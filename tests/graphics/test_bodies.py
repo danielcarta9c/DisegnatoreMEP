@@ -105,7 +105,12 @@ def test_the_libraries_are_not_empty() -> None:
     # antivibrante e il dosatore di polifosfati.
     # 62 dal 5 ottobre 2026 (I-210, I-211): lo sfiato con il suo rubinetto, in un
     # simbolo solo.
-    assert len(published()) == 62
+    # 76 dal 29 ottobre 2026, `REL-012`: gli undici simboli del kit aria-aria del
+    # PO (I-224) e i tre del comando nell'idronico — sonda, sonda esterna,
+    # regolatore (I-226).
+    # 80 dal collaudo T1 di REL-012: i plenum di zona a due, tre, quattro e sei
+    # serrande, accanto a quello a cinque del kit.
+    assert len(published()) == 80
 
 
 @pytest.mark.parametrize("symbol", published(), ids=lambda item: item.manifest.id)

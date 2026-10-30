@@ -1,0 +1,48 @@
+{
+  "id": "split-outdoor-unit",
+  "version": "1.0.0",
+  "name": "Unità esterna split a pompa di calore",
+  "functions": [
+    "refrigerant_generation"
+  ],
+  "traits": [
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
+  "symbol_id": "split-outdoor-unit",
+  "composite": false,
+  "ports": [
+    {
+      "id": "liquid",
+      "domain": "refrigerant",
+      "medium": "refrigerant_liquid",
+      "flow": "bidirectional",
+      "required": true
+    },
+    {
+      "id": "gas",
+      "domain": "refrigerant",
+      "medium": "refrigerant_gas",
+      "flow": "bidirectional",
+      "required": true
+    },
+    {
+      "id": "power",
+      "domain": "control",
+      "medium": "power_supply",
+      "flow": "in",
+      "required": true
+    },
+    {
+      "id": "link",
+      "domain": "control",
+      "medium": "interconnection",
+      "flow": "bidirectional",
+      "required": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION",
+    "proposta della sessione del 29/10/2026 (caso di prova AA-01, canalizzato aria-aria): forma da approvare dal PO sulla tavola"
+  ]
+}

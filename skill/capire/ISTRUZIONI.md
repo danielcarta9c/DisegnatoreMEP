@@ -481,6 +481,10 @@ dell'ingegnere, la soglia è fissa: il conto è aritmetica, non dimensionamento.
   *«Il testo non dà le potenze: il regime della centrale non è stato ricavato. Sotto o
   sopra i 35 kW?»*
 
+**Il regime è delle centrali ad acqua.** Un impianto senza generatori sull'acqua — un
+aria-aria, la sola distribuzione — non ha regime: ometti il campo e **non** chiedere
+niente sui 35 kW (le regole del corredo idronico lì non si applicano).
+
 Contano solo i generatori: accumuli, circolatori e terminali non hanno potenza di
 generazione. `power_kw` è la **potenza termica** della macchina. Se il testo le distingue
 — potenza resa e potenza assorbita — in `power_kw` va la resa, e l'altra si trascrive a
@@ -533,6 +537,84 @@ la portata di progetto dell'acqua calda sanitaria. Se non li dai, quei tratti re
 senza DN.»* Senza risposta la tavola esce lo stesso, e quei tratti non portano il
 diametro.
 
+### 4.8 L'aria-aria, e le linee elettriche e di comando
+
+Un canalizzato — unità esterna, unità interna, plenum di zona, bocchette — si trascrive
+come un impianto ad acqua: macchine dal catalogo per mestiere, una rete per circuito, una
+tubazione per tratto. Cambiano le voci, i fluidi e il dominio.
+
+**Le voci.** Unità esterna `split-outdoor-unit`; unità interna canalizzata
+`ducted-indoor-unit`; plenum motorizzato da `zoning-plenum-2` a `zoning-plenum-6`, col numero delle uscite
+(tutte collegate: cinque bocchette, `zoning-plenum-5`), e la sua centrale
+`zone-controller`; bocchetta di mandata `air-supply-terminal`; ripresa
+`return-air-terminal`; sifone `condensate-trap` e allaccio allo scarico
+`condensate-outlet` (un confine, come l'acquedotto); quadro `electrical-panel`; sezionatore
+`isolator-switch`; termostato di zona `room-thermostat`; comando a filo `wired-remote`. Una
+bocchetta per ogni bocchetta del testo: qui il terminale **non** è rappresentativo, perché
+ognuna ha il suo ramo, la sua portata e la sua lunghezza.
+
+**Le reti e i fluidi.** Ogni linea è una rete, e il fluido dice di che linea si tratta:
+
+| linea | `domain` | `medium` |
+|---|---|---|
+| linea del liquido, linea del gas | `refrigerant` | `refrigerant_liquid`, `refrigerant_gas` — due reti |
+| mandata e ripresa dell'aria | `aeraulic` | `supply_air`, `return_air` |
+| scarico della condensa | `condensate` | `condensate` |
+| alimentazione dal quadro (una rete per linea) | `control` | `power_supply` |
+| collegamento fra unità interna ed esterna | `control` | `interconnection` |
+| bus, linea P1-P2, comando dei motori delle serrande | `control` | `control_bus` |
+
+**Il verso.** Anche i cavi si scrivono **dall'attacco da cui il fluido esce a quello in cui
+entra** (§4.3): l'alimentazione dal quadro (`out_1`) al sezionatore (`a`), e dal sezionatore
+(`b`) all'unità esterna (`power`); la condensa dallo scarico dell'unità (`drain`) al sifone
+e dal sifone all'allaccio; la ripresa dalla griglia (`a`) all'unità (`return`). Un attacco
+`bidirectional` — le linee frigorifere, il collegamento, il bus — va bene da tutt'e due le
+parti. Una tubazione scritta al contrario la validazione la ferma
+(`CONNECTION_WRITTEN_BACKWARDS`): non è pignoleria, senza il verso la lettura
+dell'impianto si ferma e le sigle che non hai scritto non si assegnano.
+
+**L'elettrico e il comando si trascrivono solo dove il catalogo ha gli attacchi**: le
+voci dell'aria-aria, il quadro (`out_1`…`out_6`), il sezionatore, il regolatore
+(`power`, `bus`, `out_1`…`out_4` per i comandi, `probe_1`…`probe_3` per le sonde), le sonde
+(`signal`), e sulle macchine idroniche gli attacchi di comando facoltativi: pompe di calore e
+caldaie `power` e `bus`, circolatori `power` (e il comando, se la voce lo ha), valvole a tre
+vie motorizzate `comando`, ventilconvettori `power` e `bus`. `python3 scripts/mep.py
+catalogo <id>` li elenca. Se il testo descrive un cavo verso un pezzo la cui voce non ha
+l'attacco, non inventarlo: è una voce di tipo B (§6).
+
+**Le uscite di un quadro e gli ingressi di un regolatore sono equivalenti**: scegli la prima
+libera, nell'ordine. Quale uscita usa un cavo **non è topologia** — il collegamento resta lo
+stesso —, e chi compone può cambiarla per non incrociare i cavi (`comporre.md`). Il protocollo
+di un bus («Modbus», «P1-P2») va nella `scritta` del tratto, se il progettista lo dice:
+«Modbus · 2×0,75 schermato · L 15 m».
+
+**I tre campi del tratto — dati del progettista, mai calcolati.** Su ogni tubazione, **in
+testa** e non fra le `properties`, perché la tavola li scrive lungo la linea:
+
+- `sezione` — il diametro o la sezione **come il testo li scrive**: «Ø200», «1/4"» (se il testo
+  dice 1/4"), «3G2,5», «1000×250». Un testo, che non si converte;
+- `lunghezza_m` — la lunghezza del tratto che il progettista dà, in metri; zero è un raccordo
+  diretto, e il tratto non porta scritta (salvo una `scritta` tua);
+  un tratto spezzato da un sezionatore o da un sifone si scrive in due tubazioni, ma è una
+  linea sola: la lunghezza si scrive su **una** delle due, per il tratto intero — la più lunga:
+  dal quadro al sezionatore, dall'unità al sifone, mai il moncone fra sifone e scarico —, e
+  l'altra resta senza (non `0`, che vuol dire raccordo diretto);
+- `scritta` — il testo che la tavola porta sul tratto, se il progettista ne vuole uno suo:
+  «Ø200 · 270 m³/h · L 6 m», «bus · L 9 m», «di fabbrica». Se c'è, vince sugli altri due;
+  se non c'è, la tavola scrive «sezione · L lunghezza m».
+
+La skill non dimensiona l'aria, l'elettrico e il bus: se il testo non dà sezioni e
+lunghezze **non ci sono**, e li chiedi in una voce sola di `assumptions`, tratto per
+tratto. Un **raccordo diretto** — il plenum sulla bocca dell'unità, la ripresa sulla
+macchina, il cablaggio di fabbrica fra plenum e centrale — ha `"lunghezza_m": 0`: la
+distinta materiali lo legge come raccordo, e la tavola non scrive la lunghezza. Fra le `properties` vanno anche gli altri dati dei tratti che la
+distinta legge, se il progettista li dà: `portata_m3h` di un ramo d'aria, gli
+`attraversamenti` di parete, la `protezione` di una linea.
+
+**Sigle ed etichette.** Le sigle seguono la regola di sempre (§3). L'`etichetta` di una
+bocchetta o di un termostato è il **locale** — «Camera 13 m²», «Z1 Camera 13 m²» —, senza
+ripetere la sigla, che la tavola scrive già accanto al pezzo.
+
 ---
 
 ## 5. Cosa entra nel grafo e cosa no: le due liste
@@ -556,7 +638,8 @@ Le voci per **il costruito** (I-194), quando il testo le dice:
 
 - il **contatore di calore** (`heat-meter`), in linea dove il progettista lo mette — di
   solito sul ritorno: le regole gli mettono le intercettazioni prima e dopo;
-- il **collettore d'appartamento con mandata e ritorno** (`zone-manifold-pair`): ogni
+- il **collettore con mandata e ritorno** (`zone-manifold-pair`), d'appartamento o di
+  centrale: ogni
   circuito esce da `out_n` e rientra in `ret_n`, e il ritorno esce da `out` — senza
   raccordi a T per richiudere i ritorni;
 - il **volano a sei attacchi** (`buffer-six-port`), quando ne ha due predisposti in più
@@ -624,8 +707,18 @@ trova. Se ne mettono uno dove sul costruito non c'è, si toglie; se lo mettono i
 diverso, si sposta (`accessori_tolti`, §3). Quello che il testo nomina senza un posto
 resta alle regole.
 
-Se il testo nomina un mestiere che non sta in nessuna delle due liste (un ventilatore,
-una linea frigorifera…), trattalo come voce di catalogo mancante: §6, tipo B.
+**Entrano anche, quando il testo li dice, l'aria-aria e l'elettrico e il comando** (§4.8),
+che non sono ferramenta di servizio: i mestieri `refrigerant_generation`,
+`direct_expansion_terminal`, `air_zoning`, `zone_control`, `air_terminal`, `air_return`,
+`condensate_trap`, `power_source`, `power_isolation`, `room_control`, `unit_control`,
+`plant_control`, `temperature_sensing`, `outdoor_temperature_sensing`. La **sonda a
+immersione** su una tubazione si appende come un termometro: un `tee-branch` in linea e dal
+braccio una tubazione corta alla porta `a` della sonda; nel bollitore o nel volano va
+sull'attacco `probe`, se la voce lo ha. Il suo cavo esce dalla porta `signal` verso un
+ingresso `probe_n` del regolatore.
+
+Se il testo nomina un mestiere che non sta in nessuna delle liste (un ventilatore, un'unità
+di trattamento aria…), trattalo come voce di catalogo mancante: §6, tipo B.
 
 ---
 
@@ -769,7 +862,10 @@ Rispondi a queste domande. Se una risposta è «no», il lavoro non è finito.
 - Ogni attacco usato esiste nel catalogo del suo pezzo, nessun attacco porta due
   tubazioni, nessuna tubazione tocca un attacco `stub` — salvo il braccio delle
   derivazioni solari, da cui pendono i pezzi del gruppo (§4.2)?
-- Ogni tubazione va da una porta `out` a una porta `in`, sullo stesso fluido?
+- Ogni tubazione va da una porta `out` a una porta `in`, sullo stesso fluido — anche i
+  cavi dell'alimentazione, dal quadro alla macchina (§4.8)?
+- Sezioni, lunghezze e scritte dei tratti sono in testa alla tubazione, e ognuna è del
+  testo (§4.8)?
 - I `tag` sono solo quelli scritti dall'ingegnere, e tutti gli altri sono `null`?
 - I dati con un nome fisso (§3) sono numeri nell'unità del nome, e ogni marca e ogni
   modello è scritto nel testo? I dati della tabella che il testo non dà sono chiesti in

@@ -220,6 +220,16 @@ JSON, e solo queste chiavi:
   il comando**. Guarda il manifesto prima di scriverla. **Lo specchio invece vale per tutti**,
   anche per chi non si ruota (D-169): un volano a due attacchi specchiato ha `a` a destra e `b`
   a sinistra, ed è il modo di farlo guardare dall'altra parte senza girarlo.
+- **`zone_tabelle`** — **solo se la tavola porta tabelle** oltre a quella delle apparecchiature:
+  la tabella delle tratte, il computo, le note e le attività della distinta materiali, le note
+  del progettista. `"zone_tabelle": {"destra_mm": 230, "basso_mm": 230}` lascia una zona a
+  destra del disegno, accanto alla legenda, e una in basso, sopra il cartiglio; l'area del
+  disegno si restringe di tanto, e il foglio resta quello di `formato` (regole del piano, D4).
+  Le tabelle le passa il comando, `disegna --tabelle <file>` — il `tabelle-del-foglio.json` che
+  scrive `distinta`, e se il progettista ha note sue un secondo file nello stesso formato —, e
+  il comando dice dove le ha messe. **Le scritte non si rimpiccioliscono**: se non entrano il
+  comando si ferma, e allarghi le zone o prendi il formato successivo. Un computo intero non sta
+  in un A2: la M.02 del canalizzato è un A1 con zone di 230 mm.
 - **`note`** e **`regola`** — **non sono decorazione.** Il piano senza di loro dice dove
   stanno i pezzi e non dice **perché**, e chi lo rivede non può correggerlo: può solo
   spostare. `note` porta la motivazione del piano intero, `regola` la stessa cosa pezzo per
@@ -504,7 +514,100 @@ disegno per riempire il foglio**, e soprattutto **non allontanare un pezzo dalla
 serve**: A4 vince su questa regola, sempre. Se hai sbagliato formato te lo dice
 `SHEET_LARGER_THAN_NEEDED`, e si cambia una riga e si rilancia.
 
+### L'aria-aria — un canalizzato (E1, E2, E3)
+
+Il metodo è lo stesso: prima le autostrade, poi il resto. Le autostrade sono le linee
+frigorifere, la mandata al plenum, i rami alle bocchette e il bus ai termostati.
+
+- **Unità esterna e unità interna alla stessa `y`**: le porte frigorifere si allineano e le
+  due linee vengono rette. Il **plenum alla `y` dell'unità interna**; le **bocchette in
+  colonna**, ognuna alla quota della sua uscita (passo 12,5); la **ripresa sopra l'unità**,
+  sull'asse della bocca.
+- **La centrale di zona separata dal plenum**, sotto, sull'asse dei motori; i **termostati in
+  colonna** accanto, ognuno alla quota della sua porta di bus. Con la centrale attaccata al
+  plenum il kit aveva bus a L con sormonti e quattro rilievi bloccanti sulle scritte dei
+  termostati.
+- **Sotto l'unità interna** il collegamento all'unità esterna, la condensa con sifone e
+  scarico **addosso** (A4), il comando a filo; **il quadro sotto l'unità esterna**, con
+  l'alimentazione dritta in verticale.
+
 ---
+
+### L'elettrico e il comando — una tavola o due (I-227, proposta D-213)
+
+Se il grafo porta cavi o bus — reti del dominio `control`: l'alimentazione dal quadro, i comandi del
+regolatore, il bus, le sonde — decidi **prima di comporre** se l'elettrico sta sulla tavola
+dell'impianto o su una tavola sua. Il grafo è uno solo: le due tavole escono dallo stesso grafo, con
+due piani.
+
+**Due tavole** se vale almeno una di queste:
+
+1. **è una centrale**: il grafo ha un generatore sull'acqua (pompa di calore aria-acqua, caldaia,
+   boiler in pompa di calore) oppure un accumulo (volano, accumulo combinato, bollitore);
+2. **è densa**: `python3 scripts/mep.py pezzi <grafo> --vista idraulica` elenca **più di 15 pezzi da
+   posare**;
+3. **la tavola unica non esce**: composta in una vista sola ha un rilievo bloccante o una tratta
+   ceduta, e un giro di ricomposizione non li toglie.
+
+**Tavola unica** altrimenti: la sola distribuzione (un collettore con circolatore e miscelatrice, il
+suo regolatore e le sue sonde), l'aria-aria con un'unità esterna e un'unità interna.
+
+**Il progettista decide sempre.** Se ha detto «tavola unica» o «tavola a parte per l'elettrico», fai
+quello che ha detto, anche contro la regola qui sopra; se la regola ti porta dove lui non ha detto,
+dillo nella consegna in una riga («l'elettrico è su una tavola a parte: è una centrale»).
+
+#### Come si scrivono
+
+Il campo **`vista`** del piano dice quale parte del grafo la tavola disegna:
+
+| `vista` | che cosa disegna |
+|---|---|
+| `"tutto"` (se il campo manca) | il grafo intero: la tavola unica |
+| `"idraulica"` | tutto **tranne** i cavi e i bus, e tranne i pezzi che stanno solo sul comando (quadro, sezionatore, regolatore, sonda esterna). La sonda a immersione resta sul suo tubo, senza il cavo |
+| `"elettrico"` | i **soli** cavi e bus, e i pezzi che toccano: quadro, sezionatore, regolatore, sonde, e le macchine, i circolatori e le valvole che hanno un cavo. Niente acqua |
+
+Per due tavole scrivi **due piani** sullo stesso grafo completo, `piano-idraulica.json` con
+`"vista": "idraulica"` e `piano-elettrico.json` con `"vista": "elettrico"`, e disegna due volte. Il
+motore fa il resto:
+
+- il titolo della tavola porta «— idraulica» e «— elettrico e comando», e il numero della tavola
+  dell'elettrico è quello del grafo con «-E» (P.04 e P.04-E);
+- la legenda di ciascuna rimanda all'altra («Vedi tavola P.04-E «elettrico e comando»»);
+- **le sigle sono le stesse** sulle due tavole: sono quelle del grafo intero;
+- i file escono con nomi diversi (`…-idraulica-t1.pdf`, `…-elettrico-t1.pdf`).
+
+I pezzi da posare non sono gli stessi nelle due viste: chiedili per ciascuna, con
+`mep.py pezzi <grafo> --vista idraulica` e `--vista elettrico`. Sulla tavola dell'elettrico **il
+circolatore va nel piano**: non ha il suo tubo, e non sta più in linea. Il sezionatore resta in
+linea sul suo cavo, e lo posa il motore.
+
+#### Come si compone la tavola dell'elettrico
+
+**Le uscite del quadro e gli ingressi del regolatore si possono scambiare.** Quale `out_n` del
+quadro o quale `out_n`/`probe_n` del regolatore usa un cavo non è topologia: il pezzo collegato
+resta lo stesso. Se l'uscita scelta in Capire fa incrociare due cavi, cambia l'attacco nel
+grafo (solo quello: stessi pezzi, stessa rete), rilancia `completa` e dillo nella consegna in
+una riga. `python3 scripts/mep.py pezzi <grafo> --vista elettrico` dice dove sta ogni porta.
+
+È uno schema di collegamento, non la centrale ridisegnata: i pezzi non devono stare dove stanno
+sull'idraulica. Quello che conta è che i cavi siano corti e non si incrocino.
+
+- **Il regolatore al centro.** Le sue porte: alimentazione e bus su un fianco, i comandi sull'altro,
+  le sonde sotto. Specchialo (`"specchio": true`) se i pezzi che comanda stanno dall'altra parte.
+- **Le macchine dal lato dell'alimentazione e del bus del regolatore**, le **valvole e i
+  circolatori dal lato dei comandi**: girali (`rotazione`) perché l'attacco del comando guardi il
+  regolatore — il cavo è una retta.
+- **Il quadro vicino alle macchine che alimenta**, con un'uscita sull'asse dell'alimentazione della
+  macchina: il cavo è una verticale, e il sezionatore di prossimità ci sta in mezzo da solo.
+- **Le sonde sotto il regolatore**, nell'ordine dei loro ingressi: la più lontana sull'ingresso più
+  lontano, così i cavi non si incrociano.
+- **Guarda l'ordine delle porte prima di posare.** La pompa di calore ha l'alimentazione a sinistra
+  del bus, sotto; il regolatore ha l'alimentazione sopra il bus. Con il quadro sotto la macchina e il
+  regolatore accanto, il bus passa sotto il quadro: altrimenti incrocia l'alimentazione.
+
+Sulla **tavola unica** l'acqua si compone come sempre, e i cavi vengono dopo: il motore instrada
+prima tutta l'acqua e poi i cavi, nello spazio che resta. Metti il regolatore e il quadro **fuori**
+dal disegno dell'acqua, dalla parte dei pezzi che comandano.
 
 ## 6. Quello che il piano **non può** dire, e come si aggira
 

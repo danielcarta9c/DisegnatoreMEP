@@ -1,0 +1,698 @@
+{
+ "versione": "1.0.0",
+ "titolo": "Pianta dei posizionamenti e dei tracciati",
+ "note": [
+  "Planimetria a parole del progettista: 11 × 8 m misure interne, muri perimetrali 30 cm fuori dal rettangolo interno, tramezze 10 cm.",
+  "Le tramezze del corridoio hanno le facce a y=3,4 e y=4,6 (corridoio libero 1,2 m): assi a 3,35 e 4,65.",
+  "Il terrazzo sta solo a sud del soggiorno (dal testo): la profondità di 1,5 m è assunta, da confermare. Fuori dal terrazzo le linee non passano.",
+  "Da confermare: posizione dei termostati e del comando a filo; posizione del sezionatore e dell'allaccio allo scarico della cucina; il lato della UI sotto cui sta la ripresa.",
+  "T05 (ripresa) è un raccordo diretto sotto la UI: non ha tracciato."
+ ],
+ "cartiglio": {
+  "committente": "DA DEFINIRE",
+  "indirizzo": "DA DEFINIRE",
+  "progetto": "Canalizzato aria-aria in pompa di calore - appartamento al secondo piano",
+  "numero_tavola": "DA DEFINIRE",
+  "revisione": "00",
+  "data": "29.10.2026",
+  "commessa": "DA DEFINIRE"
+ },
+ "foglio": {
+  "scala": 50
+ },
+ "muri": [
+  {
+   "id": "m-nord",
+   "da": [
+    0.15,
+    0.15
+   ],
+   "a": [
+    11.45,
+    0.15
+   ],
+   "spessore": 0.3,
+   "tipo": "perimetrale"
+  },
+  {
+   "id": "m-est",
+   "da": [
+    11.45,
+    0.15
+   ],
+   "a": [
+    11.45,
+    8.45
+   ],
+   "spessore": 0.3,
+   "tipo": "perimetrale"
+  },
+  {
+   "id": "m-sud",
+   "da": [
+    11.45,
+    8.45
+   ],
+   "a": [
+    0.15,
+    8.45
+   ],
+   "spessore": 0.3,
+   "tipo": "perimetrale"
+  },
+  {
+   "id": "m-ovest",
+   "da": [
+    0.15,
+    8.45
+   ],
+   "a": [
+    0.15,
+    0.15
+   ],
+   "spessore": 0.3,
+   "tipo": "perimetrale"
+  },
+  {
+   "id": "t-corridoio-nord",
+   "da": [
+    0.3,
+    3.65
+   ],
+   "a": [
+    11.3,
+    3.65
+   ],
+   "spessore": 0.1
+  },
+  {
+   "id": "t-corridoio-sud",
+   "da": [
+    0.3,
+    4.95
+   ],
+   "a": [
+    11.3,
+    4.95
+   ],
+   "spessore": 0.1
+  },
+  {
+   "id": "t-matrimoniale-bagno",
+   "da": [
+    4.8,
+    0.3
+   ],
+   "a": [
+    4.8,
+    3.6
+   ],
+   "spessore": 0.1
+  },
+  {
+   "id": "t-bagno-singola",
+   "da": [
+    6.8,
+    0.3
+   ],
+   "a": [
+    6.8,
+    3.6
+   ],
+   "spessore": 0.1
+  },
+  {
+   "id": "t-soggiorno-ingresso",
+   "da": [
+    7.3,
+    5.0
+   ],
+   "a": [
+    7.3,
+    8.3
+   ],
+   "spessore": 0.1
+  }
+ ],
+ "aperture": [
+  {
+   "id": "porta-matrimoniale",
+   "muro": "t-corridoio-nord",
+   "centro": [
+    2.55,
+    3.65
+   ],
+   "larghezza": 0.9,
+   "tipo": "porta",
+   "apre_verso": "sopra"
+  },
+  {
+   "id": "porta-bagno",
+   "muro": "t-corridoio-nord",
+   "centro": [
+    5.8,
+    3.65
+   ],
+   "larghezza": 0.9,
+   "tipo": "porta",
+   "apre_verso": "sopra"
+  },
+  {
+   "id": "porta-singola",
+   "muro": "t-corridoio-nord",
+   "centro": [
+    9.05,
+    3.65
+   ],
+   "larghezza": 0.9,
+   "tipo": "porta",
+   "apre_verso": "sopra"
+  },
+  {
+   "id": "varco-soggiorno",
+   "muro": "t-corridoio-sud",
+   "centro": [
+    3.8,
+    4.95
+   ],
+   "larghezza": 1.5,
+   "tipo": "varco"
+  },
+  {
+   "id": "porta-ingresso",
+   "muro": "t-corridoio-sud",
+   "centro": [
+    9.3,
+    4.95
+   ],
+   "larghezza": 0.9,
+   "tipo": "porta",
+   "apre_verso": "sotto"
+  },
+  {
+   "id": "porta-di-casa",
+   "muro": "m-sud",
+   "centro": [
+    9.3,
+    8.45
+   ],
+   "larghezza": 0.9,
+   "tipo": "porta",
+   "apre_verso": "sopra"
+  }
+ ],
+ "stanze": [
+  {
+   "id": "matrimoniale",
+   "nome": "Camera matrimoniale",
+   "zona": "Z1",
+   "poligono": [
+    [
+     0.3,
+     0.3
+    ],
+    [
+     4.75,
+     0.3
+    ],
+    [
+     4.75,
+     3.6
+    ],
+    [
+     0.3,
+     3.6
+    ]
+   ]
+  },
+  {
+   "id": "bagno",
+   "nome": "Bagno",
+   "poligono": [
+    [
+     4.85,
+     0.3
+    ],
+    [
+     6.75,
+     0.3
+    ],
+    [
+     6.75,
+     3.6
+    ],
+    [
+     4.85,
+     3.6
+    ]
+   ]
+  },
+  {
+   "id": "singola",
+   "nome": "Camera singola",
+   "zona": "Z2",
+   "poligono": [
+    [
+     6.85,
+     0.3
+    ],
+    [
+     11.3,
+     0.3
+    ],
+    [
+     11.3,
+     3.6
+    ],
+    [
+     6.85,
+     3.6
+    ]
+   ]
+  },
+  {
+   "id": "corridoio",
+   "nome": "Disimpegno",
+   "poligono": [
+    [
+     0.3,
+     3.7
+    ],
+    [
+     11.3,
+     3.7
+    ],
+    [
+     11.3,
+     4.9
+    ],
+    [
+     0.3,
+     4.9
+    ]
+   ],
+   "controsoffitto": true,
+   "disimpegno": true
+  },
+  {
+   "id": "soggiorno",
+   "nome": "Soggiorno-cucina",
+   "zona": "Z3",
+   "poligono": [
+    [
+     0.3,
+     5.0
+    ],
+    [
+     7.25,
+     5.0
+    ],
+    [
+     7.25,
+     8.3
+    ],
+    [
+     0.3,
+     8.3
+    ]
+   ]
+  },
+  {
+   "id": "ingresso",
+   "nome": "Ingresso",
+   "poligono": [
+    [
+     7.35,
+     5.0
+    ],
+    [
+     11.3,
+     5.0
+    ],
+    [
+     11.3,
+     8.3
+    ],
+    [
+     7.35,
+     8.3
+    ]
+   ],
+   "controsoffitto": true
+  }
+ ],
+ "velette": [
+  {
+   "id": "veletta-soggiorno",
+   "rettangolo": [
+    0.3,
+    5.0,
+    3.05,
+    5.6
+   ]
+  }
+ ],
+ "zone_esterne": [
+  {
+   "id": "terrazzo",
+   "nome": "Terrazzo",
+   "rettangolo": [
+    0.0,
+    8.6,
+    7.35,
+    10.1
+   ]
+  }
+ ],
+ "pezzi": [
+  {
+   "sigla": "UI-01",
+   "tipo": "ducted-indoor-unit",
+   "nome": "Unità interna canalizzata PEAD-M71JA",
+   "x": 6.3,
+   "y": 4.3,
+   "larghezza": 1.1,
+   "profondita": 0.73,
+   "quota": "controsoffitto",
+   "id": "ui",
+   "ingombro_da_confermare": true
+  },
+  {
+   "sigla": "PLZ-01",
+   "tipo": "zoning-plenum-4",
+   "nome": "Plenum motorizzato Airzone a 4 uscite",
+   "x": 5.5,
+   "y": 4.3,
+   "larghezza": 0.5,
+   "profondita": 0.7,
+   "quota": "controsoffitto",
+   "id": "plenum",
+   "ingombro_da_confermare": true
+  },
+  {
+   "sigla": "CZ-01",
+   "tipo": "zone-controller",
+   "nome": "Centrale di zona Airzone",
+   "x": 5.5,
+   "y": 4.3,
+   "larghezza": 0.25,
+   "profondita": 0.15,
+   "quota": "controsoffitto",
+   "id": "centrale-zona",
+   "sovrapposto_a": "PLZ-01",
+   "sta": "sopra",
+   "ingombro_da_confermare": true
+  },
+  {
+   "sigla": "RA-01",
+   "tipo": "return-air-terminal",
+   "nome": "Ripresa 800×300",
+   "x": 6.6,
+   "y": 4.3,
+   "larghezza": 0.3,
+   "profondita": 0.8,
+   "quota": "controsoffitto",
+   "id": "ripresa",
+   "sovrapposto_a": "UI-01",
+   "sta": "sotto",
+   "ingombro_da_confermare": true
+  },
+  {
+   "sigla": "TA-01",
+   "tipo": "air-supply-terminal",
+   "nome": "Bocchetta camera matrimoniale",
+   "x": 2.55,
+   "y": 3.65,
+   "larghezza": 0.4,
+   "profondita": 0.2,
+   "id": "bocchetta-matrimoniale"
+  },
+  {
+   "sigla": "TA-02",
+   "tipo": "air-supply-terminal",
+   "nome": "Bocchetta camera singola",
+   "x": 9.05,
+   "y": 3.65,
+   "larghezza": 0.4,
+   "profondita": 0.2,
+   "id": "bocchetta-singola"
+  },
+  {
+   "sigla": "TA-03",
+   "tipo": "air-supply-terminal",
+   "nome": "Bocchetta soggiorno sopra il varco",
+   "x": 3.8,
+   "y": 4.95,
+   "larghezza": 0.4,
+   "profondita": 0.2,
+   "id": "bocchetta-soggiorno-varco"
+  },
+  {
+   "sigla": "TA-04",
+   "tipo": "air-supply-terminal",
+   "nome": "Bocchetta soggiorno parete nord (veletta)",
+   "x": 1.3,
+   "y": 5.3,
+   "larghezza": 0.4,
+   "profondita": 0.2,
+   "id": "bocchetta-soggiorno-parete"
+  },
+  {
+   "sigla": "UE-01",
+   "tipo": "split-outdoor-unit",
+   "nome": "Unità esterna SUZ-M71VA (terrazzo)",
+   "x": 2.3,
+   "y": 8.85,
+   "larghezza": 0.8,
+   "profondita": 0.3,
+   "id": "ue"
+  },
+  {
+   "sigla": "SZ-01",
+   "tipo": "isolator-switch",
+   "nome": "Sezionatore vicino all'unità esterna",
+   "x": 3.1,
+   "y": 8.7,
+   "larghezza": 0.12,
+   "profondita": 0.12,
+   "id": "sezionatore-ue"
+  },
+  {
+   "sigla": "QE-01",
+   "tipo": "electrical-panel",
+   "nome": "Quadro elettrico",
+   "x": 11.2,
+   "y": 6.3,
+   "larghezza": 0.2,
+   "profondita": 0.4,
+   "id": "quadro"
+  },
+  {
+   "sigla": "SIF-01",
+   "tipo": "condensate-trap",
+   "nome": "Sifone",
+   "x": 7.1,
+   "y": 5.3,
+   "larghezza": 0.15,
+   "profondita": 0.15,
+   "id": "sifone"
+  },
+  {
+   "sigla": "AL-01",
+   "tipo": "condensate-outlet",
+   "nome": "Allaccio allo scarico della cucina",
+   "x": 7.15,
+   "y": 6.3,
+   "larghezza": 0.15,
+   "profondita": 0.15,
+   "id": "scarico-condensa"
+  },
+  {
+   "sigla": "TZ-01",
+   "tipo": "room-thermostat",
+   "nome": "Termostato camera matrimoniale",
+   "x": 3.3,
+   "y": 3.54,
+   "larghezza": 0.12,
+   "profondita": 0.12,
+   "id": "termostato-matrimoniale"
+  },
+  {
+   "sigla": "TZ-02",
+   "tipo": "room-thermostat",
+   "nome": "Termostato camera singola",
+   "x": 9.8,
+   "y": 3.54,
+   "larghezza": 0.12,
+   "profondita": 0.12,
+   "id": "termostato-singola"
+  },
+  {
+   "sigla": "TZ-03",
+   "tipo": "room-thermostat",
+   "nome": "Termostato soggiorno",
+   "x": 5.3,
+   "y": 5.06,
+   "larghezza": 0.12,
+   "profondita": 0.12,
+   "id": "termostato-soggiorno"
+  },
+  {
+   "sigla": "CF-01",
+   "tipo": "wired-remote",
+   "nome": "Comando a filo PAR-41MAA (ingresso)",
+   "x": 10.1,
+   "y": 5.06,
+   "larghezza": 0.12,
+   "profondita": 0.12,
+   "id": "comando-filo"
+  }
+ ],
+ "tracciati": [
+  {
+   "tratta": "T01",
+   "da": "PLZ-01",
+   "a": "TA-01",
+   "fluido": "supply_air",
+   "dimensione": "Ø200",
+   "lunghezza_m": 5
+  },
+  {
+   "tratta": "T02",
+   "da": "PLZ-01",
+   "a": "TA-02",
+   "fluido": "supply_air",
+   "dimensione": "Ø200",
+   "lunghezza_m": 3
+  },
+  {
+   "tratta": "T04",
+   "da": "PLZ-01",
+   "a": "TA-04",
+   "fluido": "supply_air",
+   "dimensione": "Ø200",
+   "lunghezza_m": 6
+  },
+  {
+   "tratta": "T03",
+   "da": "PLZ-01",
+   "a": "TA-03",
+   "fluido": "supply_air",
+   "dimensione": "Ø200",
+   "lunghezza_m": 4
+  },
+  {
+   "tratta": "T06",
+   "da": {
+    "pezzo": "UI-01",
+    "lato": "sotto"
+   },
+   "a": "UE-01",
+   "fluido": "refrigerant_liquid",
+   "dimensione": "1/4\"",
+   "lunghezza_m": 9,
+   "fascio": "frigo"
+  },
+  {
+   "tratta": "T07",
+   "da": {
+    "pezzo": "UI-01",
+    "lato": "sotto"
+   },
+   "a": "UE-01",
+   "fluido": "refrigerant_gas",
+   "dimensione": "5/8\"",
+   "lunghezza_m": 9,
+   "fascio": "frigo"
+  },
+  {
+   "tratta": "T11",
+   "da": {
+    "pezzo": "UI-01",
+    "lato": "sotto"
+   },
+   "a": "UE-01",
+   "fluido": "interconnection",
+   "dimensione": "4G1,5",
+   "lunghezza_m": 10,
+   "fascio": "frigo"
+  },
+  {
+   "tratta": "T08",
+   "da": "UI-01",
+   "a": "AL-01",
+   "fluido": "condensate",
+   "dimensione": "PVC Ø32",
+   "lunghezza_m": 8,
+   "passa_per": [
+    "SIF-01"
+   ]
+  },
+  {
+   "tratta": "T09",
+   "da": "QE-01",
+   "a": "CZ-01",
+   "fluido": "power_supply",
+   "dimensione": "3G1,5",
+   "lunghezza_m": 8,
+   "quota": "traccia"
+  },
+  {
+   "tratta": "T10",
+   "da": "QE-01",
+   "a": "UE-01",
+   "fluido": "power_supply",
+   "dimensione": "3G4",
+   "lunghezza_m": 18,
+   "passa_per": [
+    "SZ-01"
+   ],
+   "quota": "traccia"
+  },
+  {
+   "tratta": "T12",
+   "da": "CZ-01",
+   "a": "TZ-01",
+   "fluido": "control_bus",
+   "dimensione": "bus",
+   "lunghezza_m": 7,
+   "quota": "traccia"
+  },
+  {
+   "tratta": "T13",
+   "da": "CZ-01",
+   "a": "TZ-02",
+   "fluido": "control_bus",
+   "dimensione": "bus",
+   "lunghezza_m": 5,
+   "quota": "traccia"
+  },
+  {
+   "tratta": "T14",
+   "da": "CZ-01",
+   "a": "TZ-03",
+   "fluido": "control_bus",
+   "dimensione": "bus",
+   "lunghezza_m": 9,
+   "quota": "traccia"
+  },
+  {
+   "tratta": "T16",
+   "da": "UI-01",
+   "a": "CF-01",
+   "fluido": "control_bus",
+   "dimensione": "2×0,75",
+   "lunghezza_m": 6,
+   "quota": "traccia"
+  },
+  {
+   "tratta": "T15",
+   "da": "CZ-01",
+   "a": "UI-01",
+   "fluido": "control_bus",
+   "dimensione": "2×0,75",
+   "lunghezza_m": 2,
+   "quota": "controsoffitto"
+  }
+ ]
+}

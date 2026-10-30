@@ -126,6 +126,56 @@ def hydronic_port(
     }
 
 
+# --- le porte elettriche e di comando (REL-012, fase 3, I-226) ----------------
+# **Proposte della sessione del 29 ottobre 2026, da approvare dal PO sulla
+# tavola.** Tutte nel dominio `control` e **facoltative**: una pompa di calore si
+# disegna anche su una tavola che l'elettrico non lo descrive, e li' i suoi cavi
+# non ci sono. Il simbolo le tiene fra le `control_ports`, e il registro le mette
+# da parte finche' il grafo non ne collega una: senza elettrico nel grafo nessuna
+# tavola cambia.
+#
+# - **`power`**, l'alimentazione (`power_supply`, entra): dal quadro, o da
+#   un'uscita del regolatore quando e' lui ad accendere il pezzo;
+# - **`bus`**, il bus di comando (`control_bus`, nei due versi): la pompa di
+#   calore, la caldaia, il ventilconvettore parlano col regolatore;
+# - **`comando`**, l'attuatore della valvola motorizzata (`power_supply`, entra):
+#   le uscite del regolatore sono a 230 V (REL-012, fase 3, punto 2), e
+#   l'attuatore a tre punti ne prende una.
+
+CONTROL_PORTS_PROPOSAL = (
+    "porte elettriche e di comando: proposta della sessione del 29/10/2026 (REL-012 fase 3, "
+    "I-226), da approvare dal PO sulla tavola"
+)
+
+
+def _porta_di_comando(port_id: str, medium: str, flow: str) -> dict[str, Any]:
+    return {"id": port_id, "domain": "control", "medium": medium, "flow": flow, "required": False}
+
+
+def machine_control_ports() -> list[dict[str, Any]]:
+    """Alimentazione e bus di una macchina: pompa di calore, caldaia, boiler in
+    pompa di calore, ventilconvettore."""
+    return [
+        _porta_di_comando("power", "power_supply", "in"),
+        _porta_di_comando("bus", "control_bus", "bidirectional"),
+    ]
+
+
+def pump_control_ports() -> list[dict[str, Any]]:
+    """L'alimentazione del circolatore e il suo **comando** (collaudo T2 di REL-012,
+    §2.2.10): alimentato dal quadro e acceso da un'uscita del regolatore, che e' a
+    230 V come quella che muove una valvola. Facoltativi tutti e due."""
+    return [
+        _porta_di_comando("power", "power_supply", "in"),
+        _porta_di_comando("comando", "power_supply", "in"),
+    ]
+
+
+def valve_control_ports() -> list[dict[str, Any]]:
+    """Il comando dell'attuatore di una valvola motorizzata."""
+    return [_porta_di_comando("comando", "power_supply", "in")]
+
+
 def state(state_id: str, name: str, *groups: list[str]) -> dict[str, Any]:
     """Una configurazione ammessa di un multivia (DRAW-006, blocco C).
 
@@ -243,13 +293,14 @@ REL_003: list[dict[str, Any]] = [
         [
             hydronic_port("water_supply", "out"),
             hydronic_port("water_return", "in"),
+            *machine_control_ports(),
         ],
         # Il circolatore a bordo, come la monoblocco domestica: cosi' la
         # disegnano Caleffi (SRC-030, fig. 47) e il progetto di Padova (SRC-031),
         # e cosi' l'ha confermato il PO (D-188).
         carries_on_board=["circulation"],
         variant={"of": "heat-pump-air-water", "named_as": ["alta potenza", "grande taglia"]},
-        sources=[D188],
+        sources=[D188, CONTROL_PORTS_PROPOSAL],
     ),
     definition(
         "gas-boiler-modular",
@@ -259,22 +310,23 @@ REL_003: list[dict[str, Any]] = [
         [
             hydronic_port("water_supply", "out"),
             hydronic_port("water_return", "in"),
+            *machine_control_ports(),
         ],
         # Il PO, 26 settembre 2026: «anche loro le danno sempre con circolatore
         # integrato» (D-188). E' la differenza di contenuto con la murale, che
         # non dichiara niente a bordo.
         carries_on_board=["circulation"],
         variant={"of": "gas-boiler", "named_as": ["modulare", "a moduli"]},
-        sources=[D188],
+        sources=[D188, CONTROL_PORTS_PROPOSAL],
     ),
     definition(
         "fan-coil-ducted",
         "Ventilconvettore canalizzato",
         ["emission"],
         [MAINTAINABLE, FOULS_CIRCUIT, SHUTOFF_ORDINARY, INLINE],
-        [hydronic_port("in", "in"), hydronic_port("out", "out")],
+        [hydronic_port("in", "in"), hydronic_port("out", "out"), *machine_control_ports()],
         variant={"of": "fan-coil", "named_as": ["canalizzato", "canalizzabile"]},
-        sources=[D188],
+        sources=[D188, CONTROL_PORTS_PROPOSAL],
     ),
     # **Il solare.** Il collettore e' un generatore (D-188), sigla GT; i suoi
     # attacchi portano il fluido solare, e sulle reti di quel fluido le regole
@@ -326,7 +378,7 @@ REL_003: list[dict[str, Any]] = [
     solar_accessory(
         "pump-circulator-solar", "Pompa di circolazione solare", ["circulation"],
         [MAINTAINABLE, NEEDS_DEBRIS_PROTECTION, SHUTOFF_ORDINARY, INLINE],
-        [hydronic_port("a", "in", SOLAR), hydronic_port("b", "out", SOLAR)],
+        [hydronic_port("a", "in", SOLAR), hydronic_port("b", "out", SOLAR), *pump_control_ports()],
         "pump-circulator",
     ),
     solar_accessory(
@@ -413,6 +465,264 @@ REL_003: list[dict[str, Any]] = [
     ),
 ]
 
+
+# --- REL-012, l'aria-aria e il comando (I-224, I-226) -------------------------
+# Le voci del kit del PO (`docs/input-pm/2026-10-29-kit-aria-aria/`, `RAPPORTO.md`
+# §5.2), rifatte qui perche' il catalogo e' generato, e i segni del comando
+# nell'idronico proposti dalla sessione. Sono tutte **proposte**: il PO le
+# approva sulla tavola.
+#
+# **Nessuna dichiara `maintainable`, apposta** (`RAPPORTO.md` §5.2): farebbe
+# scattare la regola dell'intercettazione, che cercherebbe una valvola sul fluido
+# frigorigeno, sull'aria o su un cavo, e il catalogo non ne ha — un'unita' su
+# una linea frigorifera o un ventilatore su un canale non si chiudono con una
+# valvola (`test_nothing_outside_the_water_declares_itself_serviceable`).
+
+SUPPLY_AIR = "supply_air"
+RETURN_AIR = "return_air"
+REFRIGERANT_LIQUID = "refrigerant_liquid"
+REFRIGERANT_GAS = "refrigerant_gas"
+CONDENSATE = "condensate"
+POWER = "power_supply"
+"""L'alimentazione elettrica: i cavi di potenza, dal quadro alle macchine."""
+INTERCONNECTION = "interconnection"
+"""Il collegamento elettrico fra unita' esterna e unita' interna."""
+CONTROL_BUS = "control_bus"
+"""Il bus di comando: termostati, centrali, e — proposta di questa sessione — il
+segnale delle sonde, finche' il PO non decide se vuole un fluido a parte."""
+
+KIT_AA01 = (
+    "proposta della sessione del 29/10/2026 (caso di prova AA-01, canalizzato aria-aria): "
+    "forma da approvare dal PO sulla tavola"
+)
+CONTROL_PROPOSAL = (
+    "proposta della sessione del 29/10/2026 (REL-012 fase 3, I-226): da approvare dal PO "
+    "sulla tavola"
+)
+PLENUM_T1 = (
+    "proposta della sessione del 29/10/2026 (collaudo T1 di REL-012, plenum a quattro uscite): "
+    "la voce del plenum a cinque serrande del kit AA-01, con le serrande che il plenum ha; "
+    "da approvare dal PO sulla tavola"
+)
+PANEL_T1 = (
+    "uscite dalla terza alla sesta: proposta della sessione del 29/10/2026 (collaudo T1 e fase 3 "
+    "di REL-012), da approvare dal PO sulla tavola"
+)
+PLENUM_OUTLET_COUNTS = (2, 3, 4, 5, 6)
+"""Da due a sei serrande: Airzone e gli altri costruttori fanno plenum da 2 a 6-8 bocche."""
+NUMERI_IN_LETTERE = {2: "due", 3: "tre", 4: "quattro", 5: "cinque", 6: "sei"}
+QUIET = [SHUTOFF_ORDINARY, INLINE]
+"""I caratteri delle voci dell'aria, del refrigerante e dell'elettrico: si
+chiudono come tutto il resto, e nient'altro (vedi sopra, `maintainable`)."""
+
+
+def port_of(
+    port_id: str, domain: str, medium: str, flow: str, required: bool = True
+) -> dict[str, Any]:
+    """Un attacco fuori dall'acqua: aria, refrigerante, condensa o comando."""
+    return {"id": port_id, "domain": domain, "medium": medium, "flow": flow, "required": required}
+
+
+def control_port(
+    port_id: str, medium: str, flow: str = "bidirectional", required: bool = True
+) -> dict[str, Any]:
+    """Un attacco di comando: un cavo o un bus, nel dominio `control`."""
+    return port_of(port_id, "control", medium, flow, required)
+
+
+def temperature_probe(definition_id: str, name: str, medium: str) -> dict[str, Any]:
+    """La sonda di temperatura sul fluido che misura: pende dal tubo come il
+    termometro, e dal lato opposto esce il suo segnale.
+
+    Il segnale **non e' obbligatorio**: una sonda si disegna anche su una tavola
+    che il comando non lo descrive, e li' resta appesa al suo tubo."""
+    return definition(
+        definition_id,
+        name,
+        ["temperature_sensing"],
+        [SHUTOFF_ORDINARY, BRANCH],
+        [
+            hydronic_port("a", "bidirectional", medium),
+            control_port("signal", CONTROL_BUS, "out", required=False),
+        ],
+        symbol_id="temperature-probe",
+        sources=[CONTROL_PROPOSAL],
+    )
+
+
+REL_012: list[dict[str, Any]] = [
+    definition(
+        "split-outdoor-unit",
+        "Unità esterna split a pompa di calore",
+        ["refrigerant_generation"],
+        QUIET,
+        [
+            port_of("liquid", "refrigerant", REFRIGERANT_LIQUID, "bidirectional"),
+            port_of("gas", "refrigerant", REFRIGERANT_GAS, "bidirectional"),
+            control_port("power", POWER, "in"),
+            control_port("link", INTERCONNECTION),
+        ],
+        sources=[KIT_AA01],
+    ),
+    definition(
+        "ducted-indoor-unit",
+        "Unità interna canalizzata ad espansione diretta",
+        ["direct_expansion_terminal"],
+        QUIET,
+        [
+            port_of("liquid", "refrigerant", REFRIGERANT_LIQUID, "bidirectional"),
+            port_of("gas", "refrigerant", REFRIGERANT_GAS, "bidirectional"),
+            port_of("supply", "aeraulic", SUPPLY_AIR, "out"),
+            port_of("return", "aeraulic", RETURN_AIR, "in"),
+            port_of("drain", "condensate", CONDENSATE, "out"),
+            control_port("link", INTERCONNECTION),
+            control_port("p1p2_a", CONTROL_BUS),
+            control_port("p1p2_b", CONTROL_BUS, required=False),
+        ],
+        sources=[KIT_AA01],
+    ),
+    # Il plenum di zona da due a sei serrande (collaudo T1 di REL-012, §2.1): una
+    # voce per numero, con le uscite tutte obbligatorie, perche' una serranda che
+    # non porta a una bocchetta non c'e'. Il cinque e' quello del kit e della M.02.
+    *(
+        definition(
+            f"zoning-plenum-{uscite}",
+            f"Plenum motorizzato di zona a {NUMERI_IN_LETTERE[uscite]} serrande",
+            ["air_zoning"],
+            QUIET,
+            [
+                port_of("in", "aeraulic", SUPPLY_AIR, "in"),
+                control_port("motori", CONTROL_BUS),
+                *(
+                    port_of(f"out_{indice}", "aeraulic", SUPPLY_AIR, "out")
+                    for indice in range(1, uscite + 1)
+                ),
+            ],
+            sources=[KIT_AA01 if uscite == 5 else PLENUM_T1],
+        )
+        for uscite in PLENUM_OUTLET_COUNTS
+    ),
+    definition(
+        "zone-controller",
+        "Centrale di zona",
+        ["zone_control"],
+        QUIET,
+        [
+            control_port("serrande", CONTROL_BUS),
+            control_port("p1p2", CONTROL_BUS),
+            control_port("power", POWER, "in"),
+            *(control_port(f"bus_{indice}", CONTROL_BUS, required=False) for indice in range(1, 5)),
+        ],
+        sources=[KIT_AA01],
+    ),
+    definition(
+        "air-supply-terminal",
+        "Bocchetta di mandata con plenum di raccordo",
+        ["air_terminal"],
+        QUIET,
+        [port_of("a", "aeraulic", SUPPLY_AIR, "in")],
+        symbol_id="air-diffuser",
+        sources=[KIT_AA01],
+    ),
+    definition(
+        "return-air-terminal",
+        "Griglia di ripresa con plenum e filtro",
+        ["air_return"],
+        QUIET,
+        [port_of("a", "aeraulic", RETURN_AIR, "out")],
+        symbol_id="return-grille",
+        sources=[KIT_AA01],
+    ),
+    definition(
+        "condensate-trap",
+        "Sifone ispezionabile sulla condensa",
+        ["condensate_trap"],
+        QUIET,
+        [
+            port_of("a", "condensate", CONDENSATE, "in"),
+            port_of("b", "condensate", CONDENSATE, "out"),
+        ],
+        sources=[KIT_AA01],
+    ),
+    definition(
+        "condensate-outlet",
+        "Allaccio della condensa allo scarico",
+        ["boundary"],
+        QUIET,
+        [port_of("a", "condensate", CONDENSATE, "in")],
+        sources=[KIT_AA01],
+    ),
+    definition(
+        "electrical-panel",
+        "Quadro elettrico",
+        ["power_source"],
+        QUIET,
+        [
+            control_port("out_1", POWER, "out"),
+            # Fino a sei uscite (collaudo T1 e fase 3 di REL-012): facoltative, e
+            # una libera non si disegna.
+            *(control_port(f"out_{indice}", POWER, "out", required=False) for indice in range(2, 7)),
+        ],
+        sources=[KIT_AA01, PANEL_T1],
+    ),
+    definition(
+        "isolator-switch",
+        "Sezionatore onnipolare",
+        ["power_isolation"],
+        QUIET,
+        [control_port("a", POWER, "in"), control_port("b", POWER, "out")],
+        sources=[KIT_AA01],
+    ),
+    definition(
+        "room-thermostat",
+        "Termostato di zona",
+        ["room_control"],
+        QUIET,
+        [control_port("a", CONTROL_BUS)],
+        sources=[KIT_AA01],
+    ),
+    definition(
+        "wired-remote",
+        "Comando a filo dell'unità",
+        ["unit_control"],
+        QUIET,
+        [control_port("a", CONTROL_BUS)],
+        sources=[KIT_AA01],
+    ),
+    # --- fase 3: il comando nell'idronico (I-226), proposte della sessione ---
+    # Una sonda per fluido, come il termometro: la voce dice su quale acqua pende.
+    temperature_probe("temperature-probe", "Sonda di temperatura", HEATING),
+    temperature_probe("temperature-probe-dhw", "Sonda di temperatura sanitaria", DHW),
+    temperature_probe("temperature-probe-solar", "Sonda di temperatura solare", SOLAR),
+    definition(
+        "outdoor-temperature-probe",
+        "Sonda esterna",
+        ["outdoor_temperature_sensing"],
+        QUIET,
+        [control_port("a", CONTROL_BUS, "out")],
+        sources=[CONTROL_PROPOSAL],
+    ),
+    definition(
+        "plant-controller",
+        "Regolatore d'impianto",
+        ["plant_control"],
+        QUIET,
+        [
+            control_port("power", POWER, "in"),
+            # Il bus verso le macchine che lo parlano (la pompa di calore, la
+            # caldaia): facoltativo, un regolatore puo' comandare solo a contatti.
+            control_port("bus", CONTROL_BUS, required=False),
+            # I comandi a pompe e valvole: uscite a 230 V, quindi alimentazione.
+            *(control_port(f"out_{indice}", POWER, "out", required=False) for indice in range(1, 5)),
+            *(
+                control_port(f"probe_{indice}", CONTROL_BUS, "in", required=False)
+                for indice in range(1, 4)
+            ),
+        ],
+        sources=[CONTROL_PROPOSAL],
+    ),
+]
+
 DEFINITIONS: list[dict[str, Any]] = [
     definition(
         "heat-pump-air-water",
@@ -429,11 +739,13 @@ DEFINITIONS: list[dict[str, Any]] = [
         [
             hydronic_port("water_supply", "out"),
             hydronic_port("water_return", "in"),
+            *machine_control_ports(),
         ],
         # Le monoblocco comuni portano a bordo il circolatore primario, non il
         # vaso di espansione (D-106; SRC-019, p. 15): nessuna regola deve
         # aggiungere un circolatore che sta gia' dentro il mantello.
         carries_on_board=["circulation"],
+        sources=[CONTROL_PORTS_PROPOSAL],
     ),
     definition(
         # **Confluenza.** Il ritorno della macchina raccoglie sia il circuito del
@@ -578,7 +890,9 @@ DEFINITIONS: list[dict[str, Any]] = [
         [
             hydronic_port("water_supply", "out"),
             hydronic_port("water_return", "in"),
+            *machine_control_ports(),
         ],
+        sources=[CONTROL_PORTS_PROPOSAL],
     ),
     definition(
         "plate-heat-exchanger",
@@ -597,7 +911,8 @@ DEFINITIONS: list[dict[str, Any]] = [
         "Ventilconvettore",
         ["emission"],
         [MAINTAINABLE, FOULS_CIRCUIT, SHUTOFF_ORDINARY, INLINE],
-        [hydronic_port("in", "in"), hydronic_port("out", "out")],
+        [hydronic_port("in", "in"), hydronic_port("out", "out"), *machine_control_ports()],
+        sources=[CONTROL_PORTS_PROPOSAL],
     ),
     definition(
         "ahu-coil",
@@ -662,9 +977,11 @@ DEFINITIONS: list[dict[str, Any]] = [
             hydronic_port("dhw_out", "out", DHW),
             service_port("probe", "temperature_measurement", DHW),
             recirculation_port(),
+            *machine_control_ports(),
         ],
         stored_medium=DHW,
         fills_from="cold_in",
+        sources=[CONTROL_PORTS_PROPOSAL],
     ),
     definition(
         "mixing-valve-3way",
@@ -675,15 +992,18 @@ DEFINITIONS: list[dict[str, Any]] = [
             hydronic_port("hot_in", "in"),
             hydronic_port("cold_in", "in"),
             hydronic_port("out", "out"),
+            *valve_control_ports(),
         ],
+        sources=[CONTROL_PORTS_PROPOSAL],
     ),
     definition(
         "pump-circulator-dhw",
         "Pompa di ricircolo sanitario",
         ["circulation"],
         [MAINTAINABLE, NEEDS_DEBRIS_PROTECTION, SHUTOFF_ORDINARY, INLINE],
-        [hydronic_port("a", "in", DHW), hydronic_port("b", "out", DHW)],
+        [hydronic_port("a", "in", DHW), hydronic_port("b", "out", DHW), *pump_control_ports()],
         symbol_id="pump-circulator",
+        sources=[CONTROL_PORTS_PROPOSAL],
     ),
     definition(
         # **Ha un verso, come ogni ritegno** (I-114): il simbolo porta la
@@ -710,6 +1030,7 @@ DEFINITIONS: list[dict[str, Any]] = [
             hydronic_port("in", "in"),
             hydronic_port("out_a", "out"),
             hydronic_port("out_b", "out"),
+            *valve_control_ports(),
         ],
         # I due stati della deviazione. L'ingresso comunica con un ramo oppure
         # con l'altro; i due rami non comunicano mai fra loro, e attraversarli
@@ -718,6 +1039,7 @@ DEFINITIONS: list[dict[str, Any]] = [
             state("verso_a", "Deviazione sul primo ramo", ["in", "out_a"]),
             state("verso_b", "Deviazione sul secondo ramo", ["in", "out_b"]),
         ],
+        sources=[CONTROL_PORTS_PROPOSAL],
     ),
     definition(
         "switching-valve-3way",
@@ -728,6 +1050,7 @@ DEFINITIONS: list[dict[str, Any]] = [
             hydronic_port("in_a", "in"),
             hydronic_port("in_b", "in"),
             hydronic_port("out", "out"),
+            *valve_control_ports(),
         ],
         # **Due ingressi e un'uscita: l'organo che sceglie da dove si pesca.**
         # Serve perche' un circuito sanitario dedicato sia davvero dedicato
@@ -745,6 +1068,7 @@ DEFINITIONS: list[dict[str, Any]] = [
             state("da_primario", "Pesca dal primario", ["in_a", "out"]),
             state("da_sanitario", "Pesca dal sanitario", ["in_b", "out"]),
         ],
+        sources=[CONTROL_PORTS_PROPOSAL],
     ),
     definition(
         "buffer-four-port",
@@ -802,7 +1126,8 @@ DEFINITIONS: list[dict[str, Any]] = [
         "Pompa di circolazione",
         ["circulation"],
         [MAINTAINABLE, NEEDS_DEBRIS_PROTECTION, SHUTOFF_ORDINARY, INLINE],
-        [hydronic_port("a", "in"), hydronic_port("b", "out")],
+        [hydronic_port("a", "in"), hydronic_port("b", "out"), *pump_control_ports()],
+        sources=[CONTROL_PORTS_PROPOSAL],
     ),
     definition(
         "zone-manifold",
@@ -850,6 +1175,7 @@ DEFINITIONS: list[dict[str, Any]] = [
         ],
     ),
     *REL_003,
+    *REL_012,
 ]
 
 NETWORKS = [

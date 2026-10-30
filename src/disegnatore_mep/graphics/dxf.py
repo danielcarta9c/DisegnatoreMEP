@@ -45,7 +45,9 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 from xml.etree import ElementTree
 
-from disegnatore_mep.layout.geometry import FlowKind, Point, Richiamo, RoutedTrunk, SheetGeometry
+from disegnatore_mep.diametri.scritte import CAMPIONE_DELLA_LEGENDA as CAMPIONE_DELLA_SCRITTA
+from disegnatore_mep.layout.fluidi import ha_un_verso
+from disegnatore_mep.layout.geometry import Point, Richiamo, RoutedTrunk, SheetGeometry
 from disegnatore_mep.layout.legend import (
     INTERLINEA_EM,
     MEDIUM_NAMES,
@@ -79,6 +81,7 @@ from .sheet import (
 )
 from .symbol import FlowGlyph, PortFace, StrokeWeight
 from .tabella import tratti_della_tabella
+from .tabelle import tratti_della_tabella_posata
 
 if TYPE_CHECKING:
     from ezdxf.document import Drawing
@@ -156,6 +159,16 @@ _RETI: dict[tuple[str, bool], str] = {
     ("return_air", False): "M-HVAC-RETN",
     ("condensate", True): "M-CNDS-PIPE",
     ("condensate", False): "M-CNDS-PIPE",
+    # L'elettrico e il comando (REL-012): disciplina `E`, gruppo `POWR` per i
+    # circuiti di potenza e `CTRL` per il comando, come le linee guida AIA li
+    # nominano; `CIRC`, `LINK` e `BUS` sono sottogruppi del progetto. Un verso solo:
+    # sono fluidi senza verso (`layout.fluidi`).
+    ("power_supply", True): "E-POWR-CIRC",
+    ("power_supply", False): "E-POWR-CIRC",
+    ("interconnection", True): "E-POWR-LINK",
+    ("interconnection", False): "E-POWR-LINK",
+    ("control_bus", True): "E-CTRL-BUS",
+    ("control_bus", False): "E-CTRL-BUS",
 }
 """Il layer di ogni rete: il fluido e il verso.
 
@@ -629,6 +642,9 @@ class _Tavola:
         self.doc = new(DXF_VERSION, setup=False, units=units.MM)
         self.msp = self.doc.modelspace()
         self.blocchi: set[str] = set()
+        self.varianti: dict[tuple[str, tuple[str, ...]], str] = {}
+        """I blocchi di un simbolo senza qualche moncone (collaudo T1 di REL-012):
+        uno per combinazione di porte scollegate, `NoveC_<simbolo>_V<n>`."""
         self._intestazione()
         self._stili()
         self.carta = self._presentazione()
@@ -694,9 +710,9 @@ class _Tavola:
         nome = layer_della_rete(route.medium, route.supply)
         fluido = MEDIUM_NAMES.get(route.medium, route.medium)
         verso = "andata" if route.supply else RETURN_NAMES.get(route.medium, "ritorno")
-        return self.layer(
-            nome, f"{fluido} — {verso}", colore, tratto, self.standard.line_medium_mm
-        )
+        # Un fluido senza verso ha un layer solo, e il layer si chiama col fluido.
+        descrizione = f"{fluido} — {verso}" if ha_un_verso(route.medium) else fluido
+        return self.layer(nome, descrizione, colore, tratto, self.standard.line_medium_mm)
 
     def layer_di_servizio(self) -> None:
         thin, medium = self.standard.line_thin_mm, self.standard.line_medium_mm
@@ -704,12 +720,23 @@ class _Tavola:
         self.layer(LAYER_SIGLE, "Sigle e richiami", None, "none", thin)
         self.layer(LAYER_TESTI, "Testi e rimandi", None, "none", thin)
         self.layer(LAYER_LEGENDA, "Legenda", None, "none", thin)
-        if self.sheet.tabella is not None:
-            self.layer(LAYER_TABELLA, "Tabella delle apparecchiature", None, "none", thin)
+        if self.sheet.tabella is not None or self.sheet.tabelle:
+            # Le tabelle nelle zone (REL-012) stanno sullo stesso layer: sono anche
+            # loro «Schedules». Senza, la descrizione e' quella di sempre.
+            descrizione = (
+                "Tabella delle apparecchiature"
+                if not self.sheet.tabelle
+                else "Tabelle della tavola: apparecchiature e tabelle nelle zone del foglio"
+            )
+            self.layer(LAYER_TABELLA, descrizione, None, "none", thin)
         if self.sheet.diametri:
+            scritte = any(
+                nota.campione == CAMPIONE_DELLA_SCRITTA for nota in self.sheet.note_della_legenda
+            )
             self.layer(
                 LAYER_DIAMETRI,
-                "Diametri delle tubazioni: Øi, diametro interno netto minimo in mm",
+                "Diametri delle tubazioni: Øi, diametro interno netto minimo in mm"
+                + ("; e le scritte dei tratti, Ø · L, dato del progettista" if scritte else ""),
                 None, "none", thin,
             )
         self.layer(LAYER_CARTIGLIO, "Squadratura e cartiglio", None, "none", thin)
@@ -764,11 +791,36 @@ class _Tavola:
             [(cx - r, cy, 1.0), (cx + r, cy, 1.0)], is_closed=True
         )
 
-    def blocco_del_simbolo(self, symbol_id: str) -> str:
+    def blocco_del_simbolo(
+        self, symbol_id: str, senza: Sequence[str] = (), con: Sequence[str] = ()
+    ) -> str:
+        """Il blocco di un simbolo; con `senza`, quello senza il moncone di quelle
+        porte, e con `con` quello col moncone di quelle porte di comando (collaudo T2
+        di REL-012) — un blocco a parte, perche' il blocco del simbolo e' uno per
+        tutti i pezzi che lo usano. Le lettere diritte restano quelle del blocco
+        intero."""
+        simbolo = self.symbols.get(symbol_id)
+        ridotto = simbolo.senza_le_porte(senza, con)
+        if ridotto is not simbolo:
+            tolte = tuple(sorted(set(senza) & (simbolo.porte_col_moncone | simbolo.monconi_d_acqua)))
+            aggiunte = tuple(sorted(set(con) & simbolo.monconi_di_comando))
+            chiave = (symbol_id, tolte, aggiunte)
+            if chiave not in self.varianti:
+                base = self.blocco_del_simbolo(symbol_id)
+                nome = f"{base}_V{sum(1 for item in self.varianti if item[0] == symbol_id) + 1}"
+                descrizione = f"{simbolo.manifest.name}: " + ", ".join(
+                    parte
+                    for parte, c_e in (("senza i monconi liberi", tolte), ("coi monconi dei cavi", aggiunte))
+                    if c_e
+                )
+                blocco = self.doc.blocks.new(nome, dxfattribs={"description": descrizione})
+                self._primitive_nel_blocco(blocco, corpo_del_simbolo(ridotto.body).primitive)
+                self.blocchi.add(nome)
+                self.varianti[chiave] = nome
+            return self.varianti[chiave]
         nome = nome_del_blocco(symbol_id)
         if nome in self.blocchi:
             return nome
-        simbolo = self.symbols.get(symbol_id)
         corpo = corpo_del_simbolo(simbolo.body)
         blocco = self.doc.blocks.new(nome, dxfattribs={"description": simbolo.manifest.name})
         self._primitive_nel_blocco(blocco, corpo.primitive)
@@ -894,7 +946,7 @@ class _Tavola:
                             centro, CROSSING_ARC_RADIUS_MM, 270, 90,
                             dxfattribs={"layer": layer, "linetype": "Continuous"},
                         )
-                if route.flow_kind is not FlowKind.STATIC:
+                if route.flow_kind.porta_la_freccia:
                     freccia = flow_arrow_at(segment, route.flow_from_start)
                     if freccia is not None:
                         tip_x, tip_y, dx, dy = freccia
@@ -933,7 +985,11 @@ class _Tavola:
         for placed in self.sheet.symbols:
             diritto = self.symbols.get(placed.symbol_id)
             girato: Symbol = diritto.rotated(placed.rotation_deg, placed.specchiato)
-            nome = self.blocco_del_simbolo(placed.symbol_id)
+            nome = self.blocco_del_simbolo(
+                placed.symbol_id, placed.porte_scollegate, placed.porte_col_cavo
+            )
+            # Le lettere diritte sono del blocco del simbolo intero.
+            base = nome_del_blocco(placed.symbol_id)
             dove = inserimento_del_simbolo(
                 placed.origin, placed.rotation_deg, placed.specchiato,
                 diritto.manifest.width_mm, diritto.manifest.height_mm, self.altezza,
@@ -950,7 +1006,7 @@ class _Tavola:
             self.msp.add_blockref(nome, (dove.x, dove.y), dxfattribs=attributi)
             for glifo in girato.manifest.upright_glyphs:
                 self.msp.add_blockref(
-                    f"{nome}_{glifo.id.capitalize()}",
+                    f"{base}_{glifo.id.capitalize()}",
                     self.p(placed.origin.x_mm + glifo.x_mm, placed.origin.y_mm + glifo.y_mm),
                     dxfattribs={"layer": LAYER_SIMBOLI},
                 )
@@ -1049,13 +1105,17 @@ class _Tavola:
                     self.standard.text_small_mm, LAYER_LEGENDA,
                 )
         for nota in self.sheet.note_della_legenda:
-            self.testo(
-                nota.campione, nota.anchor.x_mm, nota.anchor.y_mm,
-                self.standard.text_small_mm, LAYER_LEGENDA,
-            )
+            # Una frase (il rimando all'altra tavola) porta il campione nelle sue righe,
+            # e comincia dove comincia il campione (collaudo T2 di REL-012).
+            if not nota.frase:
+                self.testo(
+                    nota.campione, nota.anchor.x_mm, nota.anchor.y_mm,
+                    self.standard.text_small_mm, LAYER_LEGENDA,
+                )
+            rientro = 0.0 if nota.frase else LEGEND_SWATCH_MM + LEGEND_TEXT_GAP_MM
             for indice, riga in enumerate(nota.righe):
                 self.testo(
-                    riga, nota.anchor.x_mm + LEGEND_SWATCH_MM + LEGEND_TEXT_GAP_MM,
+                    riga, nota.anchor.x_mm + rientro,
                     nota.anchor.y_mm + indice * INTERLINEA_EM * self.standard.text_small_mm,
                     self.standard.text_small_mm, LAYER_LEGENDA,
                 )
@@ -1102,6 +1162,20 @@ class _Tavola:
                 item.testo, item.x_mm, item.y_mm, tratti.corpo_mm, LAYER_TABELLA,
                 grassetto=item.grassetto,
             )
+
+    def tabelle(self) -> None:
+        """Le tabelle nelle zone del foglio (REL-012), dalle stesse linee e dagli stessi
+        testi dell'SVG (`tabelle.tratti_della_tabella_posata`), sul layer delle
+        tabelle."""
+        for tabella in self.sheet.tabelle:
+            tratti = tratti_della_tabella_posata(tabella, self.standard)
+            for x1, y1, x2, y2 in tratti.linee:
+                self.msp.add_line(self.p(x1, y1), self.p(x2, y2), dxfattribs={"layer": LAYER_TABELLA})
+            for item in tratti.testi:
+                self.testo(
+                    item.testo, item.x_mm, item.y_mm, tratti.corpo_mm, LAYER_TABELLA,
+                    allineamento="end" if item.a_destra else "start", grassetto=item.grassetto,
+                )
 
     def rimandi(self) -> None:
         for reference in self.sheet.cross_references:
@@ -1301,6 +1375,7 @@ def write_dxf(
         tavola.diametri()
         tavola.legenda()
         tavola.tabella()
+        tavola.tabelle()
         tavola.rimandi()
         _classi_in_ordine(tavola.doc)
         tavola.doc.saveas(target)

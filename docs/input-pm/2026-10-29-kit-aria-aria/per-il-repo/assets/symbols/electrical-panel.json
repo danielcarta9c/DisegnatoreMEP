@@ -1,0 +1,32 @@
+{
+  "id": "electrical-panel",
+  "version": "1.0.0",
+  "name": "Quadro elettrico",
+  "width_mm": 25.0,
+  "height_mm": 15.0,
+  "allowed_rotations_deg": [
+    0
+  ],
+  "ports": [
+    {
+      "id": "out_1",
+      "face": "top",
+      "x_mm": 7.5,
+      "y_mm": 0.0
+    },
+    {
+      "id": "out_2",
+      "face": "top",
+      "x_mm": 17.5,
+      "y_mm": 0.0
+    }
+  ],
+  "keep_out": {
+    "left_mm": 0.0,
+    "right_mm": 0.0,
+    "top_mm": 2.0,
+    "bottom_mm": 0.0
+  },
+  "stroke_weight": "medium",
+  "source": "proposta della sessione del 29/10/2026 (caso di prova AA-01, canalizzato aria-aria): forma da approvare dal PO sulla tavola"
+}

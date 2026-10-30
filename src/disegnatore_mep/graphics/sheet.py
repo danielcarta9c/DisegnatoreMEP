@@ -17,7 +17,7 @@ bozza (D-025).
 from dataclasses import dataclass
 
 from disegnatore_mep.layout.addresses import VERIFY_MARK
-from disegnatore_mep.layout.geometry import FlowKind, Point, Richiamo, RoutedTrunk, SheetGeometry
+from disegnatore_mep.layout.geometry import Point, Richiamo, RoutedTrunk, SheetGeometry
 from disegnatore_mep.layout.legend import (
     INTERLINEA_EM,
     basi_delle_righe,
@@ -31,6 +31,7 @@ from .glyphs import flow_glyph_path
 from .registry import SymbolRegistry
 from .standard import FAMIGLIA_DELLE_SCRITTE, GraphicStandard
 from .tabella import svg_della_tabella
+from .tabelle import svg_delle_tabelle
 
 DRAFT_MARK = "BOZZA — cartiglio non compilato"
 """Marcatura della bozza senza cartiglio: una tavola finale lo richiede completo."""
@@ -450,6 +451,10 @@ def render_sheet(
     # compone e la impagina l'esecutore del piano, qui si disegna e basta.
     if sheet.tabella is not None:
         parts.append(svg_della_tabella(sheet.tabella, standard))
+    # **Le tabelle nelle zone** che il piano ha lasciato (REL-012): le ha posate
+    # `graphics.tabelle`, qui si disegnano e basta.
+    if sheet.tabelle:
+        parts.append(svg_delle_tabelle(sheet, standard))
 
     # **Nessuna linea di terra** (D-121, I-024). Nella centrale non esiste una
     # linea che attraversa il foglio: la quota su cui le macchine si allineano
@@ -490,12 +495,20 @@ def render_sheet(
                 )
             )
             # La freccia compare solo dove esiste un flusso: un ramo statico
-            # — misura, espansione, sfiato, sicurezza su stacco — non ne porta.
-            if route.flow_kind is not FlowKind.STATIC:
+            # — misura, espansione, sfiato, sicurezza su stacco — non ne porta, e
+            # nemmeno un fluido senza freccia (`layout.fluidi`, REL-012).
+            if route.flow_kind.porta_la_freccia:
                 parts.append(_flow_arrow(segment, colour, route.flow_from_start))
 
     for placed in sheet.symbols:
-        symbol = symbols.get(placed.symbol_id).rotated(placed.rotation_deg, placed.specchiato)
+        # Il moncone di una porta che la tavola non collega non si disegna (collaudo
+        # T1 di REL-012): si toglie dal corpo prima di girarlo. Quello di una porta di
+        # comando a cui arriva un cavo si disegna fino al corpo (collaudo T2).
+        symbol = (
+            symbols.get(placed.symbol_id)
+            .senza_le_porte(placed.porte_scollegate, placed.porte_col_cavo)
+            .rotated(placed.rotation_deg, placed.specchiato)
+        )
         # La freccia di verso si traccia qui, non nel corpo: punta nel verso
         # locale dell'acqua che la posa ha letto dal catalogo (I-032), e ruota
         # con la porta a cui e' legata.
@@ -633,16 +646,20 @@ def render_sheet(
     # Le righe che spiegano una scritta (I-155): il campione dove le altre righe
     # hanno il simbolo o il tratto, la spiegazione dove hanno il nome.
     for nota in sheet.note_della_legenda:
-        parts.append(
-            f'<text class="legend-note-sample" x="{nota.anchor.x_mm:g}" '
-            f'y="{nota.anchor.y_mm:g}" font-size="{standard.text_small_mm:g}" '
-            f'font-family="{FAMIGLIA_DELLE_SCRITTE}" fill="black">'
-            f"{_escape(nota.campione)}</text>"
-        )
+        # Una frase — il rimando all'altra tavola — porta il campione nelle sue righe
+        # e comincia dove comincia il campione (collaudo T2 di REL-012).
+        if not nota.frase:
+            parts.append(
+                f'<text class="legend-note-sample" x="{nota.anchor.x_mm:g}" '
+                f'y="{nota.anchor.y_mm:g}" font-size="{standard.text_small_mm:g}" '
+                f'font-family="{FAMIGLIA_DELLE_SCRITTE}" fill="black">'
+                f"{_escape(nota.campione)}</text>"
+            )
+        rientro = 0.0 if nota.frase else LEGEND_SWATCH_MM + LEGEND_TEXT_GAP_MM
         for indice, riga in enumerate(nota.righe):
             parts.append(
                 f'<text class="legend-note" '
-                f'x="{nota.anchor.x_mm + LEGEND_SWATCH_MM + LEGEND_TEXT_GAP_MM:g}" '
+                f'x="{nota.anchor.x_mm + rientro:g}" '
                 f'y="{nota.anchor.y_mm + indice * INTERLINEA_EM * standard.text_small_mm:g}" '
                 f'font-size="{standard.text_small_mm:g}" fill="black">{_escape(riga)}</text>'
             )

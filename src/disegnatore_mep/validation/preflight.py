@@ -24,8 +24,10 @@ from collections.abc import Iterable
 
 from disegnatore_mep.catalog.errors import CatalogError
 from disegnatore_mep.catalog.registry import ComponentRegistry
-from disegnatore_mep.diametri.tratti import tratti_da_etichettare
+from disegnatore_mep.diametri.scritte import ScrittaDelTratto, tratti_da_scrivere
+from disegnatore_mep.diametri.tratti import TrattoDelDiametro
 from disegnatore_mep.graphics.frame import ORDINARY_FRAMES, Rect, SheetFrame
+from disegnatore_mep.graphics.tabelle import riquadro_della_tabella_posata
 from disegnatore_mep.layout.autostrade import (
     AutostradaInTavola,
     autostrade_del_progetto,
@@ -61,6 +63,7 @@ from disegnatore_mep.layout.geometry import (
 from disegnatore_mep.layout.labels import (
     ETICHETTA,
     LINE_CLEARANCE_MM,
+    fasce_delle_scritte,
     riquadro_della_scritta,
     riquadro_di_rispetto,
     segmenti_del_richiamo,
@@ -72,6 +75,7 @@ from disegnatore_mep.model.types import IssueSeverity
 
 from .geometry import TOLERANCE_MM
 from .issues import ValidationIssue
+from .nomi import nome_della_tratta
 
 BENDS_PER_RUN_MAX = 3
 """Cambi di direzione ammessi su una tratta prima dell'avviso (B4, D-060).
@@ -164,6 +168,7 @@ MEASURE_ORDER: tuple[str, ...] = (
     "u_turns",
     "orthogonality_of_leaders",
     "labels_on_runs",
+    "labels_along_written_runs",
     "leader_crossings",
     "omitted_tags",
     "omitted_free_labels",
@@ -242,8 +247,10 @@ def _run_polylines(sheet: SheetGeometry) -> list[tuple[int, RoutedTrunk, list[Po
     ]
 
 
-def _run_name(route: RoutedTrunk) -> str:
-    return ", ".join(route.connection_ids) if route.connection_ids else route.network_id
+def _run_name(sheet: SheetGeometry, route: RoutedTrunk) -> str:
+    """La tratta coi pezzi ai suoi capi, «fra COL-01 e VOL-01» (collaudo T2 di
+    REL-012): l'id di una tratta sul foglio non c'e'. Gli id restano fra i codici."""
+    return nome_della_tratta(sheet, route)
 
 
 def _run_ids(sheet: SheetGeometry, route: RoutedTrunk) -> list[str]:
@@ -385,7 +392,7 @@ def bends_per_run(
                 _finding(
                     "RUN_WITH_TOO_MANY_BENDS",
                     IssueSeverity.WARNING,
-                    f"la tratta {_run_name(route)} cambia direzione {total} "
+                    f"la tratta {_run_name(sheet, route)} cambia direzione {total} "
                     f"{'volta' if total == 1 else 'volte'}, oltre le "
                     f"{BENDS_PER_RUN_MAX} pieghe che bastano a unire due porte: "
                     f"la piega in piu' la chiede un ostacolo, e l'ostacolo si "
@@ -430,8 +437,8 @@ def longitudinal_overlap(
                     _finding(
                         "RUNS_OVERLAP_LENGTHWISE",
                         IssueSeverity.BLOCKING,
-                        f"le tratte {_run_name(one[1])} e {_run_name(other[1])} corrono "
-                        f"sovrapposte per {len(shared) * grid_mm:g} mm: due linee sullo "
+                        f"la tratta {_run_name(sheet, one[1])} e quella {_run_name(sheet, other[1])} "
+                        f"corrono sovrapposte per {len(shared) * grid_mm:g} mm: due linee sullo "
                         f"stesso tratto sono una linea sola (B2, D-062)",
                         sorted({*_run_ids(sheet, one[1]), *_run_ids(sheet, other[1])}),
                     )
@@ -490,7 +497,7 @@ def _symbol_clearances(sheet: SheetGeometry, minimum: float) -> list[ValidationI
                 _finding(
                     "RUN_TOO_CLOSE_TO_A_SYMBOL",
                     severity,
-                    f"la tratta {_run_name(route)} passa a {gap:g} mm dal simbolo "
+                    f"la tratta {_run_name(sheet, route)} passa a {gap:g} mm dal simbolo "
                     f"{symbol.component_id}, cui non si attacca: la distanza di "
                     f"rispetto e' {minimum:g} mm (B5)",
                     sorted({*_run_ids(sheet, route), symbol.component_id}),
@@ -522,8 +529,8 @@ def _parallel_clearances(sheet: SheetGeometry, minimum: float) -> list[Validatio
                 _finding(
                     "PARALLEL_RUNS_TOO_CLOSE",
                     severity,
-                    f"le tratte {_run_name(one[1])} e {_run_name(other[1])} corrono "
-                    f"affiancate a {gap:g} mm: la distanza di rispetto e' "
+                    f"la tratta {_run_name(sheet, one[1])} e quella {_run_name(sheet, other[1])} "
+                    f"corrono affiancate a {gap:g} mm: la distanza di rispetto e' "
                     f"{minimum:g} mm (B6)",
                     sorted({*_run_ids(sheet, one[1]), *_run_ids(sheet, other[1])}),
                 )
@@ -555,7 +562,7 @@ def u_turns(drawing: DrawingGeometry, frame: SheetFrame) -> list[ValidationIssue
                 _finding(
                     "RUN_OVERSHOOTS_ITS_PORT",
                     IssueSeverity.BLOCKING,
-                    f"la tratta {_run_name(route)} supera di {overshoot:g} mm la "
+                    f"la tratta {_run_name(sheet, route)} supera di {overshoot:g} mm la "
                     f"propria porta di arrivo e ci torna indietro: si sposta "
                     f"l'oggetto, non si allunga la linea (B12, D-078)",
                     _run_ids(sheet, route),
@@ -617,8 +624,54 @@ def labels_on_runs(drawing: DrawingGeometry, frame: SheetFrame) -> list[Validati
                 _finding(
                     "LABEL_ON_A_RUN",
                     IssueSeverity.WARNING,
-                    f"l'etichetta {label.id} copre la tratta {_run_name(hit)}: un testo "
+                    f"l'etichetta {label.id} copre la tratta {_run_name(sheet, hit)}: un testo "
                     f"si scrive su un posto libero o si omette (D5, D-075, DRAW-003-R1)",
+                    sorted({sheet.sheet_id, label.id, *hit.connection_ids}),
+                )
+            )
+    return findings
+
+
+def labels_along_written_runs(drawing: DrawingGeometry, frame: SheetFrame) -> list[ValidationIssue]:
+    """Collaudo T1 di REL-012, §3 — una scritta di pezzo lungo una linea che porta la
+    sua scritta del tratto, e che si legge come la scritta della linea.
+
+    «Terrazzo», l'etichetta dell'unita' esterna, stava mezzo millimetro sopra il
+    franco della linea del gas, accanto a «5/8" · L 9 m»: `LABEL_ON_A_RUN` non la
+    vedeva, perche' non toccava la linea. Qui si misura la **fascia** di un corpo
+    sopra e sotto ogni tratto orizzontale che porta la scritta del progettista
+    (`labels.fasce_delle_scritte`, la stessa che la posa rispetta). E' un **avviso**
+    come gli altri sui testi: la posa la evita, e se succede lo stesso la tavola esce
+    e si sa. Le linee scritte sono quelle che portano una scritta del progettista
+    (`DiametroSullaTavola.del_progettista`): senza — tutte le tavole idroniche di
+    prima, anche quelle col DN calcolato — non misura niente."""
+    findings: list[ValidationIssue] = []
+    height = frame.standard.text_small_mm
+    for sheet in drawing.sheets:
+        linee = frozenset(
+            item for scritta in sheet.diametri if scritta.del_progettista for item in scritta.connection_ids
+        )
+        if not linee:
+            continue
+        fasce = [
+            (route, fascia)
+            for route in sheet.routes
+            for fascia in fasce_delle_scritte([route], linee, height)
+        ]
+        for label in sheet.labels:
+            if label.role not in ("tag", "data"):
+                continue
+            box = _label_box(label, height)
+            hit = next((route for route, fascia in fasce if _boxes_overlap(box, fascia)), None)
+            if hit is None:
+                continue
+            findings.append(
+                _finding(
+                    "PIECE_LABEL_ALONG_A_WRITTEN_RUN",
+                    IssueSeverity.WARNING,
+                    f"la scritta «{label.text}» ({label.id}) sta lungo la tratta "
+                    f"{_run_name(sheet, hit)}, che porta la sua scritta: si legge come la scritta "
+                    f"della linea (collaudo T1 di REL-012)",
                     sorted({sheet.sheet_id, label.id, *hit.connection_ids}),
                 )
             )
@@ -656,6 +709,7 @@ def equipment_table(drawing: DrawingGeometry, frame: SheetFrame) -> list[Validat
     legge, e il disegno ha bisogno di un foglio piu' grande, che il piano sceglie."""
     findings: list[ValidationIssue] = []
     height = frame.standard.text_small_mm
+    findings.extend(_tabelle_fuori_zona(drawing, frame))
     for sheet in drawing.sheets:
         if sheet.tabella is None:
             continue
@@ -679,7 +733,7 @@ def equipment_table(drawing: DrawingGeometry, frame: SheetFrame) -> list[Validat
                 or _segment_crosses_box(before, after, zona)
                 for before, after in moves_of(segment)
             ):
-                dentro.append(_run_name(route))
+                dentro.append(f"la tratta {_run_name(sheet, route)}")
         for label in sheet.labels:
             if _boxes_overlap(_label_box(label, height), zona) or any(
                 _segment_crosses_box(*segmento, zona) for segmento in segmenti_del_richiamo(label)
@@ -710,6 +764,38 @@ def equipment_table(drawing: DrawingGeometry, frame: SheetFrame) -> list[Validat
                 [sheet.sheet_id, *unici],
             )
         )
+    return findings
+
+
+def _tabelle_fuori_zona(drawing: DrawingGeometry, frame: SheetFrame) -> list[ValidationIssue]:
+    """REL-012 — **ogni tabella nelle zone sta dentro una zona** che il piano ha
+    lasciato (`zone_tabelle`). La posa le mette li' (`graphics.tabelle`), e un
+    vincolo della posa ha il suo rilievo sulla tavola finita (D-158): fuori dalla
+    zona la tabella passerebbe sul disegno, sulla legenda o sul cartiglio."""
+    zone = [item for item in (frame.zona_destra_mm, frame.zona_basso_mm) if item is not None]
+    findings: list[ValidationIssue] = []
+    for sheet in drawing.sheets:
+        for indice, tabella in enumerate(sheet.tabelle):
+            sinistra, alto, destra, basso = riquadro_della_tabella_posata(tabella, frame.standard)
+            if any(
+                zona.x_mm - TOLERANCE_MM <= sinistra
+                and zona.y_mm - TOLERANCE_MM <= alto
+                and destra <= zona.right_mm + TOLERANCE_MM
+                and basso <= zona.bottom_mm + TOLERANCE_MM
+                for zona in zone
+            ):
+                continue
+            nome = tabella.titolo or f"tabella {indice + 1}"
+            findings.append(
+                _finding(
+                    "ZONE_TABLE_OUT_OF_ITS_ZONE",
+                    IssueSeverity.BLOCKING,
+                    f"la tavola {sheet.sheet_id}: «{nome}» esce dalle zone che il piano lascia "
+                    f"alle tabelle (zone_tabelle): passerebbe sul disegno, sulla legenda o sul "
+                    f"cartiglio",
+                    [sheet.sheet_id],
+                )
+            )
     return findings
 
 
@@ -804,12 +890,15 @@ def diameter_tags(
     (`DIAMETER_TAG_REPEATED`). **Col modello** si vede anche il terzo: un tratto
     che porta il DN — chiesto dal progettista, con la portata dai suoi dati — e
     l'etichetta non l'ha trovata (`DIAMETER_TAG_MISSING`): e' un avviso, come
-    una sigla omessa (DRAW-003-R1), e la tavola esce lo stesso."""
-    tratti = (
-        tratti_da_etichettare(project, catalog)
-        if project is not None and project.diametri is not None
-        else ()
-    )
+    una sigla omessa (DRAW-003-R1), e la tavola esce lo stesso.
+
+    **La scritta che il progettista ha dato al tratto** (REL-012, `diametri.scritte`)
+    si conta con le stesse regole — una per tratto, sul tratto che nomina —, e se
+    manca **blocca** (`RUN_LABEL_OMITTED`): e' un suo dato, come la scritta libera di
+    un pezzo (`FREE_LABEL_OMITTED`, I-194), non un conto della skill che si
+    sacrifica."""
+    scritte, calcolati = tratti_da_scrivere(project, catalog) if project is not None else ((), ())
+    tratti: tuple[ScrittaDelTratto | TrattoDelDiametro, ...] = (*scritte, *calcolati)
     findings: list[ValidationIssue] = []
     for sheet in drawing.sheets:
         disegnate = {
@@ -843,7 +932,21 @@ def diameter_tags(
                         [sheet.sheet_id, *sorted(nominate)[:1]],
                     )
                 )
-        for tratto in tratti:
+        for scritta in scritte:
+            if not scritta.connection_ids <= disegnate or scritta.connection_ids in per_tratto:
+                continue
+            findings.append(
+                _finding(
+                    "RUN_LABEL_OMITTED",
+                    IssueSeverity.BLOCKING,
+                    f"la scritta «{scritta.scritta}» della tubazione {scritta.tubazione} non e' "
+                    f"scritta: nessun rettilineo con un lato libero e nessun richiamo pulito. "
+                    f"E' un dato del progettista, e la tavola non esce senza: si lascia posto "
+                    f"accanto alla linea (REL-012)",
+                    [sheet.sheet_id, scritta.tubazione],
+                )
+            )
+        for tratto in calcolati:
             if not tratto.connection_ids <= disegnate or tratto.connection_ids in per_tratto:
                 continue
             if not tratto.strada_principale:
@@ -1115,7 +1218,7 @@ def leader_crossings(drawing: DrawingGeometry) -> list[ValidationIssue]:
                         "LEADER_CROSSES_A_RUN",
                         IssueSeverity.WARNING,
                         f"il richiamo dell'etichetta {label_id} attraversa la tratta "
-                        f"{_run_name(crossed)}: un richiamo che confonde non si "
+                        f"{_run_name(sheet, crossed)}: un richiamo che confonde non si "
                         f"disegna, il testo si omette (D2, DRAW-003-R1)",
                         sorted({sheet.sheet_id, label_id, *crossed.connection_ids}),
                     )
@@ -1358,14 +1461,21 @@ def sheet_fill(drawing: DrawingGeometry, frame: SheetFrame) -> list[ValidationIs
         # direbbe «usa l'A3» per un disegno che sull'A3 tocca la cornice — e un
         # rilievo che non si puo' chiudere e' peggio di nessun rilievo.
         respiro = 2 * SHEET_MARGIN_MIN_MM
-        piu_piccoli = [
-            indice
-            for indice, altro in enumerate(ORDINARY_FRAMES)
-            if altro.drawing_rect_mm.width_mm < area.width_mm
-            and _ci_sta(
+        # **Con le zone delle tabelle** (REL-012) il foglio piu' piccolo si misura con
+        # le stesse zone: le tabelle ci vanno anche li', e un A3 che le contiene
+        # lascia al disegno molto meno di un A3 intero. Un foglio su cui le zone non
+        # entrano non e' un candidato.
+        piu_piccoli: list[int] = []
+        for indice, altro in enumerate(ORDINARY_FRAMES):
+            if frame.riserva_destra_mm or frame.riserva_basso_mm:
+                try:
+                    altro = altro.con_le_zone(frame.riserva_destra_mm, frame.riserva_basso_mm)
+                except ValueError:
+                    continue
+            if altro.drawing_rect_mm.width_mm < area.width_mm and _ci_sta(
                 larghezza, altezza, altro.drawing_rect_mm, respiro, sheet
-            )
-        ]
+            ):
+                piu_piccoli.append(indice)
         if piu_piccoli:
             nome = NOMI_DEI_FORMATI[min(piu_piccoli)]
             findings.append(
@@ -1501,7 +1611,7 @@ def unresolved_runs(drawing: DrawingGeometry) -> list[ValidationIssue]:
         for route in sheet.routes:
             if not route.unresolved:
                 continue
-            nome = route.connection_ids[0] if route.connection_ids else "senza nome"
+            nome = _run_name(sheet, route)
             findings.append(
                 _finding(
                     "RUN_UNRESOLVED",
@@ -1550,6 +1660,7 @@ def preflight_drawing(
         *u_turns(drawing, frame),
         *orthogonality_of_leaders(drawing),
         *labels_on_runs(drawing, frame),
+        *labels_along_written_runs(drawing, frame),
         *leader_crossings(drawing),
         *omitted_tags(drawing),
         *omitted_free_labels(drawing, project),

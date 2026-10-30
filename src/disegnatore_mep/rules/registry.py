@@ -64,8 +64,17 @@ class RuleRegistry:
             if rule.then.bridges_from_medium is not None:
                 self._bridges(rule, catalog)
                 continue
-            for proposed in rule.then.functions():
-                self._resolves_everywhere(rule.id, proposed, catalog)
+            if rule.then.question is not None:
+                # Chi chiede non sceglie un pezzo (REL-011): la funzione di cui
+                # parla deve esistere, ma nessuna voce deve portarla da sola.
+                if rule.then.provides_function not in known_functions:
+                    raise RuleError(
+                        f"rule {rule.id} asks about {rule.then.provides_function!r}, "
+                        f"which no catalogue definition declares"
+                    )
+            else:
+                for proposed in rule.then.functions():
+                    self._resolves_everywhere(rule.id, proposed, catalog)
             for label, awaited in (
                 ("when.anchor_has_function", rule.when.anchor_has_function),
                 ("when.network_has_function", rule.when.network_has_function),

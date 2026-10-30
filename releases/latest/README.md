@@ -1,21 +1,28 @@
-# L'ultima release: 1.5.0
+# L'ultima release: 1.6.0
 
-`DisegnatoreMEP-v1.5.0.zip` — sha256 `36d03a1f17ca154a…`, 104 file — è **il revisore esterno** (`REL-010`, I-216,
-I-219, I-222, D-212 proposta) e **la tavola d'esempio senza i due difetti dell'occhio** (D-211). Si carica come ogni
-skill personale, dallo ZIP così com'è.
+`DisegnatoreMEP-v1.6.0.zip` — sha256 `5b5c6865adc77d11…`, 131 file — è **l'aria-aria, l'elettrico e il comando**
+(`REL-012`), con **la distinta materiali** (`REL-013`) e **la pianta dei tracciati** (`REL-014`) su richiesta, dal
+kit del PO del 29 ottobre 2026 (I-224 … I-229, D-213 proposta). Si carica come ogni skill personale, dallo ZIP così
+com'è.
 
-Rispetto alla 1.4.1:
-- **la tavola si può far rivedere a un revisore esterno**: un altro agente Claude, che non ha composto la tavola e non
-  conosce l'impianto, la guarda a occhio fresco. La skill lo chiede al progettista con una domanda a scelta, insieme
-  alle altre domande, **solo dove i sub-agenti ci sono** (Claude Code, Cowork); la proposta è la revisione in
-  conversazione. Il revisore riceve la sola tavola, i rilievi e le istruzioni — niente grafo, niente piano —, con un
-  incarico fisso; al più due revisori, uno nuovo per giro; la consegna dice chi ha guardato la tavola;
-- **il revisore prima racconta l'impianto** che legge dalla tavola, e chi compone confronta il racconto con il grafo;
-- **la soglia del PO** nelle istruzioni di Rivedere: che cosa ferma la consegna e che cosa no, tarata su tredici tavole
-  che il PO ha giudicato (I-220, I-221), e lo sguardo dentro i simboli;
-- **la serpentina del pannello radiante dentro il suo riquadro**, e **il giunto dell'ultima pompa di una cascata fuori
-  dal prolungamento del collettore** (D-211).
+Rispetto alla 1.5.0:
+- **l'aria-aria**: unità esterna, unità interna canalizzata, plenum di zona da 2 a 6 uscite, centrale di zona,
+  bocchette, ripresa, sifone e scarico della condensa, termostati, comando a filo; linee frigorifere, aria, condensa;
+- **l'elettrico e il comando**: quadro (fino a 6 uscite), sezionatore, regolatore d'impianto, sonde, e gli attacchi
+  elettrici facoltativi sulle macchine idroniche (pompe di calore, caldaie, circolatori, valvole motorizzate,
+  ventilconvettori); sulle centrali e sulle tavole dense **una tavola a parte**, sulle piccole la tavola unica (I-227);
+- **sezione e lunghezza di ogni tratto** («Ø200 · L 6 m», «3G2,5 · L 20 m») come dato del progettista, con la sua
+  riga di legenda; niente frecce di flusso su refrigerante, cavi e bus (proposta);
+- **le tabelle sul foglio**: il piano riserva le zone, `disegna --tabelle` le posa;
+- **la distinta materiali** (`mep.py distinta`), solo se il progettista la chiede: Excel per l'installatore a corpo,
+  solo valori, ogni quantità con la sua regola; le scelte di fornitura dichiarate da confermare;
+- **la pianta dei posizionamenti e dei tracciati** (`mep.py pianta`), solo se la chiede: instradamento ortogonale
+  lungo i muri, curve e sormonti pagati, mai diagonali (I-229), fuori dall'edificio solo nelle zone esterne
+  dichiarate, pezzi sovrapposti a quote diverse, dettaglio 1:20 dove serve; con `--distinta` e `--grafo` controlla che
+  sigle, numeri di tratta e lunghezze siano quelli dello schema e della distinta;
+- **i tre comportamenti del motore** trovati dal kit (sigle, etichetta in tabella, lato del sezionatore) corretti.
 
-La prova del passo 7 nelle due modalità, sulla tavola del caso rifatta, è in `docs/collaudi/REL-010/RAPPORTO.md` §5.
+Le tavole idroniche della 1.5.0 non cambiano: il banco di regressione di `REL-011` (24 tavole) esce identico byte per
+byte. Le prove e i tre collaudi indipendenti sono in `docs/collaudi/REL-012/`, `REL-013/`, `REL-014/`.
 
 Alla prossima versione questo file e lo ZIP si sostituiscono; la copia numerata resta in `../archive/`.

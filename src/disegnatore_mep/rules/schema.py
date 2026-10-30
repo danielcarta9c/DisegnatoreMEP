@@ -176,6 +176,17 @@ class RuleCondition(StrictModel):
     leggerebbe come «tagliato fuori» un generatore la cui protezione comune
     non e' ancora stata posata."""
 
+    anchor_runs_in_parallel: bool = False
+    """L'ancoraggio **lavora in parallelo** con un altro che la regola descrive
+    sulla stessa rete (REL-011): la sua mandata e quella di un altro confluiscono
+    in un tratto comune prima di arrivare a una macchina o a un serbatoio.
+
+    E' la condizione della cascata. Una macchina ferma accanto a una che lavora
+    e' una via aperta all'indietro: l'acqua che l'altra manda torna nel
+    collettore passando per lei. Non nomina ne' le macchine ne' il collettore: si
+    legge dalle camminate delle mandate, come il tratto comune, e vale per due
+    pompe di calore come per una pompa di calore e una caldaia."""
+
     plant_regime: PlantRegime | None = None
     """Il regime della centrale in cui questa regola vale (D-106).
 
@@ -203,6 +214,26 @@ class OnBoardPolicy(StrEnum):
 
     ASK = "ask"
     """Il pezzo non si propone: esce una domanda aperta per il progettista."""
+
+
+class DesignerQuestion(StrictModel):
+    """La domanda che una regola fa al progettista **invece** di posare un pezzo
+    (REL-011).
+
+    Serve dove la ragione dell'accessorio e' un **numero** che la skill non conosce
+    e non deve calcolare (D-002): il volume d'acqua dell'impianto, che il
+    costruttore vuole sopra un minimo. La regola sa riconoscere il caso in cui il
+    dubbio c'e' — una macchina senza serbatoio sul proprio circuito — e lo dice;
+    la risposta e' del progettista."""
+
+    text: str = Field(min_length=1)
+    """La domanda, in italiano piano: e' cio' che l'ingegnere legge fra i punti
+    aperti di `completa`."""
+
+    answered_by: dict[str, str] = Field(default_factory=dict)
+    """I dati che, dichiarati su uno degli ancoraggi della rete, dicono che il
+    progettista ha gia' risposto: la domanda non si rifa'. Si confrontano come
+    `unless_the_anchor_declares`, senza badare a maiuscole e spazi."""
 
 
 class RuleProposalTemplate(StrictModel):
@@ -293,6 +324,15 @@ class RuleProposalTemplate(StrictModel):
     Si confronta ogni coppia, senza badare a maiuscole e spazi: e' una parola
     del progettista trascritta com'e', non un codice."""
 
+    question: DesignerQuestion | None = None
+    """Una regola che **chiede e non posa** (REL-011): dove scatterebbe, non
+    propone nessun pezzo ma un punto aperto con questa domanda.
+
+    `provides_function` resta, e dice **di che cosa** si parla — il volano, il
+    vaso —: la soddisfazione si legge su quella funzione come per ogni altra
+    regola. Ma nessuna voce di catalogo deve portarla da sola, perche' la regola
+    non sceglie un pezzo: quale volano, e dove, lo decide il progettista."""
+
     def function_for(self, regime: ComponentTrait) -> str:
         """La funzione da proporre a un ancoraggio con quel regime."""
         return self.provides_function_by_shutoff_regime.get(regime, self.provides_function)
@@ -330,6 +370,25 @@ class RuleProposalTemplate(StrictModel):
             raise ValueError(
                 "unless_the_anchor_declares says when the on-board question is not "
                 "asked, and this rule asks nothing: if_on_board_is_unknown must be ask"
+            )
+        return self
+
+    @model_validator(mode="after")
+    def a_question_proposes_nothing(self) -> "RuleProposalTemplate":
+        """Chi chiede non posa: niente di cio' che serve a scegliere o a posare
+        un pezzo ha senso accanto a una domanda."""
+        if self.question is None:
+            return self
+        if (
+            self.bridges_from_medium is not None
+            or self.provides_function_by_shutoff_regime
+            or self.unless_the_anchor_declares
+            or self.if_on_board_is_unknown is not OnBoardPolicy.ASSUME_ABSENT
+        ):
+            raise ValueError(
+                "a rule that asks the designer proposes no piece: it cannot also "
+                "bridge two networks, change organ with the shutoff regime, or "
+                "decide on the on-board datum"
             )
         return self
 
@@ -506,6 +565,12 @@ class RuleDefinition(StrictModel):
                 f"{self.cardinality}: il tratto comune non si conta per componente "
                 f"ne' per attacco, ma fra {', '.join(sorted(on_a_run))}"
             )
+        if self.when.anchor_runs_in_parallel and self.then.placement.on_a_common_run:
+            raise ValueError(
+                f"{self.id} chiede che l'ancoraggio lavori in parallelo e si posa "
+                f"sul tratto comune: il tratto comune e' di tutti, e la condizione "
+                f"parla dell'attacco di ciascuno"
+            )
         if (
             self.cardinality is RuleCardinality.PER_PROTECTION_DOMAIN
             and not self.then.placement.on_a_common_run
@@ -520,6 +585,7 @@ class RuleDefinition(StrictModel):
 
 
 __all__ = [
+    "DesignerQuestion",
     "OnBoardPolicy",
     "Ordering",
     "Placement",

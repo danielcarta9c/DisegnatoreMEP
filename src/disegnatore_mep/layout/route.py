@@ -260,14 +260,14 @@ def route(
             cell = (origin[0] + direction[0] * count, origin[1] + direction[1] * count)
             if not (0 <= cell[0] < cols and 0 <= cell[1] < rows) or cell in blocked:
                 raise LayoutError(
-                    f"no route from {start} to {goal}: the {steps} straight steps the "
-                    f"chain needs beyond the port at {origin} run into an obstacle at {cell}"
+                    f"nessuna strada da {start} a {goal}: i {steps} passi dritti che la "
+                    f"catena vuole oltre la porta in {origin} incontrano un ostacolo in {cell}"
                 )
             previous = found[-1] if found else origin
             if (previous, cell) in taken or (cell, previous) in taken:
                 raise LayoutError(
-                    f"no route from {start} to {goal}: the straight the chain needs "
-                    f"beyond the port at {origin} is already run by another line at {cell}"
+                    f"nessuna strada da {start} a {goal}: il tratto dritto che la catena "
+                    f"vuole oltre la porta in {origin} e' gia' percorso da un'altra linea in {cell}"
                 )
             found.append(cell)
         return found
@@ -353,8 +353,8 @@ def route(
         expansions += 1
         if expansions > max_expansions:
             raise LayoutError(
-                f"no route from {start} to {goal} within {max_expansions} expansions: "
-                f"the layout did not converge, try a different partition"
+                f"nessuna strada da {start} a {goal} in {max_expansions} espansioni: "
+                f"l'instradamento non converge, prova un'altra posa"
             )
 
         for step in DIRECTIONS:
@@ -401,7 +401,7 @@ def route(
                 )
 
     raise LayoutError(
-        f"no route from {start} to {goal}: every orthogonal path is blocked"
+        f"nessuna strada da {start} a {goal}: ogni percorso ortogonale e' chiuso"
     )
 
 
@@ -574,8 +574,8 @@ def route_sheet(
         symbol = by_component.get(ref.component_id)
         if symbol is None:
             raise LayoutError(
-                f"connection endpoint {ref.component_id}.{ref.port_id} has no placed "
-                f"symbol on this sheet: an inline accessory cannot be a run endpoint"
+                f"il capo {ref.component_id}.{ref.port_id} non ha un simbolo posato su "
+                f"questa tavola: un organo in linea non puo' essere il capo di una tratta"
             )
         return _port_anchor(
             symbol, ref.port_id, catalog, definitions[ref.component_id], grid
@@ -695,8 +695,8 @@ def route_sheet(
         except LayoutError as exc:
             if not tolerant:
                 raise LayoutError(
-                    f"run {trunk.connection_ids[0]} on network {trunk.network_id} "
-                    f"cannot be routed: {exc}"
+                    f"la tratta {trunk.connection_ids[0]} della rete {trunk.network_id} "
+                    f"non si instrada: {exc}"
                 ) from exc
             cells = _last_resort(
                 start, start_direction, goal, goal_direction, grid.cols, grid.rows
@@ -739,7 +739,13 @@ def route_sheet(
         )
         routed.append(current)
         if on_routed is not None:
-            settled = _obstacle_cells(on_routed(trunk, current), grid)
+            posati = on_routed(trunk, current)
+            # Un pezzo in linea appena posato e' il capo di un cavo che viene dopo
+            # (REL-012, fase 3): l'alimentazione di un circolatore. Senza cavi verso
+            # i pezzi in linea nessuna tratta lo cerca qui.
+            for item in posati:
+                by_component.setdefault(item.component_id, item)
+            settled = _obstacle_cells(posati, grid)
             blocked = blocked | settled
             absorb(settled)
     return routed

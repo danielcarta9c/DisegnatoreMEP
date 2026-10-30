@@ -1,0 +1,34 @@
+impianto-1               identica
+impianto-2               identica
+impianto-3               identica
+impianto-4               identica
+impianto-5               identica
+impianto-6a              identica
+impianto-6b              identica
+impianto-7               identica
+prova-po-A               identica
+prova-po-B               identica
+prova-po-C               identica
+prova-po-D               identica
+simboli-rel009           identica
+caso-reale-2             identica
+prova-pulita-A           identica
+prova-pulita-B           identica
+prova-pulita-C           identica
+impianto-1-completato    CAMBIA
+                          prima: Formato A3 · tratte 25 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 4 · sormonti 1 · avvisi e regole: SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x1, SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x1
+                          dopo:  Il piano non si instrada: run p1-a-a-a-2 has no straight stretch of 10mm for valve-check that keeps 2mm clear of the other symbols and runs: symbols are never shrunk to fit, give the run a longer straight length
+impianto-2-completato    identica
+impianto-3-completato    identica
+impianto-4-completato    identica
+impianto-5-completato    CAMBIA
+                          prima: Formato A2 · tratte 56 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 9 · sormonti 5 · avvisi e regole: SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x1
+                          dopo:  Il piano non si instrada: run p1-a-a-a-1-a-3 has no straight stretch of 10mm for valve-check that keeps 2mm clear of the other symbols and runs: symbols are never shrunk to fit, give the run a longer straight length
+impianto-6a-completato   CAMBIA
+                          prima: Formato A2 · tratte 48 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 10 · sormonti 3 · avvisi e regole: HIGHWAY_IS_NOT_STRAIGHT x1, SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x2
+                          dopo:  Il piano non si instrada: run pr-1-a-a-a-1-a-3 has no straight stretch of 10mm for valve-check that keeps 2mm clear of the other symbols and runs: symbols are never shrunk to fit, give the run a longer straight length
+impianto-6b-completato   CAMBIA
+                          prima: Formato A2 · tratte 48 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 9 · sormonti 3 · avvisi e regole: HIGHWAY_IS_NOT_STRAIGHT x1, PARALLEL_PUMPS_FACE_DIFFERENT_WAYS x1, SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x1
+                          dopo:  Il piano non si instrada: run pr-1-a-a-a-1-a-3 has no straight stretch of 10mm for valve-check that keeps 2mm clear of the other symbols and runs: symbols are never shrunk to fit, give the run a longer straight length
+
+20 identiche su 24

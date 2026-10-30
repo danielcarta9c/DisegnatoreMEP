@@ -1,6 +1,6 @@
 from collections.abc import Sequence
 from datetime import date
-from typing import Any, Literal
+from typing import Annotated, Any, Literal
 
 from pydantic import Field, SerializerFunctionWrapHandler, model_serializer, model_validator
 
@@ -240,17 +240,50 @@ class ConnectionModel(IdentifiedModel):
     accessorio posato su un tratto esistente lo spezza, e le due meta' restano
     esistenti. Vuoto non si scrive."""
 
+    # **La scritta del tratto** (REL-012): tre dati del progettista, facoltativi. La
+    # skill non dimensiona l'aria, l'elettrico e il bus (I-225): li scrive come le
+    # sono dati. Sulla tavola il tratto porta `scritta` se c'e', altrimenti «sezione
+    # · L lunghezza m» (`diametri.scritte`); la distinta dei materiali (REL-013)
+    # legge gli stessi campi. Vuoti non si scrivono, e i grafi agli atti restano
+    # identici byte per byte.
+    sezione: Annotated[str, Field(min_length=1)] | None = None
+    """Il diametro o la sezione, come il progettista lo scrive: «Ø200», «Ø6,35
+    (1/4")», «3G2,5», «1000×250». Un testo, non un numero: la skill non lo calcola e
+    non lo converte."""
+    lunghezza_m: Annotated[float, Field(ge=0, allow_inf_nan=False, strict=True)] | None = None
+    """La lunghezza del tratto in metri, dato del progettista (riserva compresa, se
+    lui la comprende). Non e' una misura sulla tavola, che e' uno schema. Zero e'
+    il raccordo diretto — il plenum sulla bocca dell'unita' —: la distinta lo legge
+    cosi', e la tavola non scrive nessuna lunghezza."""
+    scritta: Annotated[str, Field(min_length=1)] | None = None
+    """Il testo libero del tratto: se c'e', **vince** su sezione e lunghezza — «di
+    fabbrica», «bus · L 9 m». Sezione e lunghezza restano dati della distinta."""
+
     @model_serializer(mode="wrap")
     def _senza_l_esistente_non_detto(self, handler: SerializerFunctionWrapHandler) -> dict[str, Any]:
         dati: dict[str, Any] = handler(self)
         if not dati.get("esistente"):
             dati.pop("esistente", None)
+        for campo in ("sezione", "lunghezza_m", "scritta"):
+            if dati.get(campo) is None:
+                dati.pop(campo, None)
         return dati
 
     @model_validator(mode="after")
     def endpoints_must_differ(self) -> "ConnectionModel":
         if self.endpoint_a == self.endpoint_b:
             raise ValueError("connection endpoints must differ")
+        return self
+
+    @model_validator(mode="after")
+    def la_scritta_ha_del_testo(self) -> "ConnectionModel":
+        """Sezione e scritta sono testi che si leggono: non solo spazi."""
+        for campo in ("sezione", "scritta"):
+            valore = getattr(self, campo)
+            if valore is not None and not valore.strip():
+                raise ValueError(
+                    f"connection {self.id}: {campo} must be a readable text, not {valore!r}"
+                )
         return self
 
 

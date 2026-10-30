@@ -1,0 +1,968 @@
+{
+  "$defs": {
+    "Apertura": {
+      "additionalProperties": false,
+      "description": "Una porta, un varco, una finestra o un foro, su un muro dichiarato.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z0-9][a-z0-9_-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "muro": {
+          "title": "Muro",
+          "type": "string"
+        },
+        "centro": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Centro",
+          "type": "array"
+        },
+        "larghezza": {
+          "exclusiveMinimum": 0,
+          "maximum": 10,
+          "title": "Larghezza",
+          "type": "number"
+        },
+        "tipo": {
+          "enum": [
+            "porta",
+            "varco",
+            "finestra",
+            "foro"
+          ],
+          "title": "Tipo",
+          "type": "string"
+        },
+        "passa": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "controsoffitto",
+                  "traccia",
+                  "pavimento",
+                  "a_vista"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Passa"
+        },
+        "apre_verso": {
+          "anyOf": [
+            {
+              "enum": [
+                "sopra",
+                "sotto",
+                "sinistra",
+                "destra"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Apre Verso"
+        }
+      },
+      "required": [
+        "id",
+        "muro",
+        "centro",
+        "larghezza",
+        "tipo"
+      ],
+      "title": "Apertura",
+      "type": "object"
+    },
+    "Dettaglio": {
+      "additionalProperties": false,
+      "description": "Un riquadro di dettaglio: una zona della pianta disegnata a scala\nmaggiore su una tavola a parte, quando a 1:50 e' troppo fitta per le sue\nscritte.",
+      "properties": {
+        "id": {
+          "pattern": "^[A-Z0-9]{1,3}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "rettangolo": {
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Rettangolo",
+          "type": "array"
+        },
+        "scala": {
+          "default": 20,
+          "maximum": 50,
+          "minimum": 5,
+          "title": "Scala",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "rettangolo"
+      ],
+      "title": "Dettaglio",
+      "type": "object"
+    },
+    "Estremo": {
+      "additionalProperties": false,
+      "description": "Un capo di un tracciato: il pezzo e, se conta, il lato da cui si prende.",
+      "properties": {
+        "pezzo": {
+          "title": "Pezzo",
+          "type": "string"
+        },
+        "lato": {
+          "anyOf": [
+            {
+              "enum": [
+                "sopra",
+                "sotto",
+                "sinistra",
+                "destra"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lato"
+        }
+      },
+      "required": [
+        "pezzo"
+      ],
+      "title": "Estremo",
+      "type": "object"
+    },
+    "Foglio": {
+      "additionalProperties": false,
+      "properties": {
+        "formato": {
+          "anyOf": [
+            {
+              "enum": [
+                "A3",
+                "A2",
+                "A1"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Formato"
+        },
+        "scala": {
+          "anyOf": [
+            {
+              "maximum": 500,
+              "minimum": 10,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scala"
+        }
+      },
+      "title": "Foglio",
+      "type": "object"
+    },
+    "Maggiorazione": {
+      "additionalProperties": false,
+      "description": "La regola delle lunghezze da quotare: un parametro, non una costante.\n\n`L da quotare = (L misurata + aggiunta) × fattore`, per eccesso\nall'arrotondamento, mai sotto il minimo del fluido. I valori predefiniti\nsono quelli del kit aria-aria (AA-01, `lavoro/dimensionamento.py`); i\nminimi del kit erano della commessa, e si dichiarano nella pianta.",
+      "properties": {
+        "aggiunta_m": {
+          "default": 1.0,
+          "minimum": 0,
+          "title": "Aggiunta M",
+          "type": "number"
+        },
+        "fattore": {
+          "default": 1.15,
+          "minimum": 1,
+          "title": "Fattore",
+          "type": "number"
+        },
+        "arrotondamento_m": {
+          "default": 0.5,
+          "exclusiveMinimum": 0,
+          "title": "Arrotondamento M",
+          "type": "number"
+        },
+        "minimi_m": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "propertyNames": {
+            "enum": [
+              "supply_air",
+              "return_air",
+              "refrigerant_liquid",
+              "refrigerant_gas",
+              "condensate",
+              "power_supply",
+              "interconnection",
+              "control_bus",
+              "heating_water",
+              "domestic_hot_water",
+              "cold_water",
+              "natural_gas",
+              "solar_fluid"
+            ]
+          },
+          "title": "Minimi M",
+          "type": "object"
+        }
+      },
+      "title": "Maggiorazione",
+      "type": "object"
+    },
+    "Muro": {
+      "additionalProperties": false,
+      "description": "Un muro: l'asse da `da` ad `a` e lo spessore, in metri.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z0-9][a-z0-9_-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "da": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Da",
+          "type": "array"
+        },
+        "a": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "A",
+          "type": "array"
+        },
+        "spessore": {
+          "exclusiveMinimum": 0,
+          "maximum": 1.5,
+          "title": "Spessore",
+          "type": "number"
+        },
+        "tipo": {
+          "default": "tramezza",
+          "enum": [
+            "perimetrale",
+            "portante",
+            "tramezza"
+          ],
+          "title": "Tipo",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "da",
+        "a",
+        "spessore"
+      ],
+      "title": "Muro",
+      "type": "object"
+    },
+    "Parametri": {
+      "additionalProperties": false,
+      "description": "Le misure dell'instradatore. Le lunghezze equivalenti dicono quanto\ntracciato lungo il muro vale una curva, un sormonto, una foratura.\n\n**Una foratura costa piu' di un sormonto**, apposta: il sormonto e' un\nincrocio sulla carta, la foratura e' lavoro in cantiere. Con i due valori\nal contrario (prima stesura, 3 m contro 2 m) un bus andava dalla centrale\nal comando passando per tre camere e quattro muri pur di non incrociare le\nlinee frigo: misurato sul caso di prova, e visto sulla tavola.",
+      "properties": {
+        "passo_m": {
+          "default": 0.05,
+          "maximum": 0.2,
+          "minimum": 0.02,
+          "title": "Passo M",
+          "type": "number"
+        },
+        "corsia_da_m": {
+          "default": 0.15,
+          "exclusiveMinimum": 0,
+          "title": "Corsia Da M",
+          "type": "number"
+        },
+        "corsia_a_m": {
+          "default": 0.3,
+          "exclusiveMinimum": 0,
+          "title": "Corsia A M",
+          "type": "number"
+        },
+        "centro_da_m": {
+          "default": 0.8,
+          "exclusiveMinimum": 0,
+          "title": "Centro Da M",
+          "type": "number"
+        },
+        "passo_fascio_m": {
+          "default": 0.1,
+          "exclusiveMinimum": 0,
+          "title": "Passo Fascio M",
+          "type": "number"
+        },
+        "distacco_m": {
+          "default": 0.1,
+          "minimum": 0,
+          "title": "Distacco M",
+          "type": "number"
+        },
+        "curva_m": {
+          "default": 0.5,
+          "minimum": 0,
+          "title": "Curva M",
+          "type": "number"
+        },
+        "sormonto_m": {
+          "default": 1.5,
+          "minimum": 0,
+          "title": "Sormonto M",
+          "type": "number"
+        },
+        "foratura_m": {
+          "default": 4.0,
+          "minimum": 0,
+          "title": "Foratura M",
+          "type": "number"
+        },
+        "scarto_della_misura": {
+          "default": 0.15,
+          "exclusiveMinimum": 0,
+          "maximum": 1,
+          "title": "Scarto Della Misura",
+          "type": "number"
+        }
+      },
+      "title": "Parametri",
+      "type": "object"
+    },
+    "Pezzo": {
+      "additionalProperties": false,
+      "description": "Un pezzo posato: la sigla, che cosa e', dove sta (il centro) e quanto ingombra.",
+      "properties": {
+        "sigla": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$",
+          "title": "Sigla",
+          "type": "string"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id"
+        },
+        "tipo": {
+          "title": "Tipo",
+          "type": "string"
+        },
+        "nome": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Nome"
+        },
+        "x": {
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "title": "Y",
+          "type": "number"
+        },
+        "larghezza": {
+          "exclusiveMinimum": 0,
+          "maximum": 10,
+          "title": "Larghezza",
+          "type": "number"
+        },
+        "profondita": {
+          "exclusiveMinimum": 0,
+          "maximum": 10,
+          "title": "Profondita",
+          "type": "number"
+        },
+        "quota": {
+          "anyOf": [
+            {
+              "enum": [
+                "controsoffitto",
+                "traccia",
+                "pavimento",
+                "a_vista"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Quota"
+        },
+        "sovrapposto_a": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sovrapposto A"
+        },
+        "sta": {
+          "default": "sopra",
+          "enum": [
+            "sopra",
+            "sotto"
+          ],
+          "title": "Sta",
+          "type": "string"
+        },
+        "ingombro_da_confermare": {
+          "default": false,
+          "title": "Ingombro Da Confermare",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "sigla",
+        "tipo",
+        "x",
+        "y",
+        "larghezza",
+        "profondita"
+      ],
+      "title": "Pezzo",
+      "type": "object"
+    },
+    "Rettangolo": {
+      "additionalProperties": false,
+      "description": "Un rettangolo in metri: [x0, y0, x1, y1].",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z0-9][a-z0-9_-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "rettangolo": {
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Rettangolo",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "rettangolo"
+      ],
+      "title": "Rettangolo",
+      "type": "object"
+    },
+    "Sfondo": {
+      "additionalProperties": false,
+      "description": "Una planimetria raster sotto il disegno: un JPEG, la sua scala, l'origine.",
+      "properties": {
+        "file": {
+          "title": "File",
+          "type": "string"
+        },
+        "px_per_m": {
+          "exclusiveMinimum": 0,
+          "title": "Px Per M",
+          "type": "number"
+        },
+        "origine_px": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Origine Px",
+          "type": "array"
+        },
+        "opacita": {
+          "default": 0.35,
+          "exclusiveMinimum": 0,
+          "maximum": 1,
+          "title": "Opacita",
+          "type": "number"
+        }
+      },
+      "required": [
+        "file",
+        "px_per_m",
+        "origine_px"
+      ],
+      "title": "Sfondo",
+      "type": "object"
+    },
+    "Stanza": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[a-z0-9][a-z0-9_-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "nome": {
+          "title": "Nome",
+          "type": "string"
+        },
+        "zona": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Zona"
+        },
+        "poligono": {
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array"
+          },
+          "minItems": 3,
+          "title": "Poligono",
+          "type": "array"
+        },
+        "controsoffitto": {
+          "default": false,
+          "title": "Controsoffitto",
+          "type": "boolean"
+        },
+        "disimpegno": {
+          "default": false,
+          "title": "Disimpegno",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "nome",
+        "poligono"
+      ],
+      "title": "Stanza",
+      "type": "object"
+    },
+    "Tracciato": {
+      "additionalProperties": false,
+      "description": "Un tracciato da instradare: da un pezzo a un altro, attraverso gli organi\nin linea che lo schema numera nella stessa tratta.",
+      "properties": {
+        "tratta": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$",
+          "title": "Tratta",
+          "type": "string"
+        },
+        "da": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/Estremo"
+            }
+          ],
+          "title": "Da"
+        },
+        "a": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/Estremo"
+            }
+          ],
+          "title": "A"
+        },
+        "passa_per": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Passa Per",
+          "type": "array"
+        },
+        "fluido": {
+          "enum": [
+            "supply_air",
+            "return_air",
+            "refrigerant_liquid",
+            "refrigerant_gas",
+            "condensate",
+            "power_supply",
+            "interconnection",
+            "control_bus",
+            "heating_water",
+            "domestic_hot_water",
+            "cold_water",
+            "natural_gas",
+            "solar_fluid"
+          ],
+          "title": "Fluido",
+          "type": "string"
+        },
+        "lunghezza_m": {
+          "anyOf": [
+            {
+              "ge": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lunghezza M"
+        },
+        "lunghezza_minima_m": {
+          "anyOf": [
+            {
+              "ge": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lunghezza Minima M"
+        },
+        "dimensione": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dimensione"
+        },
+        "quota": {
+          "default": "controsoffitto",
+          "enum": [
+            "controsoffitto",
+            "traccia",
+            "pavimento",
+            "a_vista"
+          ],
+          "title": "Quota",
+          "type": "string"
+        },
+        "fascio": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fascio"
+        },
+        "etichetta": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Etichetta"
+        }
+      },
+      "required": [
+        "tratta",
+        "da",
+        "a",
+        "fluido"
+      ],
+      "title": "Tracciato",
+      "type": "object"
+    },
+    "ZonaEsterna": {
+      "additionalProperties": false,
+      "description": "Una zona fuori dall'edificio dove le linee possono correre: il terrazzo,\nil balcone, la facciata attrezzata. **Fuori da queste zone l'esterno non e'\nuna strada**: l'instradatore ci passa solo se non ha altro, a un costo\naltissimo, e la tavola lo dice come rilievo bloccante.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z0-9][a-z0-9_-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "nome": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Nome"
+        },
+        "rettangolo": {
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Rettangolo",
+          "type": "array"
+        },
+        "costo": {
+          "default": 1.0,
+          "maximum": 20.0,
+          "minimum": 1.0,
+          "title": "Costo",
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "rettangolo"
+      ],
+      "title": "ZonaEsterna",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "versione": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Versione",
+      "type": "string"
+    },
+    "titolo": {
+      "default": "Pianta dei posizionamenti e dei tracciati",
+      "title": "Titolo",
+      "type": "string"
+    },
+    "cartiglio": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Cartiglio",
+      "type": "object"
+    },
+    "foglio": {
+      "$ref": "#/$defs/Foglio"
+    },
+    "muri": {
+      "items": {
+        "$ref": "#/$defs/Muro"
+      },
+      "title": "Muri",
+      "type": "array"
+    },
+    "aperture": {
+      "items": {
+        "$ref": "#/$defs/Apertura"
+      },
+      "title": "Aperture",
+      "type": "array"
+    },
+    "stanze": {
+      "items": {
+        "$ref": "#/$defs/Stanza"
+      },
+      "title": "Stanze",
+      "type": "array"
+    },
+    "velette": {
+      "items": {
+        "$ref": "#/$defs/Rettangolo"
+      },
+      "title": "Velette",
+      "type": "array"
+    },
+    "zone_esterne": {
+      "items": {
+        "$ref": "#/$defs/ZonaEsterna"
+      },
+      "title": "Zone Esterne",
+      "type": "array"
+    },
+    "sfondo": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Sfondo"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "pezzi": {
+      "items": {
+        "$ref": "#/$defs/Pezzo"
+      },
+      "title": "Pezzi",
+      "type": "array"
+    },
+    "tracciati": {
+      "items": {
+        "$ref": "#/$defs/Tracciato"
+      },
+      "title": "Tracciati",
+      "type": "array"
+    },
+    "maggiorazione": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Maggiorazione"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "parametri": {
+      "$ref": "#/$defs/Parametri"
+    },
+    "dettagli": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/Dettaglio"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Dettagli"
+    },
+    "note": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Note",
+      "type": "array"
+    }
+  },
+  "title": "Pianta",
+  "type": "object"
+}

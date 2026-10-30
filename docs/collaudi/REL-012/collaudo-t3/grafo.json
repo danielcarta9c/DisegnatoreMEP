@@ -1,0 +1,614 @@
+{
+ "schema_version": "1.1.0",
+ "metadata": {
+  "project_id": "canalizzato-appartamento-secondo-piano",
+  "client": "ND",
+  "project_name": "Canalizzato aria-aria in pompa di calore - appartamento al secondo piano",
+  "commission_code": "ND",
+  "revision": "00",
+  "issue_date": "2026-10-29"
+ },
+ "networks": [
+  {
+   "id": "linea-liquido",
+   "name": "Linea frigorifera del liquido",
+   "domain": "refrigerant",
+   "medium": "refrigerant_liquid"
+  },
+  {
+   "id": "linea-gas",
+   "name": "Linea frigorifera del gas",
+   "domain": "refrigerant",
+   "medium": "refrigerant_gas"
+  },
+  {
+   "id": "collegamento-ui-ue",
+   "name": "Collegamento fra unità interna ed esterna",
+   "domain": "control",
+   "medium": "interconnection"
+  },
+  {
+   "id": "mandata-aria",
+   "name": "Mandata dell'aria",
+   "domain": "aeraulic",
+   "medium": "supply_air"
+  },
+  {
+   "id": "ripresa-aria",
+   "name": "Ripresa dell'aria",
+   "domain": "aeraulic",
+   "medium": "return_air"
+  },
+  {
+   "id": "condensa",
+   "name": "Scarico della condensa",
+   "domain": "condensate",
+   "medium": "condensate"
+  },
+  {
+   "id": "alimentazione-ue",
+   "name": "Alimentazione dell'unità esterna",
+   "domain": "control",
+   "medium": "power_supply"
+  },
+  {
+   "id": "alimentazione-cz",
+   "name": "Alimentazione della centrale di zona",
+   "domain": "control",
+   "medium": "power_supply"
+  },
+  {
+   "id": "serrande",
+   "name": "Comando delle serrande del plenum",
+   "domain": "control",
+   "medium": "control_bus"
+  },
+  {
+   "id": "interfaccia-cz-ui",
+   "name": "Interfaccia centrale di zona - unità interna",
+   "domain": "control",
+   "medium": "control_bus"
+  },
+  {
+   "id": "bus-termostati",
+   "name": "Bus dei termostati di zona",
+   "domain": "control",
+   "medium": "control_bus"
+  },
+  {
+   "id": "comando-filo",
+   "name": "Linea del comando a filo",
+   "domain": "control",
+   "medium": "control_bus"
+  }
+ ],
+ "components": [
+  {
+   "id": "ue",
+   "definition_id": "split-outdoor-unit",
+   "tag": null,
+   "properties": {
+    "power_kw": 7.1,
+    "marca": "Mitsubishi Electric",
+    "modello": "SUZ-M71VA",
+    "refrigerante": "R32",
+    "posizione": "sul terrazzo"
+   }
+  },
+  {
+   "id": "ui",
+   "definition_id": "ducted-indoor-unit",
+   "tag": null,
+   "properties": {
+    "marca": "Mitsubishi Electric",
+    "modello": "PEAD-M71JA",
+    "pompa_condensa": "a bordo",
+    "posizione": "in controsoffitto nel disimpegno"
+   }
+  },
+  {
+   "id": "plenum",
+   "definition_id": "zoning-plenum-4",
+   "tag": null,
+   "properties": {
+    "marca": "Airzone",
+    "tipo": "plenum motorizzato a 4 uscite Ø200"
+   }
+  },
+  {
+   "id": "centrale-zona",
+   "definition_id": "zone-controller",
+   "tag": null,
+   "properties": {
+    "marca": "Airzone",
+    "compreso_in": "plenum"
+   }
+  },
+  {
+   "id": "bocchetta-matrimoniale",
+   "definition_id": "air-supply-terminal",
+   "tag": null,
+   "properties": {
+    "etichetta": "Camera matrimoniale",
+    "locale": "Camera matrimoniale"
+   }
+  },
+  {
+   "id": "bocchetta-singola",
+   "definition_id": "air-supply-terminal",
+   "tag": null,
+   "properties": {
+    "etichetta": "Camera singola",
+    "locale": "Camera singola"
+   }
+  },
+  {
+   "id": "bocchetta-soggiorno-varco",
+   "definition_id": "air-supply-terminal",
+   "tag": null,
+   "properties": {
+    "etichetta": "Soggiorno (sopra il varco)",
+    "locale": "Soggiorno",
+    "varco": "varco 1,5 m"
+   }
+  },
+  {
+   "id": "bocchetta-soggiorno-parete",
+   "definition_id": "air-supply-terminal",
+   "tag": null,
+   "properties": {
+    "etichetta": "Soggiorno (parete nord)",
+    "locale": "Soggiorno",
+    "varco": "varco 1,5 m"
+   }
+  },
+  {
+   "id": "ripresa",
+   "definition_id": "return-air-terminal",
+   "tag": null,
+   "properties": {
+    "dimensione": "800×300",
+    "locale": "Disimpegno",
+    "etichetta": "Ripresa disimpegno"
+   }
+  },
+  {
+   "id": "sifone",
+   "definition_id": "condensate-trap",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "scarico-condensa",
+   "definition_id": "condensate-outlet",
+   "tag": null,
+   "properties": {
+    "etichetta": "Scarico della cucina"
+   }
+  },
+  {
+   "id": "quadro",
+   "definition_id": "electrical-panel",
+   "tag": null,
+   "properties": {
+    "etichetta": "Quadro elettrico d'appartamento"
+   }
+  },
+  {
+   "id": "sezionatore-ue",
+   "definition_id": "isolator-switch",
+   "tag": null,
+   "properties": {
+    "etichetta": "Sezionatore vicino all'unità esterna"
+   }
+  },
+  {
+   "id": "termostato-matrimoniale",
+   "definition_id": "room-thermostat",
+   "tag": null,
+   "properties": {
+    "marca": "Airzone",
+    "modello": "Think a filo",
+    "etichetta": "Camera matrimoniale"
+   }
+  },
+  {
+   "id": "termostato-singola",
+   "definition_id": "room-thermostat",
+   "tag": null,
+   "properties": {
+    "marca": "Airzone",
+    "modello": "Think a filo",
+    "etichetta": "Camera singola"
+   }
+  },
+  {
+   "id": "termostato-soggiorno",
+   "definition_id": "room-thermostat",
+   "tag": null,
+   "properties": {
+    "marca": "Airzone",
+    "modello": "Think a filo",
+    "etichetta": "Soggiorno"
+   }
+  },
+  {
+   "id": "comando-filo",
+   "definition_id": "wired-remote",
+   "tag": null,
+   "properties": {
+    "marca": "Mitsubishi Electric",
+    "modello": "PAR-41MAA",
+    "etichetta": "Ingresso"
+   }
+  }
+ ],
+ "connections": [
+  {
+   "id": "frigo-liquido",
+   "network_id": "linea-liquido",
+   "endpoint_a": {
+    "component_id": "ue",
+    "port_id": "liquid"
+   },
+   "endpoint_b": {
+    "component_id": "ui",
+    "port_id": "liquid"
+   },
+   "properties": {},
+   "sezione": "1/4\"",
+   "lunghezza_m": 9
+  },
+  {
+   "id": "frigo-gas",
+   "network_id": "linea-gas",
+   "endpoint_a": {
+    "component_id": "ue",
+    "port_id": "gas"
+   },
+   "endpoint_b": {
+    "component_id": "ui",
+    "port_id": "gas"
+   },
+   "properties": {},
+   "sezione": "5/8\"",
+   "lunghezza_m": 9
+  },
+  {
+   "id": "cavo-ui-ue",
+   "network_id": "collegamento-ui-ue",
+   "endpoint_a": {
+    "component_id": "ue",
+    "port_id": "link"
+   },
+   "endpoint_b": {
+    "component_id": "ui",
+    "port_id": "link"
+   },
+   "properties": {},
+   "sezione": "4G1,5",
+   "lunghezza_m": 10
+  },
+  {
+   "id": "ui-plenum",
+   "network_id": "mandata-aria",
+   "endpoint_a": {
+    "component_id": "ui",
+    "port_id": "supply"
+   },
+   "endpoint_b": {
+    "component_id": "plenum",
+    "port_id": "in"
+   },
+   "properties": {},
+   "lunghezza_m": 0
+  },
+  {
+   "id": "ramo-matrimoniale",
+   "network_id": "mandata-aria",
+   "endpoint_a": {
+    "component_id": "plenum",
+    "port_id": "out_1"
+   },
+   "endpoint_b": {
+    "component_id": "bocchetta-matrimoniale",
+    "port_id": "a"
+   },
+   "properties": {
+    "portata_m3h": 300
+   },
+   "sezione": "Ø200",
+   "lunghezza_m": 5
+  },
+  {
+   "id": "ramo-singola",
+   "network_id": "mandata-aria",
+   "endpoint_a": {
+    "component_id": "plenum",
+    "port_id": "out_2"
+   },
+   "endpoint_b": {
+    "component_id": "bocchetta-singola",
+    "port_id": "a"
+   },
+   "properties": {
+    "portata_m3h": 220
+   },
+   "sezione": "Ø200",
+   "lunghezza_m": 3
+  },
+  {
+   "id": "ramo-soggiorno-varco",
+   "network_id": "mandata-aria",
+   "endpoint_a": {
+    "component_id": "plenum",
+    "port_id": "out_3"
+   },
+   "endpoint_b": {
+    "component_id": "bocchetta-soggiorno-varco",
+    "port_id": "a"
+   },
+   "properties": {
+    "portata_m3h": 300
+   },
+   "sezione": "Ø200",
+   "lunghezza_m": 4
+  },
+  {
+   "id": "ramo-soggiorno-parete",
+   "network_id": "mandata-aria",
+   "endpoint_a": {
+    "component_id": "plenum",
+    "port_id": "out_4"
+   },
+   "endpoint_b": {
+    "component_id": "bocchetta-soggiorno-parete",
+    "port_id": "a"
+   },
+   "properties": {
+    "portata_m3h": 300
+   },
+   "sezione": "Ø200",
+   "lunghezza_m": 6
+  },
+  {
+   "id": "ripresa-ui",
+   "network_id": "ripresa-aria",
+   "endpoint_a": {
+    "component_id": "ripresa",
+    "port_id": "a"
+   },
+   "endpoint_b": {
+    "component_id": "ui",
+    "port_id": "return"
+   },
+   "properties": {},
+   "sezione": "800×300",
+   "lunghezza_m": 0
+  },
+  {
+   "id": "condensa-ui-sifone",
+   "network_id": "condensa",
+   "endpoint_a": {
+    "component_id": "ui",
+    "port_id": "drain"
+   },
+   "endpoint_b": {
+    "component_id": "sifone",
+    "port_id": "a"
+   },
+   "properties": {},
+   "sezione": "PVC Ø32",
+   "lunghezza_m": 8
+  },
+  {
+   "id": "condensa-sifone-scarico",
+   "network_id": "condensa",
+   "endpoint_a": {
+    "component_id": "sifone",
+    "port_id": "b"
+   },
+   "endpoint_b": {
+    "component_id": "scarico-condensa",
+    "port_id": "a"
+   },
+   "properties": {},
+   "sezione": "PVC Ø32"
+  },
+  {
+   "id": "alim-quadro-sezionatore",
+   "network_id": "alimentazione-ue",
+   "endpoint_a": {
+    "component_id": "quadro",
+    "port_id": "out_1"
+   },
+   "endpoint_b": {
+    "component_id": "sezionatore-ue",
+    "port_id": "a"
+   },
+   "properties": {},
+   "sezione": "3G4",
+   "lunghezza_m": 18
+  },
+  {
+   "id": "alim-sezionatore-ue",
+   "network_id": "alimentazione-ue",
+   "endpoint_a": {
+    "component_id": "sezionatore-ue",
+    "port_id": "b"
+   },
+   "endpoint_b": {
+    "component_id": "ue",
+    "port_id": "power"
+   },
+   "properties": {},
+   "sezione": "3G4"
+  },
+  {
+   "id": "alim-centrale-zona",
+   "network_id": "alimentazione-cz",
+   "endpoint_a": {
+    "component_id": "quadro",
+    "port_id": "out_3"
+   },
+   "endpoint_b": {
+    "component_id": "centrale-zona",
+    "port_id": "power"
+   },
+   "properties": {},
+   "sezione": "3G1,5",
+   "lunghezza_m": 8
+  },
+  {
+   "id": "cablaggio-serrande",
+   "network_id": "serrande",
+   "endpoint_a": {
+    "component_id": "centrale-zona",
+    "port_id": "serrande"
+   },
+   "endpoint_b": {
+    "component_id": "plenum",
+    "port_id": "motori"
+   },
+   "properties": {},
+   "lunghezza_m": 0
+  },
+  {
+   "id": "interfaccia-cz-ui",
+   "network_id": "interfaccia-cz-ui",
+   "endpoint_a": {
+    "component_id": "centrale-zona",
+    "port_id": "p1p2"
+   },
+   "endpoint_b": {
+    "component_id": "ui",
+    "port_id": "p1p2_a"
+   },
+   "properties": {},
+   "sezione": "2×0,75",
+   "lunghezza_m": 2
+  },
+  {
+   "id": "bus-matrimoniale",
+   "network_id": "bus-termostati",
+   "endpoint_a": {
+    "component_id": "centrale-zona",
+    "port_id": "bus_1"
+   },
+   "endpoint_b": {
+    "component_id": "termostato-matrimoniale",
+    "port_id": "a"
+   },
+   "properties": {},
+   "lunghezza_m": 7
+  },
+  {
+   "id": "bus-singola",
+   "network_id": "bus-termostati",
+   "endpoint_a": {
+    "component_id": "centrale-zona",
+    "port_id": "bus_2"
+   },
+   "endpoint_b": {
+    "component_id": "termostato-singola",
+    "port_id": "a"
+   },
+   "properties": {},
+   "lunghezza_m": 5
+  },
+  {
+   "id": "bus-soggiorno",
+   "network_id": "bus-termostati",
+   "endpoint_a": {
+    "component_id": "centrale-zona",
+    "port_id": "bus_3"
+   },
+   "endpoint_b": {
+    "component_id": "termostato-soggiorno",
+    "port_id": "a"
+   },
+   "properties": {},
+   "lunghezza_m": 9
+  },
+  {
+   "id": "cavo-comando-filo",
+   "network_id": "comando-filo",
+   "endpoint_a": {
+    "component_id": "ui",
+    "port_id": "p1p2_b"
+   },
+   "endpoint_b": {
+    "component_id": "comando-filo",
+    "port_id": "a"
+   },
+   "properties": {},
+   "sezione": "2×0,75",
+   "lunghezza_m": 6
+  }
+ ],
+ "assumptions": [
+  {
+   "id": "a-cartiglio",
+   "status": "proposed",
+   "text": "Per il cartiglio mancano: committente, codice di commessa, indirizzo dell'intervento, titolo e numero della tavola. Senza, la tavola esce in bozza con «DA DEFINIRE»."
+  },
+  {
+   "id": "a-tabella",
+   "status": "proposed",
+   "text": "Per la tabella delle apparecchiature mancano: il modello del plenum Airzone e della centrale di zona. Se non li dai, quelle celle restano vuote."
+  },
+  {
+   "id": "a-potenza",
+   "status": "approved",
+   "text": "La potenza dell'unità esterna è scritta come 7,1 kW, il dato del testo (resa nominale): è quella in raffrescamento? Il regime della centrale (sotto/sopra 35 kW) non si applica a un impianto aria-aria e non è stato scritto."
+  },
+  {
+   "id": "a-soggiorno",
+   "status": "approved",
+   "text": "Le due bocchette del soggiorno: si è assunto che quella sopra il varco abbia il flessibile da 4 m e quella a x=1 sulla parete nord quello da 6 m (la seconda è più lontana dal plenum). È così? Entrambe sono asservite al termostato del soggiorno: il plenum ha due serrande sulla stessa zona."
+  },
+  {
+   "id": "a-ripresa",
+   "status": "approved",
+   "text": "La ripresa 800×300 sta sotto la UI: si è assunto un raccordo diretto alla bocca di ripresa della macchina (lunghezza 0), senza canale. È così?"
+  },
+  {
+   "id": "a-plenum",
+   "status": "approved",
+   "text": "Il plenum è attaccato alla bocca di mandata della UI (raccordo diretto, lunghezza 0), e il comando delle serrande fra centrale e plenum è il cablaggio di fabbrica (lunghezza 0). La centrale di zona è considerata compresa nel kit del plenum Airzone. È così?"
+  },
+  {
+   "id": "a-bus",
+   "status": "proposed",
+   "text": "Bus ai termostati: il testo dà le lunghezze (7, 5, 9 m) ma non il cavo. Che cavo e'? Senza, sulla tavola la sezione non c'e'."
+  },
+  {
+   "id": "a-alimentazione-ui",
+   "status": "approved",
+   "text": "La UI non ha una sua alimentazione dal quadro: è alimentata dall'unità esterna attraverso il cavo 4G1,5 (così il testo, che non dà altre linee). La centrale Airzone è alimentata dal quadro senza sezionatore locale. È così?"
+  },
+  {
+   "id": "a-condensa",
+   "status": "approved",
+   "text": "La UI ha la pompa di condensa a bordo: è scritta come dato della macchina, non è un pezzo della tavola (il catalogo non ha la voce). Il sifone è disegnato fra la UI e l'allaccio allo scarico della cucina."
+  },
+  {
+   "id": "a-reversibile",
+   "status": "approved",
+   "text": "L'impianto è reversibile (raffrescamento e riscaldamento): le linee frigorifere sono le stesse nelle due stagioni."
+  },
+  {
+   "id": "a-diametri",
+   "status": "approved",
+   "text": "Diametri: il testo dà le sezioni di ogni tratto (linee frigo, flessibili, cavi): si trascrivono, non si calcolano. Non ci sono reti ad acqua da dimensionare."
+  },
+  {
+   "id": "a-distinta",
+   "status": "proposed",
+   "text": "Per la distinta mancano: le dimensioni delle bocchette; l'attacco condensa della UI; precarica, carica aggiuntiva e lunghezza massima delle linee frigo dell'unità esterna; la protezione nel quadro delle due linee di alimentazione."
+  }
+ ],
+ "rule_applications": [],
+ "subsystems": [],
+ "sheets": []
+}

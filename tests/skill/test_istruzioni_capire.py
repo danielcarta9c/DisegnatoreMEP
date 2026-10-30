@@ -163,3 +163,32 @@ def test_se_il_testo_non_parla_dei_diametri_capire_chiede_se_li_vuole() -> None:
     domande = skill.split("### 2. Le domande", 1)[1].split("### 3.", 1)[0]
     fermano = domande.split("**Fermati e chiedi**", 1)[1].split("Il messaggio porta:", 1)[0]
     assert "**i diametri delle tubazioni, se il testo non dice se li vuole**" in fermano
+
+
+VOCI_DELL_ARIA_ARIA = {
+    "split-outdoor-unit", "ducted-indoor-unit", "zoning-plenum-5", "zone-controller", "air-supply-terminal",
+    "return-air-terminal", "condensate-trap", "condensate-outlet", "electrical-panel", "isolator-switch",
+    "room-thermostat", "wired-remote",
+}
+FLUIDI_DELL_ARIA_ARIA = {
+    "supply_air", "return_air", "refrigerant_liquid", "refrigerant_gas", "condensate", "power_supply",
+    "interconnection", "control_bus",
+}
+
+
+def test_le_istruzioni_dicono_come_si_trascrive_l_aria_aria_e_l_elettrico() -> None:
+    """REL-012, fase 2: un canalizzato e le sue linee elettriche e di comando si
+    trascrivono con le voci e i fluidi che il catalogo e la tabella dei fluidi hanno
+    davvero, scrivendo anche i cavi nel verso del fluido, e con sezione, lunghezza e
+    scritta del tratto **in testa** alla tubazione: e' li' che il motore le legge (la
+    M.02 rifatta, `docs/collaudi/REL-012/fase-2/`)."""
+    sezione = istruzioni().split("### 4.8 L'aria-aria", 1)[1].split("\n## 5.", 1)[0]
+    catalogo = {percorso.stem for percorso in (ROOT / "examples" / "layout" / "catalog").glob("*.json")}
+    assert set(re.findall(r"`([a-z0-9-]+)`", sezione)) >= VOCI_DELL_ARIA_ARIA
+    assert catalogo >= VOCI_DELL_ARIA_ARIA
+    media = json.loads((ROOT / "naming" / "media.json").read_text(encoding="utf-8"))["media"]
+    assert {voce["medium"] for voce in media} >= FLUIDI_DELL_ARIA_ARIA
+    assert all(f"`{fluido}`" in sezione for fluido in FLUIDI_DELL_ARIA_ARIA)
+    assert "`CONNECTION_WRITTEN_BACKWARDS`" in sezione
+    assert all(f"`{campo}`" in sezione for campo in ("sezione", "lunghezza_m", "scritta"))
+    assert "**in\ntesta**" in sezione and "mai calcolati" in sezione

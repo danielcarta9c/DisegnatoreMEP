@@ -1,0 +1,24 @@
+{
+  "versione": "1.0.0",
+  "titolo": "Caso di prova: un muro senza aperture",
+  "note": ["Due stanze divise da una tramezza senza aperture: il tracciato la deve forare, e la foratura va in uscita."],
+  "cartiglio": {"committente": "Caso di prova", "indirizzo": "Nessuno", "progetto": "REL-014 - muro", "numero_tavola": "P.03", "revisione": "00", "data": "29.10.2026", "commessa": "PROVA-REL-014"},
+  "muri": [
+    {"id": "nord", "da": [-0.15, -0.15], "a": [8.15, -0.15], "spessore": 0.3, "tipo": "perimetrale"},
+    {"id": "sud", "da": [-0.15, 3.15], "a": [8.15, 3.15], "spessore": 0.3, "tipo": "perimetrale"},
+    {"id": "ovest", "da": [-0.15, -0.15], "a": [-0.15, 3.15], "spessore": 0.3, "tipo": "perimetrale"},
+    {"id": "est", "da": [8.15, -0.15], "a": [8.15, 3.15], "spessore": 0.3, "tipo": "perimetrale"},
+    {"id": "tramezza", "da": [4.0, 0.0], "a": [4.0, 3.0], "spessore": 0.1}
+  ],
+  "stanze": [
+    {"id": "ovest", "nome": "Stanza ovest", "poligono": [[0, 0], [3.95, 0], [3.95, 3], [0, 3]], "controsoffitto": true},
+    {"id": "est", "nome": "Stanza est", "poligono": [[4.05, 0], [8, 0], [8, 3], [4.05, 3]], "controsoffitto": true}
+  ],
+  "pezzi": [
+    {"sigla": "A", "tipo": "x", "x": 1.0, "y": 1.5, "larghezza": 0.4, "profondita": 0.4},
+    {"sigla": "B", "tipo": "x", "x": 7.0, "y": 1.5, "larghezza": 0.4, "profondita": 0.4}
+  ],
+  "tracciati": [
+    {"tratta": "T01", "da": "A", "a": "B", "fluido": "refrigerant_gas", "dimensione": "12,7"}
+  ]
+}

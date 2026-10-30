@@ -117,6 +117,23 @@ class PezzoNelPiano(StrictModel):
     """
 
 
+class ZoneDelleTabelle(StrictModel):
+    """Quanto del foglio il piano lascia alle tabelle (REL-012): una zona a destra del
+    disegno, accanto alla legenda, e una sotto, sopra il cartiglio.
+
+    **Non e' un formato in piu'**: il foglio e' quello di `formato`, e l'area del
+    disegno si restringe di queste misure. Le tabelle le disegna il motore
+    (`graphics.tabelle`), che sa dove stanno le zone; i controlli del motore — il
+    margine, la tavola che tocca la squadratura, la scelta del foglio — lavorano
+    sull'area che resta."""
+
+    destra_mm: FiniteFloat = Field(default=0.0, ge=0)
+    """La larghezza della zona a destra, in millimetri."""
+
+    basso_mm: FiniteFloat = Field(default=0.0, ge=0)
+    """L'altezza della zona in basso, in millimetri."""
+
+
 class PianoDiComposizione(StrictModel):
     """Il piano intero: il foglio, le ragioni, e dove stanno i pezzi."""
 
@@ -136,6 +153,16 @@ class PianoDiComposizione(StrictModel):
     pezzi: dict[str, PezzoNelPiano]
     """Da identificativo del componente a dove sta. Il cuore del piano."""
 
+    zone_tabelle: ZoneDelleTabelle | None = None
+    """Le zone del foglio lasciate alle tabelle (REL-012): `{"destra_mm": 175,
+    "basso_mm": 135}`. Senza, l'area del disegno e' quella di sempre."""
+    vista: Literal["tutto", "idraulica", "elettrico"] = "tutto"
+    """Quale parte del grafo disegna questa tavola (REL-012, fase 3, I-227):
+    `tutto`, la tavola unica, ed e' quella di sempre; `idraulica`, senza i cavi e i
+    pezzi del solo comando; `elettrico`, i soli cavi e bus con i pezzi che toccano.
+    Le due tavole separate escono dallo stesso grafo con due piani
+    (`piano.vista`)."""
+
 
 _ATTESO_PER_CAMPO: dict[str, str] = {
     "x": "un numero, i millimetri dal bordo sinistro del foglio",
@@ -146,6 +173,11 @@ _ATTESO_PER_CAMPO: dict[str, str] = {
     "formato": f"uno dei formati ordinari: {', '.join(FORMATI_ORDINARI)} (D-148, D-186)",
     "note": "un elenco di righe di testo",
     "pezzi": 'l\'elenco dei pezzi con il loro posto: {"id": {"x": …, "y": …}}',
+    "zone_tabelle": (
+        'le zone lasciate alle tabelle, in millimetri: {"destra_mm": …, "basso_mm": …}, '
+        "numeri non negativi"
+    ),
+    "vista": "una delle viste: tutto, idraulica, elettrico (REL-012, I-227)",
 }
 
 _CAMPI_DEL_PEZZO = ", ".join(PezzoNelPiano.model_fields)

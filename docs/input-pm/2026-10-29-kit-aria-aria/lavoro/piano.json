@@ -1,0 +1,86 @@
+{
+ "formato": "A2T",
+ "note": [
+  "UE a sinistra e UI alla stessa quota: le due linee frigorifere sono rette (stessa y delle porte liquido e gas).",
+  "Plenum alla quota della UI: la mandata UI-plenum e' retta; le cinque uscite vanno dritte alle bocchette, impilate a passo 12,5.",
+  "Ripresa sopra la UI, sull'asse della bocca di aspirazione.",
+  "Sotto la UI: collegamento UI-UE, condensa con sifone, comando Madoka; quadro sotto la UE, alimentazione UE dritta in verticale.",
+  "Centrale di zona sotto il plenum; termostati in colonna alla quota delle porte di bus: bus rettilinei."
+ ],
+ "pezzi": {
+  "ue": {
+   "x": 0,
+   "y": 40,
+   "regola": "D-159 quota delle porte frigorifere"
+  },
+  "ui": {
+   "x": 105,
+   "y": 40,
+   "regola": "stessa y della UE: linee frigo rette"
+  },
+  "ripresa": {
+   "x": 120,
+   "y": 12.5,
+   "regola": "asse della bocca di ripresa, stacco corto"
+  },
+  "plenum": {
+   "x": 170,
+   "y": 40,
+   "regola": "stessa y della UI: mandata retta"
+  },
+  "bocchetta-b1": {
+   "x": 270,
+   "y": 40
+  },
+  "bocchetta-b2": {
+   "x": 270,
+   "y": 52.5
+  },
+  "bocchetta-b3": {
+   "x": 270,
+   "y": 65
+  },
+  "bocchetta-b4": {
+   "x": 270,
+   "y": 77.5
+  },
+  "bocchetta-b5": {
+   "x": 270,
+   "y": 90
+  },
+  "termostato-1": {
+   "x": 245,
+   "y": 112.5
+  },
+  "termostato-2": {
+   "x": 245,
+   "y": 127.5
+  },
+  "termostato-3": {
+   "x": 245,
+   "y": 142.5
+  },
+  "termostato-4": {
+   "x": 245,
+   "y": 157.5
+  },
+  "madoka": {
+   "x": 132.5,
+   "y": 105
+  },
+  "scarico": {
+   "x": 125,
+   "y": 95,
+   "regola": "A4: sifone e scarico addosso alla UI"
+  },
+  "quadro": {
+   "x": 2.5,
+   "y": 150
+  },
+  "centrale": {
+   "x": 175,
+   "y": 110,
+   "regola": "sotto il plenum, sull'asse dei motori"
+  }
+ }
+}

@@ -241,6 +241,45 @@
           "default": false,
           "title": "Esistente",
           "type": "boolean"
+        },
+        "sezione": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sezione"
+        },
+        "lunghezza_m": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lunghezza M"
+        },
+        "scritta": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scritta"
         }
       },
       "required": [

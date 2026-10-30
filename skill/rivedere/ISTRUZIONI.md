@@ -1,7 +1,8 @@
 # Rivedere — dalla tavola ai vincoli per chi compone
 
 > **A chi parla questo file.** A un agente AI che riceve una **tavola di schema funzionale
-> idronico già disegnata** e deve dire **che cosa non va**, in una forma che chi compone il
+> già disegnata** — una centrale idronica, un impianto aria-aria, le linee elettriche e di
+> comando — e deve dire **che cosa non va**, in una forma che chi compone il
 > piano possa applicare. Queste istruzioni bastano da sole. Non serve leggere altro.
 >
 > **Chi è «il PO».** In queste istruzioni è il responsabile della skill: ha scritto le regole e
@@ -87,6 +88,21 @@ tutto da una parte? Ci sono zone fitte e zone vuote? La tavola si legge da due m
 valvole. *Un segno esce dal proprio riquadro? Due simboli stanno uno dentro l'altro?* Un simbolo
 disegnato male è un difetto che nessun controllo vede. Il PO, su una tavola dove il revisore non
 aveva visto la serpentina di un pannello uscire dal riquadro: «doveva vederla».
+
+**Se la tavola è un aria-aria, o l'elettrico e il comando** (proposta, REL-012). L'ordine resta
+quello sopra — le «autostrade» sono le linee frigorifere, i canali, le dorsali dei cavi —, e in
+più guardi:
+
+- **ogni cavo arriva a un pezzo che si riconosce**: sigla scritta su ogni pezzo comandato — la
+  valvola, il circolatore, la sonda —, e due simboli simili (due valvole a tre vie, due sonde)
+  si distinguono per la sigla, non per la posizione. Un cavo che finisce su un pezzo senza
+  sigla è un rilievo, anche se i numeri sono puliti;
+- **i cavi toccano i pezzi**: un vuoto fra la fine del cavo e il simbolo si legge come un
+  collegamento mancante;
+- **ogni tratto porta la sua scritta** — sezione e lunghezza —, e la scritta sta sulla sua
+  linea, non accanto a un'altra; l'etichetta di un pezzo non si posa su una linea;
+- **le linee senza verso non hanno freccia** (refrigerante, cavi, bus); aria e condensa sì;
+- **niente monconi d'acqua aperti** sulla tavola dell'elettrico: lì l'acqua non c'è.
 
 ---
 

@@ -37,6 +37,11 @@ class GapReason(StrEnum):
     a bordo, ma il catalogo non dice se lo porta: il dato e' ignoto, e un
     dato ignoto non e' un'assenza (I-046). Si chiede al progettista."""
 
+    DESIGNER_QUESTION = "designer_question"
+    """La regola non posa pezzi: chiede al progettista un dato che solo lui ha —
+    il volume d'acqua dell'impianto, un vaso che puo' restare separato dalle
+    macchine (REL-011). La domanda e' scritta nella regola."""
+
 
 class RuleGap(StrictModel):
     """Una regola che si applica, e non ha niente da proporre.
@@ -69,6 +74,9 @@ class RuleGap(StrictModel):
 
     rationale: str = Field(min_length=1)
     source: str = Field(min_length=1)
+    question: str | None = None
+    """La domanda della regola, quando il punto aperto e' una domanda al
+    progettista (`DESIGNER_QUESTION`); vuota per ogni altro punto aperto."""
 
     @property
     def key(self) -> tuple[str, str, str, str]:

@@ -1,0 +1,69 @@
+{
+  "id": "zone-controller",
+  "version": "1.0.0",
+  "name": "Centrale di zona",
+  "functions": [
+    "zone_control"
+  ],
+  "traits": [
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
+  "symbol_id": "zone-controller",
+  "composite": false,
+  "ports": [
+    {
+      "id": "serrande",
+      "domain": "control",
+      "medium": "control_bus",
+      "flow": "bidirectional",
+      "required": true
+    },
+    {
+      "id": "p1p2",
+      "domain": "control",
+      "medium": "control_bus",
+      "flow": "bidirectional",
+      "required": true
+    },
+    {
+      "id": "power",
+      "domain": "control",
+      "medium": "power_supply",
+      "flow": "in",
+      "required": true
+    },
+    {
+      "id": "bus_1",
+      "domain": "control",
+      "medium": "control_bus",
+      "flow": "bidirectional",
+      "required": false
+    },
+    {
+      "id": "bus_2",
+      "domain": "control",
+      "medium": "control_bus",
+      "flow": "bidirectional",
+      "required": false
+    },
+    {
+      "id": "bus_3",
+      "domain": "control",
+      "medium": "control_bus",
+      "flow": "bidirectional",
+      "required": false
+    },
+    {
+      "id": "bus_4",
+      "domain": "control",
+      "medium": "control_bus",
+      "flow": "bidirectional",
+      "required": false
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION",
+    "proposta della sessione del 29/10/2026 (caso di prova AA-01, canalizzato aria-aria): forma da approvare dal PO sulla tavola"
+  ]
+}

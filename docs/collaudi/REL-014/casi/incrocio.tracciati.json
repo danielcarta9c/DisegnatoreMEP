@@ -1,0 +1,279 @@
+{
+  "tavola": {
+    "formato": "A3",
+    "scala": "1:50",
+    "avvisi": []
+  },
+  "avvisi": [
+    "Senza L prog., quotate sulla misura (°): tutte le tratte. Da riportare nel grafo, o da chiedere."
+  ],
+  "regola_delle_lunghezze": {
+    "origine": "della distinta",
+    "della_distinta": true,
+    "regola": {
+      "aggiunta_m": 1.0,
+      "fattore": 1.15,
+      "passo_m": 0.5
+    },
+    "scarto_della_misura": 0.15
+  },
+  "tratte": [
+    {
+      "tratta": "T01",
+      "fluido": "condensate",
+      "da": "A1",
+      "a": "B1",
+      "passa_per": [],
+      "dimensione": null,
+      "quota": "controsoffitto",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_data_m": null,
+      "lunghezza_data_da": null,
+      "lunghezza_misurata_m": 6.8,
+      "lunghezza_usata_m": 6.8,
+      "lunghezza_usata_da": "misura",
+      "scarto_della_misura": null,
+      "misura_oltre_lo_scarto": false,
+      "lunghezza_da_quotare_m": 10.0,
+      "calcolo": "(6,8 + 1) × 1,15 = 8,97 → 9 m; minimo condensa 10 m → 10 m",
+      "deciso_dal_minimo": true,
+      "curve": 3,
+      "fuori_dal_controsoffitto_m": 0.0,
+      "fuori_dalle_zone_esterne_m": 0.0,
+      "attraversamenti_di_parete": 0,
+      "fori_nel_perimetrale": 0,
+      "punti_m": [
+        [
+          0.3,
+          2.5
+        ],
+        [
+          0.4,
+          2.5
+        ],
+        [
+          0.4,
+          3.7
+        ],
+        [
+          5.75,
+          3.7
+        ],
+        [
+          5.75,
+          3.55
+        ]
+      ],
+      "tronchi_m": null,
+      "attraversamenti": []
+    },
+    {
+      "tratta": "T02",
+      "fluido": "condensate",
+      "da": "A2",
+      "a": "B2",
+      "passa_per": [],
+      "dimensione": null,
+      "quota": "controsoffitto",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_data_m": null,
+      "lunghezza_data_da": null,
+      "lunghezza_misurata_m": 7.1,
+      "lunghezza_usata_m": 7.1,
+      "lunghezza_usata_da": "misura",
+      "scarto_della_misura": null,
+      "misura_oltre_lo_scarto": false,
+      "lunghezza_da_quotare_m": 10.0,
+      "calcolo": "(7,1 + 1) × 1,15 = 9,31 → 9,5 m; minimo condensa 10 m → 10 m",
+      "deciso_dal_minimo": true,
+      "curve": 3,
+      "fuori_dal_controsoffitto_m": 0.0,
+      "fuori_dalle_zone_esterne_m": 0.0,
+      "attraversamenti_di_parete": 0,
+      "fori_nel_perimetrale": 0,
+      "punti_m": [
+        [
+          0.25,
+          3.55
+        ],
+        [
+          0.25,
+          3.85
+        ],
+        [
+          5.6,
+          3.85
+        ],
+        [
+          5.6,
+          2.5
+        ],
+        [
+          5.7,
+          2.5
+        ]
+      ],
+      "tronchi_m": null,
+      "attraversamenti": []
+    },
+    {
+      "tratta": "T03",
+      "fluido": "supply_air",
+      "da": "P",
+      "a": "L",
+      "passa_per": [],
+      "dimensione": "Ø200",
+      "quota": "controsoffitto",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_data_m": null,
+      "lunghezza_data_da": null,
+      "lunghezza_misurata_m": 5.1,
+      "lunghezza_usata_m": 5.1,
+      "lunghezza_usata_da": "misura",
+      "scarto_della_misura": null,
+      "misura_oltre_lo_scarto": false,
+      "lunghezza_da_quotare_m": 7.5,
+      "calcolo": "(5,1 + 1) × 1,15 = 7,01 → 7,5 m",
+      "deciso_dal_minimo": false,
+      "curve": 2,
+      "fuori_dal_controsoffitto_m": 0.0,
+      "fuori_dalle_zone_esterne_m": 0.0,
+      "attraversamenti_di_parete": 0,
+      "fori_nel_perimetrale": 0,
+      "punti_m": [
+        [
+          0.5,
+          0.95
+        ],
+        [
+          1.7,
+          0.95
+        ],
+        [
+          1.7,
+          0.15
+        ],
+        [
+          4.8,
+          0.15
+        ]
+      ],
+      "tronchi_m": null,
+      "attraversamenti": []
+    },
+    {
+      "tratta": "T04",
+      "fluido": "supply_air",
+      "da": "P",
+      "a": "V",
+      "passa_per": [],
+      "dimensione": "Ø200",
+      "quota": "controsoffitto",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_data_m": null,
+      "lunghezza_data_da": null,
+      "lunghezza_misurata_m": 1.35,
+      "lunghezza_usata_m": 1.35,
+      "lunghezza_usata_da": "misura",
+      "scarto_della_misura": null,
+      "misura_oltre_lo_scarto": false,
+      "lunghezza_da_quotare_m": 3.0,
+      "calcolo": "(1,35 + 1) × 1,15 = 2,7 → 3 m",
+      "deciso_dal_minimo": false,
+      "curve": 1,
+      "fuori_dal_controsoffitto_m": 0.0,
+      "fuori_dalle_zone_esterne_m": 0.0,
+      "attraversamenti_di_parete": 0,
+      "fori_nel_perimetrale": 0,
+      "punti_m": [
+        [
+          0.5,
+          0.8
+        ],
+        [
+          1.25,
+          0.8
+        ],
+        [
+          1.25,
+          0.2
+        ]
+      ],
+      "tronchi_m": null,
+      "attraversamenti": []
+    }
+  ],
+  "forature": [],
+  "fori_dei_pezzi": [],
+  "per_il_grafo": {
+    "nota": "Le pareti interne forate da ogni tratta: da riportare nel grafo, fra le properties di una tubazione della tratta (attraversamenti), perche' la distinta conti le forature della pianta.",
+    "attraversamenti": {
+      "T01": 0,
+      "T02": 0,
+      "T03": 0,
+      "T04": 0
+    }
+  },
+  "confronto": {
+    "con": [],
+    "bloccanti": [],
+    "avvisi": [],
+    "lunghezze_prese": {}
+  },
+  "rilievi": {
+    "diagonali": 0,
+    "sormonti": 1,
+    "sovrapposizioni": 0,
+    "scritte_su_linee": 0,
+    "scritte_su_scritte": 0,
+    "fori_fuori_dalle_aperture": 0,
+    "tratte_cedute": 0,
+    "fasci_in_parallelo": {},
+    "fuori_dal_controsoffitto_m": {},
+    "richiami": 1,
+    "richiamo_piu_lungo_mm": 4.0,
+    "richiamo_massimo_mm": 12.0,
+    "richiami_lunghi": 0,
+    "richiami_che_attraversano": 0,
+    "richiami_su_una_linea": 1,
+    "scritte_in_legenda": 0,
+    "linee_sui_pezzi": 0,
+    "misure_oltre_la_lunghezza": 0,
+    "scritte_nel_dettaglio": 0,
+    "fuori_dalle_zone_esterne": 0,
+    "pezzi_sovrapposti": 0,
+    "discordanze_con_distinta_e_grafo": 0,
+    "bloccanti": [],
+    "elenco": {
+      "diagonali": [],
+      "sormonti": [
+        "T01 × T02 a (5.60; 3.70)"
+      ],
+      "sovrapposizioni": [],
+      "scritte_su_linee": [],
+      "scritte_su_scritte": [],
+      "fori_fuori_dalle_aperture": [],
+      "tratte_cedute": [],
+      "richiami": [
+        "«T04 · Ø200 · L 1,4 m°» (tratta T04): 4.0 mm"
+      ],
+      "richiami_lunghi": [],
+      "richiami_che_attraversano": [],
+      "richiami_su_una_linea": [
+        "«T04 · Ø200 · L 1,4 m°» (tratta T04) attraversa: tratta T03"
+      ],
+      "scritte_in_legenda": [],
+      "linee_sui_pezzi": [],
+      "misure_oltre_la_lunghezza": [],
+      "scritte_nel_dettaglio": [],
+      "fuori_dalle_zone_esterne": [],
+      "pezzi_sovrapposti": [],
+      "discordanze_con_distinta_e_grafo": []
+    }
+  },
+  "dettagli": []
+}

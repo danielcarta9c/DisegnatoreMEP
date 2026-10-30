@@ -22,7 +22,7 @@ from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.catalog.schema import SERVICE_ORGAN_FUNCTIONS, ComponentTrait
 from disegnatore_mep.graphics.symbol import PortFace, SymbolManifest
 from disegnatore_mep.model.project import PortRef, ProjectModel
-from disegnatore_mep.model.types import PortFlow
+from disegnatore_mep.model.types import Domain, PortFlow
 
 from .chains import CHAIN_PORT_GAP_MM as CHAIN_PORT_GAP_MM
 from .chains import MIN_SPACING_MM as MIN_SPACING_MM
@@ -79,6 +79,20 @@ la fa chi cammina sulla rete: interessa che l'organo appartenga a un pezzo, e
 percio' gli stia stretto. L'elenco vive nel catalogo, con chi lo legge per
 proporre e per saturare: qui se ne tiene il nome che la posa usa da D-120.
 """
+
+FUNZIONI_DI_PROSSIMITA = frozenset({"power_isolation"})
+"""Chi sta **accanto alla macchina che alimenta**, per mestiere (REL-012, §6.3 del
+kit): il sezionatore onnipolare di prossimita' si apre sul posto, davanti alla
+macchina, prima di metterci le mani.
+
+La macchina e' il capo della tratta **in cui il fluido entra** — l'attacco di
+alimentazione, `in` per il catalogo —, e l'organo le si stringe come la valvola di
+una catena (D-120), senza che la macchina debba dichiararsi `maintainable`: quella
+proprieta' fa chiedere alla regola dell'intercettazione una valvola sul fluido, che
+sull'elettrico non c'e'. Fino al 29 ottobre 2026 l'organo si posava dal capo da cui
+la tratta comincia, cioe' dalla prima tubazione del modello: sul caso del kit il
+sezionatore finiva accanto al quadro finche' la tubazione lato macchina non si e'
+chiamata `e-1a`."""
 
 
 @dataclass(frozen=True)
@@ -249,9 +263,9 @@ def place_inline_accessories(
     )
     if needed > total:
         raise LayoutError(
-            f"run {trunk.connection_ids[0]} is {total:g}mm long but its "
-            f"{len(resolved)} inline accessories need {needed:g}mm: symbols are "
-            f"never shrunk to fit, give the run more room"
+            f"la tratta {trunk.connection_ids[0]} e' lunga {total:g} mm e i suoi "
+            f"{len(resolved)} organi in linea ne vogliono {needed:g}: i simboli non si "
+            f"rimpiccioliscono, da' piu' spazio alla tratta"
         )
 
     # **Chi isola una macchina si disegna sul suo attacco** (D-120), e da
@@ -328,6 +342,27 @@ def place_inline_accessories(
         head_chain = [0]
     if not strict_tail and isolates[last] and services(trunk.end):
         tail_chain = [last]
+
+    def alimentato(ref: PortRef) -> bool:
+        """Il capo della tratta e' l'attacco in cui il fluido **entra** in una macchina."""
+        definition_id = definitions.get(ref.component_id)
+        if definition_id is None:
+            return False
+        porta = next(
+            (item for item in catalog.resolve(definition_id).definition.ports if item.id == ref.port_id),
+            None,
+        )
+        return porta is not None and porta.flow is PortFlow.IN
+
+    def di_prossimita(index: int) -> bool:
+        return bool(FUNZIONI_DI_PROSSIMITA & set(resolved[index].definition.functions))
+
+    # L'organo di prossimita' (`FUNZIONI_DI_PROSSIMITA`) si stringe alla macchina
+    # che alimenta, da qualunque capo la tratta cominci.
+    if not head_chain and not strict_head and di_prossimita(0) and alimentato(trunk.start):
+        head_chain = [0]
+    if not tail_chain and not strict_tail and di_prossimita(last) and alimentato(trunk.end):
+        tail_chain = [last]
     if set(head_chain) & set(tail_chain):
         head_chain = []
     chained = set(head_chain) | set(tail_chain)
@@ -354,8 +389,8 @@ def place_inline_accessories(
     moves = moves_of(points)
     if not moves:
         raise LayoutError(
-            f"run {trunk.connection_ids[0]} has no straight stretch to sit an "
-            f"accessory on"
+            f"la tratta {trunk.connection_ids[0]} non ha un tratto dritto su cui "
+            f"posare un organo in linea"
         )
 
     def stretches(head_mm: float, tail_mm: float) -> list[tuple[float, float]]:
@@ -446,9 +481,9 @@ def place_inline_accessories(
         allowed = [item for item in wanted if item in manifest.allowed_rotations_deg]
         if not allowed:
             raise LayoutError(
-                f"inline accessory {manifest.id} cannot be drawn rotated by "
-                f"{wanted[0]} or {wanted[1]} degrees, which the run it sits on "
-                f"requires: allowed {sorted(manifest.allowed_rotations_deg)}"
+                f"l'organo in linea {manifest.id} non si disegna girato di "
+                f"{wanted[0]} o {wanted[1]} gradi, che la sua tratta vuole: le "
+                f"rotazioni ammesse sono {sorted(manifest.allowed_rotations_deg)}"
             )
         rotation = allowed[0]
         return rotation, manifest.rotated(rotation)
@@ -537,9 +572,9 @@ def place_inline_accessories(
                     edge = snapped + max(gap, extent) / 2
                     return (total - (snapped - max(gap, extent) / 2)) if from_end else edge
         raise LayoutError(
-            f"run {trunk.connection_ids[0]} has no straight stretch for "
-            f"{manifest.id} against the fitting it isolates through: symbols are "
-            f"never shrunk to fit, give the run a longer straight length"
+            f"la tratta {trunk.connection_ids[0]} non ha un tratto dritto per "
+            f"{manifest.id} contro il raccordo che intercetta: i simboli non si "
+            f"rimpiccioliscono, da' alla tratta un tratto dritto piu' lungo"
         )
 
     def place_chain(indices: list[int], from_end: bool, strict: bool) -> float | None:
@@ -572,14 +607,14 @@ def place_inline_accessories(
             distance = total - centre if from_end else centre
             if distance - extent / 2 < low - 1e-9 or distance + extent / 2 > high + 1e-9:
                 raise LayoutError(
-                    f"run {trunk.connection_ids[0]} bends before the chain of {owner} "
-                    f"fits on the first straight from its port: {manifest.id} needs the "
-                    f"straight to reach {reach + extent:g}mm, it is {high - low:g}mm long"
+                    f"la tratta {trunk.connection_ids[0]} piega prima che la catena di {owner} "
+                    f"stia sul primo tratto dritto dalla sua porta: {manifest.id} vuole il "
+                    f"tratto dritto fino a {reach + extent:g} mm, ed e' lungo {high - low:g} mm"
                 )
             if abs(distance / step - round(distance / step)) > 1e-9:
                 raise LayoutError(
-                    f"run {trunk.connection_ids[0]}: the chain of {owner} would sit "
-                    f"off the grid at {distance:g}mm along the run"
+                    f"la tratta {trunk.connection_ids[0]}: la catena di {owner} starebbe "
+                    f"fuori griglia a {distance:g} mm lungo la tratta"
                 )
             station = _station_at(points, distance)
             origin = Point(
@@ -600,10 +635,10 @@ def place_inline_accessories(
             ]
             if blocked:
                 raise LayoutError(
-                    f"run {trunk.connection_ids[0]}: the fixed place of {manifest.id} in "
-                    f"the chain of {owner}, at ({origin.x_mm:g}, {origin.y_mm:g}), is "
-                    f"taken by {' e '.join(blocked)}, and a chain does not slide: "
-                    f"give the machine room on its port"
+                    f"la tratta {trunk.connection_ids[0]}: il posto fisso di {manifest.id} "
+                    f"nella catena di {owner}, in ({origin.x_mm:g}, {origin.y_mm:g}), e' "
+                    f"occupato da {' e '.join(blocked)}, e una catena non scorre: "
+                    f"da' spazio alla macchina sulla sua porta"
                 )
             seat(index, station, distance, rotation, turned)
             reach += extent + MIN_SPACING_MM
@@ -639,8 +674,8 @@ def place_inline_accessories(
         """Gli accessori fuori dalle catene, fra `head_mm` dal capo e `tail_mm` dalla coda."""
         if remaining and not stretches(head_mm, tail_mm):
             raise LayoutError(
-                f"run {trunk.connection_ids[0]} has no straight stretch to sit an "
-                f"accessory on"
+                f"la tratta {trunk.connection_ids[0]} non ha un tratto dritto su cui "
+                f"posare un organo in linea"
             )
 
         # Gli accessori si posano **nell'ordine della catena**, avanzando lungo la
@@ -743,10 +778,10 @@ def place_inline_accessories(
                     break
             if found is None:
                 raise LayoutError(
-                    f"run {trunk.connection_ids[0]} has no straight stretch of "
-                    f"{needed:g}mm for {component.symbol.manifest.id} that keeps "
-                    f"{clearance:g}mm clear of the other symbols and runs: symbols are "
-                    f"never shrunk to fit, give the run a longer straight length"
+                    f"la tratta {trunk.connection_ids[0]} non ha un tratto dritto di "
+                    f"{needed:g} mm per {component.symbol.manifest.id} che stia a "
+                    f"{clearance:g} mm dagli altri simboli e dalle altre linee: i simboli "
+                    f"non si rimpiccioliscono, da' alla tratta un tratto dritto piu' lungo"
                 )
             # Il cursore riparte dal **riquadro**, non dall'interruzione: un
             # simbolo piu' largo del proprio taglio sporge oltre di esso, e chi
@@ -857,10 +892,10 @@ def place_inline_accessories(
                 intrudes_into(box, before, after) for before, after in moves_of(part)
             ):
                 raise LayoutError(
-                    f"run {trunk.connection_ids[0]} still passes under "
-                    f"{item.symbol_id} after breaking for it: the accessory sits "
-                    f"where its own run bends back into it, give the run a longer "
-                    f"straight length"
+                    f"la tratta {trunk.connection_ids[0]} passa ancora sotto "
+                    f"{item.symbol_id} dopo essersi interrotta per lui: l'organo sta "
+                    f"dove la sua tratta ci ripiega dentro; da' alla tratta un tratto "
+                    f"dritto piu' lungo"
                 )
     return placed, trimmed
 
@@ -974,6 +1009,19 @@ def settle_sheet(
     in_order = sorted(
         trunks, key=lambda trunk: -int(levels.get(trunk.connection_ids, Level.SERVIZIO))
     )
+    # **Su una tavola con l'acqua, i cavi vengono dopo** (REL-012, fase 3). Il
+    # disegno dell'acqua resta quello che il piano ha composto, e i cavi e i bus
+    # passano dove resta posto: un cavo che si instrada prima di una tubazione le
+    # prende la corsia, e la catena di una valvola non trova piu' il suo posto. E il
+    # cavo di un circolatore, che lo posa la sua tratta d'acqua, fino ad allora non
+    # ha dove arrivare. Senza cavi, o senza acqua — l'aria-aria del kit —, l'ordine
+    # e' quello di sempre.
+    domini = {item.id: item.domain for item in project.networks}
+    del_comando = [trunk for trunk in in_order if domini.get(trunk.network_id) is Domain.CONTROL]
+    if del_comando and any(
+        domini.get(trunk.network_id) is Domain.HYDRONIC for trunk in in_order
+    ):
+        in_order = [item for item in in_order if item not in del_comando] + del_comando
     place_of = {trunk.connection_ids: index for index, trunk in enumerate(trunks)}
     settled: dict[int, RoutedTrunk] = {}
     found_by: dict[int, list[PlacedSymbol]] = {}

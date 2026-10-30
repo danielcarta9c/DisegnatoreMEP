@@ -1,0 +1,242 @@
+[
+ {
+  "tavola": "impianto-1",
+  "processo_s": 0.8,
+  "completa_s": 0.0,
+  "disegna_s": 0.34,
+  "rc": 0,
+  "sintesi": "Formato A3 · tratte 25 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 4 · sormonti 1 · avvisi e regole: SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x1, SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x1",
+  "errore": null,
+  "svg": "87be43ca11533820"
+ },
+ {
+  "tavola": "impianto-2",
+  "processo_s": 0.6,
+  "completa_s": 0.0,
+  "disegna_s": 0.36,
+  "rc": 0,
+  "sintesi": "Formato A3 · tratte 25 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 5 · sormonti 1 · avvisi e regole: SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x1, SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x1",
+  "errore": null,
+  "svg": "2d2a7a4b7d52ccbe"
+ },
+ {
+  "tavola": "impianto-3",
+  "processo_s": 0.7,
+  "completa_s": 0.0,
+  "disegna_s": 0.38,
+  "rc": 0,
+  "sintesi": "Formato A3 · tratte 24 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 3 · sormonti 2 · avvisi e regole: SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x2",
+  "errore": null,
+  "svg": "bd5476c73bbf2574"
+ },
+ {
+  "tavola": "impianto-4",
+  "processo_s": 0.7,
+  "completa_s": 0.0,
+  "disegna_s": 0.42,
+  "rc": 0,
+  "sintesi": "Formato A3 · tratte 27 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 6 · sormonti 2 · avvisi e regole: SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x1, SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x2",
+  "errore": null,
+  "svg": "1848e0d230834283"
+ },
+ {
+  "tavola": "impianto-5",
+  "processo_s": 0.7,
+  "completa_s": 0.0,
+  "disegna_s": 0.47,
+  "rc": 0,
+  "sintesi": "Formato A2 · tratte 56 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 9 · sormonti 5 · avvisi e regole: SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x1",
+  "errore": null,
+  "svg": "488078a6ce7663b7"
+ },
+ {
+  "tavola": "impianto-6a",
+  "processo_s": 0.9,
+  "completa_s": 0.0,
+  "disegna_s": 0.61,
+  "rc": 0,
+  "sintesi": "Formato A2 · tratte 48 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 10 · sormonti 3 · avvisi e regole: HIGHWAY_IS_NOT_STRAIGHT x1, SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x2",
+  "errore": null,
+  "svg": "b29eb24445f744b0"
+ },
+ {
+  "tavola": "impianto-6b",
+  "processo_s": 0.8,
+  "completa_s": 0.0,
+  "disegna_s": 0.53,
+  "rc": 0,
+  "sintesi": "Formato A2 · tratte 48 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 9 · sormonti 3 · avvisi e regole: HIGHWAY_IS_NOT_STRAIGHT x1, PARALLEL_PUMPS_FACE_DIFFERENT_WAYS x1, SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x1",
+  "errore": null,
+  "svg": "62f5699e24e6ec8e"
+ },
+ {
+  "tavola": "impianto-7",
+  "processo_s": 0.7,
+  "completa_s": 0.0,
+  "disegna_s": 0.45,
+  "rc": 0,
+  "sintesi": "Formato A2 · tratte 45 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 7 · sormonti 3 · avvisi e regole: SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x1",
+  "errore": null,
+  "svg": "ac13ad5769198f53"
+ },
+ {
+  "tavola": "prova-po-A",
+  "processo_s": 0.6,
+  "completa_s": 0.03,
+  "disegna_s": 0.31,
+  "rc": 0,
+  "sintesi": "Formato A3 · tratte 24 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 10 · sormonti 5 · avvisi e regole: DRAWING_TOUCHES_THE_BORDER x1, HIGHWAY_IS_NOT_STRAIGHT x2, PARALLEL_RUNS_WITHOUT_A_FREE_LANE x1, RETURN_RUNS_ABOVE_ITS_SUPPLY x1, SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x2, SHEET_TOO_FULL x1",
+  "errore": null,
+  "svg": "746ae57f44735c8c"
+ },
+ {
+  "tavola": "prova-po-B",
+  "processo_s": 0.6,
+  "completa_s": 0.03,
+  "disegna_s": 0.3,
+  "rc": 0,
+  "sintesi": "Formato A3 · tratte 24 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 9 · sormonti 1 · avvisi e regole: DRAWING_TOUCHES_THE_BORDER x1, HIGHWAY_IS_NOT_STRAIGHT x2, RUN_LEAVES_ITS_QUOTA_AND_COMES_BACK x1, SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x3",
+  "errore": null,
+  "svg": "511fc86a9664eff4"
+ },
+ {
+  "tavola": "prova-po-C",
+  "processo_s": 0.6,
+  "completa_s": 0.03,
+  "disegna_s": 0.31,
+  "rc": 0,
+  "sintesi": "Formato A3 · tratte 24 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 9 · sormonti 1 · avvisi e regole: DRAWING_TOUCHES_THE_BORDER x1, HIGHWAY_IS_NOT_STRAIGHT x3, SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x3",
+  "errore": null,
+  "svg": "74c924d181a0cf8c"
+ },
+ {
+  "tavola": "prova-po-D",
+  "processo_s": 0.6,
+  "completa_s": 0.03,
+  "disegna_s": 0.31,
+  "rc": 0,
+  "sintesi": "Formato A3 · tratte 24 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 5 · sormonti 1 · avvisi e regole: DRAWING_TOUCHES_THE_BORDER x1, HIGHWAY_IS_NOT_STRAIGHT x1, SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x1",
+  "errore": null,
+  "svg": "d8c717eacbd9f00d"
+ },
+ {
+  "tavola": "simboli-rel009",
+  "processo_s": 0.7,
+  "completa_s": 0.04,
+  "disegna_s": 0.32,
+  "rc": 0,
+  "sintesi": "Formato A2 · tratte 31 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 3 · sormonti 0 · avvisi e regole: PARALLEL_RUNS_WITHOUT_A_FREE_LANE x1, SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x6, SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x1",
+  "errore": null,
+  "svg": "959b38058eca002e"
+ },
+ {
+  "tavola": "caso-reale-2",
+  "processo_s": 2.3,
+  "completa_s": 0.17,
+  "disegna_s": 1.85,
+  "rc": 0,
+  "sintesi": "Formato A1 · tratte 137 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 13 · sormonti 12 · avvisi e regole: HIGHWAY_IS_NOT_STRAIGHT x1, PIECE_OUTSIDE_ITS_BAND x7, SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x4, SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x4",
+  "errore": null,
+  "svg": "e9dd4a3a4bdd1252"
+ },
+ {
+  "tavola": "prova-pulita-A",
+  "processo_s": 2.3,
+  "completa_s": 0.17,
+  "disegna_s": 1.78,
+  "rc": 0,
+  "sintesi": "Formato A1 · tratte 137 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 15 · sormonti 20 · avvisi e regole: DRAWING_TOUCHES_THE_BORDER x1, HIGHWAY_IS_NOT_STRAIGHT x1, SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x8, SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x4",
+  "errore": null,
+  "svg": "0e6087278f709bba"
+ },
+ {
+  "tavola": "prova-pulita-B",
+  "processo_s": 2.4,
+  "completa_s": 0.18,
+  "disegna_s": 1.85,
+  "rc": 0,
+  "sintesi": "Formato A1 · tratte 137 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 18 · sormonti 14 · avvisi e regole: HIGHWAY_IS_NOT_STRAIGHT x2, PARALLEL_RUNS_WITHOUT_A_FREE_LANE x4, SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x10, SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x4",
+  "errore": null,
+  "svg": "b515ee60829e48f9"
+ },
+ {
+  "tavola": "prova-pulita-C",
+  "processo_s": 2.3,
+  "completa_s": 0.17,
+  "disegna_s": 1.83,
+  "rc": 0,
+  "sintesi": "Formato A1 · tratte 137 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 14 · sormonti 14 · avvisi e regole: HIGHWAY_IS_NOT_STRAIGHT x1, SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x4",
+  "errore": null,
+  "svg": "63f4e29298f4d11d"
+ },
+ {
+  "tavola": "impianto-1-completato",
+  "processo_s": 0.7,
+  "completa_s": 0.04,
+  "disegna_s": 0.35,
+  "rc": 0,
+  "sintesi": "Formato A3 · tratte 25 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 4 · sormonti 1 · avvisi e regole: SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x1, SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x1",
+  "errore": null,
+  "svg": "87be43ca11533820"
+ },
+ {
+  "tavola": "impianto-2-completato",
+  "processo_s": 0.7,
+  "completa_s": 0.03,
+  "disegna_s": 0.38,
+  "rc": 0,
+  "sintesi": "Formato A3 · tratte 25 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 5 · sormonti 1 · avvisi e regole: SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x1, SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x1",
+  "errore": null,
+  "svg": "2d2a7a4b7d52ccbe"
+ },
+ {
+  "tavola": "impianto-3-completato",
+  "processo_s": 0.7,
+  "completa_s": 0.03,
+  "disegna_s": 0.37,
+  "rc": 0,
+  "sintesi": "Formato A3 · tratte 24 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 3 · sormonti 2 · avvisi e regole: SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x2",
+  "errore": null,
+  "svg": "bd5476c73bbf2574"
+ },
+ {
+  "tavola": "impianto-4-completato",
+  "processo_s": 0.7,
+  "completa_s": 0.03,
+  "disegna_s": 0.38,
+  "rc": 0,
+  "sintesi": "Formato A3 · tratte 27 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 6 · sormonti 2 · avvisi e regole: SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x1, SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x2",
+  "errore": null,
+  "svg": "1848e0d230834283"
+ },
+ {
+  "tavola": "impianto-5-completato",
+  "processo_s": 0.9,
+  "completa_s": 0.07,
+  "disegna_s": 0.54,
+  "rc": 0,
+  "sintesi": "Formato A2 · tratte 56 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 9 · sormonti 5 · avvisi e regole: SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x1",
+  "errore": null,
+  "svg": "488078a6ce7663b7"
+ },
+ {
+  "tavola": "impianto-6a-completato",
+  "processo_s": 0.9,
+  "completa_s": 0.05,
+  "disegna_s": 0.56,
+  "rc": 0,
+  "sintesi": "Formato A2 · tratte 48 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 10 · sormonti 3 · avvisi e regole: HIGHWAY_IS_NOT_STRAIGHT x1, SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x2",
+  "errore": null,
+  "svg": "b29eb24445f744b0"
+ },
+ {
+  "tavola": "impianto-6b-completato",
+  "processo_s": 0.9,
+  "completa_s": 0.06,
+  "disegna_s": 0.56,
+  "rc": 0,
+  "sintesi": "Formato A2 · tratte 48 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 9 · sormonti 3 · avvisi e regole: HIGHWAY_IS_NOT_STRAIGHT x1, PARALLEL_PUMPS_FACE_DIFFERENT_WAYS x1, SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x1",
+  "errore": null,
+  "svg": "62f5699e24e6ec8e"
+ }
+]

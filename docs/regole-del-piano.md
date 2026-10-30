@@ -625,6 +625,73 @@ compreso** (D-143). *Tavola:* impianto 5 col pettine, che da A1 è sceso ad A3.
 > **È D-164 vista dall'altro lato:** quando c'è un numero, chi compone lo insegue. Un punteggio
 > si ottimizza, e questo si ottimizzava nel verso sbagliato.
 
+### D4 — Le tabelle stanno nelle loro zone, e le zone le chiede il piano
+
+Una tavola che porta tabelle oltre a quella delle apparecchiature — le tratte, il computo, le
+note e le attività della distinta materiali, le note del progettista — le porta in **due
+zone** che il piano lascia libere: una **a destra** del disegno, accanto alla legenda, e una
+**in basso**, sopra il cartiglio. Il piano le chiede con `"zone_tabelle": {"destra_mm": …,
+"basso_mm": …}`; il foglio resta quello di `formato`, e l'area del disegno si restringe di
+quelle misure: posa, instradamento e controlli lavorano su quel che resta. Le tabelle le
+passa il comando (`disegna --tabelle <file>`, il `tabelle-del-foglio.json` della distinta),
+e il motore le posa: a destra in una colonna se ci stanno, se no in basso, dove la zona si
+divide in colonne. **Il testo non si rimpicciolisce**: se non entrano il comando si ferma e
+lo dice, e si allargano le zone o si prende il formato successivo.
+
+Le tabelle hanno il corpo delle scritte della tavola, 9 punti (I-159). Un computo di sessanta
+voci, con la tabella delle tratte e le note, non entra in un A2: la M.02 del kit aria-aria,
+che le scriveva a 7 punti sull'A2, rifatta dalla skill è un **A1** con zone di 230 mm.
+
+*Fonte:* REL-012, fase 1, punto 5 (I-224) e la M.02 del kit (`RAPPORTO.md` §3 punto 5).
+*Controllo:* il comando, prima di disegnare; sulla tavola, `equipment_table`
+(`validation/preflight.py`) ferma una tabella fuori dalla sua zona.
+*Tavola:* `docs/collaudi/REL-012/fase-2/`.
+
+---
+
+## E. L'aria-aria
+
+Le regole di sopra valgono anche qui: le **autostrade** di un canalizzato sono le linee
+frigorifere fra unità esterna e unità interna, la mandata dall'unità al plenum, i rami del
+plenum alle bocchette e il bus dalla centrale ai termostati. Quello che la M.02 del kit ha
+insegnato in più:
+
+### E1 — Le macchine dell'aria alla quota delle loro porte
+
+Unità esterna e unità interna **alla stessa quota**: le porte del liquido e del gas stanno a
+10 mm l'una dall'altra su tutt'e due, e le linee frigorifere vengono rette. Il plenum alla
+quota dell'unità interna: la mandata è retta. Le bocchette **in colonna**, al passo delle
+uscite del plenum (12,5 mm), ognuna alla quota della sua uscita. La ripresa sopra l'unità,
+sull'asse della bocca di aspirazione. È **B1** con le porte dell'aria.
+
+*Fonte:* il kit aria-aria, `lavoro/piano.json` e `RAPPORTO.md` §3. *Controllo:*
+`HIGHWAY_IS_NOT_STRAIGHT`. *Tavola:* la M.02, 5 pieghe in tutto.
+
+### E2 — La centrale di zona si separa dal plenum, e i termostati stanno in colonna
+
+La centrale **non si attacca al plenum**: sta sotto, sull'asse dei motori delle serrande,
+con le porte di bus sul fianco; i termostati **in colonna** accanto, ognuno alla quota della
+sua porta di bus (passo 15 mm). I bus vengono rettilinei, e le scritte dei termostati hanno
+posto. Alla prima stesura del kit, con la centrale accanto al plenum, i bus erano a L non
+annidate, con sormonti, e le scritte dei termostati troppo vicine erano quattro rilievi
+bloccanti.
+
+*Fonte:* il kit aria-aria, `RAPPORTO.md` §3 punti 3-4 e §6 punto 4. *Controllo:* i
+sormonti del comando (`sormonti`, la voce `incroci` del punteggio) e le scritte del
+preflight (`FREE_LABEL_OMITTED`). *Tavola:* la M.02, zero sormonti.
+
+### E3 — Sotto l'unità interna, i servizi; il quadro sotto l'unità esterna
+
+Sotto l'unità interna: il collegamento all'unità esterna, la condensa col sifone e lo
+scarico **addosso** (A4, allo stacco minimo), il comando a filo. Il quadro sotto l'unità
+esterna, con l'alimentazione dritta in verticale e il sezionatore in linea. ⚠ La scritta
+della condensa si scrive con un richiamo accanto al sifone: una sigla sul sifone le prende il
+posto (`RUN_LABEL_OMITTED`, bloccante), e allungare lo stacco per fargliene apre l'avviso di
+A4.
+
+*Fonte:* il kit aria-aria, `lavoro/piano.json`; REL-012 fase 2. *Controllo:*
+`SERVICE_STUB_LONGER_THAN_ITS_MINIMUM`, `RUN_LABEL_OMITTED`. *Tavola:* la M.02.
+
 ## Quello che manca, e si sa che manca
 
 - ~~**Nessun controllo sa che cos'è un'autostrada.**~~ **Chiuso il 20 settembre 2026**

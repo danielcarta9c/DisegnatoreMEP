@@ -171,7 +171,7 @@ def test_a_plant_that_does_not_fit_fails_with_a_diagnostic() -> None:
         *[item.id for item in extra],
     ]
     part = partition_project(crowded, build_trunks(project, inline))[0]
-    with pytest.raises(LayoutError, match="does not fit|never shrunk"):
+    with pytest.raises(LayoutError, match="non entra|non si rimpiccioliscono"):
         place_sheet(crowded, part, registry, NOVE_C_A3, inline)
 
 

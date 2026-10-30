@@ -33,7 +33,7 @@ from disegnatore_mep.model.project import PortRef, ProjectModel
 
 from .geometry import TOLERANCE_MM, Point, RoutedTrunk, SheetGeometry, moves_of
 from .highways import highways, pavimento_della_catena
-from .trunks import Trunk, build_trunks
+from .trunks import Trunk, build_trunks, porte_di_comando_in_linea
 
 _TOLLERANZA_MM = TOLERANCE_MM
 """Quanto due coordinate possono differire ed essere ancora la stessa.
@@ -127,7 +127,9 @@ def tratte_del_progetto(
     altro posto, perche' due ricostruzioni separate darebbero prima o poi due
     insiemi di tratte diversi sullo stesso impianto.
     """
-    return build_trunks(project, _pezzi_in_linea(project, catalog))
+    return build_trunks(
+        project, _pezzi_in_linea(project, catalog), porte_di_comando_in_linea(project, catalog)
+    )
 
 
 def autostrade_del_progetto(

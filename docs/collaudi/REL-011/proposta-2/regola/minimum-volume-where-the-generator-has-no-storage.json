@@ -1,0 +1,30 @@
+{
+  "id": "minimum-volume-where-the-generator-has-no-storage",
+  "version": "1.0.0",
+  "name": "Volume minimo dell'impianto",
+  "category": "necessary",
+  "cardinality": "per_network",
+  "when": {
+    "network_domain": "hydronic",
+    "network_medium": "heating_water",
+    "anchor_has_function": "heat_generation",
+    "network_lacks_function": "thermal_storage"
+  },
+  "then": {
+    "provides_function": "thermal_storage",
+    "placement": "on_outlet",
+    "inlet_port": "a",
+    "outlet_port": "b",
+    "question": {
+      "text": "su questo circuito il generatore non ha ne' un volano ne' un accumulo. Il volume d'acqua dell'impianto, esclusa la macchina e con le valvole di zona chiuse, raggiunge il minimo che il costruttore chiede? Se si', scrivilo sul generatore («volume minimo: verificato») e la domanda non torna; se no, serve un volano, e quale e dove lo decide il progettista.",
+      "answered_by": {
+        "volume_minimo": "verificato"
+      }
+    }
+  },
+  "satisfied_by": {
+    "scope": "on_the_network"
+  },
+  "rationale": "Una pompa di calore che lavora su poca acqua si accende e si spegne di continuo, e in sbrinamento ruba all'impianto piu' calore di quanto l'impianto ne tenga: il costruttore vuole percio' un volume minimo d'acqua fuori dalla macchina, che resti anche quando le valvole di zona chiudono. Quanti litri abbia l'impianto non lo sa la skill e non lo calcola: lo sa il progettista. La regola riconosce il caso in cui il dubbio c'e' — un generatore senza serbatoio sul proprio circuito — e chiede, invece di mettere un volano per prudenza.",
+  "source": "Manuale Shenling ThermaX R290 6-15 kW, p. 52: volume dell'impianto, esclusa la macchina, almeno 40 l, anche a valvole chiuse; p. 40: tampone di almeno 25 l (6-9 kW) e 40 l (12-15 kW) (letto e ricontrollato in sessione, docs/collaudi/REL-010/RAPPORTO.md par. 2; il manuale non e' nel repository); D-002, la skill non dimensiona; I-046 e D-179, un dato che manca e' una domanda"
+}

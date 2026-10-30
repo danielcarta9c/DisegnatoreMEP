@@ -1,0 +1,232 @@
+diff -ruN -x __pycache__ skill-orig/scripts/disegnatore_mep/diametri/tratti.py skill/scripts/disegnatore_mep/diametri/tratti.py
+--- a/src/disegnatore_mep/diametri/tratti.py	2026-10-29 16:28:38.620898804 +0100
++++ b/src/disegnatore_mep/diametri/tratti.py	2026-10-29 16:28:48.784870297 +0100
+@@ -289,13 +289,39 @@
+ 
+     Senza richiesta del progettista non ce n'e' nessuno (D-193, punto 8), e il
+     conto non si fa nemmeno."""
++    manuali = _tratti_con_scritta(project, catalog, trunks)
+     if project.diametri is None:
+-        return ()
+-    return tuple(
+-        item for item in tratti_del_diametro(project, catalog, trunks) if item.porta_il_dn
++        return manuali
++    coperti = {c for item in manuali for c in item.connection_ids}
++    return manuali + tuple(
++        item for item in tratti_del_diametro(project, catalog, trunks)
++        if item.porta_il_dn and not (item.connection_ids & coperti)
+     )
+ 
+ 
++@dataclass(frozen=True)
++class _ScrittaManuale:
++    scritta: str
++
++
++def _tratti_con_scritta(project, catalog, trunks=None):
++    scritte = {c.id: c.properties.get('scritta') for c in project.connections
++               if isinstance(c.properties.get('scritta'), str) and c.properties.get('scritta').strip()}
++    if not scritte:
++        return ()
++    tutte = list(trunks) if trunks is not None else tratte_del_progetto(project, catalog)
++    tratti = []
++    for tratta in tutte:
++        testi = [scritte[c] for c in tratta.connection_ids if c in scritte]
++        if not testi:
++            continue
++        tratti.append(TrattoDelDiametro(chiavi=(tratta.connection_ids,), reti=(tratta.network_id,),
++                                        capi=(tratta.start, tratta.end), portata_m3h=None, fonti=(),
++                                        diametro=_ScrittaManuale(testi[0]), richiesto=True,
++                                        strada_principale=True))
++    return tuple(tratti)
++
++
+ __all__ = [
+     "TrattoDelDiametro",
+     "tratti_da_etichettare",
+diff -ruN -x __pycache__ skill-orig/scripts/disegnatore_mep/graphics/dxf.py skill/scripts/disegnatore_mep/graphics/dxf.py
+--- a/src/disegnatore_mep/graphics/dxf.py	2026-10-29 16:28:38.621950429 +0100
++++ b/src/disegnatore_mep/graphics/dxf.py	2026-10-29 16:28:48.784099655 +0100
+@@ -134,6 +134,12 @@
+ """Il colore d'indice che AutoCAD disegna nero su fondo bianco e bianco su nero."""
+ 
+ _RETI: dict[tuple[str, bool], str] = {
++    ("power_supply", True): "E-POWR-CIRC",
++    ("power_supply", False): "E-POWR-CIRC",
++    ("interconnection", True): "E-POWR-LINK",
++    ("interconnection", False): "E-POWR-LINK",
++    ("control_bus", True): "E-CTRL-BUS",
++    ("control_bus", False): "E-CTRL-BUS",
+     ("heating_water", True): "M-HWTR-SPLY",
+     ("heating_water", False): "M-HWTR-RETN",
+     ("chilled_water", True): "M-CWTR-SPLY",
+diff -ruN -x __pycache__ skill-orig/scripts/disegnatore_mep/graphics/frame.py skill/scripts/disegnatore_mep/graphics/frame.py
+--- a/src/disegnatore_mep/graphics/frame.py	2026-10-29 16:28:38.622090634 +0100
++++ b/src/disegnatore_mep/graphics/frame.py	2026-10-29 16:28:48.785726043 +0100
+@@ -168,6 +168,20 @@
+         return self
+ 
+ 
++class SheetFrameConTabelle(SheetFrame):
++    """Un telaio ordinario con una riserva per le tabelle (estensione AA-01)."""
++
++    riserva_destra_mm: FiniteFloat = 0.0
++    riserva_sotto_mm: FiniteFloat = 0.0
++
++    @property
++    def drawing_rect_mm(self) -> Rect:
++        body = self.body_rect_mm
++        return Rect(x_mm=body.x_mm, y_mm=body.y_mm,
++                    width_mm=body.width_mm - self.legend_width_mm - self.riserva_destra_mm,
++                    height_mm=body.height_mm - self.riserva_sotto_mm)
++
++
+ NOVE_C_A3 = SheetFrame(standard=A3_LANDSCAPE)
+ 
+ NOVE_C_A4 = SheetFrame(standard=A4_LANDSCAPE)
+@@ -189,6 +203,9 @@
+ non cresce col foglio, contiene le stesse righe di testo alla stessa altezza."""
+ 
+ NOVE_C_A1 = SheetFrame(standard=A1_LANDSCAPE)
++
++NOVE_C_A2T = SheetFrameConTabelle(standard=A2_LANDSCAPE, riserva_destra_mm=175.0, riserva_sotto_mm=135.0)
++"""A2 con le tabelle: disegno in alto a sinistra, tratte e note a destra, computo in basso."""
+ """L'A1 orizzontale (D-148), per l'impianto che non entra nemmeno su A2."""
+ 
+ ORDINARY_FRAMES: tuple[SheetFrame, ...] = (NOVE_C_A3, NOVE_C_A2, NOVE_C_A1)
+diff -ruN -x __pycache__ skill-orig/scripts/disegnatore_mep/graphics/tabella.py skill/scripts/disegnatore_mep/graphics/tabella.py
+--- a/src/disegnatore_mep/graphics/tabella.py	2026-10-29 16:28:38.622785211 +0100
++++ b/src/disegnatore_mep/graphics/tabella.py	2026-10-29 16:28:48.785462916 +0100
+@@ -61,6 +61,10 @@
+     "heat_exchange",
+     "circulation",
+     "expansion",
++    "direct_expansion_terminal",
++    "air_zoning",
++    "zone_control",
++    "unit_control",
+ )
+ """I mestieri delle apparecchiature principali, e il vaso di espansione (I-141).
+ 
+@@ -79,6 +83,7 @@
+     "dhw_storage": ("volume_l",),
+     "expansion": ("volume_l",),
+     "circulation": ("flow_rate_m3h", "head_kpa", "head_m"),
++    "direct_expansion_terminal": ("power_kw", "flow_rate_m3h"),
+ }
+ """Che cosa si scrive fra le caratteristiche, secondo il mestiere del pezzo.
+ 
+diff -ruN -x __pycache__ skill-orig/scripts/disegnatore_mep/layout/diametri.py skill/scripts/disegnatore_mep/layout/diametri.py
+--- a/src/disegnatore_mep/layout/diametri.py	2026-10-29 16:28:38.623607378 +0100
++++ b/src/disegnatore_mep/layout/diametri.py	2026-10-29 16:28:48.785172067 +0100
+@@ -101,8 +101,8 @@
+ un'altra linea si legge come il suo DN. **Taratura** della sessione, da giudicare
+ sulla tavola."""
+ 
+-CAMPIONE_DELLA_LEGENDA = "Øi"
+-TESTO_DELLA_LEGENDA = "diametro interno netto minimo in mm, materiale a scelta"
++CAMPIONE_DELLA_LEGENDA = "Ø · L"
++TESTO_DELLA_LEGENDA = "diametro o sezione e lunghezza da quotare (riserva compresa) di ogni tratto: tabella delle tratte"
+ """La riga della legenda che spiega la scritta (I-155): la frase e' quella che il
+ PO ha scelto con la proposta."""
+ 
+diff -ruN -x __pycache__ skill-orig/scripts/disegnatore_mep/layout/legend.py skill/scripts/disegnatore_mep/layout/legend.py
+--- a/src/disegnatore_mep/layout/legend.py	2026-10-29 16:28:38.624434660 +0100
++++ b/src/disegnatore_mep/layout/legend.py	2026-10-29 16:28:48.784731579 +0100
+@@ -132,12 +132,15 @@
+     "supply_air": ("#148f77", "none"),
+     "return_air": ("#148f77", "4 2"),
+     "refrigerant_liquid": ("#6c3483", "none"),
+-    "refrigerant_gas": ("#6c3483", "6 2"),
++    "refrigerant_gas": ("#6c3483", "3 1.5"),
+     "condensate": ("#616a6b", "2 2"),
+     # Il circuito solare (D-187): magenta, a tratto pieno come l'acqua di
+     # riscaldamento. La tonalita' e' una scelta di questa sessione: lontana dal
+     # viola del refrigerante e dal rosso del riscaldamento.
+     "solar_fluid": ("#c71585", "none"),
++    "power_supply": ("#b03a2e", "4 1 1 1"),
++    "interconnection": ("#a04000", "4 1 1 1 1 1"),
++    "control_bus": ("#1f618d", "1.5 1.5"),
+ }
+ """Colore e tratto per fluido (D-057).
+ 
+@@ -159,6 +162,9 @@
+     "refrigerant_gas": "Refrigerante gas",
+     "condensate": "Condensa",
+     "solar_fluid": "Fluido solare",
++    "power_supply": "Alimentazione elettrica 230 V",
++    "interconnection": "Collegamento UI-UE (alimentazione e segnale)",
++    "control_bus": "Bus di comando e regolazione",
+ }
+ """Denominazione italiana del fluido, per la legenda (D-051)."""
+ 
+@@ -183,6 +189,10 @@
+     # Il solare torna dello stesso magenta con cui va (D-187): il PO, «magenta
+     # sia mandata che ritorno».
+     "#c71585": "#c71585",
++    "#b03a2e": "#b03a2e",
++    "#a04000": "#a04000",
++    "#1f618d": "#1f618d",
++    "#616a6b": "#616a6b",
+ }
+ """Il colore del ritorno, dato quello della mandata.
+ 
+@@ -202,7 +212,14 @@
+ cosi' (D-176): una rete aperta non ha altro ritorno che quello."""
+ 
+ 
++NON_DIREZIONALI = frozenset({"supply_air", "return_air", "refrigerant_liquid", "refrigerant_gas",
++                             "condensate", "power_supply", "interconnection", "control_bus"})
++"""Fluidi che in legenda non hanno andata e ritorno (estensione aria-aria, AA-01)."""
++
++
+ def style_for(medium: str, supply: bool = True) -> tuple[str, str]:
++    if medium in NON_DIREZIONALI:
++        return MEDIUM_STYLES.get(medium, DEFAULT_STYLE)
+     colour, dash = MEDIUM_STYLES.get(medium, DEFAULT_STYLE)
+     if supply:
+         return colour, dash
+@@ -254,6 +271,9 @@
+         )
+         for medium, name in sorted(by_medium.items())
+         for supply in (True, False)
++        if medium not in NON_DIREZIONALI
++    ] + [
++        (medium, name, True) for medium, name in sorted(by_medium.items()) if medium in NON_DIREZIONALI
+     ]
+     # **Una riga per ogni linea che la tavola disegna, e nessuna per quelle che
+     # non ci sono.** Fino al 23 settembre 2026 la legenda elencava andata e
+@@ -263,6 +283,7 @@
+     # ricircolo l'impianto non lo aveva. L'ha visto un agente in camera pulita.
+     if routes is not None:
+         disegnate = {(route.medium, route.supply) for route in routes}
++        disegnate |= {(route.medium, True) for route in routes if route.medium in NON_DIREZIONALI}
+         keys = [key for key in keys if (key[0], key[2]) in disegnate]
+     # Il solare va e torna dello stesso magenta (D-187): due righe uguali non
+     # distinguono niente, per la stessa ragione per cui primario e secondario ne
+diff -ruN -x __pycache__ skill-orig/scripts/disegnatore_mep/piano/esecutore.py skill/scripts/disegnatore_mep/piano/esecutore.py
+--- a/src/disegnatore_mep/piano/esecutore.py	2026-10-29 16:28:38.625458285 +0100
++++ b/src/disegnatore_mep/piano/esecutore.py	2026-10-29 16:28:48.786133088 +0100
+@@ -95,6 +95,10 @@
+ 
+ def _frame(nome: str) -> SheetFrame:
+     """La squadratura del formato che il piano ha chiesto."""
++    if nome == "A2T":
++        from disegnatore_mep.graphics.frame import NOVE_C_A2T
++
++        return NOVE_C_A2T
+     voluta = _LARGHEZZE_MM[nome]
+     for item in ORDINARY_FRAMES:
+         if abs(item.standard.sheet_width_mm - voluta) < 1e-6:
+diff -ruN -x __pycache__ skill-orig/scripts/disegnatore_mep/piano/formato.py skill/scripts/disegnatore_mep/piano/formato.py
+--- a/src/disegnatore_mep/piano/formato.py	2026-10-29 16:28:38.625559711 +0100
++++ b/src/disegnatore_mep/piano/formato.py	2026-10-29 16:28:48.785873684 +0100
+@@ -53,7 +53,7 @@
+ quella si spostano insieme.
+ """
+ 
+-FormatoOrdinario = Literal["A3", "A2", "A1"]
++FormatoOrdinario = Literal["A3", "A2", "A1", "A2T"]
+ """Il tipo di `PianoDiComposizione.formato`: uno dei tre, e basta (D-186)."""
+ 
+ 

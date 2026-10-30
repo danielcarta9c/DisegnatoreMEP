@@ -289,6 +289,42 @@ def _line_boxes(routes: list[RoutedTrunk] | None) -> list[Box]:
     return boxes
 
 
+def fasce_delle_scritte(
+    routes: list[RoutedTrunk] | None, scritte: frozenset[str], corpo_mm: float
+) -> list[Box]:
+    """La fascia di una linea **che porta la sua scritta** (collaudo T1 di REL-012, §3).
+
+    Una scritta di pezzo a meno di un corpo sopra o sotto un tratto orizzontale si
+    legge come la scritta della linea: sul canalizzato del collaudo «Terrazzo», la
+    scritta dell'unita' esterna, stava sopra la linea del gas accanto a «5/8" · L 9
+    m». Il franco di ogni linea (`LINE_CLEARANCE_MM`) la lasciava passare.
+
+    La fascia vale solo per i tratti orizzontali delle linee che il progettista ha
+    scritto (`scritte`, gli id delle tubazioni con la scritta del tratto, REL-012): e'
+    li' che due testi lungo la stessa linea si confondono. Un tratto verticale porta la
+    sua scritta girata, e un testo diritto accanto non si legge come sua. **Una
+    tavola senza scritte di tratto non ha fasce**: le tavole idroniche non cambiano."""
+    if not scritte:
+        return []
+    fasce: list[Box] = []
+    for route in routes or []:
+        if not scritte & set(route.connection_ids):
+            continue
+        for segment in route.segments:
+            for before, after in zip(segment, segment[1:], strict=False):
+                if abs(before.y_mm - after.y_mm) > TOLERANCE_MM:
+                    continue
+                fasce.append(
+                    (
+                        min(before.x_mm, after.x_mm),
+                        before.y_mm - corpo_mm,
+                        max(before.x_mm, after.x_mm),
+                        before.y_mm + corpo_mm,
+                    )
+                )
+    return fasce
+
+
 def _line_segments(routes: list[RoutedTrunk] | None) -> list[Segment]:
     return [
         (before, after)
@@ -351,6 +387,13 @@ def _texts_of(
     if item.tag:
         texts.append((f"{item.component_id}-tag", item.tag, "tag"))
     if item.component_id in senza_valori:
+        # **La scritta libera resta** (REL-012, §6.2 del kit): non e' un dato che la
+        # tabella ripete, e' quello che il progettista vuole leggere accanto al pezzo
+        # (I-194). Senza, il preflight fermava la tavola (`FREE_LABEL_OMITTED`) per
+        # una scritta che la posa stessa aveva tolto.
+        scritta = format_value(ETICHETTA, properties.get(item.component_id, {}).get(ETICHETTA))
+        if scritta is not None:
+            texts.append((f"{item.component_id}-{ETICHETTA}", scritta, "data"))
         return texts
     for key in sorted(properties.get(item.component_id, {})):
         value = format_value(key, properties[item.component_id][key])
@@ -577,6 +620,7 @@ def _canvas(
     standard: GraphicStandard,
     area: Rect | None,
     ostacoli: Sequence[Box] = (),
+    fasce: Sequence[Box] = (),
 ) -> _Canvas:
     """L'area di disegno e' quella del formato, se chi chiama non la passa:
     il margine e' un conflitto come gli altri, e un testo non lo scavalca.
@@ -588,7 +632,7 @@ def _canvas(
     return _Canvas(
         area=(rect.x_mm, rect.y_mm, rect.right_mm, rect.bottom_mm),
         symbols=[*(_symbol_box(item) for item in placed), *ostacoli],
-        lines=_line_boxes(routes),
+        lines=[*_line_boxes(routes), *fasce],
         line_segments=_line_segments(routes),
         pezzi={item.component_id: _symbol_box(item) for item in placed},
     )
@@ -699,6 +743,69 @@ def place_addresses(
     return labels
 
 
+def place_tags_that_yield(
+    placed: list[PlacedSymbol],
+    tags: dict[str, str],
+    standard: GraphicStandard,
+    *,
+    routes: list[RoutedTrunk] | None = None,
+    already: list[PlacedLabel] | None = None,
+    occupied: Sequence[tuple[Box, Sequence[Segment]]] = (),
+    area: Rect | None = None,
+    ostacoli: Sequence[Box] = (),
+    linee_scritte: frozenset[str] = frozenset(),
+) -> list[PlacedLabel]:
+    """Le sigle **che cedono**: si posano dopo tutte le altre scritte, anche dopo
+    quelle dei tratti, e non ne tolgono il posto a nessuna (collaudo T1 di REL-012).
+
+    Sono le sigle dei pezzi fuori dall'acqua — bocchette, termostati, quadro,
+    sezionatore, sifone, scarico (`graphics.tabella.fuori_dall_acqua`). La scritta di
+    un tratto e' un dato del progettista e la tavola non esce senza
+    (`RUN_LABEL_OMITTED`, bloccante); la sigla di un sezionatore su un tratto corto
+    no: se non trova un lato libero ne' un richiamo pulito si omette, e il
+    preflight lo dice (`TAG_OMITTED`, avviso). Sul collaudo, posate insieme alle
+    altre sigle, quella del sifone e quella del sezionatore toglievano il posto alla
+    scritta del loro tratto, e la tavola si fermava.
+
+    `occupied` sono i riquadri e i richiami gia' sulla tavola che non sono sigle: le
+    scritte dei tratti."""
+    height = standard.text_small_mm
+    step = standard.grid_mm
+    canvas = _canvas(
+        placed, routes, standard, area, ostacoli, fasce_delle_scritte(routes, linee_scritte, height)
+    )
+    pezzi = sorted((item.component_id for item in placed), key=len, reverse=True)
+    for written in already or ():
+        # Di chi e' una scritta: il suo id comincia con quello del pezzo.
+        padrone = next((pezzo for pezzo in pezzi if written.id.startswith(f"{pezzo}-")), None)
+        canvas.take(riquadro_della_scritta(written, height), segmenti_del_richiamo(written), padrone)
+    for box, segmenti in occupied:
+        # Un corpo tutt'intorno: una scritta di tratto staccata vuole un corpo di
+        # vuoto da cio' che non e' il suo tratto (`DETACHED_DIAMETER_CROWDED`), e una
+        # sigla che arriva dopo non glielo toglie.
+        canvas.take(
+            (box[0] - height, box[1] - height, box[2] + height, box[3] + height), list(segmenti)
+        )
+    labels: list[PlacedLabel] = []
+    for item in placed:
+        text = tags.get(item.component_id)
+        if text is None:
+            continue
+        settled = _settle(
+            item,
+            f"{item.component_id}-tag",
+            text,
+            "tag",
+            0,
+            height_mm=height,
+            step_mm=step,
+            canvas=canvas,
+        )
+        if settled is not None:
+            labels.append(settled)
+    return labels
+
+
 def place_labels(
     project: ProjectModel,
     placed: list[PlacedSymbol],
@@ -709,6 +816,7 @@ def place_labels(
     area: Rect | None = None,
     ostacoli: Sequence[Box] = (),
     senza_valori: frozenset[str] = frozenset(),
+    linee_scritte: frozenset[str] = frozenset(),
 ) -> list[PlacedLabel]:
     """Sigle e valori, scritti piccoli accanto al proprio componente (D-075).
 
@@ -723,6 +831,8 @@ def place_labels(
     sopra una linea senza che nulla se ne accorga. Resta opzionale perche' i
     testi si posano anche quando le tratte non sono ancora instradate.
     `floor_y_mm` e' accettato per compatibilita' e non e' usato (D-121).
+    `linee_scritte` sono le tubazioni che portano la scritta del tratto: un testo di
+    pezzo non sta nella loro fascia (`fasce_delle_scritte`).
 
     Deterministico: l'ordine segue quello dei simboli posati, e a parita' di
     ingombro la ricerca percorre sempre gli stessi lati nello stesso ordine.
@@ -731,7 +841,9 @@ def place_labels(
     properties = {item.id: item.properties for item in project.components}
     height = standard.text_small_mm
     step = standard.grid_mm
-    canvas = _canvas(placed, routes, standard, area, ostacoli)
+    canvas = _canvas(
+        placed, routes, standard, area, ostacoli, fasce_delle_scritte(routes, linee_scritte, height)
+    )
     labels: list[PlacedLabel] = []
     for item in placed:
         slots = {"tag": 0, "data": 0}

@@ -75,6 +75,7 @@ Rieseguire questo script deve produrre file bit per bit identici.
 """
 
 import json
+import math
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -1630,6 +1631,545 @@ def polyphosphate_doser_body(w: float, h: float) -> str:
     )
 
 
+# --- REL-012, l'aria-aria del kit del PO (I-224) ------------------------------
+# Undici simboli disegnati dalla sessione del 29 ottobre 2026 su un canalizzato
+# aria-aria reale (caso AA-01) e consegnati dal PO nel kit
+# `docs/input-pm/2026-10-29-kit-aria-aria/`. Il PO, guardandoli sulla tavola M.02:
+# sono «fatti molto bene». Qui sono **rifatti nel generatore**, non copiati: la
+# forma e' quella del kit al decimo di millimetro, e i monconi, i collari e i
+# morsetti si ricavano dalle porte. La forma resta una proposta, che il PO
+# approva sulla tavola (D-081, D-083): nessuna fonte esterna e' citata, perche'
+# nessuna e' stata acquisita.
+
+SOURCE_REL012_KIT = (
+    "proposta della sessione del 29/10/2026 (caso di prova AA-01, canalizzato aria-aria): "
+    "forma da approvare dal PO sulla tavola"
+)
+"""La fonte dei simboli del kit, con le parole del kit (`RAPPORTO.md` §5.1)."""
+
+SOURCE_REL012_PLENUM = (
+    "proposta della sessione del 29/10/2026 (collaudo T1 di REL-012, plenum a quattro uscite): "
+    "lo stesso disegno del plenum a cinque serrande del kit AA-01, con le serrande che il "
+    "plenum ha; forma da approvare dal PO sulla tavola"
+)
+"""La fonte dei plenum di zona che il kit non aveva: da due a sei serrande."""
+
+SPLIT_UNIT = MACHINE
+"""Unita' esterna e unita' interna hanno la taglia di una macchina (D-055)."""
+ZONING_PLENUM_PITCH = 12.5
+"""Il passo delle uscite del plenum di zona: quello del kit."""
+ZONING_PLENUM_FIRST_OUTLET = 5.0
+"""La prima uscita a 5 mm dal bordo di sopra, l'ultima a 2,5 da quello di sotto."""
+ZONING_PLENUM_OUTLET_COUNTS = (2, 3, 4, 5, 6)
+"""Quante serrande ha un plenum di zona: da due a sei (collaudo T1 di REL-012, §2.1).
+Airzone e gli altri costruttori li fanno da 2 a 6-8 bocche; il catalogo ne porta
+una voce per numero, ognuna con le uscite tutte obbligatorie."""
+NUMERI_IN_LETTERE = {2: "due", 3: "tre", 4: "quattro", 5: "cinque", 6: "sei"}
+"""Il numero delle serrande come lo dice il nome: «a quattro serrande»."""
+
+
+def zoning_plenum_size(outlets: int) -> tuple[float, float]:
+    """Il riquadro del plenum a `outlets` uscite: largo 40, alto quanto le uscite
+    a passo 12,5 — 57,5 per le cinque del kit."""
+    return (40.0, ZONING_PLENUM_FIRST_OUTLET + ZONING_PLENUM_PITCH * (outlets - 1) + 2.5)
+
+
+def zoning_plenum_outlets(outlets: int) -> tuple[float, ...]:
+    return tuple(ZONING_PLENUM_FIRST_OUTLET + ZONING_PLENUM_PITCH * indice for indice in range(outlets))
+
+
+ZONING_PLENUM = zoning_plenum_size(5)
+"""Cinque uscite a passo 12,5, la prima e l'ultima a 2,5 dai bordi del plenum."""
+ZONING_PLENUM_OUTLETS = zoning_plenum_outlets(5)
+ZONE_CONTROLLER = (30.0, 60.0)
+"""La centrale di zona: alta perche' le porte di bus stanno a 15 mm l'una
+dall'altra, e un termostato (10 x 10) per porta si impila in colonna."""
+ZONE_CONTROLLER_BUSES = (7.5, 22.5, 37.5, 52.5)
+ELECTRICAL_PANEL = (25.0, 15.0)
+MACHINE_SHELL_INSET = 2.5
+"""L'involucro delle macchine del kit sta a un passo dal riquadro: i monconi
+vanno dal bordo dell'involucro alla porta."""
+CONTROL_TERMINAL_RADIUS = 0.9
+"""Il morsetto di una porta di bus o di comando: un cerchietto vuoto dentro
+l'involucro, davanti al moncone."""
+
+SPLIT_OUTDOOR_PORTS = [
+    # Le porte frigorifere a 10 mm l'una dall'altra, alle stesse quote di
+    # quelle dell'unita' interna: le linee restano diritte se le due unita'
+    # stanno alla stessa altezza (kit, `RAPPORTO.md` §5.1).
+    port_at("liquid", "right", 7.5, *SPLIT_UNIT),
+    port_at("gas", "right", 17.5, *SPLIT_UNIT),
+    port_at("power", "bottom", 10.0, *SPLIT_UNIT),
+    port_at("link", "bottom", 27.5, *SPLIT_UNIT),
+]
+DUCTED_INDOOR_PORTS = [
+    port_at("liquid", "left", 7.5, *SPLIT_UNIT),
+    port_at("gas", "left", 17.5, *SPLIT_UNIT),
+    port_at("supply", "right", 12.5, *SPLIT_UNIT),
+    port_at("p1p2_a", "right", 25.0, *SPLIT_UNIT),
+    port_at("return", "top", 20.0, *SPLIT_UNIT),
+    port_at("link", "bottom", 7.5, *SPLIT_UNIT),
+    port_at("drain", "bottom", 22.5, *SPLIT_UNIT),
+    port_at("p1p2_b", "bottom", 32.5, *SPLIT_UNIT),
+]
+def zoning_plenum_ports(outlets: int) -> list[dict[str, Any]]:
+    """L'ingresso a sinistra alla quota della mandata dell'unita' interna, i motori
+    sotto al centro, e le uscite a destra."""
+    size = zoning_plenum_size(outlets)
+    return [
+        port_at("in", "left", 12.5, *size),
+        port_at("motori", "bottom", size[0] / 2, *size),
+        *(
+            port_at(f"out_{indice + 1}", "right", y, *size)
+            for indice, y in enumerate(zoning_plenum_outlets(outlets))
+        ),
+    ]
+
+
+ZONING_PLENUM_PORTS = zoning_plenum_ports(5)
+ZONE_CONTROLLER_PORTS = [
+    port_at("serrande", "top", ZONE_CONTROLLER[0] / 2, *ZONE_CONTROLLER),
+    port_at("p1p2", "left", 10.0, *ZONE_CONTROLLER),
+    port_at("power", "left", 20.0, *ZONE_CONTROLLER),
+    *(
+        port_at(f"bus_{indice + 1}", "right", y, *ZONE_CONTROLLER)
+        for indice, y in enumerate(ZONE_CONTROLLER_BUSES)
+    ),
+]
+ELECTRICAL_PANEL_PORTS = [
+    # Le due uscite del kit, sopra, dove sono sempre state.
+    port_at("out_1", "top", 7.5, *ELECTRICAL_PANEL),
+    port_at("out_2", "top", 17.5, *ELECTRICAL_PANEL),
+    # Fino a sei (collaudo T1 e fase 3 di REL-012): le altre in senso orario, sulle
+    # facce che erano libere — destra, sotto da destra a sinistra, sinistra. Sono
+    # facoltative, e una non collegata non si disegna (`data-port`).
+    port_at("out_3", "right", ELECTRICAL_PANEL[1] / 2, *ELECTRICAL_PANEL),
+    port_at("out_4", "bottom", 17.5, *ELECTRICAL_PANEL),
+    port_at("out_5", "bottom", 7.5, *ELECTRICAL_PANEL),
+    port_at("out_6", "left", ELECTRICAL_PANEL[1] / 2, *ELECTRICAL_PANEL),
+]
+
+
+def _segment(x1: float, y1: float, x2: float, y2: float) -> str:
+    return f'<line x1="{n(x1)}" y1="{n(y1)}" x2="{n(x2)}" y2="{n(y2)}"/>'
+
+
+def _stub(item: dict[str, Any], w: float, h: float, inset: float) -> str:
+    """Il moncone di una porta fino a un involucro che sta a `inset` dal riquadro.
+
+    Tracciato dalla coordinata minore alla maggiore, com'e' nel kit: sulla
+    faccia sinistra e su quella in alto parte dalla porta, sulle altre due
+    dall'involucro."""
+    x, y = item["x_mm"], item["y_mm"]
+    return {
+        "left": _segment(x, y, inset, y),
+        "right": _segment(w - inset, y, x, y),
+        "top": _segment(x, y, x, inset),
+        "bottom": _segment(x, h - inset, x, y),
+    }[item["face"]]
+
+
+def _by_id(ports: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
+    return {item["id"]: item for item in ports}
+
+
+def _of_port(item: dict[str, Any], contenuto: str) -> str:
+    """Il moncone di una porta nel suo gruppo `data-port` (collaudo T1 di REL-012, §3).
+
+    Il motore toglie il gruppo di una porta **che la tavola non collega**: una porta
+    facoltativa libera non disegna niente, e un moncone che non porta a nessuna
+    linea non si legge piu' come un attacco libero. Solo le macchine dell'aria-aria
+    e del comando lo hanno; i simboli idronici restano com'erano, byte per byte."""
+    return f'<g data-port="{item["id"]}">{contenuto}</g>'
+
+
+def _fan(cx: float, cy: float, r: float) -> str:
+    """Il ventilatore delle unita' del kit: il disco e tre pale a 120 gradi.
+
+    Le pale sono lunghe tre quarti del raggio, al decimo, e i capi sono scritti
+    al centesimo, come nel kit: e' la stessa elica di `fan_body`, piu' grande."""
+    pala = round(r * 0.747, 1)
+    capi = "".join(
+        _segment(
+            cx,
+            cy,
+            round(cx + pala * math.cos(math.radians(angolo)), 2),
+            round(cy + pala * math.sin(math.radians(angolo)), 2),
+        )
+        for angolo in (270, 150, 30)
+    )
+    return f'<circle cx="{n(cx)}" cy="{n(cy)}" r="{n(r)}"/>' + capi
+
+
+def _shell(w: float, h: float) -> str:
+    inset = MACHINE_SHELL_INSET
+    return f'<rect x="{n(inset)}" y="{n(inset)}" width="{n(w - 2 * inset)}" height="{n(h - 2 * inset)}"/>'
+
+
+def split_outdoor_body(w: float, h: float, ports: list[dict[str, Any]]) -> str:
+    """Unita' esterna ad espansione diretta: l'involucro, il ventilatore e il
+    compressore — un cerchio con il triangolo vuoto, il segno del compressore
+    della pratica frigorifera."""
+    cy, r = h / 2, h / 6
+    cx = w * 0.725
+    compressore = (
+        f'<circle cx="{n(cx)}" cy="{n(cy)}" r="{n(r)}"/>'
+        f'<path d="M{n(cx - r * 0.56)} {n(cy + r * 0.66)} L{n(cx)} {n(cy - r * 0.84)} '
+        f'L{n(cx + r * 0.56)} {n(cy + r * 0.66)} Z"/>'
+    )
+    return (
+        _shell(w, h)
+        + _fan(w * 0.325, cy, h / 4)
+        + compressore
+        + "".join(_of_port(item, _stub(item, w, h, MACHINE_SHELL_INSET)) for item in ports)
+    )
+
+
+COLLAR_OUTSET = 0.5
+"""Il collare di un canale si chiude a mezzo millimetro dalla faccia, come quello
+della ripresa dell'unita' interna."""
+
+
+def _air_collar(item: dict[str, Any], half: float) -> str:
+    """Il collare di un canale su una faccia laterale: un riquadro largo `half` per
+    parte, fra l'involucro e la faccia, **chiuso** dalla parte del canale.
+
+    Nel kit erano due tratti paralleli aperti, e sulla tavola del collaudo T1 di
+    REL-012 (§3) si leggevano come due monconi liberi sopra e sotto la mandata.
+    Chiuso, e' lo stesso collare della ripresa, girato sul fianco. *Proposta della
+    sessione*, da giudicare sulla tavola."""
+    x, y = item["x_mm"], item["y_mm"]
+    dentro = MACHINE_SHELL_INSET if item["face"] == "left" else x - MACHINE_SHELL_INSET
+    fuori = COLLAR_OUTSET if item["face"] == "left" else x - COLLAR_OUTSET
+    return (
+        f'<path d="M{n(dentro)} {n(y - half)} L{n(fuori)} {n(y - half)} '
+        f'L{n(fuori)} {n(y + half)} L{n(dentro)} {n(y + half)}"/>'
+    )
+
+
+def ducted_indoor_body(w: float, h: float, ports: list[dict[str, Any]]) -> str:
+    """Unita' interna canalizzata: la batteria a due ranghi, il ventilatore
+    sull'asse della mandata, la vaschetta della condensa con la pompa, e i
+    collari dei canali di mandata e di ripresa."""
+    porte = _by_id(ports)
+    inset = MACHINE_SHELL_INSET
+
+    def rango(x: float) -> str:
+        punti = " L".join(
+            f"{n(x + (3.0 if indice % 2 else 0.0))} {n(5.0 + 2.0 * indice)}" for indice in range(9)
+        )
+        return f'<path d="M{punti}"/>'
+
+    mandata, ripresa, scarico = porte["supply"], porte["return"], porte["drain"]
+    vasca_alto, vasca_basso = h - 6.5, h - 4.5
+    pompa_r = 1.5
+    pompa_cy = vasca_alto - pompa_r
+    ripresa_mezzo = 5.0
+    parts = [
+        _shell(w, h),
+        rango(7.0),
+        rango(12.0),
+        _fan(w * 0.675, mandata["y_mm"], 5.5),
+        f'<path d="M{n(inset + 2)} {n(vasca_alto)} L{n(inset + 2)} {n(vasca_basso)} '
+        f'L{n(w - inset - 2)} {n(vasca_basso)} L{n(w - inset - 2)} {n(vasca_alto)}"/>',
+        f'<circle cx="{n(scarico["x_mm"])}" cy="{n(pompa_cy)}" r="{n(pompa_r)}"/>',
+    ]
+    for item in ports:
+        moncone = ""
+        if item is mandata:
+            moncone += _air_collar(item, 3.0)
+        if item is ripresa:
+            x = item["x_mm"]
+            moncone += (
+                f'<path d="M{n(x - ripresa_mezzo)} {n(inset)} L{n(x - ripresa_mezzo)} 0.5 '
+                f'L{n(x + ripresa_mezzo)} 0.5 L{n(x + ripresa_mezzo)} {n(inset)}"/>'
+            )
+        if item is scarico:
+            # Lo scarico parte dalla pompa della condensa, non dall'involucro.
+            moncone += _segment(item["x_mm"], vasca_alto, item["x_mm"], item["y_mm"])
+        else:
+            moncone += _stub(item, w, h, inset)
+        parts.append(_of_port(item, moncone))
+    return "".join(parts)
+
+
+def zoning_plenum_body(w: float, h: float, ports: list[dict[str, Any]]) -> str:
+    """Plenum motorizzato di zona: l'ingresso con il suo collare, il collettore
+    interno e, su ogni uscita, la serranda motorizzata — un riquadro con la lama
+    di traverso, come la serranda della libreria."""
+    porte = _by_id(ports)
+    ingresso = porte["in"]
+    collettore_x = w / 2
+    uscite = [item for item in ports if item["id"].startswith("out_")]
+    y_in = ingresso["y_mm"]
+    # Il collettore va dalla prima all'ultima uscita, e comunque fino all'ingresso:
+    # nel plenum a due uscite l'ingresso sta fra le due.
+    collettore = sorted((uscite[0]["y_mm"], uscite[-1]["y_mm"], y_in))
+    parts = [
+        f'<rect x="{n(MACHINE_SHELL_INSET)}" y="0" width="{n(w - 2 * MACHINE_SHELL_INSET)}" height="{n(h)}"/>',
+        _of_port(ingresso, _segment(0, y_in, MACHINE_SHELL_INSET, y_in) + _air_collar(ingresso, 3.0)),
+        _segment(MACHINE_SHELL_INSET, y_in, collettore_x, y_in),
+        _segment(collettore_x, collettore[0], collettore_x, collettore[-1]),
+    ]
+    serranda_x, serranda_w, serranda_h = w * 0.6875, 5.0, 4.0
+    for item in uscite:
+        y = item["y_mm"]
+        parts.append(
+            f'<rect x="{n(serranda_x)}" y="{n(y - serranda_h / 2)}" width="{n(serranda_w)}" '
+            f'height="{n(serranda_h)}"/>'
+            + _segment(serranda_x + 0.5, y + 1.5, serranda_x + serranda_w - 0.5, y - 1.5)
+            + _of_port(item, _segment(serranda_x + serranda_w, y, w, y))
+            + _segment(collettore_x, y, serranda_x, y)
+        )
+    # La porta dei motori sta sul bordo inferiore del plenum: il bordo la tocca.
+    return "".join(parts)
+
+
+def _display(x: float, y: float) -> str:
+    """Il visore di una centrale: un riquadro 12 x 7 con una riga."""
+    return f'<rect x="{n(x)}" y="{n(y)}" width="12" height="7"/>' + _segment(x + 2, y + 3.5, x + 10, y + 3.5)
+
+
+def _terminal(item: dict[str, Any], w: float, h: float) -> str:
+    """Il morsetto davanti a una porta di comando, dentro l'involucro."""
+    x, y = item["x_mm"], item["y_mm"]
+    cx, cy = {
+        "right": (w - 2 * MACHINE_SHELL_INSET, y),
+        "left": (2 * MACHINE_SHELL_INSET, y),
+        "bottom": (x, h - 2 * MACHINE_SHELL_INSET),
+        "top": (x, 2 * MACHINE_SHELL_INSET),
+    }[item["face"]]
+    return f'<circle cx="{n(cx)}" cy="{n(cy)}" r="{n(CONTROL_TERMINAL_RADIUS)}"/>'
+
+
+def zone_controller_body(w: float, h: float, ports: list[dict[str, Any]]) -> str:
+    """Centrale di zona: l'involucro, il visore, e un morsetto per ogni porta di
+    bus dei termostati."""
+    fissi = [item for item in ports if not item["id"].startswith("bus_")]
+    bus = [item for item in ports if item["id"].startswith("bus_")]
+    return (
+        _shell(w, h)
+        + "".join(_of_port(item, _stub(item, w, h, MACHINE_SHELL_INSET)) for item in fissi)
+        + _display(6.0, 6.0)
+        + "".join(
+            _of_port(item, _stub(item, w, h, MACHINE_SHELL_INSET) + _terminal(item, w, h))
+            for item in bus
+        )
+    )
+
+
+def return_grille_body(w: float, h: float) -> str:
+    """Griglia di ripresa con plenum e filtro: il riquadro con le alette, la
+    bocchetta di mandata della libreria vista allo specchio."""
+    x, y = w * 0.08, h * 0.12
+    bw, bh = w * 0.72, h * 0.76
+    alette = "".join(_segment(x, y + bh * i / 4, x + bw, y + bh * i / 4) for i in (1, 2, 3))
+    return (
+        f'<rect x="{n(x)}" y="{n(y)}" width="{n(bw)}" height="{n(bh)}"/>'
+        + alette
+        + _segment(x + bw, h / 2, w, h / 2)
+    )
+
+
+def condensate_trap_body(w: float, h: float) -> str:
+    """Sifone ispezionabile: la U sotto la linea e, sopra il primo ramo, il tappo
+    d'ispezione."""
+    cy = h / 2
+    a, b, fondo = w * 0.3, w * 0.7, h * 0.92
+    return (
+        f'<path d="M0 {n(cy)} L{n(a)} {n(cy)} L{n(a)} {n(fondo)} L{n(b)} {n(fondo)} '
+        f'L{n(b)} {n(cy)} L{n(w)} {n(cy)}"/>'
+        + _segment(a, h * 0.12, a, cy)
+    )
+
+
+def condensate_outlet_body(w: float, h: float) -> str:
+    """Allaccio allo scarico: l'imbuto con il tubo che scende fino alla linea di
+    scarico."""
+    cx = w / 2
+    bocca, punta, fondo = h * 0.3, h * 0.62, h * 0.9
+    return (
+        _segment(cx, 0, cx, bocca)
+        + f'<path d="M0.5 {n(bocca)} L{n(w - 0.5)} {n(bocca)} L{n(cx)} {n(punta)} Z"/>'
+        + _segment(cx, punta, cx, fondo)
+        + _segment(0.5, fondo, w - 0.5, fondo)
+    )
+
+
+def electrical_panel_body(w: float, h: float, ports: list[dict[str, Any]]) -> str:
+    """Quadro elettrico: il rettangolo diviso in diagonale con la meta' piena, il
+    segno del quadro della pratica elettrica."""
+    x0, y0, x1, y1 = 0.5, MACHINE_SHELL_INSET, w - 0.5, h - 0.5
+
+    def moncone(item: dict[str, Any]) -> str:
+        # Dalla faccia al rettangolo del quadro: sopra un passo, sugli altri
+        # lati il mezzo millimetro che il rettangolo lascia.
+        x, y = item["x_mm"], item["y_mm"]
+        return {
+            "top": _segment(x, 0, x, y0),
+            "right": _segment(x1, y, w, y),
+            "bottom": _segment(x, y1, x, h),
+            "left": _segment(0, y, x0, y),
+        }[item["face"]]
+
+    return (
+        f'<rect x="{n(x0)}" y="{n(y0)}" width="{n(x1 - x0)}" height="{n(y1 - y0)}"/>'
+        f'<path d="M{n(x0)} {n(y1)} L{n(x1)} {n(y0)} L{n(x1)} {n(y1)} Z" fill="currentColor"/>'
+        + "".join(_of_port(item, moncone(item)) for item in ports)
+    )
+
+
+def isolator_switch_body(w: float, h: float) -> str:
+    """Sezionatore: il contatto aperto, una lama che si alza dalla linea, e la
+    battuta di fronte."""
+    cy = h / 2
+    return (
+        _segment(0, cy, w * 0.2, cy)
+        + _segment(w * 0.2, cy, w * 0.78, h * 0.14)
+        + _segment(w * 0.8, cy, w, cy)
+        + _segment(w * 0.8, h * 0.32, w * 0.8, h * 0.68)
+    )
+
+
+ROOM_DEVICE_GLYPH_ID = "sigla"
+"""Il glifo leggibile di un apparecchio d'ambiente: resta dritto se il simbolo gira."""
+
+
+def _room_device(w: float, h: float) -> tuple[str, float, float, float, float]:
+    """L'apparecchio d'ambiente del kit: un riquadro 7 x 8 attaccato al moncone."""
+    x, y, bw, bh = w * 0.2, h * 0.1, w * 0.7, h * 0.8
+    return (
+        _segment(0, h / 2, x, h / 2) + f'<rect x="{n(x)}" y="{n(y)}" width="{n(bw)}" height="{n(bh)}"/>',
+        x,
+        y,
+        bw,
+        bh,
+    )
+
+
+def room_thermostat_body(w: float, h: float) -> str:
+    """Termostato di zona: il riquadro con la «T» a tratti, senza font."""
+    corpo, x, y, bw, bh = _room_device(w, h)
+    cx = x + bw / 2
+    t = f'<path d="M{n(cx - 1.8)} {n(y + 2)} L{n(cx + 1.8)} {n(y + 2)} M{n(cx)} {n(y + 2)} L{n(cx)} {n(y + 6.2)}"/>'
+    return corpo + f'<g data-glyph="{ROOM_DEVICE_GLYPH_ID}">{t}</g>'
+
+
+def wired_remote_body(w: float, h: float) -> str:
+    """Comando a filo: il riquadro con lo schermo e un tasto."""
+    corpo, x, y, bw, _ = _room_device(w, h)
+    cx = x + bw / 2
+    return (
+        corpo
+        + f'<rect x="{n(cx - 2)}" y="{n(y + 1.4)}" width="4" height="3"/>'
+        + f'<circle cx="{n(cx)}" cy="{n(y + 6.1)}" r="0.7"/>'
+    )
+
+
+# --- REL-012 fase 3, il comando nell'idronico: proposte della sessione ---------
+# Il PO, I-226: «REL 12 [...] ha anche la parte elettrica e comando che cmq va
+# integrata anche nell'idronico esistente». Tre segni nuovi, nello stile di quelli
+# del kit — sobri, a tratto, senza scritte che dipendano da un font. Sono
+# **proposte della sessione** (D-083): la forma la approva il PO sulla tavola.
+
+SOURCE_REL012_CONTROL = (
+    "proposta della sessione del 29/10/2026 (REL-012 fase 3, I-226): forma da approvare dal "
+    "PO sulla tavola; stile dei simboli del kit aria-aria"
+)
+"""La fonte dei segni del comando nell'idronico: nessuna fonte esterna acquisita."""
+
+PLANT_CONTROLLER = (30.0, 45.0)
+PLANT_CONTROLLER_OUTPUTS = (7.5, 17.5, 27.5, 37.5)
+"""I comandi a pompe e valvole, sul fianco destro a 10 mm l'uno dall'altro."""
+PLANT_CONTROLLER_PROBES = (7.5, 15.0, 22.5)
+"""Gli ingressi delle sonde, sul fondo."""
+
+TEMPERATURE_PROBE_PORTS = [port("a", "bottom", *BRANCHED_ACCESSORY)]
+TEMPERATURE_PROBE_CONTROL_PORTS = [port("signal", "top", *BRANCHED_ACCESSORY)]
+"""Il segnale della sonda e' una porta di comando come le altre (REL-012, fase 3):
+facoltativa, e da parte finche' il grafo non la collega. La sonda resta cosi' un
+pezzo con un attacco solo, che si gira verso il tubo da cui pende."""
+PLANT_CONTROLLER_PORTS = [
+    port_at("power", "left", 10.0, *PLANT_CONTROLLER),
+    port_at("bus", "left", 20.0, *PLANT_CONTROLLER),
+    *(
+        port_at(f"out_{indice + 1}", "right", y, *PLANT_CONTROLLER)
+        for indice, y in enumerate(PLANT_CONTROLLER_OUTPUTS)
+    ),
+    *(
+        port_at(f"probe_{indice + 1}", "bottom", x, *PLANT_CONTROLLER)
+        for indice, x in enumerate(PLANT_CONTROLLER_PROBES)
+    ),
+]
+
+
+def _probe_pin(cx: float, top: float, bottom: float, half: float) -> str:
+    """Il bulbo di una sonda: uno stelo pieno che finisce a punta verso il fluido."""
+    spalla = bottom - half * 2
+    return (
+        f'<path d="M{n(cx - half)} {n(top)} L{n(cx + half)} {n(top)} L{n(cx + half)} {n(spalla)} '
+        f'L{n(cx)} {n(bottom)} L{n(cx - half)} {n(spalla)} Z" fill="black"/>'
+    )
+
+
+def temperature_probe_body(w: float, h: float) -> str:
+    """Sonda di temperatura a immersione o a contatto: la testa con il cavo che
+    esce in alto, e il bulbo pieno a punta che scende verso il tubo — o nel
+    pozzetto dell'accumulo — da cui pende.
+
+    E' diversa dal termometro apposta: il termometro si legge sul posto ed e' un
+    quadrante con la lettera, la sonda non si legge e manda un segnale."""
+    cx = w / 2
+    testa_alto, testa_basso = h * 0.15, h * 0.45
+    bulbo_basso = h * 0.85
+    return (
+        _segment(cx, 0, cx, testa_alto)
+        + f'<rect x="{n(w * 0.2)}" y="{n(testa_alto)}" width="{n(w * 0.6)}" '
+        f'height="{n(testa_basso - testa_alto)}"/>'
+        + _probe_pin(cx, testa_basso, bulbo_basso, w * 0.15)
+        + _segment(cx, bulbo_basso, cx, h)
+    )
+
+
+def outdoor_probe_body(w: float, h: float) -> str:
+    """Sonda esterna: la custodia con il bulbo, e a fianco il muro esterno
+    tratteggiato su cui sta. Il cavo entra dal lato opposto al muro."""
+    cy = h / 2
+    x0, x1 = w * 0.2, w * 0.7
+    muro = w * 0.85
+    custodia = _segment(0, cy, x0, cy) + (
+        f'<rect x="{n(x0)}" y="{n(h * 0.1)}" width="{n(x1 - x0)}" height="{n(h * 0.8)}"/>'
+    )
+    bulbo = _probe_pin((x0 + x1) / 2, h * 0.3, h * 0.75, w * 0.075)
+    tratteggio = _segment(muro, h * 0.05, muro, h * 0.95) + "".join(
+        _segment(muro, y, w, y - h * 0.15) for y in (h * 0.25, h * 0.45, h * 0.65, h * 0.85)
+    )
+    return custodia + bulbo + tratteggio
+
+
+def plant_controller_body(w: float, h: float, ports: list[dict[str, Any]]) -> str:
+    """Regolatore d'impianto: l'involucro, il visore e la curva climatica — la
+    temperatura di mandata che scende quando quella esterna sale, il segno di
+    cio' che il regolatore fa. Un morsetto per ogni comando e per ogni sonda."""
+    alimentazione = [item for item in ports if item["face"] == "left"]
+    morsetti = [item for item in ports if item["face"] != "left"]
+    ax, ay_alto, ay_basso, ax_fine = 7.0, 18.0, 34.0, 21.0
+    curva = (
+        f'<path d="M{n(ax)} {n(ay_alto)} L{n(ax)} {n(ay_basso)} L{n(ax_fine)} {n(ay_basso)}"/>'
+        + _segment(ax + 1.5, ay_alto + 3, ax_fine - 1, ay_basso - 3)
+    )
+    return (
+        _shell(w, h)
+        + "".join(_of_port(item, _stub(item, w, h, MACHINE_SHELL_INSET)) for item in alimentazione)
+        + _display(6.0, 6.0)
+        + curva
+        + "".join(
+            _of_port(item, _stub(item, w, h, MACHINE_SHELL_INSET) + _terminal(item, w, h))
+            for item in morsetti
+        )
+    )
+
+
 @dataclass(frozen=True)
 class SymbolSpec:
     id: str
@@ -1659,6 +2199,8 @@ class SymbolSpec:
     clearance_mm: float = CLEARANCE_MM
     """L'area di rispetto sulle facce con porta. Un raccordo e' un punto della
     tubazione, non un apparecchio, e ne tiene una minima (D-119)."""
+    control_ports: list[dict[str, Any]] = field(default_factory=list)
+    """Le porte elettriche e di comando (REL-012, fase 3): `CONTROL_PORTS`."""
 
 
 def inline_symbol(
@@ -1670,6 +2212,7 @@ def inline_symbol(
     allowed_rotations_deg: list[int] | None = None,
     version: str = VERSION,
     stroke_weight: str = "medium",
+    control_ports: list[dict[str, Any]] | None = None,
 ) -> SymbolSpec:
     """Componente in linea: due porte opposte, a sinistra e a destra."""
     w, h = size
@@ -1685,6 +2228,7 @@ def inline_symbol(
         allowed_rotations_deg=list(allowed_rotations_deg or ALLOWED_ROTATIONS_DEG),
         version=version,
         stroke_weight=stroke_weight,
+        control_ports=list(control_ports or []),
     )
 
 
@@ -1779,7 +2323,12 @@ non si sposta comunque**.
 
 
 def two_port_terminal(
-    symbol_id: str, name: str, body_of: Any, source: str, version: str = "1.1.0"
+    symbol_id: str,
+    name: str,
+    body_of: Any,
+    source: str,
+    version: str = "1.1.0",
+    control_ports: list[dict[str, Any]] | None = None,
 ) -> SymbolSpec:
     """Terminale d'impianto: ingresso e uscita **tutt'e due sulla faccia sinistra**.
 
@@ -1812,11 +2361,62 @@ def two_port_terminal(
         # Una porta ha cambiato faccia: il manifesto dei quattro terminali di
         # allora e' salito di minore. Un terminale nato dopo parte da 1.0.0.
         version=version,
+        control_ports=list(control_ports or []),
     )
 
 
 HEAT_PUMP_W, HEAT_PUMP_H = MACHINE
 STORAGE_W, STORAGE_H = STORAGE
+
+# --- le porte elettriche e di comando (REL-012, fase 3, I-226) ----------------
+# **Proposte della sessione del 29 ottobre 2026, da approvare dal PO sulla
+# tavola.** Stanno fra le `control_ports` del manifesto: non sono sul percorso
+# dell'acqua, sono facoltative, e il registro le tiene da parte finche' il grafo
+# non le collega — senza elettrico nel grafo nessuna tavola cambia. Il corpo dei
+# simboli **non cambia**: il cavo arriva sulla faccia del riquadro.
+#
+# Le facce sono quelle libere dall'acqua:
+#
+# - le **macchine** (pompe di calore, caldaie, boiler in pompa di calore) le
+#   portano **sotto**, alimentazione a sinistra e bus a destra, lontane dal
+#   fianco degli attacchi idraulici;
+# - il **circolatore** porta l'alimentazione **sopra**, al centro: e' la faccia
+#   libera di un pezzo in linea, e gira con lui;
+# - la **valvola motorizzata a tre vie** porta il comando dell'attuatore
+#   **sopra**, al centro: la terza via e' sotto, e sopra c'e' lo stelo;
+# - il **ventilconvettore** le porta **a destra**: l'acqua entra a sinistra
+#   (D-167), e sopra e sotto il canalizzato ha i collari dell'aria.
+MACHINE_CONTROL_ALONG = (10.0, 20.0)
+"""Alimentazione e bus sotto una macchina, da sinistra: dieci millimetri fra
+l'uno e l'altro, come le uscite del regolatore."""
+
+
+def machine_control_ports(width_mm: float, height_mm: float) -> list[dict[str, Any]]:
+    """L'alimentazione e il bus di una macchina, sulla faccia di sotto."""
+    alimentazione, bus = MACHINE_CONTROL_ALONG
+    return [
+        port_at("power", "bottom", alimentazione, width_mm, height_mm),
+        port_at("bus", "bottom", bus, width_mm, height_mm),
+    ]
+
+
+DHW_HEAT_PUMP_CONTROL_PORTS = [
+    port_at("power", "bottom", 7.5, STORAGE_W, STORAGE_H),
+    port_at("bus", "bottom", 17.5, STORAGE_W, STORAGE_H),
+]
+"""Il boiler in pompa di calore e' largo 25: le due porte a 7,5 e 17,5."""
+PUMP_CONTROL_PORTS = [port("power", "top", *DEVICE), port("comando", "bottom", *DEVICE)]
+"""L'alimentazione del circolatore, sopra al centro, e il **comando** sotto, sulla
+faccia libera (collaudo T2 di REL-012, §2.2.10): il caso di una villetta e' il
+circolatore alimentato dal quadro e acceso da un'uscita del regolatore, due cavi
+sullo stesso pezzo. Facoltativo, come l'alimentazione: senza un cavo non c'e'."""
+VALVE_CONTROL_PORTS = [port("comando", "top", *DEVICE)]
+"""Il comando dell'attuatore di una valvola motorizzata, sopra al centro."""
+FAN_COIL_CONTROL_PORTS = [
+    port_at("power", "right", 5.0, *TERMINAL),
+    port_at("bus", "right", 10.0, *TERMINAL),
+]
+"""L'alimentazione e il bus del ventilconvettore, sul fianco destro."""
 MANIFOLD_W, MANIFOLD_H = MANIFOLD
 MANIFOLD_OUTLETS = (12.5, 27.5)
 
@@ -2069,8 +2669,10 @@ SYMBOLS: list[SymbolSpec] = [
         body=gas_boiler_body(MACHINE[0], MACHINE[1], GAS_BOILER_PORTS),
         source=SOURCE_PRACTICE_HYDRONIC,
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
-        # Una porta si e' mossa: il manifesto sale di minore (D-163).
-        version="1.1.0",
+        # Una porta si e' mossa: il manifesto sale di minore (D-163). E poi le
+        # porte di comando (REL-012): di nuovo.
+        version="1.3.0",
+        control_ports=machine_control_ports(*MACHINE),
     ),
     SymbolSpec(
         id="plate-heat-exchanger",
@@ -2142,8 +2744,10 @@ SYMBOLS: list[SymbolSpec] = [
         body=reserve_body(STORAGE_W, STORAGE_H, DHW_HEAT_PUMP_PORTS),
         source=SOURCE_PRACTICE_HYDRONIC,
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
-        # Una porta in piu', l'attacco del ricircolo (D-176): sale di minore.
-        version="1.2.0",
+        # Una porta in piu', l'attacco del ricircolo (D-176): sale di minore. E
+        # poi le porte di comando (REL-012): di nuovo.
+        version="1.4.0",
+        control_ports=DHW_HEAT_PUMP_CONTROL_PORTS,
     ),
     SymbolSpec(
         id="mixing-valve-3way",
@@ -2158,6 +2762,8 @@ SYMBOLS: list[SymbolSpec] = [
         ],
         body=diverting_valve_body(*DEVICE),
         source=SOURCE_UNI_TAB3,
+        version="1.2.0",
+        control_ports=VALVE_CONTROL_PORTS,
     ),
     # --- idronico -----------------------------------------------------------
     # Il T di UNI 9511 serve a due cose che sul disegno hanno lo stesso segno e
@@ -2211,7 +2817,10 @@ SYMBOLS: list[SymbolSpec] = [
         "strainer", "Filtro a Y", INLINE_ACCESSORY, strainer_body, SOURCE_PRACTICE_HYDRONIC,
         STRAINER_ROTATIONS_DEG, version="3.0.0", stroke_weight="thick",
     ),
-    inline_symbol("pump-circulator", "Pompa di circolazione", DEVICE, pump_body, SOURCE_PRACTICE_HYDRONIC),
+    inline_symbol(
+        "pump-circulator", "Pompa di circolazione", DEVICE, pump_body, SOURCE_PRACTICE_HYDRONIC,
+        version="1.2.0", control_ports=PUMP_CONTROL_PORTS,
+    ),
     single_port_symbol(
         "air-vent", "Valvola di sfiato aria", SMALL_AIR_VENT, "bottom",
         air_vent_body, SOURCE_PRACTICE_HYDRONIC, AIR_VENT_ROTATIONS_DEG,
@@ -2231,7 +2840,8 @@ SYMBOLS: list[SymbolSpec] = [
         body=heat_pump_body(HEAT_PUMP_W, HEAT_PUMP_H, HEAT_PUMP_PORTS),
         source=SOURCE_PRACTICE_HYDRONIC,
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
-        version="2.0.0",
+        version="2.2.0",
+        control_ports=machine_control_ports(HEAT_PUMP_W, HEAT_PUMP_H),
     ),
     SymbolSpec(
         id="dhw-cylinder",
@@ -2275,6 +2885,8 @@ SYMBOLS: list[SymbolSpec] = [
         ],
         body=diverting_valve_body(*DEVICE),
         source=SOURCE_UNI_TAB3,
+        version="1.2.0",
+        control_ports=VALVE_CONTROL_PORTS,
     ),
     SymbolSpec(
         id="switching-valve-3way",
@@ -2296,6 +2908,8 @@ SYMBOLS: list[SymbolSpec] = [
         ],
         body=diverting_valve_body(*DEVICE),
         source=SOURCE_UNI_TAB3,
+        version="1.2.0",
+        control_ports=VALVE_CONTROL_PORTS,
     ),
     SymbolSpec(
         id="zone-manifold",
@@ -2318,7 +2932,10 @@ SYMBOLS: list[SymbolSpec] = [
     two_port_terminal(
         "underfloor-panel", "Pannello radiante", underfloor_body, SOURCE_PRACTICE_HYDRONIC, "1.2.0"
     ),
-    two_port_terminal("fan-coil", "Ventilconvettore", fan_coil_body, SOURCE_PRACTICE_HYDRONIC),
+    two_port_terminal(
+        "fan-coil", "Ventilconvettore", fan_coil_body, SOURCE_PRACTICE_HYDRONIC, "1.3.0",
+        control_ports=FAN_COIL_CONTROL_PORTS,
+    ),
     # --- i simboli nuovi della prima release (`REL-003`, I-124, D-184) -------
     SymbolSpec(
         id="heat-pump-air-water-large",
@@ -2330,6 +2947,8 @@ SYMBOLS: list[SymbolSpec] = [
         body=large_heat_pump_body(*LARGE_MACHINE, LARGE_HEAT_PUMP_PORTS),
         source=SOURCE_REL003_LARGE_HEAT_PUMP,
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+        version="1.2.0",
+        control_ports=machine_control_ports(*LARGE_MACHINE),
     ),
     SymbolSpec(
         id="gas-boiler-modular",
@@ -2341,6 +2960,8 @@ SYMBOLS: list[SymbolSpec] = [
         body=modular_boiler_body(*MODULAR_BOILER, MODULAR_BOILER_PORTS),
         source=SOURCE_REL003_MODULAR_BOILER,
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+        version="1.2.0",
+        control_ports=machine_control_ports(*MODULAR_BOILER),
     ),
     SymbolSpec(
         id="solar-collector",
@@ -2374,11 +2995,18 @@ SYMBOLS: list[SymbolSpec] = [
     ),
     two_port_terminal(
         "fan-coil-ducted", "Ventilconvettore canalizzato", ducted_fan_coil_body,
-        SOURCE_REL003_DUCTED_FAN_COIL, version=VERSION,
+        SOURCE_REL003_DUCTED_FAN_COIL, version="1.2.0",
+        control_ports=FAN_COIL_CONTROL_PORTS,
     ),
     # --- aeraulico ----------------------------------------------------------
     inline_symbol("duct-damper", "Serranda", INLINE_ACCESSORY, duct_damper_body, SOURCE_PRACTICE_PENDING),
-    single_port_symbol("air-diffuser", "Diffusore d'aria", DEVICE, "left", air_diffuser_body, SOURCE_PRACTICE_PENDING),
+    # Il nome in legenda e' quello del kit (REL-012, I-224): la bocchetta del
+    # canalizzato e' una bocchetta con il suo plenum, non un diffusore generico.
+    # Il segno non cambia, e il manifesto resta alla sua versione.
+    single_port_symbol(
+        "air-diffuser", "Bocchetta di mandata con plenum di raccordo", DEVICE, "left",
+        air_diffuser_body, SOURCE_PRACTICE_PENDING,
+    ),
     inline_symbol("fan-inline", "Ventilatore in linea", DEVICE, fan_body, SOURCE_PRACTICE_PENDING),
     # --- refrigerante -------------------------------------------------------
     SymbolSpec(
@@ -2460,7 +3088,269 @@ SYMBOLS: list[SymbolSpec] = [
         source=SOURCE_REL009_PROPOSAL,
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
     ),
+    # --- REL-012, l'aria-aria del kit del PO (I-224): proposte, le approva il PO ---
+    # Unita' esterna, unita' interna, plenum, centrale di zona e quadro si
+    # disegnano nel proprio verso, come la pompa di calore e la caldaia: hanno
+    # porte su tre o quattro facce, e un involucro coricato non aiuta a leggere.
+    # Gli accessori e gli apparecchi d'ambiente girano come i loro fratelli
+    # idronici.
+    SymbolSpec(
+        id="split-outdoor-unit",
+        name="Unità esterna ad espansione diretta",
+        width_mm=SPLIT_UNIT[0],
+        height_mm=SPLIT_UNIT[1],
+        inline=False,
+        ports=SPLIT_OUTDOOR_PORTS,
+        body=split_outdoor_body(*SPLIT_UNIT, SPLIT_OUTDOOR_PORTS),
+        source=SOURCE_REL012_KIT,
+        allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+        # I monconi nei loro gruppi `data-port`: il corpo cambia, sale di minore.
+        version="1.1.0",
+    ),
+    SymbolSpec(
+        id="ducted-indoor-unit",
+        name="Unità interna canalizzata",
+        width_mm=SPLIT_UNIT[0],
+        height_mm=SPLIT_UNIT[1],
+        inline=False,
+        ports=DUCTED_INDOOR_PORTS,
+        body=ducted_indoor_body(*SPLIT_UNIT, DUCTED_INDOOR_PORTS),
+        source=SOURCE_REL012_KIT,
+        allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+        # I monconi nei loro gruppi `data-port` e il collare chiuso: sale di minore.
+        version="1.1.0",
+    ),
+    # Il plenum di zona da due a sei serrande (collaudo T1 di REL-012, §2.1): lo
+    # stesso disegno del cinque del kit, una serranda per uscita a passo 12,5, e
+    # l'altezza che segue il numero. Il cinque e' quello della M.02.
+    *(
+        SymbolSpec(
+            id=f"zoning-plenum-{uscite}",
+            name=f"Plenum motorizzato di zona a {NUMERI_IN_LETTERE[uscite]} serrande",
+            width_mm=zoning_plenum_size(uscite)[0],
+            height_mm=zoning_plenum_size(uscite)[1],
+            inline=False,
+            ports=zoning_plenum_ports(uscite),
+            body=zoning_plenum_body(*zoning_plenum_size(uscite), zoning_plenum_ports(uscite)),
+            source=SOURCE_REL012_KIT if uscite == 5 else SOURCE_REL012_PLENUM,
+            allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+            # I monconi nei loro gruppi e il collare chiuso: il corpo cambia, il
+            # manifesto sale di minore. Gli altri nascono adesso.
+            version="1.1.0" if uscite == 5 else VERSION,
+        )
+        for uscite in ZONING_PLENUM_OUTLET_COUNTS
+    ),
+    SymbolSpec(
+        id="zone-controller",
+        name="Centrale di zona",
+        width_mm=ZONE_CONTROLLER[0],
+        height_mm=ZONE_CONTROLLER[1],
+        inline=False,
+        ports=ZONE_CONTROLLER_PORTS,
+        body=zone_controller_body(*ZONE_CONTROLLER, ZONE_CONTROLLER_PORTS),
+        source=SOURCE_REL012_KIT,
+        allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+        # I monconi nei loro gruppi `data-port`: il corpo cambia, sale di minore.
+        version="1.1.0",
+    ),
+    single_port_symbol(
+        "return-grille", "Griglia di ripresa con plenum e filtro", DEVICE, "right",
+        return_grille_body, SOURCE_REL012_KIT,
+    ),
+    inline_symbol(
+        "condensate-trap", "Sifone ispezionabile", WIDE_INLINE_ACCESSORY,
+        condensate_trap_body, SOURCE_REL012_KIT,
+    ),
+    single_port_symbol(
+        "condensate-outlet", "Allaccio allo scarico", TERMINAL_ACCESSORY, "top",
+        condensate_outlet_body, SOURCE_REL012_KIT,
+    ),
+    SymbolSpec(
+        id="electrical-panel",
+        name="Quadro elettrico",
+        width_mm=ELECTRICAL_PANEL[0],
+        height_mm=ELECTRICAL_PANEL[1],
+        inline=False,
+        ports=ELECTRICAL_PANEL_PORTS,
+        body=electrical_panel_body(*ELECTRICAL_PANEL, ELECTRICAL_PANEL_PORTS),
+        source=SOURCE_REL012_KIT,
+        allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+        # Quattro uscite facoltative in piu' e i monconi nei loro gruppi: sale di minore.
+        version="1.1.0",
+    ),
+    inline_symbol(
+        "isolator-switch", "Sezionatore onnipolare", INLINE_ACCESSORY,
+        isolator_switch_body, SOURCE_REL012_KIT,
+    ),
+    single_port_symbol(
+        "room-thermostat", "Termostato di zona", DEVICE, "left",
+        room_thermostat_body, SOURCE_REL012_KIT,
+        upright_glyphs=[{"id": ROOM_DEVICE_GLYPH_ID, "x_mm": 5.5, "y_mm": DEVICE[1] / 2}],
+    ),
+    single_port_symbol(
+        "wired-remote", "Comando a filo", DEVICE, "left", wired_remote_body, SOURCE_REL012_KIT,
+    ),
+    # --- REL-012 fase 3, il comando nell'idronico (I-226): proposte della sessione ---
+    # La sonda pende dal tubo come il termometro, e gira come lui; la sonda
+    # esterna gira come il termostato; il regolatore ha porte su tre facce e sta
+    # nel proprio verso, come la centrale di zona.
+    SymbolSpec(
+        id="temperature-probe",
+        name="Sonda di temperatura",
+        width_mm=BRANCHED_ACCESSORY[0],
+        height_mm=BRANCHED_ACCESSORY[1],
+        inline=False,
+        ports=TEMPERATURE_PROBE_PORTS,
+        body=temperature_probe_body(*BRANCHED_ACCESSORY),
+        source=SOURCE_REL012_CONTROL,
+        control_ports=TEMPERATURE_PROBE_CONTROL_PORTS,
+        # Il moncone dell'attacco al pozzetto marcato (collaudo T2): sale di minore.
+        version="1.1.0",
+    ),
+    single_port_symbol(
+        "outdoor-temperature-probe", "Sonda esterna", DEVICE, "left",
+        outdoor_probe_body, SOURCE_REL012_CONTROL,
+    ),
+    SymbolSpec(
+        id="plant-controller",
+        name="Regolatore d'impianto",
+        width_mm=PLANT_CONTROLLER[0],
+        height_mm=PLANT_CONTROLLER[1],
+        inline=False,
+        ports=PLANT_CONTROLLER_PORTS,
+        body=plant_controller_body(*PLANT_CONTROLLER, PLANT_CONTROLLER_PORTS),
+        source=SOURCE_REL012_CONTROL,
+        allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+        # I monconi nei loro gruppi `data-port`: il corpo cambia, sale di minore.
+        version="1.1.0",
+    ),
 ]
+
+
+# --- i monconi marcati (collaudo T2 di REL-012) ------------------------------
+# Il collaudo T2 ha trovato due difetti sulla tavola dell'elettrico, e hanno la stessa
+# radice: il corpo di un pezzo che sta sull'acqua non sa niente dei suoi cavi.
+#
+# - **Il cavo non tocca il corpo.** Le porte di comando stanno sulla faccia del
+#   riquadro, e il corpo della pompa di calore comincia tre millimetri piu' in la':
+#   il cavo si fermava nel vuoto. Il moncone di una porta di comando va dalla porta
+#   al corpo, e si disegna **solo quando un cavo ci arriva** (`data-comando`).
+# - **I monconi d'acqua sulla tavola dell'elettrico.** La pompa di calore mostrava i
+#   due attacchi d'acqua come due tubi aperti. Il moncone di un attacco d'acqua si
+#   marca (`data-moncone`), e la tavola dell'elettrico lo toglie.
+#
+# Il corpo di sempre — senza i monconi di comando, con quelli d'acqua senza la marca
+# — e' **byte per byte quello di prima** (`registry.corpo_di_sempre`): senza
+# elettrico nel grafo nessuna tavola cambia. Le marche si scrivono solo sui simboli
+# che hanno porte di comando, cioe' su quelli che possono stare sulla tavola
+# dell'elettrico.
+
+MONCONE_D_ACQUA_MASSIMO_MM = 5.0
+"""Un moncone d'acqua e' un tratto corto dalla porta al corpo: una linea piu' lunga
+che parte da una porta — il collettore interno della caldaia modulare — e' corpo, e
+resta."""
+
+_VERSO_DENTRO = {"left": (1.0, 0.0), "right": (-1.0, 0.0), "top": (0.0, 1.0), "bottom": (0.0, -1.0)}
+"""Dalla faccia di una porta verso l'interno del riquadro."""
+
+
+def _segmenti_e_cerchi(
+    body: str,
+) -> tuple[list[tuple[float, float, float, float]], list[tuple[float, float, float]]]:
+    """Le primitive del corpo come segmenti e cerchi: linee, lati dei rettangoli,
+    spezzate dei percorsi (le curve con i loro punti di controllo)."""
+    import re
+    from xml.etree import ElementTree
+
+    segmenti: list[tuple[float, float, float, float]] = []
+    cerchi: list[tuple[float, float, float]] = []
+    for element in ElementTree.fromstring(f"<g>{body}</g>").iter():
+        tag, get = element.tag.rpartition("}")[2], element.get
+        if tag == "line":
+            segmenti.append(tuple(float(get(k, "0")) for k in ("x1", "y1", "x2", "y2")))  # type: ignore[arg-type]
+        elif tag == "rect":
+            x, y, w, h = (float(get(k, "0")) for k in ("x", "y", "width", "height"))
+            segmenti += [(x, y, x + w, y), (x + w, y, x + w, y + h), (x + w, y + h, x, y + h), (x, y + h, x, y)]
+        elif tag == "circle":
+            cerchi.append(tuple(float(get(k, "0")) for k in ("cx", "cy", "r")))  # type: ignore[arg-type]
+        elif tag == "path":
+            punti: list[tuple[float, float]] = []
+            for comando, argomenti in re.findall(r"([MLQCZ])([^MLQCZ]*)", get("d", "")):
+                numeri = [float(v) for v in re.findall(r"-?\d+(?:\.\d+)?", argomenti)]
+                if comando == "M":
+                    punti = [(numeri[0], numeri[1])]
+                elif comando in ("L", "Q", "C"):
+                    for x, y in zip(numeri[0::2], numeri[1::2], strict=False):
+                        segmenti.append((*punti[-1], x, y))
+                        punti.append((x, y))
+                elif comando == "Z" and punti:
+                    segmenti.append((*punti[-1], *punti[0]))
+    return segmenti, cerchi
+
+
+def fin_dove_arriva(body: str, porta: dict[str, Any]) -> float:
+    """Quanto e' lungo il moncone di una porta: dalla porta, verso l'interno del
+    riquadro, fino alla prima primitiva del corpo. Zero se il corpo arriva gia' alla
+    porta; infinito se non incontra niente."""
+    px, py = porta["x_mm"], porta["y_mm"]
+    dx, dy = _VERSO_DENTRO[porta["face"]]
+    segmenti, cerchi = _segmenti_e_cerchi(body)
+    migliore = math.inf
+    for x1, y1, x2, y2 in segmenti:
+        ex, ey = x2 - x1, y2 - y1
+        denominatore = dx * ey - dy * ex
+        if abs(denominatore) < 1e-12:
+            # Parallelo: conta solo se e' sulla stessa retta, e allora il capo piu' vicino.
+            if abs((x1 - px) * dy - (y1 - py) * dx) < 1e-9:
+                for x, y in ((x1, y1), (x2, y2)):
+                    t = (x - px) * dx + (y - py) * dy
+                    if t >= -1e-9:
+                        migliore = min(migliore, max(t, 0.0))
+            continue
+        t = ((x1 - px) * ey - (y1 - py) * ex) / denominatore
+        s = ((x1 - px) * dy - (y1 - py) * dx) / denominatore
+        if t >= -1e-9 and -1e-9 <= s <= 1 + 1e-9:
+            migliore = min(migliore, max(t, 0.0))
+    for cx, cy, r in cerchi:
+        fx, fy = px - cx, py - cy
+        b = fx * dx + fy * dy
+        c = fx * fx + fy * fy - r * r
+        delta = b * b - c
+        if delta < 0:
+            continue
+        for t in (-b - math.sqrt(delta), -b + math.sqrt(delta)):
+            if t >= -1e-9:
+                migliore = min(migliore, max(t, 0.0))
+                break
+    return migliore
+
+
+def corpo_coi_monconi_marcati(spec: SymbolSpec) -> str:
+    """Il corpo come si scrive nel file: con i monconi d'acqua marcati e, in fondo,
+    quelli delle porte di comando. Solo per i simboli con porte di comando; gli
+    altri restano il loro corpo."""
+    import re
+
+    if not spec.control_ports:
+        return spec.body
+    body = spec.body
+    for porta in spec.ports:
+        px, py = porta["x_mm"], porta["y_mm"]
+        for linea in re.findall(r"<line [^>]*/>", body):
+            numeri = dict(re.findall(r'(x1|y1|x2|y2)="(-?[\d.]+)"', linea))
+            x1, y1, x2, y2 = (float(numeri[k]) for k in ("x1", "y1", "x2", "y2"))
+            dalla_porta = any(abs(x - px) < 1e-9 and abs(y - py) < 1e-9 for x, y in ((x1, y1), (x2, y2)))
+            if dalla_porta and math.hypot(x2 - x1, y2 - y1) <= MONCONE_D_ACQUA_MASSIMO_MM and body.count(linea) == 1:
+                body = body.replace(linea, f'<g data-moncone="{porta["id"]}">{linea}</g>', 1)
+                break
+    for porta in spec.control_ports:
+        lungo = fin_dove_arriva(spec.body, porta)
+        if lungo == 0.0 or math.isinf(lungo):
+            continue
+        dx, dy = _VERSO_DENTRO[porta["face"]]
+        x, y = porta["x_mm"], porta["y_mm"]
+        body += f'<g data-comando="{porta["id"]}">{_segment(x, y, x + dx * lungo, y + dy * lungo)}</g>'
+    return body
 
 
 def manifest_payload(spec: SymbolSpec) -> dict[str, Any]:
@@ -2477,7 +3367,12 @@ def manifest_payload(spec: SymbolSpec) -> dict[str, Any]:
         # destra, quindi l'asse che le unisce e' orizzontale.
         payload["inline_gap_mm"] = spec.width_mm
     payload["ports"] = spec.ports
-    payload["keep_out"] = keep_out(spec.ports, spec.clearance_mm)
+    # Le porte di comando si scrivono solo dove ci sono: gli altri manifesti
+    # restano quelli di prima, byte per byte. L'area di rispetto le conta come
+    # le altre: una faccia con una porta ha il suo rispetto.
+    if spec.control_ports:
+        payload["control_ports"] = spec.control_ports
+    payload["keep_out"] = keep_out(spec.ports + spec.control_ports, spec.clearance_mm)
     if spec.flow_glyphs:
         payload["flow_glyphs"] = spec.flow_glyphs
     if spec.upright_glyphs:
@@ -2493,7 +3388,7 @@ def write_symbol(directory: Path, spec: SymbolSpec) -> None:
     (directory / f"{spec.id}.json").write_text(
         json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
-    (directory / f"{spec.id}.svg").write_text(spec.body + "\n", encoding="utf-8")
+    (directory / f"{spec.id}.svg").write_text(corpo_coi_monconi_marcati(spec) + "\n", encoding="utf-8")
 
 
 def main() -> None:

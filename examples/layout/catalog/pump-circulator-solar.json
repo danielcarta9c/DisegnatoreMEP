@@ -27,6 +27,20 @@
       "medium": "solar_fluid",
       "flow": "out",
       "required": true
+    },
+    {
+      "id": "power",
+      "domain": "control",
+      "medium": "power_supply",
+      "flow": "in",
+      "required": false
+    },
+    {
+      "id": "comando",
+      "domain": "control",
+      "medium": "power_supply",
+      "flow": "in",
+      "required": false
     }
   ],
   "sources": [

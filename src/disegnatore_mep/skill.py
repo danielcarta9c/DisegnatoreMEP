@@ -10,7 +10,8 @@ Capire, Comporre, Rivedere — e il resto e' questo comando
 - `disegna` la tavola dal piano che Comporre scrive: la esegue, la misura — il
   preflight e le regole del piano —, e la scrive in SVG, **PDF** e DXF, **con i
   rilievi accanto**, per il progettista. I controlli sono della skill, non della
-  sessione che la sviluppa (**I-166**);
+  sessione che la sviluppa (**I-166**). Con `--tabelle` posa nelle zone del piano le
+  tabelle di un file — quello che scrive `distinta` (REL-012);
 - `catalogo` stampa le voci fra cui Capire sceglie, una riga per voce, o una voce
   intera; `simbolo` il manifesto di un simbolo; `pezzi` i pezzi che il piano posa;
 - `anteprima` fa della tavola un'immagine, per guardarla; `consegna` copia i file
@@ -46,21 +47,38 @@ from pydantic import ValidationError
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graph.naming import Naming
 from disegnatore_mep.graphics.cartiglio import (
+    PT_MM,
     Cartiglio,
     CartiglioDellaTavola,
+    larghezza_mm,
     rilievi_del_cartiglio,
     valori_del_cartiglio,
 )
-from disegnatore_mep.graphics.pdf import scrivi_pdf
+from disegnatore_mep.graphics.frame import ORDINARY_FRAMES, SheetFrame
+from disegnatore_mep.graphics.pdf import per_winansi, scrivi_pdf
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.graphics.sheet import render_sheet, stati_della_tavola
+from disegnatore_mep.graphics.tabella import RIENTRO_MM
+from disegnatore_mep.graphics.tabelle import (
+    MARGINE_DALLA_ZONA_MM,
+    STACCO_FRA_LE_TABELLE_MM,
+    posa_le_tabelle,
+)
 from disegnatore_mep.io.canonical import canonical_json
 from disegnatore_mep.io.project_json import load_project
+from disegnatore_mep.layout.errors import LayoutError
+from disegnatore_mep.layout.geometry import (
+    ColonnaDellaTabella,
+    RigaDellaTabellaLibera,
+    SheetGeometry,
+    TabellaNelleZone,
+)
 from disegnatore_mep.model.project import ConnectionModel, ProjectModel
 from disegnatore_mep.model.types import ApprovalStatus, IssueSeverity
 from disegnatore_mep.piano.esecutore import EsitoDelPiano, esegui_piano
-from disegnatore_mep.piano.formato import PianoDiComposizione, carica_piano
+from disegnatore_mep.piano.formato import FORMATI_ORDINARI, PianoDiComposizione, carica_piano
 from disegnatore_mep.piano.revisore import misura
+from disegnatore_mep.piano.vista import VISTE, vista_del_grafo
 from disegnatore_mep.rules.apply import saturation
 from disegnatore_mep.rules.errors import RuleError
 from disegnatore_mep.rules.proposal import RuleProposal
@@ -76,7 +94,12 @@ GRAVITA: dict[IssueSeverity, str] = {
     IssueSeverity.WARNING: "Avvisi — la tavola si consegna, e si sa",
 }
 
-ESTENSIONI_DA_CONSEGNARE = (".pdf", ".dxf", ".svg", ".jpg", ".md")
+ESTENSIONI_DA_CONSEGNARE = (".pdf", ".dxf", ".md", ".jpg", ".xlsx")
+"""Quello che il progettista riceve: il PDF, il DXF, i rilievi, il logo del cartiglio e
+l'Excel della distinta. L'SVG resta nella cartella di lavoro (collaudo T2 di REL-012,
+§1). Il logo no: il DXF lo nomina (`graphics.dxf`), e aperto senza il logo accanto
+AutoCAD mostra il riquadro del logo vuoto. L'Excel e la pianta: collaudo T3 di
+REL-012, §2 punto 8 — prima si copiavano a mano."""
 
 
 @dataclass(frozen=True)
@@ -203,6 +226,8 @@ def _valida(args: argparse.Namespace, cartelle: Cartelle) -> int:
     """Il grafo di Capire carica, e regge contro il catalogo? E che cosa chiede?"""
     dati = _Dati(cartelle)
     modello = load_project(args.grafo)
+    # Le porte di comando che il grafo collega (REL-012): senza elettrico, nessuna.
+    dati.catalogo = dati.catalogo.per_il_progetto(modello)
     esito = validate_project(modello, dati.catalogo)
     print(
         f"Il grafo si legge: {len(modello.components)} pezzi, {len(modello.connections)} "
@@ -231,6 +256,8 @@ def _completa(args: argparse.Namespace, cartelle: Cartelle) -> int:
     """Le regole degli accessori sul grafo: che cosa aggiungono, e perche'."""
     dati = _Dati(cartelle)
     modello = load_project(args.grafo)
+    # Le porte di comando che il grafo collega (REL-012): senza elettrico, nessuna.
+    dati.catalogo = dati.catalogo.per_il_progetto(modello)
     esito = validate_project(modello, dati.catalogo)
     if not esito.ok:
         print("Il grafo non regge contro il catalogo: si corregge prima di completarlo.")
@@ -411,6 +438,269 @@ def _stampa_il_corredo_sull_esistente(completo: ProjectModel, applicate: Sequenc
             print(f"      {posto}")
 
 
+# --- le tabelle del foglio ------------------------------------------------------
+
+FORMATO_DELLE_TABELLE = "disegnatore-mep/tabelle-del-foglio"
+"""Il formato del file che `disegna --tabelle` legge: quello che la distinta scrive in
+`tabelle-del-foglio.json` (`distinta.uscite.tabelle_del_foglio`), versione 1.
+
+    {"formato": "disegnatore-mep/tabelle-del-foglio", "versione": 1,
+     "tabelle": [{"id": "tratte", "titolo": "…",
+                  "colonne": [{"titolo": "Tratto", "allinea": "sinistra", "peso": 0.6}, …],
+                  "sezioni": [{"titolo": "A. Apparecchiature" o null,
+                               "righe": [["T01", "PLZ-01 - B1", …], …]}],
+                  "zona": "destra" | "basso",    facoltativa
+                  "larghezza_mm": 170}]}         facoltativa
+
+Le celle sono testo gia' scritto: il comando non conta niente. Una sezione col titolo
+diventa una riga di sezione («B. Distribuzione aria»), senza titolo le righe e basta.
+`peso` e' la larghezza relativa della colonna."""
+
+VERSIONE_DELLE_TABELLE = 1
+
+ZONE_DELLE_TABELLE = ("destra", "basso")
+
+
+def _squadratura_del_piano(piano: PianoDiComposizione) -> SheetFrame:
+    """Il foglio del piano con le sue zone delle tabelle: lo stesso che l'esecutore
+    costruisce, per sapere prima di eseguire dove le tabelle stanno."""
+    frame = dict(zip(FORMATI_ORDINARI, ORDINARY_FRAMES, strict=True))[piano.formato]
+    if piano.zone_tabelle is None:
+        return frame
+    return frame.con_le_zone(piano.zone_tabelle.destra_mm, piano.zone_tabelle.basso_mm)
+
+
+@dataclass(frozen=True)
+class _TabellaDelFile:
+    """Una tabella come il file la da': il contenuto, e quanto ciascuna colonna pesa."""
+
+    nome: str
+    titolo: str | None
+    pesi: tuple[float, ...]
+    colonne: tuple[ColonnaDellaTabella, ...]
+    """Con la larghezza ancora da decidere (1 mm): si fissa quando si sa la zona."""
+    righe: tuple[RigaDellaTabellaLibera, ...]
+    zona: str | None
+    larghezza_mm: float | None
+
+
+def _leggi_le_tabelle(percorso: Path) -> list[_TabellaDelFile]:
+    """Le tabelle di un file nel formato `FORMATO_DELLE_TABELLE`. Un file che non e' in
+    quel formato e' un errore che dice dove."""
+    try:
+        dati = json.loads(percorso.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as errore:
+        raise ValueError(f"il file delle tabelle {percorso} non e' un JSON: {errore}") from errore
+
+    def guasto(dove: str, che_cosa: str) -> ValueError:
+        return ValueError(f"il file delle tabelle {percorso}: {dove}{che_cosa}")
+
+    if not isinstance(dati, dict) or dati.get("formato") != FORMATO_DELLE_TABELLE:
+        raise guasto("", f"manca \"formato\": \"{FORMATO_DELLE_TABELLE}\" (lo scrive il comando distinta)")
+    if dati.get("versione") != VERSIONE_DELLE_TABELLE:
+        raise guasto("", f"versione {dati.get('versione')!r}: il comando legge la {VERSIONE_DELLE_TABELLE}")
+    tabelle = dati.get("tabelle")
+    if not isinstance(tabelle, list):
+        raise guasto("", "\"tabelle\" non e' un elenco")
+    lette: list[_TabellaDelFile] = []
+    for indice, tabella in enumerate(tabelle, start=1):
+        if not isinstance(tabella, dict):
+            raise guasto(f"la tabella {indice}: ", "non e' un oggetto")
+        nome = str(tabella.get("id") or tabella.get("titolo") or indice)
+        dove = f"la tabella «{nome}»: "
+        colonne = tabella.get("colonne")
+        if not isinstance(colonne, list) or not colonne:
+            raise guasto(dove, "\"colonne\" manca o e' vuoto")
+        pesi: list[float] = []
+        lette_colonne: list[ColonnaDellaTabella] = []
+        for colonna in colonne:
+            peso = colonna.get("peso", 1) if isinstance(colonna, dict) else None
+            allinea = colonna.get("allinea", "sinistra") if isinstance(colonna, dict) else None
+            if not isinstance(peso, int | float) or isinstance(peso, bool) or peso <= 0:
+                raise guasto(dove, f"la colonna {colonna!r} vuole un \"peso\" positivo")
+            if allinea not in ("sinistra", "destra"):
+                raise guasto(dove, f"la colonna {colonna!r}: \"allinea\" e' \"sinistra\" o \"destra\"")
+            pesi.append(float(peso))
+            lette_colonne.append(
+                ColonnaDellaTabella(
+                    intestazione=str(colonna.get("titolo") or ""), larghezza_mm=1.0, a_destra=allinea == "destra"
+                )
+            )
+        righe: list[RigaDellaTabellaLibera] = []
+        sezioni = tabella.get("sezioni")
+        if not isinstance(sezioni, list):
+            raise guasto(dove, "\"sezioni\" non e' un elenco")
+        for sezione in sezioni:
+            if not isinstance(sezione, dict) or not isinstance(sezione.get("righe", []), list):
+                raise guasto(dove, f"la sezione {sezione!r} non ha \"righe\" in elenco")
+            if sezione.get("titolo"):
+                righe.append(RigaDellaTabellaLibera(sezione=str(sezione["titolo"])))
+            for riga in sezione.get("righe", []):
+                if not isinstance(riga, list) or len(riga) != len(colonne):
+                    raise guasto(dove, f"la riga {riga!r} non ha {len(colonne)} celle, una per colonna")
+                righe.append(RigaDellaTabellaLibera(celle=["" if c is None else str(c) for c in riga]))
+        zona = tabella.get("zona")
+        if zona is not None and zona not in ZONE_DELLE_TABELLE:
+            raise guasto(dove, f"\"zona\" e' \"destra\" o \"basso\", non {zona!r}")
+        larghezza = tabella.get("larghezza_mm")
+        if larghezza is not None and (not isinstance(larghezza, int | float) or larghezza <= 0):
+            raise guasto(dove, f"\"larghezza_mm\" e' un numero positivo, non {larghezza!r}")
+        titolo = tabella.get("titolo")
+        lette.append(
+            _TabellaDelFile(
+                nome=nome,
+                titolo=str(titolo) if titolo else None,
+                pesi=tuple(pesi),
+                colonne=tuple(lette_colonne),
+                righe=tuple(righe),
+                zona=zona,
+                larghezza_mm=float(larghezza) if larghezza is not None else None,
+            )
+        )
+    return lette
+
+
+def _parola_piu_larga_mm(testi: Sequence[str], corpo_pt: float, grassetto: bool) -> float:
+    return max(
+        (larghezza_mm(parola, corpo_pt, grassetto) for testo in testi for parola in per_winansi(testo).split()),
+        default=0.0,
+    )
+
+
+def _larghezze_delle_colonne(tabella: _TabellaDelFile, larghezza: float, corpo_pt: float) -> list[float] | None:
+    """Le larghezze delle colonne per una tabella larga `larghezza`: ciascuna almeno
+    quanto la sua parola piu' lunga — il motore va a capo fra le parole, non dentro —,
+    e il resto in proporzione ai pesi. `None` se nemmeno le parole piu' lunghe ci
+    stanno."""
+    minime = [
+        _parola_piu_larga_mm(
+            [riga.celle[indice] for riga in tabella.righe if riga.sezione is None], corpo_pt, False
+        )
+        for indice in range(len(tabella.colonne))
+    ]
+    minime = [
+        max(minima, _parola_piu_larga_mm([colonna.intestazione], corpo_pt, True)) + 2 * RIENTRO_MM + 0.05
+        for minima, colonna in zip(minime, tabella.colonne, strict=True)
+    ]
+    sezioni = [riga.sezione for riga in tabella.righe if riga.sezione is not None]
+    if sezioni and max(larghezza_mm(per_winansi(s), corpo_pt, True) for s in sezioni) + 2 * RIENTRO_MM > larghezza:
+        return None
+    if sum(minime) > larghezza:
+        return None
+    # Ogni colonna e' larga max(minima, k x peso): si cerca il k che fa la larghezza.
+    basso, alto = 0.0, larghezza / min(tabella.pesi)
+    for _ in range(60):
+        k = (basso + alto) / 2
+        if sum(max(m, k * p) for m, p in zip(minime, tabella.pesi, strict=True)) > larghezza:
+            alto = k
+        else:
+            basso = k
+    return [int(max(m, basso * p) * 100) / 100 for m, p in zip(minime, tabella.pesi, strict=True)]
+
+
+def _tabelle_nella_zona(
+    frame: SheetFrame, zona: str, tabelle: Sequence[_TabellaDelFile]
+) -> tuple[list[TabellaNelleZone], int] | str:
+    """Le tabelle di una zona con le colonne a misura, e in quante colonne di zona
+    stanno: si prova con una colonna di zona, poi con due, e cosi' via, ognuna larga
+    quanto la zona divisa per il loro numero — la zona a destra, solo per le tabelle
+    che la chiedono. Se non stanno in nessun modo, il perche'."""
+    rettangolo = frame.zona_destra_mm if zona == "destra" else frame.zona_basso_mm
+    if rettangolo is None:
+        return f"il piano non lascia la zona {zona} (zone_tabelle)"
+    corpo_pt = frame.standard.text_small_mm / PT_MM
+    utile = rettangolo.width_mm - 2 * MARGINE_DALLA_ZONA_MM
+    motivo = "non entra"
+    # La zona a destra e' una striscia accanto alla legenda: divisa in colonne strette,
+    # le tabelle non si leggono. Si divide solo se il file ce le manda apposta.
+    divisibile = zona == "basso" or any(tabella.zona == "destra" for tabella in tabelle)
+    for colonne_di_zona in range(1, 10 if divisibile else 2):
+        larghezza = (utile - (colonne_di_zona - 1) * STACCO_FRA_LE_TABELLE_MM) / colonne_di_zona
+        fatte: list[TabellaNelleZone] = []
+        for tabella in tabelle:
+            larghezze = _larghezze_delle_colonne(tabella, tabella.larghezza_mm or larghezza, corpo_pt)
+            if larghezze is None:
+                # Con piu' colonne di zona ogni colonna e' piu' stretta: non c'e' altro da provare.
+                return motivo if colonne_di_zona > 1 else (
+                    f"«{tabella.nome}» vuole piu' di {tabella.larghezza_mm or larghezza:.0f} mm per le sue parole"
+                )
+            fatte.append(
+                TabellaNelleZone(
+                    titolo=tabella.titolo,
+                    colonne=[
+                        colonna.model_copy(update={"larghezza_mm": misura})
+                        for colonna, misura in zip(tabella.colonne, larghezze, strict=True)
+                    ],
+                    righe=list(tabella.righe),
+                    zona="destra" if zona == "destra" else "basso",
+                )
+            )
+        try:
+            posa_le_tabelle(SheetGeometry(sheet_id="prova", title="prova"), frame, fatte)
+        except LayoutError as errore:
+            motivo = str(errore)
+            continue
+        return fatte, colonne_di_zona
+    return motivo
+
+
+def tabelle_per_le_zone(
+    piano: PianoDiComposizione, percorsi: Sequence[Path]
+) -> tuple[list[TabellaNelleZone], list[str]]:
+    """Le tabelle dei file, pronte per il motore, e una riga per ciascuna che dice dove
+    va. Una tabella con la sua `zona` va li'; le altre, nell'ordine dei file, **a
+    destra se ci stanno in una colonna, se no in basso**, dove la zona si divide in
+    colonne quanto serve. Le colonne della tabella si allargano quanto la zona, o
+    quanto una colonna di zona.
+
+    Solleva `LayoutError` se il piano non lascia zone, o se una tabella non entra:
+    il testo non si rimpicciolisce, e si allargano le zone o si prende il foglio
+    successivo."""
+    tabelle = [tabella for percorso in percorsi for tabella in _leggi_le_tabelle(percorso)]
+    if not tabelle:
+        return [], []
+    if piano.zone_tabelle is None:
+        raise LayoutError(
+            "il piano non lascia zone alle tabelle: scrivi nel piano "
+            '"zone_tabelle": {"destra_mm": …, "basso_mm": …} (regole del piano, D4)'
+        )
+    frame = _squadratura_del_piano(piano)
+    nelle_zone: dict[str, list[_TabellaDelFile]] = {"destra": [], "basso": []}
+    esito: dict[str, tuple[list[TabellaNelleZone], int]] = {}
+    for tabella in tabelle:
+        provate = [tabella.zona] if tabella.zona else list(ZONE_DELLE_TABELLE)
+        perche: list[str] = []
+        for zona in provate:
+            prova = _tabelle_nella_zona(frame, zona, [*nelle_zone[zona], tabella])
+            if isinstance(prova, str):
+                perche.append(f"{'a destra' if zona == 'destra' else 'in basso'}: {prova}")
+                continue
+            nelle_zone[zona].append(tabella)
+            esito[zona] = prova
+            break
+        else:
+            raise LayoutError(
+                f"la tabella «{tabella.titolo or tabella.nome}» non entra nelle zone del piano — "
+                + "; ".join(perche)
+                + ". Allarga le zone (zone_tabelle) o prendi il formato successivo: le scritte "
+                "non si rimpiccioliscono"
+            )
+    pronte: list[TabellaNelleZone] = []
+    righe: list[str] = []
+    for zona in ZONE_DELLE_TABELLE:
+        if zona not in esito:
+            continue
+        fatte, colonne_di_zona = esito[zona]
+        pronte.extend(fatte)
+        for tabella, fatta in zip(nelle_zone[zona], fatte, strict=True):
+            righe.append(
+                f"«{tabella.nome}» {'a destra' if zona == 'destra' else 'in basso'}, larga "
+                f"{sum(c.larghezza_mm for c in fatta.colonne):.0f} mm"
+                + (f" (la zona in {colonne_di_zona} colonne)" if colonne_di_zona > 1 else "")
+            )
+    return pronte, righe
+
+
 # --- disegna ----------------------------------------------------------------
 
 
@@ -432,8 +722,10 @@ def _rilievi_in_parole(
         f"Formato **{formato}** · tratte **{tratte}** · tratte cedute **{cedute}** · "
         f"rilievi bloccanti **{len(bloccanti)}**.",
         "",
-        "Li misurano i controlli della skill sulla tavola finita: il preflight di qualita' "
-        "e le regole del piano. Non sono un giudizio sull'impianto: dicono come e' "
+        # Il file va al progettista (collaudo T3 di REL-012): le frasi fisse con le
+        # lettere accentate, non con l'apostrofo; i codici restano in fondo alla riga.
+        "Li misurano i controlli della skill sulla tavola finita: il controllo di qualità "
+        "e le regole del piano. Non sono un giudizio sull'impianto: dicono com'è "
         "disegnato.",
         "",
     ]
@@ -501,7 +793,18 @@ def _disegna(args: argparse.Namespace, cartelle: Cartelle) -> int:
     modello = load_project(args.grafo)
     piano = carica_piano(args.piano)
     cartiglio = Cartiglio.da_file(cartelle.cartiglio)
-    esito = esegui_piano(modello, piano, dati.catalogo, dati.simboli, cartelle.naming, verifica=args.verifica)
+    # Le tabelle del foglio (REL-012): si sa dove vanno prima di eseguire, cosi' una
+    # tabella che non entra ferma il comando prima di scrivere una tavola senza.
+    tabelle, dove_vanno = tabelle_per_le_zone(piano, args.tabelle or [])
+    esito = esegui_piano(
+        modello, piano, dati.catalogo, dati.simboli, cartelle.naming, verifica=args.verifica, tabelle=tabelle
+    )
+    # La tavola disegna la vista del piano (REL-012, I-227): da qui si legge il suo grafo.
+    modello, dati.catalogo = esito.modello, esito.catalogo
+    if dove_vanno:
+        print("Tabelle del foglio:")
+        for riga in dove_vanno:
+            print(f"  - {riga}")
 
     if esito.girati:
         print("Girati dalla deduzione:")
@@ -568,7 +871,7 @@ def _disegna(args: argparse.Namespace, cartelle: Cartelle) -> int:
             scritti += list(write_dxf(foglio, esito.frame, dati.simboli, svg.with_suffix(".dxf"), tavola))
         sul_cartiglio = rilievi_del_cartiglio(tavola, esito.frame, stati_della_tavola(foglio))
         sostituzioni = [
-            f"{s.carattere!r} in «{s.scritta}»: nel PDF e' scritto «?»" for s in pdf.sostituzioni
+            f"{s.carattere!r} in «{s.scritta}»: nel PDF e' scritto «{s.con}»" for s in pdf.sostituzioni
         ]
         rilievi = args.out / f"{nome}-rilievi.md"
         rilievi.write_text(
@@ -624,12 +927,17 @@ def _pezzi(args: argparse.Namespace, cartelle: Cartelle) -> int:
     con ingombro, rotazioni ammesse e porte; e quelli in linea, che posa il motore."""
     dati = _Dati(cartelle)
     modello = load_project(args.grafo)
+    # La vista del piano (REL-012, I-227): sulla tavola dell'elettrico un circolatore non
+    # ha il suo tubo, e il piano lo posa.
+    modello, catalogo = vista_del_grafo(modello, args.vista, dati.catalogo, cartelle.naming)
     da_posare: list[str] = []
     in_linea: list[str] = []
     for pezzo in modello.components:
-        voce = dati.catalogo.get(pezzo.definition_id)
-        simbolo = dati.simboli.get(voce.symbol_id).manifest
-        porte = ", ".join(f"{p.id} {p.face} ({p.x_mm:g}, {p.y_mm:g})" for p in simbolo.ports)
+        voce = catalogo.get(pezzo.definition_id)
+        simbolo = catalogo.resolve(pezzo.definition_id).symbol.manifest
+        porte = ", ".join(
+            f"{p.id} {p.face} ({p.x_mm:g}, {p.y_mm:g})" for p in (*simbolo.ports, *simbolo.control_ports)
+        )
         riga = (
             f"{pezzo.id} — {voce.name} · simbolo {simbolo.id} {simbolo.width_mm:g} x "
             f"{simbolo.height_mm:g} · rotazioni {', '.join(str(r) for r in simbolo.allowed_rotations_deg)}"
@@ -832,21 +1140,45 @@ def _ambiente(args: argparse.Namespace, cartelle: Cartelle) -> int:
     return 0
 
 
-def consegna(cartella: Path, destinazione: Path) -> list[Path]:
-    """Copia nella cartella di consegna i file per il progettista: PDF, DXF col suo
-    logo, SVG e rilievi."""
+def consegna(cartelle: Path | Sequence[Path], destinazione: Path) -> list[Path]:
+    """Copia nella cartella di consegna i file per il progettista da una o piu'
+    cartelle — la tavola dello schema, la distinta, la pianta —: PDF, DXF, rilievi,
+    l'Excel della distinta e il logo che il DXF nomina (`ESTENSIONI_DA_CONSEGNARE`);
+    non l'SVG.
+
+    Lo stesso nome in due cartelle va bene se il file e' lo stesso (il logo, accanto
+    a ogni DXF); due file diversi con lo stesso nome fermano la consegna prima di
+    copiare, perche' uno coprirebbe l'altro."""
+    elenco = [cartelle] if isinstance(cartelle, Path) else list(cartelle)
+    scelti: dict[str, Path] = {}
+    for cartella in elenco:
+        if not cartella.is_dir():
+            raise OSError(f"{cartella}: la cartella da consegnare non c'e'")
+        for percorso in sorted(cartella.iterdir()):
+            if not (percorso.is_file() and percorso.suffix in ESTENSIONI_DA_CONSEGNARE):
+                continue
+            gia = scelti.get(percorso.name)
+            if gia is not None and gia.read_bytes() != percorso.read_bytes():
+                raise ValueError(
+                    f"{percorso.name} c'e' in {gia.parent} e in {percorso.parent}, ed e' diverso: "
+                    "uno coprirebbe l'altro. Rinomina una delle due tavole."
+                )
+            scelti.setdefault(percorso.name, percorso)
     destinazione.mkdir(parents=True, exist_ok=True)
-    copiati = []
-    for percorso in sorted(cartella.iterdir()):
-        if percorso.is_file() and percorso.suffix in ESTENSIONI_DA_CONSEGNARE:
-            copiati.append(Path(shutil.copy2(percorso, destinazione / percorso.name)))
-    return copiati
+    return [Path(shutil.copy2(percorso, destinazione / nome)) for nome, percorso in scelti.items()]
 
 
 def _consegna(args: argparse.Namespace, cartelle: Cartelle) -> int:
-    for percorso in consegna(args.cartella, args.destinazione):
+    for percorso in consegna(args.cartelle, args.destinazione):
         print(f"Consegnato: {percorso}")
     return 0
+
+
+def _pianta(args: argparse.Namespace, cartelle: Cartelle) -> int:
+    from disegnatore_mep.pianta.comando import esegui
+
+    return esegui(args.pianta, args.out, cartelle.cartiglio, not args.senza_dxf, distinta=args.distinta,
+                  grafo=args.grafo, catalogo=cartelle.catalogo, nomi=cartelle.naming)
 
 
 # --- il comando ---------------------------------------------------------------
@@ -870,6 +1202,12 @@ def costruisci_il_parser() -> argparse.ArgumentParser:
 
     pezzi = comandi.add_parser("pezzi", help="i pezzi da posare nel piano, e quelli che posa il motore")
     pezzi.add_argument("grafo", type=Path, help="il grafo completo")
+    pezzi.add_argument(
+        "--vista",
+        choices=VISTE,
+        default="tutto",
+        help="la vista del piano: tutto (la tavola unica), idraulica, elettrico (REL-012)",
+    )
 
     valida = comandi.add_parser("valida", help="il grafo di Capire carica e regge?")
     valida.add_argument("grafo", type=Path)
@@ -889,6 +1227,13 @@ def costruisci_il_parser() -> argparse.ArgumentParser:
         help="stampa accanto a ogni pezzo il suo indirizzo (D-110): per guardare, non per consegnare",
     )
     disegna.add_argument("--senza-dxf", action="store_true", help="non scrive il DXF")
+    disegna.add_argument(
+        "--tabelle",
+        type=Path,
+        action="append",
+        help="un file di tabelle da posare nelle zone del piano (zone_tabelle): quello che "
+        "scrive il comando distinta, tabelle-del-foglio.json; si puo' ripetere",
+    )
 
     vista = comandi.add_parser("anteprima", help="la tavola come immagine PNG")
     vista.add_argument("tavola", type=Path, help="il PDF o l'SVG della tavola")
@@ -898,10 +1243,60 @@ def costruisci_il_parser() -> argparse.ArgumentParser:
         "--zona", help="solo un riquadro del foglio, x0,y0,x1,y1 in millimetri dall'alto a sinistra"
     )
 
-    finale = comandi.add_parser("consegna", help="copia PDF, DXF, SVG e rilievi nella cartella data")
-    finale.add_argument("cartella", type=Path)
+    pianta = comandi.add_parser("pianta", help="la pianta dei posizionamenti e dei tracciati (M.03)")
+    pianta.add_argument("pianta", type=Path, help="il JSON della pianta")
+    pianta.add_argument("--out", type=Path, required=True, help="la cartella della tavola")
+    pianta.add_argument("--senza-dxf", action="store_true", help="non scrive il DXF")
+    pianta.add_argument(
+        "--distinta", type=Path,
+        help="il distinta.json del comando distinta: controlla numeri di tratta, capi e lunghezze, e da' la "
+        "lunghezza ai tracciati che non l'hanno",
+    )
+    pianta.add_argument(
+        "--grafo", type=Path, help="il grafo completo: controlla sigle, tubazioni e lunghezze dei tracciati"
+    )
+
+    finale = comandi.add_parser(
+        "consegna",
+        help="copia PDF, DXF, rilievi e l'Excel della distinta, da una o piu' cartelle, nella cartella data",
+    )
+    finale.add_argument(
+        "cartelle", type=Path, nargs="+", help="la tavola, e se ci sono la distinta e la pianta"
+    )
     finale.add_argument("destinazione", type=Path)
+
+    distinta = comandi.add_parser(
+        "distinta", help="la distinta materiali per l'installatore (proposta D-213): solo se il progettista la chiede"
+    )
+    distinta.add_argument("grafo", type=Path, help="il grafo completo, con lunghezze e sezioni sui tratti")
+    distinta.add_argument("--out", type=Path, required=True, help="la cartella della distinta")
+    distinta.add_argument("--regole", type=Path, help="le regole della distinta: una cartella o un fascio")
+    distinta.add_argument(
+        "--sul-foglio",
+        help="le tabelle di tabelle-del-foglio.json, fra tratte,computo,attivita,note (di default tutte)",
+    )
+    distinta.add_argument(
+        "--fornitura",
+        help="chi fornisce che cosa in questa offerta, es. apparecchiature=installatore; «confermata» per le "
+        "predefinite; senza, le predefinite da confermare",
+    )
     return parser
+
+
+def _distinta(args: argparse.Namespace, cartelle: Cartelle) -> int:
+    # REL-013, proposta D-213: un modulo a parte, che nessun altro comando chiama.
+    from disegnatore_mep.distinta.comando import esegui
+
+    return esegui(
+        args.grafo,
+        args.out,
+        args.regole,
+        cartelle.regole,
+        cartelle.catalogo,
+        cartelle.naming,
+        sul_foglio=args.sul_foglio,
+        fornitura=args.fornitura,
+    )
 
 
 def main(argv: Sequence[str] | None, cartelle: Cartelle) -> int:
@@ -919,6 +1314,8 @@ def main(argv: Sequence[str] | None, cartelle: Cartelle) -> int:
             "disegna": _disegna,
             "anteprima": _anteprima,
             "consegna": _consegna,
+            "distinta": _distinta,
+            "pianta": _pianta,
         }
         return comando[args.comando](args, cartelle)
     except (OSError, ValidationError, ValueError, RuleError) as errore:

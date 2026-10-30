@@ -636,7 +636,12 @@ def everything_wrong() -> DrawingGeometry:
         update={
             # Un DN che nomina una tratta che la tavola non disegna (REL-007).
             "diametri": [
-                DiametroSullaTavola(testo="Øi 32", ancora=at(60, 250), connection_ids=["fantasma"])
+                DiametroSullaTavola(testo="Øi 32", ancora=at(60, 250), connection_ids=["fantasma"]),
+                # La scritta del progettista sulla tratta `h`: il testo `l2` le sta
+                # lungo, e si legge come sua (collaudo T1 di REL-012).
+                DiametroSullaTavola(
+                    testo="Ø200 · L 5 m", ancora=at(170, 98.5), connection_ids=["h"], del_progettista=True
+                ),
             ]
         }
     )
@@ -694,6 +699,7 @@ def test_preflight_runs_every_measure_in_the_declared_order() -> None:
         preflight.u_turns(broken, FRAME),
         preflight.orthogonality_of_leaders(broken),
         preflight.labels_on_runs(broken, FRAME),
+        preflight.labels_along_written_runs(broken, FRAME),
         preflight.leader_crossings(broken),
         preflight.omitted_tags(broken),
         preflight.omitted_free_labels(broken, progetto),

@@ -1,0 +1,29 @@
+{
+  "id": "outdoor-temperature-probe",
+  "version": "1.0.0",
+  "name": "Sonda esterna",
+  "width_mm": 10.0,
+  "height_mm": 10.0,
+  "allowed_rotations_deg": [
+    0,
+    90,
+    180,
+    270
+  ],
+  "ports": [
+    {
+      "id": "a",
+      "face": "left",
+      "x_mm": 0.0,
+      "y_mm": 5.0
+    }
+  ],
+  "keep_out": {
+    "left_mm": 2.0,
+    "right_mm": 0.0,
+    "top_mm": 0.0,
+    "bottom_mm": 0.0
+  },
+  "stroke_weight": "medium",
+  "source": "proposta della sessione del 29/10/2026 (REL-012 fase 3, I-226): forma da approvare dal PO sulla tavola; stile dei simboli del kit aria-aria"
+}

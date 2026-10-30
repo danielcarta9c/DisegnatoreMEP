@@ -35,6 +35,7 @@ from disegnatore_mep.catalog.schema import PortDefinition
 from disegnatore_mep.model.project import PortRef, ProjectModel
 from disegnatore_mep.model.types import PortFlow
 
+from .fluidi import porta_la_freccia
 from .geometry import FlowKind
 from .trunks import Trunk
 
@@ -608,6 +609,15 @@ def classify_trunks(
             } - {None}
             supply = hosts.pop() if len(hosts) == 1 else True
         result[key] = TrunkFlow(supply=supply, kind=kind, flow_from_start=flow_from_start)
+    # **Le linee di un fluido senza freccia** (REL-012): il refrigerante di una
+    # macchina reversibile, l'elettrico, il bus. Il verso resta dove il modello lo
+    # dice; la freccia no. La convenzione e' in `layout.fluidi`, e si cambia li'.
+    fluidi = {item.id: item.medium for item in project.networks}
+    for trunk in trunks:
+        if not porta_la_freccia(fluidi.get(trunk.network_id, "")):
+            result[trunk.connection_ids] = result[trunk.connection_ids]._replace(
+                kind=FlowKind.NO_ARROW
+            )
     return result
 
 

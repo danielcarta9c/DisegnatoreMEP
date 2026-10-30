@@ -32,22 +32,36 @@ Il giro, in ordine:
 from __future__ import annotations
 
 import re
+from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
-from disegnatore_mep.diametri.tratti import tratti_da_etichettare
+from disegnatore_mep.diametri.scritte import CAMPIONE_DELLA_LEGENDA as CAMPIONE_DELLA_SCRITTA
+from disegnatore_mep.diametri.scritte import TESTO_DELLA_LEGENDA as TESTO_DELLA_SCRITTA
+from disegnatore_mep.diametri.scritte import tratti_da_scrivere
 from disegnatore_mep.graphics.frame import ORDINARY_FRAMES, SheetFrame
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.graphics.symbol import PortFace, SymbolManifest
-from disegnatore_mep.graphics.tabella import tabella_della_tavola
+from disegnatore_mep.graphics.tabella import (
+    pezzi_comandati,
+    sigle_sul_disegno,
+    tabella_della_tavola,
+)
+from disegnatore_mep.graphics.tabelle import posa_le_tabelle
 from disegnatore_mep.layout.addresses import with_addresses
 from disegnatore_mep.layout.compose import (
     centre_vertically,
     inline_component_ids,
     sgombra_la_tabella,
 )
-from disegnatore_mep.layout.diametri import nota_della_legenda, posa_i_diametri
+from disegnatore_mep.layout.diametri import (
+    CAMPIONE_DELLA_LEGENDA,
+    TESTO_DELLA_LEGENDA,
+    note_della_legenda,
+    posa_i_diametri,
+    riquadro_del_diametro,
+)
 from disegnatore_mep.layout.errors import LayoutError
 from disegnatore_mep.layout.geometry import (
     SHEET_MARGIN_MIN_MM,
@@ -56,19 +70,26 @@ from disegnatore_mep.layout.geometry import (
     Point,
     RoutedTrunk,
     SheetGeometry,
+    TabellaNelleZone,
     zona_della_tabella,
 )
 from disegnatore_mep.layout.grid import GridSpace
 from disegnatore_mep.layout.inline import settle_sheet
-from disegnatore_mep.layout.labels import place_labels
+from disegnatore_mep.layout.labels import place_labels, place_tags_that_yield
 from disegnatore_mep.layout.legend import build_legend
 from disegnatore_mep.layout.partition import SheetPartition, partition_project
 from disegnatore_mep.layout.place import place_sheet
 from disegnatore_mep.layout.spine import SpineLayout, carry_the_rest
-from disegnatore_mep.layout.trunks import build_trunks
+from disegnatore_mep.layout.trunks import build_trunks, porte_di_comando_in_linea
 from disegnatore_mep.model.project import ProjectModel
 from disegnatore_mep.model.types import IssueSeverity
 from disegnatore_mep.piano.formato import ErroreDelPiano, PianoDiComposizione
+from disegnatore_mep.piano.vista import (
+    CAMPIONE_DEL_RIMANDO,
+    rimando,
+    sigle_del_grafo_intero,
+    vista_del_grafo,
+)
 from disegnatore_mep.validation.issues import ValidationIssue
 from disegnatore_mep.validation.preflight import preflight_drawing
 
@@ -171,11 +192,23 @@ def orienta(
     definizioni = {item.id: item.definition_id for item in modello.components}
     dove = {item.component_id: item for item in posati}
 
+    # **Un cavo non gira un pezzo che ha il suo tubo** (REL-012, fase 3). La sonda
+    # pende dal suo tubo e manda il segnale al regolatore: guarda il tubo, e il cavo
+    # parte da dove la sonda lo porta. Sulla tavola dell'elettrico il tubo non c'e',
+    # e allora la sonda guarda il suo cavo.
     vicini: dict[str, dict[str, str]] = {}
+    via_cavo: dict[str, dict[str, str]] = {}
     for trunk in partizione.trunks:
         for mio, suo in ((trunk.start, trunk.end), (trunk.end, trunk.start)):
-            if mio.component_id != suo.component_id:
-                vicini.setdefault(mio.component_id, {})[mio.port_id] = suo.component_id
+            if mio.component_id == suo.component_id:
+                continue
+            voce = definizioni.get(mio.component_id)
+            if voce is not None and mio.port_id in catalogo.porte_di_comando(voce):
+                via_cavo.setdefault(mio.component_id, {})[mio.port_id] = suo.component_id
+                continue
+            vicini.setdefault(mio.component_id, {})[mio.port_id] = suo.component_id
+    for component_id, porte_del_cavo in via_cavo.items():
+        vicini.setdefault(component_id, porte_del_cavo)
 
     def centro(item: PlacedSymbol) -> tuple[float, float]:
         return (
@@ -199,7 +232,14 @@ def orienta(
             # `bocchettone` e non `attacco` perche' qui si tiene in mano
             # l'attacco **fisico** del simbolo, e tre righe piu' giu' `attacco`
             # e' il suo identificativo: due cose diverse, due nomi diversi.
-            for bocchettone in manifesto.ports:
+            # Una porta di comando e' il suo attacco e nessun altro (REL-012): il
+            # cavo non si sposta su un bocchettone dell'acqua.
+            candidati = (
+                [manifesto.port(porta)]
+                if porta in manifesto.control_port_ids
+                else manifesto.ports
+            )
+            for bocchettone in candidati:
                 faccia = _VERSO[bocchettone.face]
                 preferenze.append(
                     (
@@ -321,6 +361,15 @@ class EsitoDelPiano:
     girati: tuple[str, ...]
     """I pezzi girati dalla deduzione, nella forma `id 0->180`."""
 
+    modello: ProjectModel
+    """Il grafo che la tavola disegna: quello della vista del piano (REL-012). Per la
+    tavola unica e' il grafo dato."""
+
+    catalogo: ComponentRegistry
+    """Il catalogo di quel grafo, con le porte di comando che collega (REL-012):
+    quello con cui chi viene dopo — le regole del piano, il cartiglio — deve leggere
+    la tavola."""
+
     @property
     def bloccanti(self) -> list[ValidationIssue]:
         """I soli rilievi che fermano una consegna (D-063)."""
@@ -349,6 +398,70 @@ class EsitoDelPiano:
         )
 
 
+def con_le_porte_scollegate(
+    foglio: SheetGeometry,
+    modello: ProjectModel,
+    catalogo: ComponentRegistry,
+    reti: Sequence[str],
+    vista: str = "tutto",
+) -> SheetGeometry:
+    """Il foglio con, su ogni pezzo, le porte che **nessuna linea della tavola**
+    collega fra quelle che il corpo del simbolo disegna col loro moncone
+    (collaudo T1 di REL-012, §3), e le porte di comando a cui un cavo arriva
+    (collaudo T2).
+
+    **Sulla tavola dell'elettrico** si tolgono anche i monconi degli attacchi
+    d'acqua (`data-moncone`): la pompa di calore del collaudo T2 mostrava i suoi due
+    attacchi come tubi aperti. Sulle altre viste restano: e' l'idronico di sempre.
+    E **il cavo tocca il corpo**: il moncone di una porta di comando collegata
+    (`data-comando`) va dalla faccia del riquadro, dove il cavo finisce, al corpo.
+
+    Sul canalizzato del collaudo la centrale di zona disegnava il moncone del
+    quarto bus, che nessun termostato usava: si leggeva come un attacco libero. Il
+    renderer toglie il moncone di queste porte. Una porta conta collegata se una
+    tubazione **di una rete di questa tavola** ci arriva: sulla tavola idraulica di
+    un grafo con l'elettrico, il cavo sta sull'altra, e il suo moncone non c'e'.
+
+    Solo i simboli con i gruppi `data-port` — le macchine dell'aria-aria e del
+    comando — hanno qualcosa da togliere; gli altri restano com'erano, e la loro
+    geometria non cambia di un byte."""
+    sulla_tavola = set(reti)
+    collegate = {
+        (ref.component_id, ref.port_id)
+        for item in modello.connections
+        if item.network_id in sulla_tavola
+        for ref in (item.endpoint_a, item.endpoint_b)
+    }
+    voce = {item.id: item.definition_id for item in modello.components}
+    posati: list[PlacedSymbol] = []
+    for placed in foglio.symbols:
+        definizione = voce.get(placed.component_id)
+        if definizione is None:
+            posati.append(placed)
+            continue
+        simbolo = catalogo.resolve(definizione).symbol
+        col_moncone = simbolo.porte_col_moncone
+        if vista == "elettrico":
+            col_moncone = col_moncone | simbolo.monconi_d_acqua
+        if not col_moncone and not simbolo.monconi_di_comando:
+            posati.append(placed)
+            continue
+        attaccate = {
+            placed.physical_port(porta)
+            for componente, porta in collegate
+            if componente == placed.component_id
+        }
+        cambi: dict[str, list[str]] = {}
+        libere = sorted(col_moncone - attaccate)
+        if libere:
+            cambi["porte_scollegate"] = libere
+        col_cavo = sorted(simbolo.monconi_di_comando & attaccate)
+        if col_cavo:
+            cambi["porte_col_cavo"] = col_cavo
+        posati.append(placed.model_copy(update=cambi) if cambi else placed)
+    return foglio.model_copy(update={"symbols": posati})
+
+
 def _detto_nel_piano(
     messaggio: str, partizione: SheetPartition, posa: tuple[PlacedSymbol, ...]
 ) -> str:
@@ -362,7 +475,7 @@ def _detto_nel_piano(
     Qui si aggiunge quello che il piano sa leggere: quali pezzi la tratta
     unisce, e dove il piano li ha messi.
     """
-    trovata = re.search(r"\brun (\S+) on network", messaggio)
+    trovata = re.search(r"\bla tratta (\S+) della rete", messaggio)
     if trovata is None:
         return messaggio
     tratta = next(
@@ -400,6 +513,7 @@ def esegui_piano(
     simboli: SymbolRegistry,
     naming: Path,
     verifica: bool = False,
+    tabelle: Sequence[TabellaNelleZone] = (),
 ) -> EsitoDelPiano:
     """Esegue un piano di composizione, e misura quello che ne esce.
 
@@ -416,13 +530,41 @@ def esegui_piano(
     Solleva `ErroreDelPiano` se il piano nomina pezzi che non esistono nel
     modello, elencandoli: e' un difetto del piano, non della tavola, e va detto
     prima di posare qualunque cosa.
+
+    `tabelle` sono le tabelle che un altro modulo — la distinta, la tabella delle
+    tratte (REL-013) — vuole sulla tavola, nelle zone che il piano lascia
+    (`zone_tabelle`): il motore le posa e le disegna (`graphics.tabelle`). Una
+    tabella che non entra nella sua zona e' un `LayoutError` che lo dice.
     """
+    # **La vista** (REL-012, fase 3, I-227): la tavola unica, l'idraulica o
+    # l'elettrico e il comando dallo stesso grafo. Da qui in avanti il grafo e' quello
+    # della vista, e il catalogo quello di quel grafo — con le porte di comando che
+    # collega, e soltanto quelle: senza elettrico, il catalogo di sempre.
+    # Il rimando all'altra tavola si legge sul grafo intero: il numero di ciascuna
+    # vista viene dal suo.
+    altra_tavola = rimando(modello, piano.vista)
+    # Le sigle del grafo intero, per i pezzi fuori dall'acqua (collaudo T1).
+    sigle_intere = sigle_del_grafo_intero(modello, catalogo.per_il_progetto(modello), naming)
+    # I pezzi con un cavo, letti sul grafo intero: portano la sigla anche sulla
+    # tavola idraulica, dove il cavo non c'e' (collaudo T2).
+    comandati = pezzi_comandati(modello)
+    modello, catalogo = vista_del_grafo(modello, piano.vista, catalogo, naming)
     frame = _frame(piano.formato)
+    # **Le zone delle tabelle** (REL-012): lo stesso foglio, con l'area del disegno
+    # piu' stretta. Da qui in avanti tutto — posa, instradamento, centratura, preflight
+    # — vede l'area che resta.
+    if piano.zone_tabelle is not None:
+        try:
+            frame = frame.con_le_zone(piano.zone_tabelle.destra_mm, piano.zone_tabelle.basso_mm)
+        except ValueError as errore:
+            raise ErroreDelPiano(f"le zone delle tabelle non entrano nell'{piano.formato}: {errore}") from errore
     area = frame.drawing_rect_mm
     grid = GridSpace(origin=area, standard=frame.standard)
 
     inline = inline_component_ids(modello, catalogo)
-    partizione = partition_project(modello, build_trunks(modello, inline))[0]
+    partizione = partition_project(
+        modello, build_trunks(modello, inline, porte_di_comando_in_linea(modello, catalogo))
+    )[0]
 
     # 1. La posa di partenza serve solo come **inventario**: da lei si prendono
     #    i simboli, le rotazioni e la mappa delle porte di ogni pezzo. Le
@@ -567,6 +709,8 @@ def esegui_piano(
             partizione=partizione,
             errore=_detto_nel_piano(str(errore), partizione, posa),
             girati=girati,
+            modello=modello,
+            catalogo=catalogo,
         )
 
     voci, chiavi = build_legend(
@@ -585,6 +729,7 @@ def esegui_piano(
         legend=voci,
         network_keys=chiavi,
     )
+    foglio = con_le_porte_scollegate(foglio, modello, catalogo, partizione.network_ids, piano.vista)
     foglio = centre_vertically(foglio, area, frame.standard.grid_mm)
 
     # **La tabella delle apparecchiature, in alto a sinistra** (REL-006, I-141).
@@ -615,6 +760,26 @@ def esegui_piano(
         ostacoli = (zona_della_tabella(tabella.riquadro),)
         in_tabella = frozenset(riga.component_id for riga in tabella.righe)
 
+    # **I pezzi fuori dall'acqua portano la loro sigla** (collaudo T1 di REL-012):
+    # bocchette, riprese, termostati, quadro, sezionatore, sifone, scarico. Sono
+    # quelli che la pianta e la distinta citano, e senza una sigla sullo schema non
+    # c'era modo di collegare l'una all'altro. L'idronico resta com'e': una valvola
+    # la sigla sul disegno non la porta (`tabella.fuori_dall_acqua`). Si posano per
+    # ultime, dopo le scritte dei tratti, e cedono (`place_tags_that_yield`).
+    # Chi ha gia' una sigla — scritta dal progettista, o il codice della tabella —
+    # la porta gia': qui solo gli altri.
+    fuori = sigle_sul_disegno(
+        modello,
+        catalogo,
+        sigle_intere,
+        (item.component_id for item in foglio.symbols if item.tag is None),
+        comandati,
+    )
+
+    # Le tubazioni con la scritta del progettista: un testo di pezzo non sta lungo
+    # di loro, o si leggerebbe come la loro scritta (collaudo T1 di REL-012).
+    scritte, calcolati = tratti_da_scrivere(modello, catalogo)
+    linee_scritte = frozenset(item for scritta in scritte for item in scritta.connection_ids)
     foglio = foglio.model_copy(
         update={
             "labels": place_labels(
@@ -625,6 +790,7 @@ def esegui_piano(
                 area=area,
                 ostacoli=ostacoli,
                 senza_valori=in_tabella,
+                linee_scritte=linee_scritte,
             )
         }
     )
@@ -633,13 +799,70 @@ def esegui_piano(
     # il progettista l'ha chiesto, e sulle reti che ha detto; dopo le sigle,
     # perche' e' l'ultimo testo che si scrive e non sposta niente. La legenda
     # spiega la scritta con una riga sua (I-155), se almeno un tratto la porta.
-    tratti = tratti_da_etichettare(modello, catalogo)
-    if tratti:
-        diametri, _ = posa_i_diametri(tratti, foglio, frame.standard, area, ostacoli)
+    #
+    # **E la scritta che il progettista ha dato al tratto** (REL-012): «Ø200 · L 6
+    # m», «3G2,5 · L 20 m». La posa e' la stessa; un DN calcolato sullo stesso
+    # tratto le cede il posto, e la legenda la spiega con una riga sua, «Ø · L»,
+    # sotto quella del DN, che resta «Øi».
+    # **Le due tavole si rimandano** (REL-012, fase 3): sull'idraulica una riga della
+    # legenda dice dove sta l'elettrico e il comando, e viceversa. Sotto le righe delle
+    # scritte, se ci sono.
+    spiegate: list[tuple[str, str]] = []
+    if scritte or calcolati:
+        diametri, _ = posa_i_diametri(
+            (*scritte, *calcolati), foglio, frame.standard, area, ostacoli
+        )
         foglio = foglio.model_copy(update={"diametri": diametri})
-        nota = nota_della_legenda(foglio, frame) if diametri else None
-        if nota is not None:
-            foglio = foglio.model_copy(update={"note_della_legenda": [nota]})
+        nominate = {frozenset(item.connection_ids) for item in diametri}
+        spiegate = [
+            voce
+            for voce, quali in (
+                ((CAMPIONE_DELLA_LEGENDA, TESTO_DELLA_LEGENDA), calcolati),
+                ((CAMPIONE_DELLA_SCRITTA, TESTO_DELLA_SCRITTA), scritte),
+            )
+            if any(frozenset(item.connection_ids) in nominate for item in quali)
+        ]
+    if fuori:
+        foglio = foglio.model_copy(
+            update={
+                "symbols": [
+                    item.model_copy(update={"tag": fuori[item.component_id]})
+                    if item.tag is None and item.component_id in fuori
+                    else item
+                    for item in foglio.symbols
+                ],
+                "labels": [
+                    *foglio.labels,
+                    *place_tags_that_yield(
+                        foglio.symbols,
+                        fuori,
+                        frame.standard,
+                        routes=foglio.routes,
+                        already=foglio.labels,
+                        occupied=[
+                            (
+                                riquadro_del_diametro(item, frame.standard.text_small_mm),
+                                () if item.richiamo is None else item.richiamo.segmenti,
+                            )
+                            for item in foglio.diametri
+                        ],
+                        area=area,
+                        ostacoli=ostacoli,
+                        linee_scritte=linee_scritte,
+                    ),
+                ],
+            }
+        )
+    # Il rimando e' una frase sola, «Vedi la tavola …», su tutta la fascia: con
+    # «Vedi» nella colonna dei simboli si leggeva come una voce (collaudo T2).
+    frasi = [(CAMPIONE_DEL_RIMANDO, altra_tavola)] if altra_tavola is not None else []
+    if scritte or calcolati or altra_tavola is not None:
+        note = note_della_legenda(foglio, frame, spiegate, frasi)
+        if note:
+            foglio = foglio.model_copy(update={"note_della_legenda": note})
+    # **Le tabelle nelle zone** (REL-012): fuori dall'area del disegno, quindi non
+    # spostano niente; si posano per ultime.
+    foglio = posa_le_tabelle(foglio, frame, tabelle)
     disegno = DrawingGeometry(project_id=modello.metadata.project_id, sheets=[foglio])
     # **Gli indirizzi dei nodi si chiedono, non si subiscono** (D-110). Fino al
     # 20 settembre il piano li metteva sempre, e la conseguenza si vedeva a
@@ -662,4 +885,6 @@ def esegui_piano(
         partizione=partizione,
         errore=None,
         girati=girati,
+        modello=modello,
+        catalogo=catalogo,
     )

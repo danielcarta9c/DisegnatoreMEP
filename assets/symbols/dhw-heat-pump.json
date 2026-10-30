@@ -1,6 +1,6 @@
 {
   "id": "dhw-heat-pump",
-  "version": "1.2.0",
+  "version": "1.4.0",
   "name": "Boiler in pompa di calore",
   "width_mm": 25.0,
   "height_mm": 45.0,
@@ -33,11 +33,25 @@
       "y_mm": 12.5
     }
   ],
+  "control_ports": [
+    {
+      "id": "power",
+      "face": "bottom",
+      "x_mm": 7.5,
+      "y_mm": 45.0
+    },
+    {
+      "id": "bus",
+      "face": "bottom",
+      "x_mm": 17.5,
+      "y_mm": 45.0
+    }
+  ],
   "keep_out": {
     "left_mm": 2.0,
     "right_mm": 2.0,
     "top_mm": 2.0,
-    "bottom_mm": 0.0
+    "bottom_mm": 2.0
   },
   "stroke_weight": "medium",
   "source": "pratica di settore, cfr. SRC-008"

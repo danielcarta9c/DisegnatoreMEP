@@ -14,13 +14,15 @@ Che cosa ci mette, e da dove:
 | nella skill | dal repository |
 |---|---|
 | `SKILL.md` | `skill/SKILL.md` — l'ingresso |
-| `riferimenti/capire.md`, `comporre.md`, `rivedere.md` | le istruzioni in `skill/<pezzo>/ISTRUZIONI.md` |
+| `riferimenti/capire.md`, `comporre.md`, `rivedere.md`, `distinta.md`, `pianta.md` | le istruzioni in `skill/<pezzo>/ISTRUZIONI.md` |
 | `riferimenti/regole-del-piano.md` | `docs/regole-del-piano.md` |
 | `scripts/mep.py` | `skill/scripts/mep.py` — il comando |
 | `scripts/disegnatore_mep/` | `src/disegnatore_mep/` — il motore, tutto |
 | `dati/simboli.json` | `assets/symbols/`, in un file solo |
 | `dati/catalogo.json` | `examples/layout/catalog/`, in un file solo |
 | `dati/regole.json` | `rules/hydronic/`, in un file solo |
+| `dati/distinta.json` | `rules/distinta/`, in un file solo (la distinta, REL-013) |
+| `dati/schema/pianta.schema.json`, `dati/esempi/pianta-appartamento.json` | lo schema e l'esempio della pianta (REL-014) |
 | `dati/naming/` | `naming/` |
 | `dati/cartiglio/` | `assets/cartigli/Cartiglio_NoveC_A3.json` e il suo logo |
 | `dati/schema/project.schema.json` | `schemas/project.schema.json` |
@@ -150,6 +152,18 @@ PERCORSI_DI_COMPORRE = (
 
 PERCORSI_DI_RIVEDERE = (
     Sostituzione("(`regole-del-piano.md`)", "(`riferimenti/regole-del-piano.md`)", 1, "le regole"),
+)
+
+PERCORSI_DELLA_DISTINTA = (
+    Sostituzione("`rules/distinta/`", "`dati/distinta.json`, in un file solo", 1,
+                 "le regole della distinta stanno in un fascio"),
+)
+
+PERCORSI_DELLA_PIANTA = (
+    Sostituzione("`schemas/pianta.schema.json`", "`dati/schema/pianta.schema.json`", 1, "lo schema della pianta"),
+    Sostituzione("`examples/pianta/appartamento-aria-aria.json`", "`dati/esempi/pianta-appartamento.json`", 1,
+                 "l'esempio completo sta nei dati della skill"),
+    Sostituzione("`naming/media.json`", "`dati/naming/media.json`", 1, "i fluidi"),
 )
 
 NOTA_DELLE_REGOLE = (
@@ -313,6 +327,8 @@ def costruisci(uscita: Path) -> tuple[Path, Path]:
         ("capire", PERCORSI_DI_CAPIRE),
         ("comporre", PERCORSI_DI_COMPORRE),
         ("rivedere", PERCORSI_DI_RIVEDERE),
+        ("distinta", PERCORSI_DELLA_DISTINTA),
+        ("pianta", PERCORSI_DELLA_PIANTA),
     ):
         testo = (ROOT / "skill" / pezzo / "ISTRUZIONI.md").read_text(encoding="utf-8")
         _scrivi(riferimenti / f"{pezzo}.md", _con_l_indice(_sostituisci(testo, sostituzioni, pezzo)))
@@ -330,10 +346,13 @@ def costruisci(uscita: Path) -> tuple[Path, Path]:
         strict=True,
     ):
         _scrivi(dati / f"{nome}.json", fascio_della_cartella(sorgente, nome))
+    _scrivi(dati / "distinta.json", fascio_della_cartella(ROOT / "rules" / "distinta", "distinta"))
     _copia_cartella(ROOT / "naming", dati / "naming", (".json",))
     for nome in ("Cartiglio_NoveC_A3.json", "Cartiglio_NoveC_A3-logo.jpg"):
         _copia(ROOT / "assets" / "cartigli" / nome, dati / "cartiglio" / nome)
     _copia(ROOT / "schemas" / "project.schema.json", dati / "schema" / "project.schema.json")
+    _copia(ROOT / "schemas" / "pianta.schema.json", dati / "schema" / "pianta.schema.json")
+    _copia(ROOT / "examples" / "pianta" / "appartamento-aria-aria.json", dati / "esempi" / "pianta-appartamento.json")
     _copia(ROOT / "LICENSE", skill / "LICENSE.txt")
 
     difetti = controlla(skill)

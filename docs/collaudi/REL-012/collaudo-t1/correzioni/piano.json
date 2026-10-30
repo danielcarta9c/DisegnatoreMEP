@@ -1,0 +1,92 @@
+{
+ "formato": "A3",
+ "note": [
+  "UE e UI allo stesso y: liquido (+7,5) e gas (+17,5) rette (E1).",
+  "Plenum con l'ingresso alla quota della mandata della UI (+12,5); bocchette in colonna alle quote delle uscite (E1).",
+  "Ripresa sopra la UI, sull'asse della bocca (E1). Centrale di zona sotto il plenum sull'asse dei motori, termostati in colonna alla quota dei bus (E2).",
+  "Sotto la UI condensa con scarico addosso, comando a filo; quadro sotto la UE con l'alimentazione in verticale (E3).",
+  "Giro 2: scarico a 25 mm sotto la UI (minimo del sifone, A4); quadro abbassato a y=115 perche' l'alimentazione della centrale corra a y=105, 10 mm sotto il collegamento centrale-UI (B9).",
+  "Correzioni del collaudo T1: plenum a quattro serrande, niente piu' uscita tappata.",
+  "Senza le tabelle sul foglio (distinta, REL-013): A3, senza zone per le tabelle.",
+  "Collaudo T3: i termostati con marca e modello entrano nella tabella delle apparecchiature, che cresce di tre righe e spinge il disegno; a x=235 la scritta «Z3 Soggiorno (sopra il varco)» non entrava più prima della legenda (bloccante). Bocchette e termostati a x=225: a x=230 la scritta usciva senza bloccanti ma toccava la cornice della legenda; a x=220 le scritte dei tratti non entrano più."
+ ],
+ "pezzi": {
+  "ue": {
+   "x": 0,
+   "y": 0,
+   "regola": "E1 - stessa y della UI"
+  },
+  "ui": {
+   "x": 100,
+   "y": 0,
+   "regola": "E1 - stessa y della UE"
+  },
+  "plenum": {
+   "x": 165,
+   "y": 0,
+   "regola": "E1 - ingresso alla quota della mandata UI"
+  },
+  "bocchetta-matrimoniale": {
+   "x": 225,
+   "y": 0,
+   "regola": "E1 - quota di out_1"
+  },
+  "bocchetta-singola": {
+   "x": 225,
+   "y": 12.5,
+   "regola": "E1 - quota di out_2"
+  },
+  "bocchetta-soggiorno-1": {
+   "x": 225,
+   "y": 25,
+   "regola": "E1 - quota di out_3"
+  },
+  "bocchetta-soggiorno-2": {
+   "x": 225,
+   "y": 37.5,
+   "regola": "E1 - quota di out_4"
+  },
+  "ripresa": {
+   "x": 115,
+   "y": -27.5,
+   "rotazione": 90,
+   "regola": "E1 - sopra la UI sull'asse della bocca di ripresa"
+  },
+  "centrale-zona": {
+   "x": 170,
+   "y": 85,
+   "regola": "E2 - sotto il plenum sull'asse dei motori"
+  },
+  "termostato-matrimoniale": {
+   "x": 225,
+   "y": 87.5,
+   "regola": "E2 - quota di bus_1"
+  },
+  "termostato-singola": {
+   "x": 225,
+   "y": 102.5,
+   "regola": "E2 - quota di bus_2"
+  },
+  "termostato-soggiorno": {
+   "x": 225,
+   "y": 117.5,
+   "regola": "E2 - quota di bus_3"
+  },
+  "comando-filo": {
+   "x": 145,
+   "y": 55,
+   "rotazione": 90,
+   "regola": "E3 - sotto la UI"
+  },
+  "scarico-cucina": {
+   "x": 120,
+   "y": 60,
+   "regola": "A4 cede a REL-012: a 25 mm (minimo) la scritta del tratto sifone-scarico non trova posto e la tavola si blocca; a 30 mm entra"
+  },
+  "quadro": {
+   "x": 2.5,
+   "y": 115,
+   "regola": "E3 + B9 - sotto la UE; la linea alla centrale corre 10 mm sotto il collegamento centrale-UI"
+  }
+ }
+}

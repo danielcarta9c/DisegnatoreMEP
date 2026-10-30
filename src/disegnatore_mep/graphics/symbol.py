@@ -241,6 +241,21 @@ class SymbolManifest(StrictModel):
     allowed_rotations_deg: list[int] = Field(min_length=1)
     inline_gap_mm: FiniteFloat | None = Field(default=None, gt=0)
     ports: list[SymbolPort] = Field(min_length=1)
+    control_ports: list[SymbolPort] = Field(default_factory=list)
+    """Le porte **elettriche e di comando** di un pezzo che sta su un fluido
+    (REL-012, fase 3, I-226): l'alimentazione, il bus, il comando
+    dell'attuatore di una pompa di calore, di una caldaia, di un circolatore, di
+    una valvola motorizzata, di un ventilconvettore.
+
+    Stanno **a parte** dalle altre, e la ragione e' una sola: **non sono sul
+    percorso del fluido.** Non contano per l'in linea — un circolatore resta un
+    pezzo a due porte opposte che spezza la sua tubazione —, ne' per la
+    rotazione dedotta, ne' per la mappa delle porte. E sono **facoltative**: il
+    catalogo le dichiara `required: false` nel dominio `control`, e il registro
+    le tiene da parte finche' il grafo non ne collega una
+    (`ComponentRegistry.per_il_progetto`). Una porta di comando che il grafo non
+    usa **non esiste per il disegno**: senza elettrico nel grafo, nessuna tavola
+    cambia di un byte."""
     keep_out: KeepOut = Field(default_factory=KeepOut)
     label_anchors: list[LabelAnchor] = Field(default_factory=list)
     flow_glyphs: list[FlowGlyph] = Field(default_factory=list)
@@ -251,14 +266,32 @@ class SymbolManifest(StrictModel):
     source: str = Field(min_length=1)
 
     def port(self, port_id: str) -> SymbolPort:
-        for item in self.ports:
+        for item in (*self.ports, *self.control_ports):
             if item.id == port_id:
                 return item
         raise SymbolError(f"unknown symbol port: {port_id}")
 
     @property
     def port_ids(self) -> frozenset[str]:
-        return frozenset(item.id for item in self.ports)
+        return frozenset(item.id for item in (*self.ports, *self.control_ports))
+
+    @property
+    def control_port_ids(self) -> frozenset[str]:
+        """Le porte di comando: quelle che il registro tiene da parte."""
+        return frozenset(item.id for item in self.control_ports)
+
+    def con_le_porte_di_comando(self, tenute: frozenset[str]) -> "SymbolManifest":
+        """Il manifesto con le sole porte di comando `tenute`, e le altre tolte.
+
+        E' cosi' che il registro mette da parte quelle che il grafo non collega:
+        il manifesto che ne esce e', porta per porta, quello di prima che le
+        porte di comando esistessero. L'area di rispetto non cambia: e' una
+        misura del simbolo, che la posa non legge."""
+        if tenute >= self.control_port_ids:
+            return self
+        return self.model_copy(
+            update={"control_ports": [item for item in self.control_ports if item.id in tenute]}
+        )
 
     @property
     def is_inline(self) -> bool:
@@ -282,7 +315,7 @@ class SymbolManifest(StrictModel):
             raise ValueError("duplicate allowed rotation")
 
         seen: set[str] = set()
-        for port in self.ports:
+        for port in (*self.ports, *self.control_ports):
             if port.id in seen:
                 raise ValueError(f"duplicate port id: {port.id}")
             seen.add(port.id)
@@ -303,7 +336,7 @@ class SymbolManifest(StrictModel):
         # manifesto non conosce lo standard grafico e non puo' quindi imporre
         # `min_clearance_mm`: l'invariante che gli appartiene e' "maggiore di
         # zero". Il valore concreto lo fissa chi genera il simbolo (§5).
-        port_faces = {port.face for port in self.ports}
+        port_faces = {port.face for port in (*self.ports, *self.control_ports)}
         clearance = {
             PortFace.LEFT: self.keep_out.left_mm,
             PortFace.RIGHT: self.keep_out.right_mm,
@@ -377,14 +410,17 @@ class SymbolManifest(StrictModel):
         def moved(x_mm: float, y_mm: float) -> tuple[float, float]:
             return mirror_point_mm(x_mm, y_mm, self.width_mm)
 
-        ports = [
-            SymbolPort(
-                id=port.id,
-                face=port.face.mirrored,
-                **dict(zip(("x_mm", "y_mm"), moved(port.x_mm, port.y_mm), strict=True)),
-            )
-            for port in self.ports
-        ]
+        def specchiate(porte: list[SymbolPort]) -> list[SymbolPort]:
+            return [
+                SymbolPort(
+                    id=port.id,
+                    face=port.face.mirrored,
+                    **dict(zip(("x_mm", "y_mm"), moved(port.x_mm, port.y_mm), strict=True)),
+                )
+                for port in porte
+            ]
+
+        ports = specchiate(self.ports)
         anchors = [
             anchor.model_copy(
                 update=dict(zip(("x_mm", "y_mm"), moved(anchor.x_mm, anchor.y_mm), strict=True))
@@ -406,6 +442,7 @@ class SymbolManifest(StrictModel):
         return self.model_copy(
             update={
                 "ports": ports,
+                "control_ports": specchiate(self.control_ports),
                 "label_anchors": anchors,
                 "flow_glyphs": flow,
                 "upright_glyphs": upright,
@@ -429,8 +466,8 @@ class SymbolManifest(StrictModel):
             raise SymbolError(f"rotation must be 0, 90, 180 or 270 degrees: {degrees}")
         if degrees not in self.allowed_rotations_deg:
             raise SymbolError(
-                f"symbol {self.id} may not be drawn rotated by {degrees} degrees: "
-                f"allowed {sorted(self.allowed_rotations_deg)} (D-049)"
+                f"il simbolo {self.id} non si disegna girato di {degrees} gradi: "
+                f"le rotazioni ammesse sono {sorted(self.allowed_rotations_deg)} (D-049)"
             )
         if mirrored:
             return self.mirrored_manifest().rotated(degrees)
@@ -442,12 +479,16 @@ class SymbolManifest(StrictModel):
         def moved(x_mm: float, y_mm: float) -> tuple[float, float]:
             return rotate_point_mm(x_mm, y_mm, self.width_mm, self.height_mm, degrees)
 
-        ports: list[SymbolPort] = []
-        for port in self.ports:
-            x_mm, y_mm = moved(port.x_mm, port.y_mm)
-            ports.append(
-                SymbolPort(id=port.id, face=port.face.rotated(degrees), x_mm=x_mm, y_mm=y_mm)
-            )
+        def girate(porte: list[SymbolPort]) -> list[SymbolPort]:
+            fuori: list[SymbolPort] = []
+            for port in porte:
+                x_mm, y_mm = moved(port.x_mm, port.y_mm)
+                fuori.append(
+                    SymbolPort(id=port.id, face=port.face.rotated(degrees), x_mm=x_mm, y_mm=y_mm)
+                )
+            return fuori
+
+        ports = girate(self.ports)
 
         anchors: list[LabelAnchor] = []
         for anchor in self.label_anchors:
@@ -482,6 +523,7 @@ class SymbolManifest(StrictModel):
             ],
             inline_gap_mm=self.inline_gap_mm,
             ports=ports,
+            control_ports=girate(self.control_ports),
             keep_out=self.keep_out.rotated(degrees),
             label_anchors=anchors,
             flow_glyphs=flow_glyphs,
@@ -519,7 +561,7 @@ def functional_room_mm(
             inline_extent_mm(catalog.resolve(definition.id).symbol.manifest)
             for definition in catalog.all()
             if catalog.resolve(definition.id).is_inline
-            and all(port.medium == medium for port in definition.ports)
+            and all(port.medium == medium for port in catalog.porte_del_fluido(definition))
         ),
         default=0.0,
     )

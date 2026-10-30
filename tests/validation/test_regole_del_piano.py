@@ -638,7 +638,10 @@ def test_b1_un_autostrada_che_piega_e_un_rilievo_e_dice_quante_volte() -> None:
     assert [item.code for item in rilievi] == ["HIGHWAY_IS_NOT_STRAIGHT"]
     assert rilievi[0].severity is IssueSeverity.WARNING
     detto = rilievi[0].message
-    assert "p1" in detto and "p3" in detto
+    # Le tratte si dicono coi pezzi ai loro capi, non con gli id, che sul foglio non
+    # ci sono (collaudo T2 di REL-012): gli id restano fra i codici del rilievo.
+    assert "fra nord e unione" in detto and "fra unione e volano" in detto
+    assert "p1" in rilievi[0].entity_ids and "p3" in rilievi[0].entity_ids
     assert "piegano 1 volta" in detto
     # **Il rilievo dice il pavimento, non un massimo** (D-171): il raccordo si
     # attraversa fra due facce opposte, quindi non impone niente, e la piega

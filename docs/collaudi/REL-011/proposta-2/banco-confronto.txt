@@ -1,0 +1,26 @@
+impianto-1               identica
+impianto-2               identica
+impianto-3               identica
+impianto-4               identica
+impianto-5               identica
+impianto-6a              identica
+impianto-6b              identica
+impianto-7               identica
+prova-po-A               identica
+prova-po-B               identica
+prova-po-C               identica
+prova-po-D               identica
+simboli-rel009           identica
+caso-reale-2             identica
+prova-pulita-A           identica
+prova-pulita-B           identica
+prova-pulita-C           identica
+impianto-1-completato    identica
+impianto-2-completato    identica
+impianto-3-completato    identica
+impianto-4-completato    identica
+impianto-5-completato    identica
+impianto-6a-completato   identica
+impianto-6b-completato   identica
+
+24 identiche su 24

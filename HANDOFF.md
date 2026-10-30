@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-10-25 — **il pacchetto è `REL-011`**, le regole del corredo contro il manuale Shenling (I-218). `REL-010`, il revisore esterno, è su `main` con la **1.5.0** (PR #79, I-223, D-212). Prima: la 1.4.1 (PR #77) e la tavola d'esempio (PR #78).
+**Aggiornato:** 2026-10-30 — **la 1.6.0 è su `main`** (PR #80, I-234, D-213 approvata): aria-aria, elettrico e comando, distinta e pianta su richiesta. **Il pacchetto è `REL-015`**, la 1.7.0: la distinta in un PDF a parte con la skill dei report Nove C, la tavola con sola tabella delle apparecchiature e legenda (A3), prima l'idraulica e poi l'elettrico, la pompa di calore con le sue sonde (I-230 … I-233).
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -11,7 +11,58 @@
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
 
-## ▶ Da dove riparte la prossima sessione — scritto il 25 ottobre 2026
+## ▶ Da dove riparte la prossima sessione — scritto il 30 ottobre 2026
+
+**Il pacchetto è `REL-015`** (`ACTIVE_WORK_PACKAGE.md`). Le osservazioni del PO sulla 1.6.0 sono I-230 … I-233; la
+fusione l'ha disposta lui (I-234). Dopo `REL-015` viene `REL-011`.
+
+- **La skill dei report Nove C** (`nove-c-report`, rev9) è una skill del PO installata accanto: la copertina accetta
+  `KPI_DATA` vuoto, «Chi siamo» è facoltativo. Il suo motore non entra in questo repository (pubblico): si importa dal
+  suo percorso.
+- **Il manuale Shenling** sta sul OneDrive del PO e si legge col connettore Microsoft 365; si cita con la pagina.
+- **I numeri**: il prossimo input è **I-235**, la prossima decisione **D-214**.
+
+## Com'era la notte del 29 ottobre 2026 — la 1.6.0 sul ramo
+
+
+**Prima cosa: la PR della 1.6.0.** Il PO guarda le tavole (la pagina con le tavole e le decisioni è nella PR) e approva
+la fusione, oppure no (D-146, D-147). **Non fondere senza il suo sì.** Dopo il sì: fondere, registrare l'approvazione di
+D-213 col suo testo, chiudere I-224 … I-229 nel registro.
+
+- **Che cosa c'è** (`ACTIVE_WORK_PACKAGE.md`, `REL-012`; il lavoro di una notte con agenti in parallelo, D-152):
+  - fase 1, la parte comune del motore: fluidi elettrici e di bus, niente frecce sui fluidi senza verso, la scritta
+    «sezione · L» come dato del grafo, le zone per le tabelle, i tre comportamenti del motore del kit
+    (`docs/collaudi/REL-012/fase-1/`);
+  - fase 2, l'aria-aria: simboli e catalogo del kit nei generatori, plenum da 2 a 6 uscite, la M.02 del kit rifatta
+    dalla skill (`fase-2/`, esce in A1 perché le tabelle sono a 9 pt: domanda al PO);
+  - fase 3, l'elettrico nell'idronico: attacchi di comando facoltativi, viste `idraulica` / `elettrico`, criterio
+    della tavola separata in `comporre.md` (`fase-3/`);
+  - `REL-013` in anticipo: la distinta (`mep.py distinta`, spenta di default, proposta D-213), `docs/collaudi/REL-013/`;
+  - `REL-014` in anticipo: la pianta (`mep.py pianta`), `docs/collaudi/REL-014/`;
+  - `REL-011`: `docs/collaudi/REL-011/CONFRONTO.md` e tre proposte sul ramo come codice inerte (le regole in
+    `docs/collaudi/REL-011/proposta-N/regola/`): si attivano solo col sì del PO.
+- **Le misure**: suite `2546 passed, 15 skipped, 10 xfailed`, 0 failed; `ruff check src tests` verde; banco di
+  `REL-011` fra `main` e il ramo **24 tavole su 24 identiche**; la skill 131 file, `tests/test_le_release.py` verde; lo
+  ZIP in `releases/` ricostruito dalle fonti finali, dopo il terzo collaudo.
+- **I collaudi indipendenti** (agenti che conoscono solo lo ZIP): `docs/collaudi/REL-012/collaudo-t1/` (canalizzato a 4
+  uscite: plenum mancante, sigle, lunghezze di pianta e distinta diverse — corretti), `collaudo-t2/` (centrale con
+  elettrico: sigle dei pezzi comandati, cavi staccati, circolatore con un solo attacco — corretti; `dopo/`), e
+  `collaudo-t3/` sulla 1.6.0 (schema e distinta consegnabili; la pianta no: cavi fuori dall'edificio, pezzi sovrapposti,
+  sigle ricopiate a mano — corretti: zone esterne, `sovrapposto_a`, `pianta --distinta --grafo`; schema rifatto in
+  `collaudo-t3/rifatto/`, pianta in `docs/collaudi/REL-014/collaudo-t3/`).
+- **La pagina delle tavole per il PO**: https://claude.ai/artifact/EgoBhNFfDQtHupmZ1tH6hv (linkata nella PR #80).
+- **Le decisioni che restano al PO** stanno nella PR e in D-213: «Non progetti» per la distinta; le frecce; i simboli
+  (foglio in `docs/collaudi/REL-012/simboli/`); la M.02 in A1 a 9 pt o altro; il criterio della tavola separata; le
+  scelte di fornitura di default; le convenzioni della pianta (fascia arancio, numeri cerchiati, dettaglio 1:20,
+  richiamo di 12 mm); le tre proposte di `REL-011` e il dubbio sul vaso.
+- **Note di ambiente**: gli agenti in worktree partono da `main`, non dal ramo: il primo passo di ogni incarico è
+  portarli sul commit giusto. Il limite d'uso di 5 ore ha fermato tre agenti a metà: si riprendono con SendMessage.
+- **I numeri**: il prossimo input è **I-230**, la prossima decisione **D-214**.
+
+## Com'era il 25 ottobre 2026 — `REL-011`
+
+### Il testo di allora
+
 
 **Il pacchetto è `REL-011`** (`ACTIVE_WORK_PACKAGE.md`): le regole che dicono se un accessorio ci va — il vaso, la
 sicurezza, lo sfiato, il ritegno — confrontate con il manuale Shenling e con la §2.4 della specifica tecnica Nove C.

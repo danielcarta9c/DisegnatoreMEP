@@ -110,7 +110,7 @@ def test_a_sealed_target_fails_with_a_diagnostic() -> None:
     box = frozenset(
         {(col, row) for col in range(18, 23) for row in range(8, 13)} - {(20, 10)}
     )
-    with pytest.raises(LayoutError, match="blocked|did not converge"):
+    with pytest.raises(LayoutError, match="chiuso|non converge"):
         route(
             (0, 10), EAST, (20, 10), WEST,
             cols=BODY_COLS, rows=BODY_ROWS, blocked=box, occupied=frozenset(),
@@ -118,7 +118,7 @@ def test_a_sealed_target_fails_with_a_diagnostic() -> None:
 
 
 def test_the_iteration_budget_produces_a_diagnostic_not_a_hang() -> None:
-    with pytest.raises(LayoutError, match="did not converge"):
+    with pytest.raises(LayoutError, match="non converge"):
         straight(max_expansions=3)
 
 

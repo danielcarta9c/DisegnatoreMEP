@@ -33,6 +33,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
+from disegnatore_mep.catalog.schema import ComponentDefinition
 from disegnatore_mep.graph.naming import Naming, NamingError
 from disegnatore_mep.graph.plant import GraphError, read_plant
 from disegnatore_mep.layout.geometry import (
@@ -46,7 +47,7 @@ from disegnatore_mep.model.project import (
     MODELLO,
     ProjectModel,
 )
-from disegnatore_mep.model.types import JsonPrimitive
+from disegnatore_mep.model.types import Domain, JsonPrimitive
 
 from .cartiglio import FAMIGLIA, PT_MM, SEPARATORE, larghezza_mm
 from .frame import SheetFrame
@@ -61,8 +62,20 @@ FUNZIONI_DELLA_TABELLA: tuple[str, ...] = (
     "heat_exchange",
     "circulation",
     "expansion",
+    "direct_expansion_terminal",
+    "air_zoning",
+    "zone_control",
+    "unit_control",
 )
 """I mestieri delle apparecchiature principali, e il vaso di espansione (I-141).
+
+**Con l'aria-aria** (REL-012, dal kit del PO): l'unita' interna ad espansione
+diretta, il plenum motorizzato di zona, la centrale di zona e il comando a filo.
+Sono le macchine che il progettista sceglie con marca e modello, come la pompa di
+calore. Fuori le bocchette e le riprese, che sono terminali, e i termostati, che
+sono tanti uguali e portano la loro scritta di zona accanto — se non hanno marca o
+modello dichiarati (`FUNZIONI_CON_MARCA_O_MODELLO`). *Proposta della sessione*, da
+giudicare sulla tavola.
 
 Generatori, accumuli e bollitori, separatori idraulici, scambiatori,
 circolatori — e i vasi. **Fuori** le valvole, come il PO ha detto, e con loro
@@ -70,6 +83,15 @@ filtri, strumenti, raccordi e attacchi. Fuori anche i **terminali** (radiatori,
 ventilconvettori, pannelli): nello schema di centrale sono le utenze, non
 macchine della centrale. *Proposta della sessione*, da giudicare sulla tavola.
 Un pezzo entra se **uno qualunque** dei suoi mestieri e' in elenco."""
+
+FUNZIONI_CON_MARCA_O_MODELLO: tuple[str, ...] = ("room_control",)
+"""I mestieri che entrano nella tabella **solo se il pezzo ha marca o modello
+dichiarati** (collaudo T3 di REL-012, §2: il progettista aveva dato «Airzone Think a
+filo» per i termostati, e sulla tavola non comparivano). Un termostato senza marca ne'
+modello resta fuori, come prima: una riga col solo nome non dice niente che il simbolo
+non dica. Il preflight vuole sul disegno la sigla di ogni pezzo in tabella (I-160), e
+il motore la scrive per i pezzi fuori dall'acqua (`sigle_sul_disegno`). *Proposta
+della sessione*, da giudicare sulla tavola."""
 
 CARATTERISTICHE_PER_MESTIERE: dict[str, tuple[str, ...]] = {
     "heat_generation": ("power_kw",),
@@ -79,11 +101,13 @@ CARATTERISTICHE_PER_MESTIERE: dict[str, tuple[str, ...]] = {
     "dhw_storage": ("volume_l",),
     "expansion": ("volume_l",),
     "circulation": ("flow_rate_m3h", "head_kpa", "head_m"),
+    "direct_expansion_terminal": ("power_kw", "flow_rate_m3h"),
 }
 """Che cosa si scrive fra le caratteristiche, secondo il mestiere del pezzo.
 
 La **potenza** dei generatori e degli scambiatori, il **volume** di accumuli,
-bollitori e vasi, **portata e prevalenza** dei circolatori. Un pezzo che fa
+bollitori e vasi, **portata e prevalenza** dei circolatori, **potenza e portata
+d'aria** dell'unita' interna (REL-012). Un pezzo che fa
 piu' mestieri — il boiler in pompa di calore genera e accumula — le porta
 tutte, nell'ordine delle chiavi di `CHIAVI_DEI_DATI_NUMERICI`. Il separatore
 idraulico non ha una sua caratteristica: quando e' anche un accumulo, porta il
@@ -186,7 +210,10 @@ def righe_della_tabella(
             continue
         voce = catalogo.get(pezzo.definition_id)
         mestieri = tuple(voce.functions)
-        if not set(mestieri) & set(FUNZIONI_DELLA_TABELLA):
+        if not set(mestieri) & set(FUNZIONI_DELLA_TABELLA) and not (
+            set(mestieri) & set(FUNZIONI_CON_MARCA_O_MODELLO)
+            and (_testo(pezzo.properties.get(MARCA)) or _testo(pezzo.properties.get(MODELLO)))
+        ):
             continue
         try:
             famiglia = naming.families.index(naming.family_of(mestieri, pezzo.id))
@@ -296,6 +323,64 @@ def tabella_della_tavola(
     return impagina_la_tabella(righe, frame)
 
 
+def fuori_dall_acqua(voce: ComponentDefinition) -> bool:
+    """Se una voce non ha **nessun attacco d'acqua**: sta tutta sull'aria, sul
+    refrigerante, sulla condensa, sull'elettrico o sul comando (REL-012).
+
+    E' la regola con cui questi pezzi portano la loro sigla sul disegno anche fuori
+    dalla tabella: sul canalizzato del collaudo T1 bocchette, termostati, quadro,
+    sezionatore, ripresa, sifone e scarico restavano senza, e la pianta e la
+    distinta non avevano un nome con cui citarli. **I pezzi dell'idronico restano
+    come sono**: una valvola o un filtro la sigla sul disegno non la portano (la
+    tavola di consegna porta le sigle delle macchine principali, `layout.addresses`),
+    e una regola sui soli pezzi senz'acqua non tocca nessuna tavola idronica."""
+    return bool(voce.ports) and all(porta.domain is not Domain.HYDRONIC for porta in voce.ports)
+
+
+def sigle_sul_disegno(
+    modello: ProjectModel,
+    catalogo: ComponentRegistry,
+    sigle: dict[str, str],
+    sul_foglio: Iterable[str],
+    comandati: Iterable[str] = (),
+) -> dict[str, str]:
+    """La sigla dei pezzi **fuori dall'acqua** disegnati su questa tavola, che il
+    progettista non ha scritto. `sigle` sono quelle della lettura del **grafo intero**
+    (D-097, `piano.vista.sigle_del_grafo_intero`): le stesse che la tabella, la
+    distinta e la pianta usano, e le stesse sulla tavola idraulica e su quella
+    dell'elettrico. Se l'impianto non si legge sono vuote, e valgono quelle scritte,
+    come per la tabella.
+
+    **E dei pezzi `comandati`** (collaudo T2 di REL-012, §3.1): quelli che hanno un
+    cavo — una valvola motorizzata, una sonda a immersione, un circolatore — portano
+    la sigla della famiglia (VMR, VD, SO, CIR) **sulle due tavole**, anche
+    sull'idraulica dove il cavo non c'e'. Sulla tavola dell'elettrico due valvole a
+    tre vie e due sonde senza nome non dicevano quale cavo va dove. Un grafo senza
+    elettrico non ha pezzi comandati, e nessuna tavola idronica cambia."""
+    disegnati = set(sul_foglio)
+    con_un_cavo = set(comandati)
+    return {
+        pezzo.id: sigle[pezzo.id]
+        for pezzo in modello.components
+        if pezzo.id in disegnati
+        and pezzo.tag is None
+        and pezzo.id in sigle
+        and (pezzo.id in con_un_cavo or fuori_dall_acqua(catalogo.get(pezzo.definition_id)))
+    }
+
+
+def pezzi_comandati(modello: ProjectModel) -> frozenset[str]:
+    """I pezzi a cui arriva almeno un cavo o un bus nel grafo intero (collaudo T2 di
+    REL-012): una tubazione di una rete del dominio del comando li tocca."""
+    del_comando = {rete.id for rete in modello.networks if rete.domain is Domain.CONTROL}
+    return frozenset(
+        ref.component_id
+        for item in modello.connections
+        if item.network_id in del_comando
+        for ref in (item.endpoint_a, item.endpoint_b)
+    )
+
+
 @dataclass(frozen=True)
 class TestoDellaTabella:
     testo: str
@@ -393,6 +478,7 @@ def svg_della_tabella(
 __all__ = [
     "CARATTERISTICHE_PER_MESTIERE",
     "CELLA_VUOTA",
+    "FUNZIONI_CON_MARCA_O_MODELLO",
     "FUNZIONI_DELLA_TABELLA",
     "INTESTAZIONE",
     "TestoDellaTabella",

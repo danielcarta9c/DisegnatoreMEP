@@ -1,0 +1,30 @@
+{
+ "formato": "disegnatore-mep/tabelle-del-foglio",
+ "versione": 1,
+ "tabelle": [
+  {
+   "id": "note-di-progetto",
+   "titolo": "NOTE DI PROGETTO",
+   "colonne": [
+    {"id": "n", "titolo": "", "allinea": "destra", "peso": 0.3},
+    {"id": "nota", "titolo": "", "allinea": "sinistra", "peso": 9.7}
+   ],
+   "sezioni": [
+    {
+     "titolo": null,
+     "righe": [
+      ["1.", "UI, plenum e ripresa nel controsoffitto del disimpegno est (ingresso); i rami B1 e B3 e la condensa attraversano la tramezza verso il disimpegno ovest; B5 corre nella veletta del soggiorno."],
+      ["2.", "Portate massime di zona dal carico estivo, non contemporanee: con tutte le zone aperte i 1080 m³/h della UI si ripartiscono."],
+      ["3.", "Prevalenza utile stimata circa 70 Pa (rami 18, bocchetta 10, plenum 15, ripresa e filtro 20, transiti 5), nel campo della FBA60A9 (fino a 150 Pa): regolazione automatica in messa in servizio."],
+      ["4.", "La velocità minima della UI (circa 750 m³/h) supera la portata di ogni camera: Z4 (S4a-S4b) è la zona di sfogo, con apertura minima tarata; le camere non in chiamata restano chiuse. Nessuna serranda di bypass."],
+      ["5.", "Linee frigorifere entro i 10 m di precarica senza carica aggiuntiva; oltre, 20 g/m di R32 (massimo 30 m, dislivello massimo 20 m)."],
+      ["6.", "UE a parete sul fronte NE sotto il portico, a distanza dalla PdC idronica del riscaldamento e fuori dalla sua zona di rispetto; quadro elettrico presunto all'ingresso: posizioni da confermare in sopralluogo, prima della gara."],
+      ["7.", "Condensa con la pompa a bordo UI allo scarico del bagno, con sifone ispezionabile."],
+      ["8.", "Bocchette 400×200 a doppio filare (Aeff min. 0,055 m²), griglia di ripresa 1000×250 e griglie di transito sono del Committente (Z.2, Z.3, Z.5): i plenum porta-bocchetta B.7 sono per bocchette 400×200."],
+      ["9.", "Due accessi: posa di macchine, canali e linee con le prove prima della chiusura del controsoffitto; messa in servizio e collaudo dopo controsoffitto e bocchette."]
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,265 @@
+{
+  "id": "attivita",
+  "versione": "1.1.0",
+  "nota": "Le attività a corpo (sezione G), le varianti a prezzo unitario (V) e le voci generali di assistenze e opere del committente (F, Z), per dominio. Una voce esce se la sua condizione `se` è vera sul grafo: `voci` (c'è almeno un pezzo di una di queste voci di catalogo), `fluidi` (c'è almeno una tubazione di uno di questi fluidi), `sempre`. Nei testi, `{conta.<voce>}` è il numero dei pezzi di quella voce e `{tratte.<fluido>}` il numero dei tratti di quel fluido con una lunghezza da quotare. `{fornitura.<scelta>}` è il testo della scelta dell'offerta (`distinta.json`, fornitura): «con Nove C», «fornite da Nove C».",
+  "voci": [
+    {
+      "id": "chiusure-e-ripristini",
+      "sezione": "Z",
+      "fornitura": "opere_edili",
+      "testo": "Chiusura e ripristino di fori, tracce e passaggi",
+      "um": "a corpo",
+      "se": {
+        "sempre": true
+      },
+      "fonte": "kit AA-01: lavoro/dimensionamento.py, voce Z.7; REVISIONE-INDIPENDENTE.md rilievo 11 (l'offerta esclude chiusure e ripristini)",
+      "fonte_in_parole": "regola Nove C per le offerte a corpo (aperture all'installatore, chiusure a chi fa le opere edili)",
+      "perche": "Le aperture sono dell'installatore, chiusure e ripristini del committente: va scritto, o diventa una lite."
+    },
+    {
+      "id": "posa-unita-interna",
+      "sezione": "G",
+      "testo": "Posa dell'unità interna in controsoffitto su sospensioni antivibranti, con plenum di zona e plenum di ripresa.",
+      "um": "a corpo",
+      "se": {
+        "voci": [
+          "ducted-indoor-unit"
+        ]
+      },
+      "fonte": "kit AA-01: lavoro/dimensionamento.py, ATTIVITA[0]",
+      "fonte_in_parole": "regola Nove C per le offerte a corpo",
+      "perche": "La posa delle macchine fornite da Nove C è manodopera dell'installatore, a corpo."
+    },
+    {
+      "id": "posa-unita-esterna",
+      "sezione": "G",
+      "testo": "Posa dell'unità esterna su staffe con antivibranti; canalina esterna e scarico condensa dell'unità esterna.",
+      "um": "a corpo",
+      "se": {
+        "voci": [
+          "split-outdoor-unit"
+        ]
+      },
+      "fonte": "kit AA-01: lavoro/dimensionamento.py, ATTIVITA[1]",
+      "fonte_in_parole": "regola Nove C per le offerte a corpo",
+      "perche": "Come sopra."
+    },
+    {
+      "id": "linee-frigorifere-e-prove",
+      "sezione": "G",
+      "testo": "Linee frigorifere: posa e cartelle; prova di tenuta in azoto prima della chiusura del controsoffitto, circuito lasciato in pressione con manometro fino al secondo accesso, con verbale; vuoto, apertura rubinetti, eventuale carica, registrazione F-Gas.",
+      "um": "a corpo",
+      "se": {
+        "fluidi": [
+          "refrigerant_liquid",
+          "refrigerant_gas"
+        ]
+      },
+      "fonte": "kit AA-01: lavoro/dimensionamento.py, ATTIVITA[2]; REVISIONE-INDIPENDENTE.md rilievo 14 (prove fra i due accessi)",
+      "fonte_in_parole": "regola Nove C per le prove delle linee frigorifere; regolamento F-Gas",
+      "perche": "La tenuta si prova prima di chiudere il controsoffitto: dopo, una perdita costa la demolizione. Il manometro fino al secondo accesso dice se il circuito ha tenuto nel frattempo."
+    },
+    {
+      "id": "distribuzione-aria",
+      "sezione": "G",
+      "testo": "Distribuzione aria: {tratte.supply_air} rami flessibili con plenum porta-bocchetta, sostegni e sigillature; bocche protette fino alla posa delle bocchette.",
+      "um": "a corpo",
+      "se": {
+        "fluidi": [
+          "supply_air"
+        ]
+      },
+      "fonte": "kit AA-01: lavoro/dimensionamento.py, ATTIVITA[3]",
+      "fonte_in_parole": "regola Nove C per le offerte a corpo",
+      "perche": "Le bocche aperte in cantiere si riempiono di polvere, che poi esce dalle bocchette."
+    },
+    {
+      "id": "scarico-condensa-e-prova",
+      "sezione": "G",
+      "testo": "Scarico condensa con sifone e allaccio allo scarico; prova di scarico e della pompa prima della chiusura del controsoffitto.",
+      "um": "a corpo",
+      "se": {
+        "fluidi": [
+          "condensate"
+        ]
+      },
+      "fonte": "kit AA-01: lavoro/dimensionamento.py, ATTIVITA[4]; REVISIONE-INDIPENDENTE.md rilievo 14",
+      "fonte_in_parole": "regola Nove C per le offerte a corpo",
+      "perche": "Come la tenuta: la condensa si prova a controsoffitto aperto."
+    },
+    {
+      "id": "linee-elettriche-e-comandi",
+      "sezione": "G",
+      "testo": "Linee elettriche dedicate dal quadro, collegamento fra le unità, linee di comando e bus; posa di termostati e comandi a parete.",
+      "um": "a corpo",
+      "se": {
+        "fluidi": [
+          "power_supply",
+          "interconnection",
+          "control_bus"
+        ]
+      },
+      "fonte": "kit AA-01: lavoro/dimensionamento.py, ATTIVITA[5]",
+      "fonte_in_parole": "regola Nove C per le offerte a corpo",
+      "perche": "La posa e i collegamenti del materiale della sezione E."
+    },
+    {
+      "id": "messa-in-servizio",
+      "sezione": "G",
+      "testo": "Messa in servizio {fornitura.messa_in_servizio}, al secondo accesso: regolazione della prevalenza dell'unità interna e misura delle portate per zona, configurazione della zonizzazione e dei comandi, app; collaudo con verbale.",
+      "um": "a corpo",
+      "se": {
+        "voci": [
+          "ducted-indoor-unit",
+          "split-outdoor-unit"
+        ]
+      },
+      "fonte": "kit AA-01: lavoro/dimensionamento.py, ATTIVITA[6]; REVISIONE-INDIPENDENTE.md rilievi 8 e 16 (collaudo con portate misurate e verbale)",
+      "fonte_in_parole": "regola Nove C per le offerte a corpo",
+      "perche": "La prevalenza si regola sulla rete vera, e le portate misurate sono la prova che l'impianto fa quello che promette."
+    },
+    {
+      "id": "dico-elettrico",
+      "sezione": "G",
+      "testo": "Dichiarazione di conformità D.M. 37/2008, art. 1 lettera a) (impianti elettrici), con lo schema del quadro aggiornato e gli allegati.",
+      "um": "a corpo",
+      "se": {
+        "fluidi": [
+          "power_supply"
+        ]
+      },
+      "fonte": "kit AA-01: lavoro/dimensionamento.py, ATTIVITA[7]; REVISIONE-INDIPENDENTE.md rilievo 16 (due DiCo)",
+      "fonte_in_parole": "D.M. 37/2008",
+      "perche": "Le linee dedicate sono un impianto elettrico: la sua dichiarazione è distinta da quella della climatizzazione."
+    },
+    {
+      "id": "dico-climatizzazione",
+      "sezione": "G",
+      "testo": "Dichiarazione di conformità D.M. 37/2008, art. 1 lettera c) (impianti di climatizzazione), con allegati; documenti per libretto di impianto, catasto regionale e F-Gas.",
+      "um": "a corpo",
+      "se": {
+        "fluidi": [
+          "refrigerant_liquid",
+          "refrigerant_gas",
+          "supply_air"
+        ]
+      },
+      "fonte": "kit AA-01: lavoro/dimensionamento.py, ATTIVITA[7]; REVISIONE-INDIPENDENTE.md rilievo 16",
+      "fonte_in_parole": "D.M. 37/2008",
+      "perche": "Come sopra."
+    },
+    {
+      "id": "cantiere",
+      "sezione": "G",
+      "testo": "Cantiere: POS e oneri della sicurezza (presenza dell'impresa del Committente), trabattello e mezzi di sollevamento.",
+      "um": "a corpo",
+      "se": {
+        "sempre": true
+      },
+      "fonte": "kit AA-01: lavoro/dimensionamento.py, ATTIVITA[8]; REVISIONE-INDIPENDENTE.md rilievo 13",
+      "fonte_in_parole": "regola Nove C per le offerte a corpo",
+      "perche": "Mancavano nella prima stesura del kit: sono costi veri dell'installatore, e se non sono a corpo diventano extra."
+    },
+    {
+      "id": "custodia-e-protezioni",
+      "sezione": "G",
+      "testo": "Trasporto, ricevimento e custodia delle apparecchiature {fornitura.apparecchiature} fino al collaudo; protezioni delle macchine e delle bocche durante le opere edili.",
+      "um": "a corpo",
+      "se": {
+        "voci": [
+          "split-outdoor-unit",
+          "ducted-indoor-unit",
+          "zoning-plenum-5",
+          "zoning-plenum-2",
+          "zoning-plenum-3",
+          "zoning-plenum-4",
+          "zoning-plenum-6"
+        ]
+      },
+      "fonte": "kit AA-01: lavoro/dimensionamento.py, ATTIVITA[9]; REVISIONE-INDIPENDENTE.md rilievo 13",
+      "fonte_in_parole": "regola Nove C per le offerte a corpo",
+      "perche": "Le macchine di Nove C stanno in cantiere settimane prima della posa."
+    },
+    {
+      "id": "pulizia-e-smaltimenti",
+      "sezione": "G",
+      "testo": "Pulizia finale e smaltimento di imballi e residui di lavorazione.",
+      "um": "a corpo",
+      "se": {
+        "sempre": true
+      },
+      "fonte": "kit AA-01: lavoro/dimensionamento.py, ATTIVITA[10]; REVISIONE-INDIPENDENTE.md rilievo 13",
+      "fonte_in_parole": "regola Nove C per le offerte a corpo",
+      "perche": "Come sopra."
+    },
+    {
+      "id": "variante-linea-frigorifera",
+      "sezione": "V",
+      "testo": "Linea frigorifera completa oltre la quantità di computo (coppia pre-isolata, cavo di collegamento, canalina, refrigerante)",
+      "um": "m",
+      "se": {
+        "fluidi": [
+          "refrigerant_liquid",
+          "refrigerant_gas"
+        ]
+      },
+      "fonte": "kit AA-01: lavoro/dimensionamento.py, VARIANTI V.1; REVISIONE-INDIPENDENTE.md rilievi 10 e 20",
+      "fonte_in_parole": "regola Nove C per le varianti a prezzo unitario",
+      "perche": "Se l'unità esterna va su un'altra facciata, il metro in più ha già un prezzo, fissato prima."
+    },
+    {
+      "id": "variante-flessibile",
+      "sezione": "V",
+      "testo": "Flessibile posato oltre la quantità di computo, con fascette e sostegni",
+      "um": "m",
+      "se": {
+        "fluidi": [
+          "supply_air"
+        ]
+      },
+      "fonte": "kit AA-01: lavoro/dimensionamento.py, VARIANTI V.2",
+      "fonte_in_parole": "regola Nove C per le varianti a prezzo unitario",
+      "perche": "Come sopra."
+    },
+    {
+      "id": "variante-cavo",
+      "sezione": "V",
+      "testo": "Cavo di alimentazione in corrugato oltre la quantità di computo, stessa sezione",
+      "um": "m",
+      "se": {
+        "fluidi": [
+          "power_supply"
+        ]
+      },
+      "fonte": "kit AA-01: lavoro/dimensionamento.py, VARIANTI V.3",
+      "fonte_in_parole": "regola Nove C per le varianti a prezzo unitario",
+      "perche": "La posizione del quadro si conferma in sopralluogo."
+    },
+    {
+      "id": "variante-accesso",
+      "sezione": "V",
+      "testo": "Accesso aggiuntivo in cantiere (oltre i due previsti)",
+      "um": "n",
+      "se": {
+        "sempre": true
+      },
+      "fonte": "kit AA-01: lavoro/dimensionamento.py, VARIANTI V.4; REVISIONE-INDIPENDENTE.md rilievo 14 (terzo accesso)",
+      "fonte_in_parole": "regola Nove C per le varianti a prezzo unitario",
+      "perche": "Il prezzo a corpo vale per due accessi: posa con le prove, poi messa in servizio."
+    },
+    {
+      "id": "variante-centralino",
+      "sezione": "V",
+      "testo": "Centralino aggiuntivo 8 moduli, se il quadro non ha i moduli liberi per le protezioni nuove",
+      "um": "n",
+      "se": {
+        "voci": [
+          "electrical-panel"
+        ]
+      },
+      "fonte": "kit AA-01: lavoro/dimensionamento.py, VARIANTI V.5; REVISIONE-INDIPENDENTE.md rilievo 12",
+      "fonte_in_parole": "regola Nove C per le varianti a prezzo unitario",
+      "perche": "Lo spazio nel quadro esistente si vede solo in sopralluogo."
+    }
+  ]
+}

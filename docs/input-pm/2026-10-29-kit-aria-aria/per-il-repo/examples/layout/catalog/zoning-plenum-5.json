@@ -1,0 +1,68 @@
+{
+  "id": "zoning-plenum-5",
+  "version": "1.0.0",
+  "name": "Plenum motorizzato di zona a cinque serrande",
+  "functions": [
+    "air_zoning"
+  ],
+  "traits": [
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
+  "symbol_id": "zoning-plenum-5",
+  "composite": false,
+  "ports": [
+    {
+      "id": "in",
+      "domain": "aeraulic",
+      "medium": "supply_air",
+      "flow": "in",
+      "required": true
+    },
+    {
+      "id": "motori",
+      "domain": "control",
+      "medium": "control_bus",
+      "flow": "bidirectional",
+      "required": true
+    },
+    {
+      "id": "out_1",
+      "domain": "aeraulic",
+      "medium": "supply_air",
+      "flow": "out",
+      "required": true
+    },
+    {
+      "id": "out_2",
+      "domain": "aeraulic",
+      "medium": "supply_air",
+      "flow": "out",
+      "required": true
+    },
+    {
+      "id": "out_3",
+      "domain": "aeraulic",
+      "medium": "supply_air",
+      "flow": "out",
+      "required": true
+    },
+    {
+      "id": "out_4",
+      "domain": "aeraulic",
+      "medium": "supply_air",
+      "flow": "out",
+      "required": true
+    },
+    {
+      "id": "out_5",
+      "domain": "aeraulic",
+      "medium": "supply_air",
+      "flow": "out",
+      "required": true
+    }
+  ],
+  "sources": [
+    "proposta della sessione del 29/10/2026 (caso di prova AA-01, canalizzato aria-aria): forma da approvare dal PO sulla tavola"
+  ]
+}
