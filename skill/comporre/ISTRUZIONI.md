@@ -610,17 +610,18 @@ comando a filo. Così (la villetta di `docs/collaudi/REL-015/pdc-regola/`):
 - **la pompa di calore al centro**, non specchiata;
 - **le uscite a ventaglio**: quelle di sinistra (le valvole) girano a sinistra, quelle di destra
   (i circolatori) a destra; l'uscita più esterna gira più in basso, la successiva più in alto, e
-  i cavi non si incrociano. Valvole e circolatori in colonna, girati col comando verso la
-  macchina (`"rotazione": 90`): il circolatore ha così l'alimentazione dall'altra parte, verso
-  il quadro;
+  i cavi non si incrociano. Valvole e circolatori in colonna, girati verso la macchina con la
+  porta a cui arriva il loro cavo: la valvola col comando (`"rotazione": 90`), il circolatore
+  con l'alimentazione (`"rotazione": 270`), perché la macchina lo alimenta e lo comanda con un
+  cavo solo (I-236);
 - **le sonde in fila sotto, a sinistra della macchina**, diritte (`"rotazione": 0`): la sonda
   dell'ingresso più basso è la più vicina. Lascia fra l'una e l'altra il posto della sigla e
   della scritta (`etichetta`: «bollitore», «volano», «mandata pannelli»): tre sonde uguali senza
   scritta non dicono quale cavo va dove;
 - **il quadro in basso a destra, più in basso della macchina.** L'alimentazione della macchina
   entra da sotto: con il quadro più in alto il cavo scende oltre la porta e risale, ed è un
-  bloccante (B12). Dal quadro, i circolatori scendono a ventaglio sulle uscite di sopra e di
-  destra, e la macchina arriva sull'uscita di sinistra (`out_6`);
+  bloccante (B12). Il quadro alimenta la sola macchina, dalla prima uscita (`out_1`, sopra): il
+  cavo arriva da sinistra e scende sulla porta;
 - **il comando a filo sotto la macchina**, a destra dell'alimentazione, più in alto del cavo che
   va al quadro.
 

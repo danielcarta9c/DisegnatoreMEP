@@ -21,9 +21,12 @@ esterno. Quindi:
 - **i comandi dalla macchina**: deviatrice <- `out_acs` (SV1), miscelatrice <- `out_miscelatrice`
   (SV2), circolatore dei radiatori <- `out_pompa_zona_1` (P_C1), circolatore dei pannelli <-
   `out_pompa_zona_2` (P_C2), circolatore del ricircolo <- `out_pompa_ricircolo` (P_C4);
-- **l'alimentazione dal quadro** della macchina (col sezionatore, 3G6, 15 m, come nel collaudo) e
-  dei tre circolatori: alimentati dal quadro e accesi dalla macchina, due cavi sullo stesso
-  circolatore, come nel collaudo rifatto (`collaudo-t2/dopo/`). Proposta;
+- **l'alimentazione dal quadro** della sola macchina (col sezionatore, 3G6, 15 m, come nel
+  collaudo). **I tre circolatori prendono alimentazione e comando dalla morsettiera della
+  macchina**, un cavo solo sul loro `power` (I-236, D-215, dall'elettricista del PO: «Lo standard
+  è alimentazione di potenza e comando, direttamente dalla morsettiera della pompa di calore»).
+  Il circolatore alimentato dal quadro e acceso da un cronotermostato è una scelta del
+  progettista, non lo standard;
 - **il comando a filo** della macchina (CN35), come voce `wired-remote`.
 
 Niente morsetti sulla tavola: il progettista non li ha dati. Le sigle della scheda stanno qui e
@@ -124,30 +127,30 @@ for ident, nome in (
     for item in grafo["networks"]:
         if item["id"] == ident:
             item["name"] = nome
-rete("cmd-circ-radiatori", "Comando circolatore radiatori dalla pompa di calore", "power_supply")
-rete("cmd-circ-pannelli", "Comando circolatore pannelli dalla pompa di calore", "power_supply")
-rete("cmd-circ-ricircolo", "Comando circolatore ricircolo dalla pompa di calore", "power_supply")
+# I circolatori: alimentazione e comando dalla morsettiera della macchina, un cavo solo (I-236,
+# D-215). Le loro linee dal quadro, che nel collaudo c'erano, si tolgono.
+CAVI_DAL_QUADRO = {"t27", "t28", "t29"}
+RETI_DAL_QUADRO = {"el-circ-pannelli", "el-circ-radiatori", "el-circ-ricircolo"}
+grafo["connections"] = [t for t in grafo["connections"] if t["id"] not in CAVI_DAL_QUADRO]
+grafo["networks"] = [n for n in grafo["networks"] if n["id"] not in RETI_DAL_QUADRO]
+rete("cmd-circ-radiatori", "Alimentazione e comando circolatore radiatori dalla pompa di calore", "power_supply")
+rete("cmd-circ-pannelli", "Alimentazione e comando circolatore pannelli dalla pompa di calore", "power_supply")
+rete("cmd-circ-ricircolo", "Alimentazione e comando circolatore ricircolo dalla pompa di calore", "power_supply")
 tratto("t44", "cmd-deviatrice", ("pdc", "out_acs"), ("deviatrice", "comando"))
 tratto("t45", "cmd-miscelatrice", ("pdc", "out_miscelatrice"), ("miscelatrice", "comando"))
-tratto("t46", "cmd-circ-radiatori", ("pdc", "out_pompa_zona_1"), ("circ-radiatori", "comando"))
-tratto("t47", "cmd-circ-pannelli", ("pdc", "out_pompa_zona_2"), ("circ-pannelli", "comando"))
-tratto("t48", "cmd-circ-ricircolo", ("pdc", "out_pompa_ricircolo"), ("circ-ricircolo", "comando"))
+tratto("t46", "cmd-circ-radiatori", ("pdc", "out_pompa_zona_1"), ("circ-radiatori", "power"))
+tratto("t47", "cmd-circ-pannelli", ("pdc", "out_pompa_zona_2"), ("circ-pannelli", "power"))
+tratto("t48", "cmd-circ-ricircolo", ("pdc", "out_pompa_ricircolo"), ("circ-ricircolo", "power"))
 
 rete("bus-comando-a-filo", "Comando a filo della pompa di calore", "control_bus")
 tratto("t49", "bus-comando-a-filo", ("comando-a-filo", "a"), ("pdc", "comando_a_filo"))
 
-# **Le uscite del quadro, scelte sulla geometria della tavola dell'elettrico** (capire.md
-# §4.8: un'uscita del quadro e' un morsetto come un altro). Stessi quattro cavi del collaudo.
-USCITE_DEL_QUADRO = {
-    "t25": "out_6",  # pompa di calore, da sinistra, sotto la macchina
-    "t29": "out_1",  # circolatore del ricircolo, il piu' basso: la discesa piu' vicina
-    "t27": "out_2",  # circolatore pannelli, la discesa di mezzo
-    "t28": "out_3",  # circolatore radiatori, il piu' alto: la discesa piu' lontana
-}
+# **L'uscita del quadro, scelta sulla geometria della tavola dell'elettrico** (capire.md §4.8:
+# un'uscita del quadro e' un morsetto come un altro): resta la sola pompa di calore.
 for item in grafo["connections"]:
-    if item["id"] in USCITE_DEL_QUADRO:
+    if item["id"] == "t25":
         assert item["endpoint_a"]["component_id"] == "quadro", item["id"]
-        item["endpoint_a"]["port_id"] = USCITE_DEL_QUADRO[item["id"]]
+        item["endpoint_a"]["port_id"] = "out_1"
 
 # --- le assunzioni ------------------------------------------------------------------------
 ASSUNZIONI = {
@@ -162,8 +165,8 @@ ASSUNZIONI = {
     "a14": (
         "Sezioni e lunghezze delle linee: il testo da' solo la linea della pompa di calore "
         "(3G6, 15 m, scritta sul tratto quadro-sezionatore per la linea intera). Mancano sezione "
-        "e lunghezza di: tre alimentazioni dei circolatori, cinque comandi dalla pompa di calore "
-        "(deviatrice, miscelatrice, tre circolatori), cavi delle tre sonde, comando a filo. "
+        "e lunghezza di: due comandi dalla pompa di calore (deviatrice, miscelatrice), tre linee "
+        "di alimentazione e comando dei circolatori, cavi delle tre sonde, comando a filo. "
         "Senza, quei tratti restano senza scritta."
     ),
     "a15": (
@@ -173,9 +176,9 @@ ASSUNZIONI = {
         "e non si disegna."
     ),
     "a20": (
-        "Circolatori: ciascuno e' alimentato dal quadro di centrale e acceso da un'uscita della "
-        "pompa di calore, due cavi sullo stesso circolatore. Se un'uscita della macchina "
-        "alimenta il circolatore direttamente, il cavo dal quadro non serve: dimmelo e lo tolgo."
+        "Circolatori: alimentazione e comando dalla morsettiera della pompa di calore, un cavo "
+        "solo per circolatore (lo standard). Se invece un circolatore e' alimentato dal quadro e "
+        "acceso da un cronotermostato, dimmelo e lo ridisegno cosi'."
     ),
     "a21": (
         "Sonda del volano: il testo non la nomina; e' disegnata sull'attacco della sonda del "

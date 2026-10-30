@@ -56,7 +56,7 @@ modello da riusare.
 |---|---|
 | `main` | **la testa che leggi adesso** (non si scrive uno SHA: §7, trappola 2). L'ultima fusione è la PR **#79**, la **1.5.0** — `REL-010`, il revisore esterno —, dopo la **#78** (la tavola d'esempio, D-211), la **#77** (la 1.4.1, D-210), la **#75** (la 1.4.0), la **#74** (il punto 6, la tavola del caso rifatta, D-206 … D-208), la **#73** (la chiusura della sessione della 1.3.0), la **#72** (la 1.3.0, punti 1–4), la **#71** (la 1.2.2, la prima che si carica su claude.ai, D-200), la **#70** (la 1.2.1, D-199), la **#69** e la **#68** (`REL-005`, la 1.2.0 e la pulizia del solutore, D-197, D-198) |
 | Release | **1.5.0**, `releases/latest/DisegnatoreMEP-v1.5.0.zip` — il revisore esterno (D-212) —; prima la **1.4.1** (D-210) e la **1.4.0** (D-209): la costruisce solo `scripts/costruisci-skill.py` e la pubblica solo `tests/test_le_release.py` verde (D-200, `CLAUDE.md`). La 1.2.0 e la 1.2.1 sono nell'archivio e non si caricano |
-| Pacchetto attivo | **`REL-011`**, le regole del corredo contro il manuale Shenling. La 1.7.0 (`REL-015`) è su `main` (PR #81, I-235, D-214) |
+| Pacchetto attivo | **`REL-016`**, i rilievi D1, D3, D4 del collaudo della 1.7.0; poi **`REL-011`**, le regole del corredo contro il manuale Shenling (I-238). La 1.7.1 è su `main` (PR #82) |
 | Il prodotto in chat | **la skill gira su claude.ai**: il PO l'ha usata su un impianto vero (I-191) e la usa adesso per il caso. Il percorso è testo → grafo → `completa` → approvazione → piano → tavola PDF e DXF, con i rilievi |
 | Export DXF | **costruito e approvato** (`REL-004`, I-140, D-189): AutoCAD 2013, millimetri |
 | La suite | **zero rosse** dal 2 ottobre (D-197): 2050 passate, 15 saltate, 10 attese rosse, alla 1.5.0 |
@@ -346,7 +346,7 @@ Tre, ciascuna già pagata almeno una volta.
 
 1. Legge `ACTIVE_WORK_PACKAGE.md`, `HANDOFF.md`, `docs/ARCHITETTURA-DEL-PIANO.md` e questo
    file — l'ordine sta in `CLAUDE.md`.
-2. Esegue **soltanto** il pacchetto attivo — oggi `REL-011`. Se il pacchetto è assente, già
+2. Esegue **soltanto** il pacchetto attivo — oggi `REL-016`. Se il pacchetto è assente, già
    consegnato, ambiguo o incompatibile con lo stato del repository, **si ferma e chiede al
    PO**.
 3. Prima di proporre la fusione: **guarda le tavole**, le mette accanto a quelle del

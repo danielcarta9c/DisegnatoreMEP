@@ -4,22 +4,63 @@
  "note": [
   "La pompa di calore al centro: e' lei che regola (REL-015 punto 4, I-230). Uscite sopra, sonde a sinistra, alimentazione e comando a filo sotto.",
   "Le uscite sopra si aprono a ventaglio: le due delle valvole girano a sinistra (la deviatrice piu' in basso, la miscelatrice sopra), le tre dei circolatori a destra (il ricircolo piu' in basso, poi i pannelli, poi i radiatori). Cosi' nessun cavo ne incrocia un altro.",
-  "Valvole girate col comando verso la macchina (rotazione 90); circolatori girati col comando verso la macchina e l'alimentazione verso il quadro (rotazione 90).",
-  "Il quadro in basso a destra, piu' in basso della macchina: l'alimentazione della macchina scende dal suo attacco, col sezionatore, e arriva da sinistra; i circolatori scendono a ventaglio, il piu' basso sull'uscita piu' vicina. Col quadro in alto il cavo della macchina, che entra da sotto, girerebbe oltre la porta e tornerebbe indietro (B12).",
+  "Valvole girate col comando verso la macchina (rotazione 90); circolatori girati con l'alimentazione verso la macchina (rotazione 270), che li alimenta e li comanda con un cavo solo (I-236, D-215).",
+  "Il quadro in basso a destra, piu' in basso della macchina: alimenta la sola pompa di calore, col sezionatore, e il cavo arriva da sinistra. Col quadro in alto il cavo della macchina, che entra da sotto, girerebbe oltre la porta e tornerebbe indietro (B12). Il quadro 5 mm piu' in basso che nel collaudo: il cavo della macchina arriva sulla sua prima uscita, sopra, senza pieghe in piu'.",
   "Le sonde in fila sotto, a sinistra della macchina: la piu' bassa (zona 2) e' la piu' vicina, cosi' i tre cavi scendono senza incrociarsi. Venticinque millimetri fra l'una e l'altra: sotto ciascuna c'e' la scritta di che cosa misura.",
   "Il comando a filo sotto a destra, sull'asse della sua porta, sopra il cavo di alimentazione della macchina."
  ],
  "pezzi": {
-  "pdc": {"x": 0, "y": 0},
-  "deviatrice": {"x": -30, "y": -15, "rotazione": 90},
-  "miscelatrice": {"x": -30, "y": -30, "rotazione": 90},
-  "circ-ricircolo": {"x": 60, "y": -15, "rotazione": 90},
-  "circ-pannelli": {"x": 60, "y": -27.5, "rotazione": 90},
-  "circ-radiatori": {"x": 60, "y": -40, "rotazione": 90},
-  "quadro": {"x": 90, "y": 45},
-  "comando-a-filo": {"x": 45, "y": 32.5},
-  "sonda-pannelli": {"x": -15, "y": 40, "rotazione": 0},
-  "sonda-volano": {"x": -40, "y": 40, "rotazione": 0},
-  "sonda-bollitore": {"x": -65, "y": 40, "rotazione": 0}
+  "pdc": {
+   "x": 0,
+   "y": 0
+  },
+  "deviatrice": {
+   "x": -30,
+   "y": -15,
+   "rotazione": 90
+  },
+  "miscelatrice": {
+   "x": -30,
+   "y": -30,
+   "rotazione": 90
+  },
+  "circ-ricircolo": {
+   "x": 60,
+   "y": -15,
+   "rotazione": 270
+  },
+  "circ-pannelli": {
+   "x": 60,
+   "y": -27.5,
+   "rotazione": 270
+  },
+  "circ-radiatori": {
+   "x": 60,
+   "y": -40,
+   "rotazione": 270
+  },
+  "quadro": {
+   "x": 90,
+   "y": 50
+  },
+  "comando-a-filo": {
+   "x": 45,
+   "y": 32.5
+  },
+  "sonda-pannelli": {
+   "x": -15,
+   "y": 40,
+   "rotazione": 0
+  },
+  "sonda-volano": {
+   "x": -40,
+   "y": 40,
+   "rotazione": 0
+  },
+  "sonda-bollitore": {
+   "x": -65,
+   "y": 40,
+   "rotazione": 0
+  }
  }
 }

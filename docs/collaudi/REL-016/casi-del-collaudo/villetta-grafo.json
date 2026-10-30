@@ -1,0 +1,468 @@
+{
+ "schema_version": "1.1.0",
+ "metadata": {
+  "project_id": "villetta-pdc-aria-acqua",
+  "client": "Committente di prova",
+  "project_name": "Centrale a pompa di calore aria-acqua villetta",
+  "commission_code": "PROVA-02",
+  "revision": "00",
+  "issue_date": "2026-10-30",
+  "address": "Via di Prova 2, Comune di Prova (XX)",
+  "sheet_title": "Schema funzionale centrale termica",
+  "sheet_number": "T2"
+ },
+ "plant_regime": "up_to_35_kw",
+ "networks": [
+  {
+   "id": "primario",
+   "name": "Circuito della pompa di calore",
+   "domain": "hydronic",
+   "medium": "heating_water"
+  },
+  {
+   "id": "impianto",
+   "name": "Circuito dell'impianto a pavimento",
+   "domain": "hydronic",
+   "medium": "heating_water"
+  },
+  {
+   "id": "af",
+   "name": "Acqua fredda",
+   "domain": "hydronic",
+   "medium": "cold_water"
+  },
+  {
+   "id": "acs",
+   "name": "Acqua calda sanitaria",
+   "domain": "hydronic",
+   "medium": "domestic_hot_water"
+  },
+  {
+   "id": "alim-pdc",
+   "name": "Alimentazione pompa di calore",
+   "domain": "control",
+   "medium": "power_supply"
+  },
+  {
+   "id": "alim-circ",
+   "name": "Alimentazione circolatore",
+   "domain": "control",
+   "medium": "power_supply"
+  },
+  {
+   "id": "comandi",
+   "name": "Comandi della pompa di calore",
+   "domain": "control",
+   "medium": "power_supply"
+  },
+  {
+   "id": "sonde",
+   "name": "Sonde",
+   "domain": "control",
+   "medium": "control_bus"
+  },
+  {
+   "id": "bus",
+   "name": "Comando a filo",
+   "domain": "control",
+   "medium": "control_bus"
+  }
+ ],
+ "components": [
+  {
+   "id": "pdc",
+   "definition_id": "heat-pump-air-water",
+   "tag": null,
+   "properties": {
+    "power_kw": 10,
+    "tipo": "aria-acqua monoblocco, regolazione a bordo"
+   }
+  },
+  {
+   "id": "deviatrice",
+   "definition_id": "diverting-valve-3way",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "volano",
+   "definition_id": "buffer-four-port",
+   "tag": null,
+   "properties": {
+    "volume_l": 50
+   }
+  },
+  {
+   "id": "bollitore",
+   "definition_id": "dhw-cylinder",
+   "tag": null,
+   "properties": {
+    "volume_l": 200
+   }
+  },
+  {
+   "id": "confluenza",
+   "definition_id": "tee-junction",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "circolatore",
+   "definition_id": "pump-circulator",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "pannelli",
+   "definition_id": "underfloor-panel",
+   "tag": null,
+   "properties": {
+    "etichetta": "impianto a pavimento (collettore a 6 vie)"
+   }
+  },
+  {
+   "id": "af",
+   "definition_id": "cold-water-inlet",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "utenze",
+   "definition_id": "dhw-draw-off",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "sonda-acs",
+   "definition_id": "temperature-probe-dhw",
+   "tag": null,
+   "properties": {
+    "etichetta": "bollitore"
+   }
+  },
+  {
+   "id": "sonda-volano",
+   "definition_id": "temperature-probe",
+   "tag": null,
+   "properties": {
+    "etichetta": "volano"
+   }
+  },
+  {
+   "id": "quadro",
+   "definition_id": "electrical-panel",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "comando",
+   "definition_id": "wired-remote",
+   "tag": null,
+   "properties": {
+    "etichetta": "Soggiorno"
+   }
+  }
+ ],
+ "connections": [
+  {
+   "id": "c1",
+   "network_id": "primario",
+   "endpoint_a": {
+    "component_id": "pdc",
+    "port_id": "water_supply"
+   },
+   "endpoint_b": {
+    "component_id": "deviatrice",
+    "port_id": "in"
+   },
+   "properties": {}
+  },
+  {
+   "id": "c2",
+   "network_id": "primario",
+   "endpoint_a": {
+    "component_id": "deviatrice",
+    "port_id": "out_a"
+   },
+   "endpoint_b": {
+    "component_id": "volano",
+    "port_id": "primary_in"
+   },
+   "properties": {}
+  },
+  {
+   "id": "c3",
+   "network_id": "primario",
+   "endpoint_a": {
+    "component_id": "volano",
+    "port_id": "primary_out"
+   },
+   "endpoint_b": {
+    "component_id": "confluenza",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "c4",
+   "network_id": "primario",
+   "endpoint_a": {
+    "component_id": "deviatrice",
+    "port_id": "out_b"
+   },
+   "endpoint_b": {
+    "component_id": "bollitore",
+    "port_id": "coil_in"
+   },
+   "properties": {}
+  },
+  {
+   "id": "c5",
+   "network_id": "primario",
+   "endpoint_a": {
+    "component_id": "bollitore",
+    "port_id": "coil_out"
+   },
+   "endpoint_b": {
+    "component_id": "confluenza",
+    "port_id": "c"
+   },
+   "properties": {}
+  },
+  {
+   "id": "c6",
+   "network_id": "primario",
+   "endpoint_a": {
+    "component_id": "confluenza",
+    "port_id": "b"
+   },
+   "endpoint_b": {
+    "component_id": "pdc",
+    "port_id": "water_return"
+   },
+   "properties": {}
+  },
+  {
+   "id": "c7",
+   "network_id": "impianto",
+   "endpoint_a": {
+    "component_id": "volano",
+    "port_id": "secondary_out"
+   },
+   "endpoint_b": {
+    "component_id": "circolatore",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "c8",
+   "network_id": "impianto",
+   "endpoint_a": {
+    "component_id": "circolatore",
+    "port_id": "b"
+   },
+   "endpoint_b": {
+    "component_id": "pannelli",
+    "port_id": "in"
+   },
+   "properties": {}
+  },
+  {
+   "id": "c9",
+   "network_id": "impianto",
+   "endpoint_a": {
+    "component_id": "pannelli",
+    "port_id": "out"
+   },
+   "endpoint_b": {
+    "component_id": "volano",
+    "port_id": "secondary_in"
+   },
+   "properties": {}
+  },
+  {
+   "id": "c10",
+   "network_id": "af",
+   "endpoint_a": {
+    "component_id": "af",
+    "port_id": "a"
+   },
+   "endpoint_b": {
+    "component_id": "bollitore",
+    "port_id": "cold_in"
+   },
+   "properties": {}
+  },
+  {
+   "id": "c11",
+   "network_id": "acs",
+   "endpoint_a": {
+    "component_id": "bollitore",
+    "port_id": "dhw_out"
+   },
+   "endpoint_b": {
+    "component_id": "utenze",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "c12",
+   "network_id": "acs",
+   "endpoint_a": {
+    "component_id": "bollitore",
+    "port_id": "probe"
+   },
+   "endpoint_b": {
+    "component_id": "sonda-acs",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "c13",
+   "network_id": "primario",
+   "endpoint_a": {
+    "component_id": "volano",
+    "port_id": "probe"
+   },
+   "endpoint_b": {
+    "component_id": "sonda-volano",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "c14",
+   "network_id": "alim-pdc",
+   "endpoint_a": {
+    "component_id": "quadro",
+    "port_id": "out_6"
+   },
+   "endpoint_b": {
+    "component_id": "pdc",
+    "port_id": "power"
+   },
+   "properties": {}
+  },
+  {
+   "id": "c15",
+   "network_id": "alim-circ",
+   "endpoint_a": {
+    "component_id": "quadro",
+    "port_id": "out_1"
+   },
+   "endpoint_b": {
+    "component_id": "circolatore",
+    "port_id": "power"
+   },
+   "properties": {}
+  },
+  {
+   "id": "c16",
+   "network_id": "comandi",
+   "endpoint_a": {
+    "component_id": "pdc",
+    "port_id": "out_acs"
+   },
+   "endpoint_b": {
+    "component_id": "deviatrice",
+    "port_id": "comando"
+   },
+   "properties": {}
+  },
+  {
+   "id": "c17",
+   "network_id": "comandi",
+   "endpoint_a": {
+    "component_id": "pdc",
+    "port_id": "out_pompa_zona_1"
+   },
+   "endpoint_b": {
+    "component_id": "circolatore",
+    "port_id": "comando"
+   },
+   "properties": {}
+  },
+  {
+   "id": "c18",
+   "network_id": "sonde",
+   "endpoint_a": {
+    "component_id": "sonda-acs",
+    "port_id": "signal"
+   },
+   "endpoint_b": {
+    "component_id": "pdc",
+    "port_id": "sonda_acs"
+   },
+   "properties": {}
+  },
+  {
+   "id": "c19",
+   "network_id": "sonde",
+   "endpoint_a": {
+    "component_id": "sonda-volano",
+    "port_id": "signal"
+   },
+   "endpoint_b": {
+    "component_id": "pdc",
+    "port_id": "sonda_accumulo"
+   },
+   "properties": {}
+  },
+  {
+   "id": "c20",
+   "network_id": "bus",
+   "endpoint_a": {
+    "component_id": "comando",
+    "port_id": "a"
+   },
+   "endpoint_b": {
+    "component_id": "pdc",
+    "port_id": "comando_a_filo"
+   },
+   "properties": {}
+  }
+ ],
+ "assumptions": [
+  {
+   "id": "a1",
+   "text": "Volano: il testo non dice se e' in serie o separatore. Prima interpretazione (confermata dal progettista): volano a quattro attacchi, separatore fra primario e impianto.",
+   "status": "approved"
+  },
+  {
+   "id": "a2",
+   "text": "Il catalogo non ha un collettore a 6 vie (il collettore con ritorno ha due coppie): il collettore non e' disegnato, l'impianto a pavimento e' un pannello rappresentativo con la scritta. Il progettista: procedi senza.",
+   "status": "approved"
+  },
+  {
+   "id": "a3",
+   "text": "Acqua fredda e utenze del bollitore non sono nel testo: aggiunte come confini (progettista: si').",
+   "status": "approved"
+  },
+  {
+   "id": "a4",
+   "text": "Alimentazione del circolatore dal quadro: non detta, confermata dal progettista (seconda uscita del quadro).",
+   "status": "approved"
+  },
+  {
+   "id": "a5",
+   "text": "Regola la pompa di calore (testo esplicito): niente regolatore esterno; sonde e comandi alla macchina.",
+   "status": "approved"
+  },
+  {
+   "id": "a6",
+   "text": "Diametri: non richiesti. Distinta e pianta: non richieste. Marca e modello: non dati.",
+   "status": "approved"
+  },
+  {
+   "id": "a7",
+   "text": "Deviatrice: via dritta al volano, terza via al bollitore (D-196).",
+   "status": "approved"
+  }
+ ],
+ "rule_applications": [],
+ "subsystems": [],
+ "sheets": []
+}
