@@ -1,11 +1,18 @@
-"""`mep.py distinta <grafo-completo.json> --out <cartella> [--regole <cartella o fascio>]
-[--sul-foglio tratte,computo,attivita,note] [--fornitura <scelte>|confermata]`.
+"""`mep.py distinta <grafo-completo.json> --out <cartella> [--report <skill nove-c-report>]
+[--regole <cartella o fascio>] [--fornitura <scelte>|confermata] [--sul-foglio ...]`.
 
-Si lancia **prima** di `disegna`: le tabelle del foglio (`disegna --tabelle
-<cartella>/tabelle-del-foglio.json`) le scrive lei. `--sul-foglio` sceglie quali tabelle
-vanno nel file del foglio (di default tutte: il computo intero porta di solito la tavola
-in A1). `--fornitura` conferma o cambia chi fornisce che cosa in questa offerta; senza,
-la distinta usa le scelte predefinite di Nove C e le dichiara da confermare.
+Scrive il **documento per l'installatore** (I-232: niente Excel): in PDF, con la copertina
+e l'impaginazione dei report Nove C, se `--report` porta alla skill `nove-c-report`
+installata accanto; altrimenti lo stesso contenuto in Markdown, e lo dice. Il nome e'
+parlante dal cartiglio (commessa e titolo), o «distinta». Accanto: `distinta.json` (lo
+legge la pianta), `distinta-calcoli.md` (ogni numero con il suo conto) e
+`tabelle-del-foglio.json`, che il flusso della skill non posa piu' sulla tavola (I-233:
+sulla tavola solo apparecchiature e legenda); `--sul-foglio` ne sceglie le tabelle.
+`--fornitura` conferma o cambia chi fornisce che cosa in questa offerta; senza, la
+distinta usa le scelte predefinite di Nove C e le dichiara da confermare.
+
+Col PDF il comando fa il controllo finale dei report — `fill_report` e `qa_pdf` — e ne
+stampa gli avvisi e le pagine in PNG, da guardare una per una.
 
 **Spenta di default** (proposta D-213): la distinta si fa solo con questo comando,
 che il progettista chiede. Nessun altro comando la produce, e nessuno cambia per lei.
@@ -20,9 +27,11 @@ import sys
 from pathlib import Path
 
 from .calcolo import componi_la_distinta
+from .documento import documento_della_distinta
 from .grafo import sigle_dello_schema
+from .impaginazione import scrivi_il_documento
 from .regole import ErroreDelleRegole, carica_regole, la_fornitura, regole_predefinite
-from .uscite import TABELLE_DEL_FOGLIO, ha_openpyxl, scrivi_le_uscite, tabelle_scelte
+from .uscite import TABELLE_DEL_FOGLIO, scrivi_le_uscite, tabelle_scelte
 
 
 def nomi_del_catalogo(cartella: Path) -> dict[str, str]:
@@ -59,6 +68,7 @@ def esegui(
     cartella_dei_nomi: Path,
     sul_foglio: str | None = None,
     fornitura: str | None = None,
+    report: Path | None = None,
 ) -> int:
     tabelle = tabelle_scelte(sul_foglio)
     percorso_delle_regole = regole or regole_predefinite(cartella_delle_regole, cartella_dei_nomi)
@@ -80,25 +90,36 @@ def esegui(
         la_fornitura(regole_caricate, fornitura),
     )
     scritti = scrivi_le_uscite(distinta, uscita, tabelle)
-    voci = len(distinta.voci)
+    documento, esito, perche = scrivi_il_documento(documento_della_distinta(distinta), uscita, report)
     print(
-        f"Distinta: {voci} voci in {len({v.sezione for v in distinta.voci})} sezioni, "
+        f"Distinta: {len(distinta.voci)} voci in {len({v.sezione for v in distinta.voci})} sezioni, "
         f"{len(distinta.tratte_in_tabella)} tratte; regole {distinta.regole.impronta}."
     )
-    for percorso in scritti:
+    for percorso in [documento, *scritti]:
         print(f"  {percorso}")
-    if tabelle != TABELLE_DEL_FOGLIO:
-        print(f"Sul foglio: {', '.join(tabelle)}; il resto e' nell'Excel.")
-    if not ha_openpyxl():
+    if perche:
         print(
-            "Manca la libreria openpyxl: al posto dell'Excel c'e' distinta.csv (stesse voci, solo valori).",
+            f"Il PDF della distinta non c'e': {perche}. Il documento e' in Markdown, {documento.name}, "
+            "con lo stesso contenuto.",
             file=sys.stderr,
         )
+    if esito is not None:
+        print(f"Il PDF coi report Nove C: {len(esito.pagine)} pagine, da guardare una per una:")
+        for pagina in esito.pagine:
+            print(f"  {pagina}")
+        if esito.avvisi:
+            print(f"Il controllo dei report — {len(esito.avvisi)} avvisi (si correggono, o si verificano a vista e si dicono):")
+            for avviso in esito.avvisi:
+                print(f"  - {avviso}")
+        else:
+            print("Il controllo dei report: nessun avviso.")
+    if tabelle != TABELLE_DEL_FOGLIO:
+        print(f"In tabelle-del-foglio.json: {', '.join(tabelle)}.")
     oltre = [e for e in distinta.verifica if e.esito == "oltre"]
     if oltre:
         print(f"Verifica — {len(oltre)} segnalazioni (la distinta non corregge):")
-        for esito in oltre:
-            print(f"  - {esito.dove}, {esito.controllo}: {esito.valore}, contro {esito.soglia}")
+        for segnalata in oltre:
+            print(f"  - {segnalata.dove}, {segnalata.controllo}: {segnalata.valore}, contro {segnalata.soglia}")
     gia_detti = {f"{e.dove}, {e.controllo}: {e.valore}, contro {e.soglia}." for e in oltre}
     avvisi = [a for a in distinta.avvisi if a not in gia_detti]
     if avvisi:

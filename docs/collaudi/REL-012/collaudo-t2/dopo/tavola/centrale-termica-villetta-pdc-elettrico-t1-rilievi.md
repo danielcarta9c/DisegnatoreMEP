@@ -2,7 +2,7 @@
 
 Formato **A3** · tratte **13** · tratte cedute **0** · rilievi bloccanti **0**.
 
-Li misurano i controlli della skill sulla tavola finita: il preflight di qualita' e le regole del piano. Non sono un giudizio sull'impianto: dicono come e' disegnato.
+Li misurano i controlli della skill sulla tavola finita: il controllo di qualità e le regole del piano. Non sono un giudizio sull'impianto: dicono com'è disegnato.
 
 ## Bloccanti — la tavola non si consegna
 

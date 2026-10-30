@@ -1,6 +1,6 @@
 # Rilievi della tavola — Climatizzazione canalizzata Daikin con zonizzazione Airzone
 
-Formato **A1** · tratte **20** · tratte cedute **0** · rilievi bloccanti **0**.
+Formato **A3** · tratte **20** · tratte cedute **0** · rilievi bloccanti **0**.
 
 Li misurano i controlli della skill sulla tavola finita: il controllo di qualità e le regole del piano. Non sono un giudizio sull'impianto: dicono com'è disegnato.
 

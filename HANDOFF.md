@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-10-30 — **la 1.6.0 è su `main`** (PR #80, I-234, D-213 approvata): aria-aria, elettrico e comando, distinta e pianta su richiesta. **Il pacchetto è `REL-015`**, la 1.7.0: la distinta in un PDF a parte con la skill dei report Nove C, la tavola con sola tabella delle apparecchiature e legenda (A3), prima l'idraulica e poi l'elettrico, la pompa di calore con le sue sonde (I-230 … I-233).
+**Aggiornato:** 2026-10-30 — **la 1.7.0 è su `main`** (PR #81, I-235, D-214 approvata): sulla tavola solo apparecchiature e legenda (A3), la distinta in PDF coi report Nove C, prima l'acqua poi i cavi, il collettore a coppia col ritorno continuo, la pompa di calore che regola da sé. **Il pacchetto è `REL-011`.**
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -11,7 +11,23 @@
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
 
-## ▶ Da dove riparte la prossima sessione — scritto il 30 ottobre 2026
+## ▶ Da dove riparte la prossima sessione — scritto il 30 ottobre 2026, dopo la fusione della 1.7.0
+
+**Il pacchetto è `REL-011`** (`ACTIVE_WORK_PACKAGE.md`): le regole del corredo contro il manuale Shenling. Prima di
+cominciare, al PO le domande lasciate aperte dalla 1.7.0 (in testa al pacchetto). La 1.7.0 (`REL-015`) è archiviata in
+`docs/plans/pacchetti/REL-015.md`; quello che segue è com'era il ramo prima della fusione.
+
+- **Che cosa c'è**: `ACTIVE_WORK_PACKAGE.md` punto per punto; le prove in `docs/collaudi/REL-015/` (`distinta/`,
+  `pdc-regola/`, `collettore/`, `idraulica-prima/` con il suo `rifai.sh`).
+- **La regola dell'idraulica prima** è misurata da `tests/piano/test_prima_l_idraulica.py` (piena su tre casi, linee e
+  pezzi sulla M.02: la riserva è in D-214) e da `tests/piano/test_le_scritte_dell_acqua_lasciano_la_strada_ai_cavi.py`.
+- **Da proporre al PO** (non fatto): i circolatori sulla tavola dell'elettrico prendono alimentazione e comando da due
+  facce opposte e sembrano attraversati da un cavo; dal manuale Shenling le uscite P_C della scheda possono alimentare
+  direttamente le pompe — una linea sola.
+- **Il banco**: 19/24 identiche, 5 cambiate solo nel simbolo del collettore.
+- **I numeri**: il prossimo input è **I-236**, la prossima decisione **D-215**.
+
+## Com'era la mattina del 30 ottobre 2026
 
 **Il pacchetto è `REL-015`** (`ACTIVE_WORK_PACKAGE.md`). Le osservazioni del PO sulla 1.6.0 sono I-230 … I-233; la
 fusione l'ha disposta lui (I-234). Dopo `REL-015` viene `REL-011`.
@@ -20,7 +36,6 @@ fusione l'ha disposta lui (I-234). Dopo `REL-015` viene `REL-011`.
   `KPI_DATA` vuoto, «Chi siamo» è facoltativo. Il suo motore non entra in questo repository (pubblico): si importa dal
   suo percorso.
 - **Il manuale Shenling** sta sul OneDrive del PO e si legge col connettore Microsoft 365; si cita con la pagina.
-- **I numeri**: il prossimo input è **I-235**, la prossima decisione **D-214**.
 
 ## Com'era la notte del 29 ottobre 2026 — la 1.6.0 sul ramo
 

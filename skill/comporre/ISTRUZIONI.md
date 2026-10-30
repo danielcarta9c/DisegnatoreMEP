@@ -220,16 +220,11 @@ JSON, e solo queste chiavi:
   il comando**. Guarda il manifesto prima di scriverla. **Lo specchio invece vale per tutti**,
   anche per chi non si ruota (D-169): un volano a due attacchi specchiato ha `a` a destra e `b`
   a sinistra, ed è il modo di farlo guardare dall'altra parte senza girarlo.
-- **`zone_tabelle`** — **solo se la tavola porta tabelle** oltre a quella delle apparecchiature:
-  la tabella delle tratte, il computo, le note e le attività della distinta materiali, le note
-  del progettista. `"zone_tabelle": {"destra_mm": 230, "basso_mm": 230}` lascia una zona a
-  destra del disegno, accanto alla legenda, e una in basso, sopra il cartiglio; l'area del
-  disegno si restringe di tanto, e il foglio resta quello di `formato` (regole del piano, D4).
-  Le tabelle le passa il comando, `disegna --tabelle <file>` — il `tabelle-del-foglio.json` che
-  scrive `distinta`, e se il progettista ha note sue un secondo file nello stesso formato —, e
-  il comando dice dove le ha messe. **Le scritte non si rimpiccioliscono**: se non entrano il
-  comando si ferma, e allarghi le zone o prendi il formato successivo. Un computo intero non sta
-  in un A2: la M.02 del canalizzato è un A1 con zone di 230 mm.
+- **`zone_tabelle`** — **non scriverla.** Sulla tavola vanno solo la tabella delle apparecchiature
+  e la legenda, che il motore posa da sé (I-233): la tabella delle tratte, il computo e le note
+  della distinta materiali stanno nel suo PDF, a parte, e `disegna` non riceve `--tabelle`. Il
+  formato è il più piccolo che contiene il disegno — di solito un A3. (La chiave c'è ancora, per il
+  motore che sa posare tabelle; il flusso della skill non la usa.)
 - **`note`** e **`regola`** — **non sono decorazione.** Il piano senza di loro dice dove
   stanno i pezzi e non dice **perché**, e chi lo rivede non può correggerlo: può solo
   spostare. `note` porta la motivazione del piano intero, `regola` la stessa cosa pezzo per
@@ -604,6 +599,34 @@ sull'idraulica. Quello che conta è che i cavi siano corti e non si incrocino.
 - **Guarda l'ordine delle porte prima di posare.** La pompa di calore ha l'alimentazione a sinistra
   del bus, sotto; il regolatore ha l'alimentazione sopra il bus. Con il quadro sotto la macchina e il
   regolatore accanto, il bus passa sotto il quadro: altrimenti incrocia l'alimentazione.
+
+**Quando regola la pompa di calore** (I-230, proposta) non c'è un regolatore: sonde e comandi
+vanno alla macchina, e il centro della tavola è lei. Le sue porte: le **uscite sopra**, da
+sinistra `out_acs`, `out_miscelatrice`, `out_pompa_zona_1`, `out_pompa_zona_2`,
+`out_pompa_ricircolo`, `out_ausiliario`, a 5 mm; gli **ingressi a sinistra**, dall'alto
+`sonda_acs`, `sonda_accumulo`, `sonda_zona_2`, `termostato`; **sotto** alimentazione, bus e
+comando a filo. Così (la villetta di `docs/collaudi/REL-015/pdc-regola/`):
+
+- **la pompa di calore al centro**, non specchiata;
+- **le uscite a ventaglio**: quelle di sinistra (le valvole) girano a sinistra, quelle di destra
+  (i circolatori) a destra; l'uscita più esterna gira più in basso, la successiva più in alto, e
+  i cavi non si incrociano. Valvole e circolatori in colonna, girati col comando verso la
+  macchina (`"rotazione": 90`): il circolatore ha così l'alimentazione dall'altra parte, verso
+  il quadro;
+- **le sonde in fila sotto, a sinistra della macchina**, diritte (`"rotazione": 0`): la sonda
+  dell'ingresso più basso è la più vicina. Lascia fra l'una e l'altra il posto della sigla e
+  della scritta (`etichetta`: «bollitore», «volano», «mandata pannelli»): tre sonde uguali senza
+  scritta non dicono quale cavo va dove;
+- **il quadro in basso a destra, più in basso della macchina.** L'alimentazione della macchina
+  entra da sotto: con il quadro più in alto il cavo scende oltre la porta e risale, ed è un
+  bloccante (B12). Dal quadro, i circolatori scendono a ventaglio sulle uscite di sopra e di
+  destra, e la macchina arriva sull'uscita di sinistra (`out_6`);
+- **il comando a filo sotto la macchina**, a destra dell'alimentazione, più in alto del cavo che
+  va al quadro.
+
+Le uscite e gli ingressi stanno a 5 mm: i cavi che ne escono corrono affiancati a 5 mm per un
+tratto, e la regola delle corsie libere (B9) lo segnala. Non è un errore del piano: dillo nella
+consegna.
 
 Sulla **tavola unica** l'acqua si compone come sempre, e i cavi vengono dopo: il motore instrada
 prima tutta l'acqua e poi i cavi, nello spazio che resta. Metti il regolatore e il quadro **fuori**

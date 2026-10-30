@@ -41,9 +41,26 @@ CENTRALE = FASE_3 / "centrale"
 PICCOLO = FASE_3 / "piccolo"
 IMPIANTO = ROOT / "docs" / "collaudi" / "DRAW-018" / "prova-camera-pulita-2026-09-24"
 
+PORTE_DELLA_POMPA_DI_CALORE = {
+    "power",
+    "bus",
+    "comando_a_filo",
+    "sonda_acs",
+    "sonda_accumulo",
+    "sonda_zona_2",
+    "termostato",
+    "out_acs",
+    "out_miscelatrice",
+    "out_pompa_zona_1",
+    "out_pompa_zona_2",
+    "out_pompa_ricircolo",
+    "out_ausiliario",
+}
+"""La pompa di calore con la regolazione a bordo (REL-015 punto 4, I-230): proposta."""
+
 CON_LE_PORTE_DI_COMANDO = {
-    "heat-pump-air-water": {"power", "bus"},
-    "heat-pump-air-water-large": {"power", "bus"},
+    "heat-pump-air-water": PORTE_DELLA_POMPA_DI_CALORE,
+    "heat-pump-air-water-large": PORTE_DELLA_POMPA_DI_CALORE,
     "dhw-heat-pump": {"power", "bus"},
     "gas-boiler": {"power", "bus"},
     "gas-boiler-modular": {"power", "bus"},

@@ -9,18 +9,21 @@
  },
  "regole": {
   "versioni": {
-   "distinta": "1.1.0",
+   "distinta": "1.2.0",
    "lunghezze": "1.1.0",
    "fluidi": "1.1.0",
    "corredo": "1.1.0",
    "attivita": "1.1.0",
    "verifica": "1.1.0"
   },
-  "impronta": "f8b849f909489495"
+  "impronta": "05a61bb20ef686d8"
  },
  "intestazione": [
-  "Offerta richiesta: PREZZO A CORPO, FISSO E INVARIABILE, per l'impianto finito e funzionante. Le quantità sono indicative e già maggiorate: l'installatore le verifica nel SOPRALLUOGO OBBLIGATORIO prima dell'offerta e ne risponde; quanto manca va aggiunto nella sezione H.",
-  "Si compilano solo le celle gialle, in € oltre IVA: prezzo unitario e importo per le sezioni B-F e H, importo a corpo per la sezione G, solo prezzo unitario per le varianti V (fuori dal totale). Righe grigie: forniture escluse da questa offerta (vedi la colonna Fornitura), non si quotano. Le righe DA DEFINIRE aspettano un dato del progettista."
+  "Offerta richiesta: PREZZO A CORPO, FISSO E INVARIABILE, per l'impianto finito e funzionante, in euro oltre IVA: un importo a corpo per le voci da quotare, le attività G e le voci H; per le varianti V solo il prezzo unitario, fuori dal corpo.",
+  "Le quantità sono INDICATIVE e già maggiorate: sono la base comune delle offerte, non un elenco da prezzare voce per voce.",
+  "SOPRALLUOGO OBBLIGATORIO prima dell'offerta: l'installatore verifica le quantità e ne risponde; quanto manca per l'impianto finito lo aggiunge fra le voci H.",
+  "Le forniture escluse da questa offerta (colonna Fornitura: Nove C, Committente) non si quotano; le voci DA DEFINIRE aspettano un dato del progettista.",
+  "La distinta non progetta: lunghezze, sezioni, portate e protezioni sono del progettista; la distinta le conta e le maggiora con regole scritte, ciascuna con la sua fonte."
  ],
  "sezioni": [
   {
@@ -1555,7 +1558,7 @@
   "Quantità indicative per un prezzo a corpo, fisso e invariabile: l'installatore le verifica nel sopralluogo obbligatorio prima dell'offerta; le varianti hanno solo il prezzo unitario.",
   "Velocità nei tratti di aria di mandata da 1,9 a 2,7 m/s, sulla sezione lorda, dalle portate e dalle sezioni del progettista (verifica: segnala, non corregge).",
   "Fornitura: apparecchiature fornite da Nove C; bocchette e griglie, opere edili del Committente; messa in servizio con Nove C.",
-  "La distinta non progetta: lunghezze, sezioni, portate, protezioni, marca e modello sono dati del progettista; la distinta li maggiora e ne conta il corredo con regole scritte, ciascuna con la sua fonte (regole f8b849f909489495)."
+  "La distinta non progetta: lunghezze, sezioni, portate, protezioni, marca e modello sono dati del progettista; la distinta li maggiora e ne conta il corredo con regole scritte, ciascuna con la sua fonte."
  ],
  "avvisi": [
   "T08 (Scarico della condensa: UI-01 - SIF-01 - AL-01): la tubazione SIF-01 - AL-01 senza lunghezza; si considera compresa nei 8 m dati sul tratto.",

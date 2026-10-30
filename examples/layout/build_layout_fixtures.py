@@ -161,6 +161,54 @@ def machine_control_ports() -> list[dict[str, Any]]:
     ]
 
 
+HEAT_PUMP_CONTROL_PROPOSAL = (
+    "pompa di calore con la regolazione a bordo: ingressi sonda_acs (T_DHW), sonda_accumulo "
+    "(T_BT), sonda_zona_2 (T_FW2), termostato (S_H/S_C); uscite out_acs (SV1), "
+    "out_miscelatrice (SV2), out_pompa_zona_1 (P_C1), out_pompa_zona_2 (P_C2), "
+    "out_pompa_ricircolo (P_C4), out_ausiliario (AHS); comando_a_filo (CN35); bus verso un "
+    "sistema superiore (CN36). Le sigle sono della scheda del modulo idraulico Shenling "
+    "ThermaX R290 6-15 kW, manuale d'installazione e d'uso, §5.3, pp. 39-41 (§4.1-4.2, "
+    "pp. 24-29 per le applicazioni). Proposta della sessione del 30/10/2026 (REL-015 punto 4, "
+    "I-230), da approvare dal PO sulla tavola"
+)
+
+
+def heat_pump_control_ports() -> list[dict[str, Any]]:
+    """Le porte di comando di una pompa di calore **con la regolazione a bordo** (REL-015
+    punto 4, I-230): oltre ad alimentazione e bus, gli ingressi delle sonde e del
+    termostato, le uscite verso valvole e circolatori, il comando a filo.
+
+    I nomi sono **generici**: la sigla del costruttore sta solo nella fonte della voce
+    (`HEAT_PUMP_CONTROL_PROPOSAL`). Facoltative tutte, come le altre: una pompa di calore
+    che il grafo non cabla resta quella di prima.
+
+    - le **sonde** entrano come entrano nel regolatore (`control_bus`, `in`);
+    - il **termostato** ambiente e' un contatto (`control_bus`, `in`): il suo attacco e'
+      `bidirectional`, e va bene;
+    - le **uscite** sono a 230 V come quelle del regolatore (`power_supply`, `out`): una
+      prende il `comando` di una valvola motorizzata o di un circolatore;
+    - il **comando a filo** parla con la macchina (`control_bus`, nei due versi)."""
+    return [
+        *machine_control_ports(),
+        _porta_di_comando("comando_a_filo", "control_bus", "bidirectional"),
+        *(
+            _porta_di_comando(porta, "control_bus", "in")
+            for porta in ("sonda_acs", "sonda_accumulo", "sonda_zona_2", "termostato")
+        ),
+        *(
+            _porta_di_comando(porta, "power_supply", "out")
+            for porta in (
+                "out_acs",
+                "out_miscelatrice",
+                "out_pompa_zona_1",
+                "out_pompa_zona_2",
+                "out_pompa_ricircolo",
+                "out_ausiliario",
+            )
+        ),
+    ]
+
+
 def pump_control_ports() -> list[dict[str, Any]]:
     """L'alimentazione del circolatore e il suo **comando** (collaudo T2 di REL-012,
     §2.2.10): alimentato dal quadro e acceso da un'uscita del regolatore, che e' a
@@ -293,14 +341,14 @@ REL_003: list[dict[str, Any]] = [
         [
             hydronic_port("water_supply", "out"),
             hydronic_port("water_return", "in"),
-            *machine_control_ports(),
+            *heat_pump_control_ports(),
         ],
         # Il circolatore a bordo, come la monoblocco domestica: cosi' la
         # disegnano Caleffi (SRC-030, fig. 47) e il progetto di Padova (SRC-031),
         # e cosi' l'ha confermato il PO (D-188).
         carries_on_board=["circulation"],
         variant={"of": "heat-pump-air-water", "named_as": ["alta potenza", "grande taglia"]},
-        sources=[D188, CONTROL_PORTS_PROPOSAL],
+        sources=[D188, CONTROL_PORTS_PROPOSAL, HEAT_PUMP_CONTROL_PROPOSAL],
     ),
     definition(
         "gas-boiler-modular",
@@ -739,13 +787,13 @@ DEFINITIONS: list[dict[str, Any]] = [
         [
             hydronic_port("water_supply", "out"),
             hydronic_port("water_return", "in"),
-            *machine_control_ports(),
+            *heat_pump_control_ports(),
         ],
         # Le monoblocco comuni portano a bordo il circolatore primario, non il
         # vaso di espansione (D-106; SRC-019, p. 15): nessuna regola deve
         # aggiungere un circolatore che sta gia' dentro il mantello.
         carries_on_board=["circulation"],
-        sources=[CONTROL_PORTS_PROPOSAL],
+        sources=[CONTROL_PORTS_PROPOSAL, HEAT_PUMP_CONTROL_PROPOSAL],
     ),
     definition(
         # **Confluenza.** Il ritorno della macchina raccoglie sia il circuito del

@@ -1561,32 +1561,33 @@ l'altro, larghi 15 mm, restano 5 mm."""
 
 
 def manifold_pair_body(w: float, h: float) -> str:
-    """Collettore d'appartamento con mandata e ritorno: due barre, la mandata sopra e il
-    ritorno sotto, e per ogni circuito la sua coppia di attacchi in basso.
+    """Collettore d'appartamento con mandata e ritorno: due barre **continue**, la
+    mandata sopra e il ritorno sotto, e per ogni circuito la sua coppia di attacchi in
+    basso.
 
-    Le discese della mandata passano davanti alla barra del ritorno senza toccarla:
-    la barra del ritorno si interrompe dove una discesa la attraversa, come un tubo
-    che ne scavalca un altro."""
+    **Il ritorno e' una barra sola** (REL-015, I-231). Fino alla 1.6.0 la barra del
+    ritorno si interrompeva dove una discesa di mandata la attraversava, e sulla tavola
+    si leggevano tre barrette staccate, una per circuito: il PO, «un collettore aveva
+    una forma strana», e il collaudo T2 di REL-012, «sembrano tre pezzi distinti, non
+    un collettore». Adesso si interrompe la **discesa della mandata**, che passa dietro
+    la barra del ritorno: la linea si ferma un varco prima della barra e riprende un
+    varco dopo, fino all'attacco — il segno di un tubo che ne scavalca un altro senza
+    toccarlo. Le porte non cambiano."""
     mandata_y, ritorno_y, mezza = 2.5, h - 2.5, 1.0
-    varco = 1.0
+    varco = 0.75
     inizio = 2.0
     corpo = (
         f'<line x1="0" y1="{n(mandata_y)}" x2="{n(inizio)}" y2="{n(mandata_y)}"/>'
         f'<line x1="0" y1="{n(ritorno_y)}" x2="{n(inizio)}" y2="{n(ritorno_y)}"/>'
         f'<rect x="{n(inizio)}" y="{n(mandata_y - mezza)}" width="{n(w - inizio)}" height="{n(2 * mezza)}"/>'
+        f'<rect x="{n(inizio)}" y="{n(ritorno_y - mezza)}" width="{n(w - inizio)}" height="{n(2 * mezza)}"/>'
     )
-    # La barra del ritorno, a tratti fra una discesa di mandata e l'altra.
-    bordi = [inizio]
+    # Le discese della mandata, interrotte davanti alla barra del ritorno.
     for x in MANIFOLD_PAIR_SUPPLY:
-        bordi += [x - varco, x + varco]
-    bordi.append(w)
-    for da, a in zip(bordi[::2], bordi[1::2], strict=True):
-        if a > da:
-            corpo += (
-                f'<rect x="{n(da)}" y="{n(ritorno_y - mezza)}" width="{n(a - da)}" height="{n(2 * mezza)}"/>'
-            )
-    for x in MANIFOLD_PAIR_SUPPLY:
-        corpo += f'<line x1="{n(x)}" y1="{n(mandata_y + mezza)}" x2="{n(x)}" y2="{n(h)}"/>'
+        corpo += (
+            f'<line x1="{n(x)}" y1="{n(mandata_y + mezza)}" x2="{n(x)}" y2="{n(ritorno_y - mezza - varco)}"/>'
+            f'<line x1="{n(x)}" y1="{n(ritorno_y + mezza + varco)}" x2="{n(x)}" y2="{n(h)}"/>'
+        )
     for x in MANIFOLD_PAIR_RETURN:
         corpo += f'<line x1="{n(x)}" y1="{n(ritorno_y + mezza)}" x2="{n(x)}" y2="{n(h)}"/>'
     return corpo
@@ -2400,6 +2401,70 @@ def machine_control_ports(width_mm: float, height_mm: float) -> list[dict[str, A
     ]
 
 
+# --- la pompa di calore con la regolazione a bordo (REL-015 punto 4, I-230) ----
+# **Proposta della sessione del 30 ottobre 2026, da approvare dal PO sulla tavola.**
+# Il PO: «anche la pdc va alimentata ovviamente poi ci sono le sonde della psc che
+# vanno nei bollitori e volano ecc. comunque nel manuale Shenling c'e' tutto» (I-230).
+# Una pompa di calore come la Shenling ThermaX R290 6-15 kW ha la regolazione **sulla
+# scheda del suo modulo idraulico** (manuale d'installazione e d'uso, §5.3, pp. 39-41):
+# le sonde del bollitore e del volano, le valvole a tre vie, i circolatori di zona e del
+# ricircolo si cablano alla macchina, non a un regolatore esterno. Le porte hanno nomi
+# **generici**; la sigla del costruttore sta solo qui, come riferimento:
+#
+# - **sotto**, dove gia' stavano alimentazione (10) e bus (20, verso un sistema
+#   superiore: CN36, BMS Modbus), il **comando a filo** (30; CN35);
+# - **a sinistra**, la faccia libera dall'acqua, gli **ingressi**, a 5 mm come il
+#   passo delle uscite: `sonda_acs` (T_DHW, CN27, nel bollitore), `sonda_accumulo` (T_BT,
+#   CN26, nel volano), `sonda_zona_2` (T_FW2, CN28, mandata della zona miscelata),
+#   `termostato` (S_H/S_C, CN4, termostato ambiente);
+# - **sopra**, le **uscite** (CN8), a 5 mm: `out_acs` (SV1, la deviatrice dell'acqua
+#   calda sanitaria), `out_miscelatrice` (SV2), `out_pompa_zona_1` (P_C1),
+#   `out_pompa_zona_2` (P_C2), `out_pompa_ricircolo` (P_C4), `out_ausiliario` (AHS1/AHS2,
+#   il consenso alla fonte ausiliaria). Sei uscite su quaranta millimetri: cinque e' il
+#   passo che ci sta, sulla griglia.
+#
+# Le altre uscite e gli altri ingressi della scheda (SV3, P_C3, H_TB, H_IB, T_FW, T_SP,
+# smart grid, contatore, cascata) non hanno una porta: si aggiungono quando un
+# impianto li chiede. La sonda esterna (T_AM) e' sulla scheda principale della macchina
+# (§5.3, p. 42): non si cabla in campo, e non ha una porta.
+HEAT_PUMP_INPUTS_ALONG = (7.5, 12.5, 17.5, 22.5)
+"""Gli ingressi sulla faccia sinistra, dall'alto: le tre sonde e il termostato. A 5 mm,
+centrati sul fianco: il corpo della macchina va da 3 a 27, e un ingresso fuori dal corpo
+non avrebbe il moncone su cui finisce il cavo."""
+HEAT_PUMP_OUTPUTS_ALONG = (7.5, 12.5, 17.5, 22.5, 27.5, 32.5)
+"""Le uscite sulla faccia di sopra, da sinistra."""
+HEAT_PUMP_WIRED_REMOTE_ALONG = 30.0
+"""Il comando a filo sotto, dopo alimentazione e bus."""
+
+
+def heat_pump_control_ports(width_mm: float, height_mm: float) -> list[dict[str, Any]]:
+    """Le porte di comando di una pompa di calore con la regolazione a bordo.
+
+    Alimentazione e bus restano dove stavano (`machine_control_ports`): un grafo che
+    collega solo quelle si disegna come prima."""
+    ingressi = ("sonda_acs", "sonda_accumulo", "sonda_zona_2", "termostato")
+    uscite = (
+        "out_acs",
+        "out_miscelatrice",
+        "out_pompa_zona_1",
+        "out_pompa_zona_2",
+        "out_pompa_ricircolo",
+        "out_ausiliario",
+    )
+    return [
+        *machine_control_ports(width_mm, height_mm),
+        port_at("comando_a_filo", "bottom", HEAT_PUMP_WIRED_REMOTE_ALONG, width_mm, height_mm),
+        *(
+            port_at(porta, "left", y, width_mm, height_mm)
+            for porta, y in zip(ingressi, HEAT_PUMP_INPUTS_ALONG, strict=True)
+        ),
+        *(
+            port_at(porta, "top", x, width_mm, height_mm)
+            for porta, x in zip(uscite, HEAT_PUMP_OUTPUTS_ALONG, strict=True)
+        ),
+    ]
+
+
 DHW_HEAT_PUMP_CONTROL_PORTS = [
     port_at("power", "bottom", 7.5, STORAGE_W, STORAGE_H),
     port_at("bus", "bottom", 17.5, STORAGE_W, STORAGE_H),
@@ -2840,8 +2905,8 @@ SYMBOLS: list[SymbolSpec] = [
         body=heat_pump_body(HEAT_PUMP_W, HEAT_PUMP_H, HEAT_PUMP_PORTS),
         source=SOURCE_PRACTICE_HYDRONIC,
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
-        version="2.2.0",
-        control_ports=machine_control_ports(HEAT_PUMP_W, HEAT_PUMP_H),
+        version="2.3.0",
+        control_ports=heat_pump_control_ports(HEAT_PUMP_W, HEAT_PUMP_H),
     ),
     SymbolSpec(
         id="dhw-cylinder",
@@ -2947,8 +3012,8 @@ SYMBOLS: list[SymbolSpec] = [
         body=large_heat_pump_body(*LARGE_MACHINE, LARGE_HEAT_PUMP_PORTS),
         source=SOURCE_REL003_LARGE_HEAT_PUMP,
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
-        version="1.2.0",
-        control_ports=machine_control_ports(*LARGE_MACHINE),
+        version="1.3.0",
+        control_ports=heat_pump_control_ports(*LARGE_MACHINE),
     ),
     SymbolSpec(
         id="gas-boiler-modular",
@@ -3087,6 +3152,8 @@ SYMBOLS: list[SymbolSpec] = [
         body=manifold_pair_body(*MANIFOLD_PAIR),
         source=SOURCE_REL009_PROPOSAL,
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+        # Il ritorno continuo (REL-015): il segno cambia forma, sale di minore.
+        version="1.1.0",
     ),
     # --- REL-012, l'aria-aria del kit del PO (I-224): proposte, le approva il PO ---
     # Unita' esterna, unita' interna, plenum, centrale di zona e quadro si

@@ -2,7 +2,7 @@
 
 Committente: Committente (dati omessi) · Progetto: Climatizzazione canalizzata Daikin con zonizzazione Airzone · Data: 29.10.2026
 
-> proposta (D-213, REL-013): il PO non ha ancora deciso se la skill fa la distinta; finché non decide, la distinta si fa solo col comando esplicito `mep.py distinta`. Regole `f8b849f909489495` (distinta 1.1.0, lunghezze 1.1.0, fluidi 1.1.0, corredo 1.1.0, attivita 1.1.0, verifica 1.1.0).
+> proposta (D-213, REL-013): il PO non ha ancora deciso se la skill fa la distinta; finché non decide, la distinta si fa solo col comando esplicito `mep.py distinta`. Regole `05a61bb20ef686d8` (distinta 1.2.0, lunghezze 1.1.0, fluidi 1.1.0, corredo 1.1.0, attivita 1.1.0, verifica 1.1.0).
 
 ## Da confermare per questa offerta
 
@@ -165,4 +165,4 @@ Committente: Committente (dati omessi) · Progetto: Climatizzazione canalizzata 
 3. Velocità nei tratti di aria di mandata da 1,9 a 2,5 m/s, sulla sezione lorda, dalle portate e dalle sezioni del progettista (verifica: segnala, non corregge).
 4. Velocità nei tratti di aria di ripresa 1,2 m/s, sulla sezione lorda, dalle portate e dalle sezioni del progettista (verifica: segnala, non corregge).
 5. Fornitura da confermare: apparecchiature fornite da Nove C; bocchette e griglie, opere edili del Committente; messa in servizio con Nove C.
-6. La distinta non progetta: lunghezze, sezioni, portate, protezioni, marca e modello sono dati del progettista; la distinta li maggiora e ne conta il corredo con regole scritte, ciascuna con la sua fonte (regole f8b849f909489495).
+6. La distinta non progetta: lunghezze, sezioni, portate, protezioni, marca e modello sono dati del progettista; la distinta li maggiora e ne conta il corredo con regole scritte, ciascuna con la sua fonte.

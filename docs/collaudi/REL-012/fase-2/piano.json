@@ -1,6 +1,5 @@
 {
- "formato": "A1",
- "zone_tabelle": {"destra_mm": 230, "basso_mm": 230},
+ "formato": "A3",
  "note": [
   "La posa e' quella della M.02 del kit (lavoro/piano.json), pezzo per pezzo: gli id del grafo sono gli stessi.",
   "UE a sinistra e UI alla stessa quota: le due linee frigorifere sono rette (stessa y delle porte liquido e gas).",
@@ -8,8 +7,7 @@
   "Ripresa sopra la UI, sull'asse della bocca di aspirazione.",
   "Sotto la UI: collegamento UI-UE, condensa con sifone, comando Madoka; quadro sotto la UE, alimentazione UE dritta in verticale.",
   "Centrale di zona separata dal plenum, sotto, sull'asse dei motori; termostati in colonna alla quota delle porte di bus: bus rettilinei.",
-  "Formato A1 e non A2 come il kit: le tabelle del motore hanno il corpo delle scritte della tavola, 9 punti (I-159), contro i 7 del kit, e il computo da solo vuole tre colonne di zona alte 230 mm. Sull'A2 non entra in nessuna misura delle zone.",
-  "Zone 230 x 230: a destra, in una colonna, tratte, attivita' e note della distinta come le tratte, note e attivita' del kit; in basso il computo e le note di progetto."
+  "Formato A3 (REL-015, I-233): sulla tavola solo la tabella delle apparecchiature e la legenda; tratte, note, attivita' e computo stanno nel PDF della distinta. Prima era un A1 con zone di 230 mm, per il computo sul foglio."
  ],
  "pezzi": {
   "ue": {"x": 0, "y": 40, "regola": "D-159 quota delle porte frigorifere"},

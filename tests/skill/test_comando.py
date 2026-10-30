@@ -312,10 +312,10 @@ def test_l_anteprima_di_una_zona_e_il_riquadro_chiesto(
 
 def test_consegna_copia_i_file_per_il_progettista(cartelle: Cartelle, tmp_path: Path) -> None:
     """La tavola, la distinta e la pianta in un comando solo (collaudo T3 di REL-012, §2
-    punto 8: prima l'Excel e la pianta si copiavano a mano)."""
+    punto 8: prima la distinta e la pianta si copiavano a mano)."""
     file = {
         "tavola": ("t1.pdf", "t1.dxf", "t1.svg", "t1-rilievi.md", "logo.jpg", "geometria.json"),
-        "distinta": ("distinta.xlsx", "distinta.json", "tabelle-del-foglio.json", "distinta-calcoli.md"),
+        "distinta": ("distinta.pdf", "distinta.json", "tabelle-del-foglio.json", "distinta-calcoli.md"),
         "pianta": ("pianta.pdf", "pianta.dxf", "pianta.svg", "pianta.png", "pianta.tracciati.json", "logo.jpg"),
     }
     for cartella, nomi in file.items():
@@ -325,9 +325,9 @@ def test_consegna_copia_i_file_per_il_progettista(cartelle: Cartelle, tmp_path: 
     dentro = [str(tmp_path / cartella) for cartella in file]
     assert main(["consegna", *dentro, str(tmp_path / "fuori")], cartelle) == 0
     # L'SVG, il PNG e i JSON restano nella cartella di lavoro (collaudo T2 di REL-012); il
-    # logo va col DXF, che lo nomina; l'Excel della distinta si consegna.
+    # logo va col DXF, che lo nomina; il PDF della distinta si consegna (I-232).
     assert sorted(p.name for p in (tmp_path / "fuori").iterdir()) == [
-        "distinta-calcoli.md", "distinta.xlsx", "logo.jpg", "pianta.dxf", "pianta.pdf",
+        "distinta-calcoli.md", "distinta.pdf", "logo.jpg", "pianta.dxf", "pianta.pdf",
         "t1-rilievi.md", "t1.dxf", "t1.pdf",
     ]
     # Una cartella sola, come prima.

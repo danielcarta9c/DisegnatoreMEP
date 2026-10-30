@@ -54,6 +54,11 @@ FLUIDI_SENZA_FRECCIA: frozenset[str] = frozenset(
 """I fluidi le cui linee **non portano la freccia di flusso** (proposta, D-213 punto 6)."""
 
 
+FLUIDI_DEL_COMANDO: frozenset[str] = frozenset({"power_supply", "interconnection", "control_bus"})
+"""I fluidi dell'elettrico e del comando: i cavi e i bus. Sulla tavola vengono dopo
+l'acqua e l'aria (REL-015, I-231): dove un cavo incrocia un tubo, scavalca il cavo."""
+
+
 def ha_un_verso(medium: str) -> bool:
     """Il fluido si disegna in andata e ritorno, con due righe di legenda."""
     return medium not in FLUIDI_SENZA_VERSO
@@ -64,4 +69,10 @@ def porta_la_freccia(medium: str) -> bool:
     return medium not in FLUIDI_SENZA_FRECCIA
 
 
-__all__ = ["FLUIDI_SENZA_FRECCIA", "FLUIDI_SENZA_VERSO", "ha_un_verso", "porta_la_freccia"]
+__all__ = [
+    "FLUIDI_DEL_COMANDO",
+    "FLUIDI_SENZA_FRECCIA",
+    "FLUIDI_SENZA_VERSO",
+    "ha_un_verso",
+    "porta_la_freccia",
+]

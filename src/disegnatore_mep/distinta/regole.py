@@ -92,7 +92,7 @@ class Fornitura:
         return "; ".join(f"{s['nome']} {self.testo(i)}" for i, s in self.scelte.items())
 
     def in_parole(self) -> str:
-        """La riga delle cose da confermare (il comando, l'Excel, il foglio dei calcoli)."""
+        """La riga delle cose da confermare (il comando, il PDF, il foglio dei calcoli)."""
         if self.confermata:
             return f"Fornitura per questa offerta: {self._parti()}."
         return f"Fornitura: {self._parti()} — come da regole predefinite di Nove C; confermare per questa offerta."

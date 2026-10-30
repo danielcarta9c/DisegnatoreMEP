@@ -1,0 +1,925 @@
+{
+ "schema_version": "1.1.0",
+ "metadata": {
+  "project_id": "centrale-termica-villetta-pdc-regola",
+  "client": "ND",
+  "project_name": "Centrale termica villetta con pompa di calore aria-acqua",
+  "commission_code": "ND",
+  "revision": "00",
+  "issue_date": "2026-10-30"
+ },
+ "plant_regime": "up_to_35_kw",
+ "networks": [
+  {
+   "id": "primario",
+   "name": "Circuito della pompa di calore",
+   "domain": "hydronic",
+   "medium": "heating_water"
+  },
+  {
+   "id": "secondario",
+   "name": "Distribuzione dal volano",
+   "domain": "hydronic",
+   "medium": "heating_water"
+  },
+  {
+   "id": "acqua-fredda",
+   "name": "Acqua fredda al bollitore",
+   "domain": "hydronic",
+   "medium": "cold_water"
+  },
+  {
+   "id": "acs",
+   "name": "Acqua calda sanitaria e ricircolo",
+   "domain": "hydronic",
+   "medium": "domestic_hot_water"
+  },
+  {
+   "id": "el-pdc",
+   "name": "Alimentazione pompa di calore",
+   "domain": "control",
+   "medium": "power_supply"
+  },
+  {
+   "id": "el-circ-pannelli",
+   "name": "Alimentazione circolatore pannelli",
+   "domain": "control",
+   "medium": "power_supply"
+  },
+  {
+   "id": "el-circ-radiatori",
+   "name": "Alimentazione circolatore radiatori",
+   "domain": "control",
+   "medium": "power_supply"
+  },
+  {
+   "id": "el-circ-ricircolo",
+   "name": "Alimentazione circolatore ricircolo",
+   "domain": "control",
+   "medium": "power_supply"
+  },
+  {
+   "id": "cmd-miscelatrice",
+   "name": "Comando miscelatrice pannelli dalla pompa di calore",
+   "domain": "control",
+   "medium": "power_supply"
+  },
+  {
+   "id": "cmd-deviatrice",
+   "name": "Comando deviatrice ACS dalla pompa di calore",
+   "domain": "control",
+   "medium": "power_supply"
+  },
+  {
+   "id": "sg-sonda-pannelli",
+   "name": "Sonda di mandata pannelli alla pompa di calore",
+   "domain": "control",
+   "medium": "control_bus"
+  },
+  {
+   "id": "sg-sonda-bollitore",
+   "name": "Sonda del bollitore alla pompa di calore",
+   "domain": "control",
+   "medium": "control_bus"
+  },
+  {
+   "id": "sg-sonda-volano",
+   "name": "Sonda del volano alla pompa di calore",
+   "domain": "control",
+   "medium": "control_bus"
+  },
+  {
+   "id": "cmd-circ-radiatori",
+   "name": "Comando circolatore radiatori dalla pompa di calore",
+   "domain": "control",
+   "medium": "power_supply"
+  },
+  {
+   "id": "cmd-circ-pannelli",
+   "name": "Comando circolatore pannelli dalla pompa di calore",
+   "domain": "control",
+   "medium": "power_supply"
+  },
+  {
+   "id": "cmd-circ-ricircolo",
+   "name": "Comando circolatore ricircolo dalla pompa di calore",
+   "domain": "control",
+   "medium": "power_supply"
+  },
+  {
+   "id": "bus-comando-a-filo",
+   "name": "Comando a filo della pompa di calore",
+   "domain": "control",
+   "medium": "control_bus"
+  }
+ ],
+ "components": [
+  {
+   "id": "pdc",
+   "definition_id": "heat-pump-air-water",
+   "tag": null,
+   "properties": {
+    "power_kw": 12,
+    "marca": "Shenling",
+    "modello": "ThermaX R290",
+    "tipo": "aria-acqua monoblocco",
+    "posizione": "all'esterno"
+   }
+  },
+  {
+   "id": "deviatrice",
+   "definition_id": "diverting-valve-3way",
+   "tag": null,
+   "properties": {
+    "tipo": "a tre vie, sulla mandata della pompa di calore"
+   }
+  },
+  {
+   "id": "volano",
+   "definition_id": "buffer-four-port",
+   "tag": null,
+   "properties": {
+    "volume_l": 100,
+    "configurazione": "a quattro attacchi"
+   }
+  },
+  {
+   "id": "bollitore",
+   "definition_id": "dhw-cylinder",
+   "tag": null,
+   "properties": {
+    "volume_l": 300,
+    "tipo": "a serpentino"
+   }
+  },
+  {
+   "id": "conf-ritorno-pdc",
+   "definition_id": "tee-junction",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "collettore",
+   "definition_id": "zone-manifold-pair",
+   "tag": null,
+   "properties": {
+    "etichetta": "collettore di distribuzione"
+   }
+  },
+  {
+   "id": "miscelatrice",
+   "definition_id": "mixing-valve-3way",
+   "tag": null,
+   "properties": {
+    "tipo": "a tre vie motorizzata"
+   }
+  },
+  {
+   "id": "circ-pannelli",
+   "definition_id": "pump-circulator",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "der-sonda-pannelli",
+   "definition_id": "tee-branch",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "sonda-pannelli",
+   "definition_id": "temperature-probe",
+   "tag": null,
+   "properties": {
+    "funzione": "sonda di mandata pannelli",
+    "etichetta": "mandata pannelli"
+   }
+  },
+  {
+   "id": "pannelli",
+   "definition_id": "underfloor-panel",
+   "tag": null,
+   "properties": {
+    "etichetta": "pannelli radianti a pavimento"
+   }
+  },
+  {
+   "id": "rip-ritorno-pannelli",
+   "definition_id": "tee-split",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "circ-radiatori",
+   "definition_id": "pump-circulator",
+   "tag": null,
+   "properties": {
+    "tipo": "circolatore diretto"
+   }
+  },
+  {
+   "id": "radiatori",
+   "definition_id": "radiator",
+   "tag": null,
+   "properties": {
+    "etichetta": "radiatori primo piano"
+   }
+  },
+  {
+   "id": "acquedotto",
+   "definition_id": "cold-water-inlet",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "utenze-acs",
+   "definition_id": "dhw-draw-off",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "ricircolo-acs",
+   "definition_id": "dhw-recirculation-inlet",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "circ-ricircolo",
+   "definition_id": "pump-circulator-dhw",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "sonda-bollitore",
+   "definition_id": "temperature-probe-dhw",
+   "tag": null,
+   "properties": {
+    "funzione": "sonda nel bollitore",
+    "etichetta": "bollitore"
+   }
+  },
+  {
+   "id": "quadro",
+   "definition_id": "electrical-panel",
+   "tag": null,
+   "properties": {
+    "etichetta": "quadro di centrale"
+   }
+  },
+  {
+   "id": "sez-pdc",
+   "definition_id": "isolator-switch",
+   "tag": null,
+   "properties": {
+    "posizione": "vicino alla pompa di calore"
+   }
+  },
+  {
+   "id": "sonda-volano",
+   "definition_id": "temperature-probe",
+   "tag": null,
+   "properties": {
+    "funzione": "sonda del volano",
+    "etichetta": "volano"
+   }
+  },
+  {
+   "id": "comando-a-filo",
+   "definition_id": "wired-remote",
+   "tag": null,
+   "properties": {}
+  }
+ ],
+ "connections": [
+  {
+   "id": "t1",
+   "network_id": "primario",
+   "endpoint_a": {
+    "component_id": "pdc",
+    "port_id": "water_supply"
+   },
+   "endpoint_b": {
+    "component_id": "deviatrice",
+    "port_id": "in"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t2",
+   "network_id": "primario",
+   "endpoint_a": {
+    "component_id": "deviatrice",
+    "port_id": "out_a"
+   },
+   "endpoint_b": {
+    "component_id": "volano",
+    "port_id": "primary_in"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t3",
+   "network_id": "primario",
+   "endpoint_a": {
+    "component_id": "deviatrice",
+    "port_id": "out_b"
+   },
+   "endpoint_b": {
+    "component_id": "bollitore",
+    "port_id": "coil_in"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t4",
+   "network_id": "primario",
+   "endpoint_a": {
+    "component_id": "volano",
+    "port_id": "primary_out"
+   },
+   "endpoint_b": {
+    "component_id": "conf-ritorno-pdc",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t5",
+   "network_id": "primario",
+   "endpoint_a": {
+    "component_id": "bollitore",
+    "port_id": "coil_out"
+   },
+   "endpoint_b": {
+    "component_id": "conf-ritorno-pdc",
+    "port_id": "c"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t6",
+   "network_id": "primario",
+   "endpoint_a": {
+    "component_id": "conf-ritorno-pdc",
+    "port_id": "b"
+   },
+   "endpoint_b": {
+    "component_id": "pdc",
+    "port_id": "water_return"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t7",
+   "network_id": "secondario",
+   "endpoint_a": {
+    "component_id": "volano",
+    "port_id": "secondary_out"
+   },
+   "endpoint_b": {
+    "component_id": "collettore",
+    "port_id": "in"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t8",
+   "network_id": "secondario",
+   "endpoint_a": {
+    "component_id": "collettore",
+    "port_id": "out_1"
+   },
+   "endpoint_b": {
+    "component_id": "miscelatrice",
+    "port_id": "hot_in"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t9",
+   "network_id": "secondario",
+   "endpoint_a": {
+    "component_id": "miscelatrice",
+    "port_id": "out"
+   },
+   "endpoint_b": {
+    "component_id": "circ-pannelli",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t10",
+   "network_id": "secondario",
+   "endpoint_a": {
+    "component_id": "circ-pannelli",
+    "port_id": "b"
+   },
+   "endpoint_b": {
+    "component_id": "der-sonda-pannelli",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t11",
+   "network_id": "secondario",
+   "endpoint_a": {
+    "component_id": "der-sonda-pannelli",
+    "port_id": "b"
+   },
+   "endpoint_b": {
+    "component_id": "pannelli",
+    "port_id": "in"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t12",
+   "network_id": "secondario",
+   "endpoint_a": {
+    "component_id": "der-sonda-pannelli",
+    "port_id": "branch"
+   },
+   "endpoint_b": {
+    "component_id": "sonda-pannelli",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t13",
+   "network_id": "secondario",
+   "endpoint_a": {
+    "component_id": "pannelli",
+    "port_id": "out"
+   },
+   "endpoint_b": {
+    "component_id": "rip-ritorno-pannelli",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t14",
+   "network_id": "secondario",
+   "endpoint_a": {
+    "component_id": "rip-ritorno-pannelli",
+    "port_id": "b"
+   },
+   "endpoint_b": {
+    "component_id": "collettore",
+    "port_id": "ret_1"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t15",
+   "network_id": "secondario",
+   "endpoint_a": {
+    "component_id": "rip-ritorno-pannelli",
+    "port_id": "c"
+   },
+   "endpoint_b": {
+    "component_id": "miscelatrice",
+    "port_id": "cold_in"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t16",
+   "network_id": "secondario",
+   "endpoint_a": {
+    "component_id": "collettore",
+    "port_id": "out_2"
+   },
+   "endpoint_b": {
+    "component_id": "circ-radiatori",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t17",
+   "network_id": "secondario",
+   "endpoint_a": {
+    "component_id": "circ-radiatori",
+    "port_id": "b"
+   },
+   "endpoint_b": {
+    "component_id": "radiatori",
+    "port_id": "in"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t18",
+   "network_id": "secondario",
+   "endpoint_a": {
+    "component_id": "radiatori",
+    "port_id": "out"
+   },
+   "endpoint_b": {
+    "component_id": "collettore",
+    "port_id": "ret_2"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t19",
+   "network_id": "secondario",
+   "endpoint_a": {
+    "component_id": "collettore",
+    "port_id": "out"
+   },
+   "endpoint_b": {
+    "component_id": "volano",
+    "port_id": "secondary_in"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t20",
+   "network_id": "acqua-fredda",
+   "endpoint_a": {
+    "component_id": "acquedotto",
+    "port_id": "a"
+   },
+   "endpoint_b": {
+    "component_id": "bollitore",
+    "port_id": "cold_in"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t21",
+   "network_id": "acs",
+   "endpoint_a": {
+    "component_id": "bollitore",
+    "port_id": "dhw_out"
+   },
+   "endpoint_b": {
+    "component_id": "utenze-acs",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t22",
+   "network_id": "acs",
+   "endpoint_a": {
+    "component_id": "ricircolo-acs",
+    "port_id": "a"
+   },
+   "endpoint_b": {
+    "component_id": "circ-ricircolo",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t23",
+   "network_id": "acs",
+   "endpoint_a": {
+    "component_id": "circ-ricircolo",
+    "port_id": "b"
+   },
+   "endpoint_b": {
+    "component_id": "bollitore",
+    "port_id": "recirculation_in"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t24",
+   "network_id": "acs",
+   "endpoint_a": {
+    "component_id": "bollitore",
+    "port_id": "probe"
+   },
+   "endpoint_b": {
+    "component_id": "sonda-bollitore",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t25",
+   "network_id": "el-pdc",
+   "endpoint_a": {
+    "component_id": "quadro",
+    "port_id": "out_6"
+   },
+   "endpoint_b": {
+    "component_id": "sez-pdc",
+    "port_id": "a"
+   },
+   "properties": {},
+   "sezione": "3G6",
+   "lunghezza_m": 15
+  },
+  {
+   "id": "t26",
+   "network_id": "el-pdc",
+   "endpoint_a": {
+    "component_id": "sez-pdc",
+    "port_id": "b"
+   },
+   "endpoint_b": {
+    "component_id": "pdc",
+    "port_id": "power"
+   },
+   "properties": {},
+   "sezione": "3G6"
+  },
+  {
+   "id": "t27",
+   "network_id": "el-circ-pannelli",
+   "endpoint_a": {
+    "component_id": "quadro",
+    "port_id": "out_2"
+   },
+   "endpoint_b": {
+    "component_id": "circ-pannelli",
+    "port_id": "power"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t28",
+   "network_id": "el-circ-radiatori",
+   "endpoint_a": {
+    "component_id": "quadro",
+    "port_id": "out_3"
+   },
+   "endpoint_b": {
+    "component_id": "circ-radiatori",
+    "port_id": "power"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t29",
+   "network_id": "el-circ-ricircolo",
+   "endpoint_a": {
+    "component_id": "quadro",
+    "port_id": "out_1"
+   },
+   "endpoint_b": {
+    "component_id": "circ-ricircolo",
+    "port_id": "power"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t40",
+   "network_id": "primario",
+   "endpoint_a": {
+    "component_id": "volano",
+    "port_id": "probe"
+   },
+   "endpoint_b": {
+    "component_id": "sonda-volano",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t41",
+   "network_id": "sg-sonda-bollitore",
+   "endpoint_a": {
+    "component_id": "sonda-bollitore",
+    "port_id": "signal"
+   },
+   "endpoint_b": {
+    "component_id": "pdc",
+    "port_id": "sonda_acs"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t42",
+   "network_id": "sg-sonda-volano",
+   "endpoint_a": {
+    "component_id": "sonda-volano",
+    "port_id": "signal"
+   },
+   "endpoint_b": {
+    "component_id": "pdc",
+    "port_id": "sonda_accumulo"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t43",
+   "network_id": "sg-sonda-pannelli",
+   "endpoint_a": {
+    "component_id": "sonda-pannelli",
+    "port_id": "signal"
+   },
+   "endpoint_b": {
+    "component_id": "pdc",
+    "port_id": "sonda_zona_2"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t44",
+   "network_id": "cmd-deviatrice",
+   "endpoint_a": {
+    "component_id": "pdc",
+    "port_id": "out_acs"
+   },
+   "endpoint_b": {
+    "component_id": "deviatrice",
+    "port_id": "comando"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t45",
+   "network_id": "cmd-miscelatrice",
+   "endpoint_a": {
+    "component_id": "pdc",
+    "port_id": "out_miscelatrice"
+   },
+   "endpoint_b": {
+    "component_id": "miscelatrice",
+    "port_id": "comando"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t46",
+   "network_id": "cmd-circ-radiatori",
+   "endpoint_a": {
+    "component_id": "pdc",
+    "port_id": "out_pompa_zona_1"
+   },
+   "endpoint_b": {
+    "component_id": "circ-radiatori",
+    "port_id": "comando"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t47",
+   "network_id": "cmd-circ-pannelli",
+   "endpoint_a": {
+    "component_id": "pdc",
+    "port_id": "out_pompa_zona_2"
+   },
+   "endpoint_b": {
+    "component_id": "circ-pannelli",
+    "port_id": "comando"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t48",
+   "network_id": "cmd-circ-ricircolo",
+   "endpoint_a": {
+    "component_id": "pdc",
+    "port_id": "out_pompa_ricircolo"
+   },
+   "endpoint_b": {
+    "component_id": "circ-ricircolo",
+    "port_id": "comando"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t49",
+   "network_id": "bus-comando-a-filo",
+   "endpoint_a": {
+    "component_id": "comando-a-filo",
+    "port_id": "a"
+   },
+   "endpoint_b": {
+    "component_id": "pdc",
+    "port_id": "comando_a_filo"
+   },
+   "properties": {}
+  }
+ ],
+ "assumptions": [
+  {
+   "id": "a1",
+   "text": "Dati del cartiglio che il testo non da': committente e codice di commessa (scritti ND), indirizzo dell'intervento, titolo e numero della tavola. Senza, la tavola esce in bozza con «DA DEFINIRE».",
+   "status": "proposed"
+  },
+  {
+   "id": "a2",
+   "text": "Per la tabella delle apparecchiature mancano: marca e modello di volano, bollitore, valvola deviatrice, miscelatrice e dei tre circolatori; portata e prevalenza dei tre circolatori. Se non li dai, quelle celle restano vuote.",
+   "status": "proposed"
+  },
+  {
+   "id": "a3",
+   "text": "Il testo non dice come rientrano alla pompa di calore il ritorno dal volano e quello dal serpentino del bollitore: si e' disegnata una confluenza a T prima dell'attacco di ritorno della macchina.",
+   "status": "approved"
+  },
+  {
+   "id": "a4",
+   "text": "Il testo non nomina acquedotto e utenze: il bollitore e' disegnato alimentato dall'acqua fredda di acquedotto e con l'uscita dell'acqua calda verso le utenze, come confini di rete.",
+   "status": "approved"
+  },
+  {
+   "id": "a5",
+   "text": "Ricircolo ACS: dalle utenze, attraverso il suo circolatore, rientra nel bollitore dall'attacco del ricircolo.",
+   "status": "approved"
+  },
+  {
+   "id": "a6",
+   "text": "Zona pannelli: il testo non dice l'ordine fra miscelatrice e circolatore. Si e' disegnata la miscelatrice all'uscita del collettore, poi il circolatore sulla mandata, poi la sonda di mandata, prima dei pannelli. La terza via della miscelatrice prende il ritorno dei pannelli con una ripartizione a T. Va bene?",
+   "status": "approved"
+  },
+  {
+   "id": "a7",
+   "text": "Zona radiatori: circolatore diretto sulla mandata, nessuna valvola di regolazione di circuito.",
+   "status": "approved"
+  },
+  {
+   "id": "a8",
+   "text": "Pannelli e radiatori sono disegnati con un terminale rappresentativo ciascuno: il numero vero non e' detto.",
+   "status": "approved"
+  },
+  {
+   "id": "a9",
+   "text": "Il collettore di distribuzione e' disegnato come un collettore con mandata e ritorno a due circuiti (pannelli sul primo, radiatori sul secondo).",
+   "status": "approved"
+  },
+  {
+   "id": "a10",
+   "text": "Pompa di calore monoblocco con il circolatore a bordo, come la voce di catalogo: il testo non nomina un circolatore del primario. E' cosi'?",
+   "status": "approved"
+  },
+  {
+   "id": "a11",
+   "text": "Quadro: il testo dice «dal quadro» per la pompa di calore e «dal quadro di centrale» per i circolatori. Si e' disegnato un quadro solo, quello di centrale. Sono due quadri diversi?",
+   "status": "approved"
+  },
+  {
+   "id": "a13",
+   "text": "Chi regola: la pompa di calore, con la regolazione a bordo (prima interpretazione). Le sonde del bollitore, del volano e di mandata dei pannelli sono cablate alla macchina, e la macchina comanda la deviatrice, la miscelatrice e i tre circolatori; non c'e' un regolatore esterno. Se invece la centrale ha un regolatore suo, dimmelo e ridisegno sonde e comandi verso di lui.",
+   "status": "proposed"
+  },
+  {
+   "id": "a14",
+   "text": "Sezioni e lunghezze delle linee: il testo da' solo la linea della pompa di calore (3G6, 15 m, scritta sul tratto quadro-sezionatore per la linea intera). Mancano sezione e lunghezza di: tre alimentazioni dei circolatori, cinque comandi dalla pompa di calore (deviatrice, miscelatrice, tre circolatori), cavi delle tre sonde, comando a filo. Senza, quei tratti restano senza scritta.",
+   "status": "proposed"
+  },
+  {
+   "id": "a15",
+   "text": "La logica di regolazione (curva climatica, priorita' ACS con la deviatrice, temperatura del volano) e' della pompa di calore e non e' topologia: sul grafo si vedono le sonde e i comandi, non la logica. La sonda esterna e' a bordo della macchina e non si disegna.",
+   "status": "proposed"
+  },
+  {
+   "id": "a16",
+   "text": "Il testo esclude diametri e distinta materiali: non sono calcolati perche' non richiesti.",
+   "status": "approved"
+  },
+  {
+   "id": "a17",
+   "text": "Pianta dei posizionamenti e dei tracciati: il testo non la chiede. Prima interpretazione: no.",
+   "status": "approved"
+  },
+  {
+   "id": "a18",
+   "text": "Regime della centrale ricavato dalla potenza della pompa di calore (12 kW): fino a 35 kW.",
+   "status": "approved"
+  },
+  {
+   "id": "a19",
+   "text": "Deviatrice: via dritta al volano (riscaldamento), terza via al serpentino del bollitore.",
+   "status": "approved"
+  },
+  {
+   "id": "a20",
+   "text": "Circolatori: ciascuno e' alimentato dal quadro di centrale e acceso da un'uscita della pompa di calore, due cavi sullo stesso circolatore. Se un'uscita della macchina alimenta il circolatore direttamente, il cavo dal quadro non serve: dimmelo e lo tolgo.",
+   "status": "proposed"
+  },
+  {
+   "id": "a21",
+   "text": "Sonda del volano: il testo non la nomina; e' disegnata sull'attacco della sonda del volano, cablata alla pompa di calore, perche' la macchina regoli sulla temperatura del volano. Se non la vuoi, la tolgo.",
+   "status": "proposed"
+  },
+  {
+   "id": "a22",
+   "text": "Comando a filo della pompa di calore: disegnato vicino alla macchina, collegato a lei. Dove sta (in centrale o in casa) e la lunghezza del cavo non sono detti.",
+   "status": "proposed"
+  },
+  {
+   "id": "a23",
+   "text": "Nessun collegamento a un sistema di supervisione: il testo non lo nomina. Il bus della pompa di calore resta libero.",
+   "status": "proposed"
+  },
+  {
+   "id": "a24",
+   "text": "Morsetti della pompa di calore: il testo non li da', e sulla tavola non sono scritti; ogni cavo dice a quale sonda, valvola o circolatore va.",
+   "status": "proposed"
+  }
+ ],
+ "rule_applications": [],
+ "subsystems": [],
+ "sheets": []
+}

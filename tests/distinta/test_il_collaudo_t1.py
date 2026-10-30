@@ -14,13 +14,23 @@ from typing import Any
 
 import pytest
 
-from disegnatore_mep.distinta import DA_DEFINIRE, Distinta, RegoleDellaDistinta, componi_la_distinta
+from disegnatore_mep.distinta import (
+    DA_DEFINIRE,
+    Distinta,
+    RegoleDellaDistinta,
+    carica_regole,
+    componi_la_distinta,
+)
+from disegnatore_mep.distinta.comando import nomi_dei_fluidi, nomi_del_catalogo
+from disegnatore_mep.distinta.documento import documento_della_distinta, tutti_i_testi
 from disegnatore_mep.distinta.regole import ErroreDelleRegole, la_fornitura
 from disegnatore_mep.skill import cartelle_del_repository, main
 
-from .conftest import COLLAUDO_T1, ROOT, pezzo, sigle
+from .conftest import CATALOGO, COLLAUDO_T1, NOMI, ROOT, pezzo, sigle
 
 Nomi = tuple[dict[str, str], dict[str, str]]
+
+_NOMI = (nomi_del_catalogo(CATALOGO), nomi_dei_fluidi(NOMI))
 
 
 @pytest.fixture
@@ -168,10 +178,12 @@ FONTI_DI_SVILUPPO = re.compile(
 SIGLE = re.compile(r"[A-Z]{1,4}-\d{2}( - [A-Z]{1,4}-\d{2})*")
 
 
-def _celle_dell_excel(percorso: Path) -> list[str]:
-    openpyxl = pytest.importorskip("openpyxl")
-    libro = openpyxl.load_workbook(percorso)
-    return [str(c) for f in libro for r in f.iter_rows(values_only=True) for c in r if c is not None]
+def _celle_del_documento(grafo: Path = COLLAUDO_T1) -> list[str]:
+    """Ogni testo del documento per l'installatore (I-232: il PDF, o il suo Markdown)."""
+    dati = json.loads(grafo.read_text(encoding="utf-8"))
+    regole = carica_regole(ROOT / "rules" / "distinta")
+    distinta = componi_la_distinta(dati, regole, *_NOMI, sigle(dati))
+    return tutti_i_testi(documento_della_distinta(distinta))
 
 
 def _celle_delle_tabelle(percorso: Path) -> list[str]:
@@ -194,7 +206,7 @@ def test_nelle_uscite_per_l_installatore_niente_id_del_grafo(uscite_t1: Path) ->
     grafo = json.loads(COLLAUDO_T1.read_text(encoding="utf-8"))
     ids = [c["id"] for c in grafo["components"] if "-" in c["id"]] + [c["id"] for c in grafo["connections"]]
     ids += [n["id"] for n in grafo["networks"] if "-" in n["id"]]
-    for celle in (_celle_delle_tabelle(uscite_t1 / "tabelle-del-foglio.json"), _celle_dell_excel(uscite_t1 / "distinta.xlsx")):
+    for celle in (_celle_delle_tabelle(uscite_t1 / "tabelle-del-foglio.json"), _celle_del_documento()):
         testo = "\n".join(celle)
         trovati = [i for i in ids if re.search(rf"(?<![\w-]){re.escape(i)}(?![\w-])", testo)]
         assert trovati == []
@@ -205,16 +217,17 @@ def test_nelle_uscite_per_l_installatore_niente_id_del_grafo(uscite_t1: Path) ->
 
 
 def test_nelle_uscite_per_l_installatore_niente_fonti_di_sviluppo(uscite_t1: Path) -> None:
-    for celle in (_celle_delle_tabelle(uscite_t1 / "tabelle-del-foglio.json"), _celle_dell_excel(uscite_t1 / "distinta.xlsx")):
+    for celle in (_celle_delle_tabelle(uscite_t1 / "tabelle-del-foglio.json"), _celle_del_documento()):
         trovate = sorted({m.group(0) for c in celle for m in [FONTI_DI_SVILUPPO.search(c)] if m})
         assert trovate == []
 
 
 def test_il_cartiglio_che_manca_e_da_definire_come_sulla_tavola(uscite_t1: Path) -> None:
-    celle = _celle_dell_excel(uscite_t1 / "distinta.xlsx")
-    assert celle[0].startswith(f"{DA_DEFINIRE} — Canalizzato aria-aria")
-    assert f"Committente: {DA_DEFINIRE}." in celle[1] and f"Allegata alla tavola {DA_DEFINIRE}, rev. 00" in celle[1]
-    assert not [c for c in celle[:2] if re.search(r"\bND\b|tavola -", c)]
+    celle = _celle_del_documento()
+    assert celle[celle.index("Commessa") + 1] == DA_DEFINIRE
+    assert celle[celle.index("Committente") + 1] == DA_DEFINIRE
+    assert celle[celle.index("Schema funzionale") + 1] == f"tavola {DA_DEFINIRE}, rev. 00 del 29.10.2026"
+    assert not [c for c in celle if re.search(r"\bND\b|tavola -", c)]
     calcoli = (uscite_t1 / "distinta-calcoli.md").read_text(encoding="utf-8")
     assert calcoli.startswith(f"# Distinta materiali — foglio dei calcoli ({DA_DEFINIRE}, tavola {DA_DEFINIRE} rev. 00)")
     assert "(ND" not in calcoli and f"Committente: {DA_DEFINIRE}" in calcoli
@@ -229,7 +242,7 @@ def test_sul_foglio_vanno_le_tabelle_scelte(tmp_path: Path, capsys: pytest.Captu
     assert main(argomenti, cartelle) == 2
     tabelle = json.loads((tmp_path / "tabelle-del-foglio.json").read_text(encoding="utf-8"))["tabelle"]
     assert [t["id"] for t in tabelle] == ["tratte", "note"]
-    assert "Sul foglio: tratte, note; il resto e' nell'Excel." in capsys.readouterr().out
+    assert "In tabelle-del-foglio.json: tratte, note." in capsys.readouterr().out
     assert main([*argomenti[:-1], "tratte,legenda"], cartelle) == 1
     assert "--sul-foglio: legenda; le tabelle sono tratte, computo, attivita, note" in capsys.readouterr().err
 
@@ -252,8 +265,6 @@ def test_il_comando_prende_la_fornitura(tmp_path: Path, capsys: pytest.CaptureFi
 def test_le_istruzioni_della_distinta() -> None:
     testo = (ROOT / "skill" / "distinta" / "ISTRUZIONI.md").read_text(encoding="utf-8")
     assert "non sono nella skill" not in testo
-    assert "**prima** di `disegna`" in testo
-    assert "disegna --tabelle <cartella>/tabelle-del-foglio.json" in testo
-    assert "--sul-foglio tratte,note" in testo and "--fornitura" in testo
+    assert "--report" in testo and "--fornitura" in testo
     assert "basta su **una** tubazione del tratto" in testo
     assert "`locale`" in testo and "`varco`" in testo

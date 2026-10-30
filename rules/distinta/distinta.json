@@ -1,6 +1,6 @@
 {
   "id": "distinta",
-  "versione": "1.1.0",
+  "versione": "1.2.0",
   "stato": "proposta (D-213, REL-013): il PO non ha ancora deciso se la skill fa la distinta; finché non decide, la distinta si fa solo col comando esplicito `mep.py distinta`",
   "nota": "Le parti fisse della distinta materiali per l'installatore: le sezioni, l'intestazione, chi fornisce le apparecchiature, le righe vuote della sezione H. Le quantità vengono dalle altre regole di questa cartella: `lunghezze.json`, `fluidi.json`, `corredo.json`, `attivita.json`, `verifica.json`. Ogni voce di ogni file porta `fonte` e `perche`.",
   "fonte": "kit AA-01 (I-224, I-225): docs/input-pm/2026-10-29-kit-aria-aria/RAPPORTO.md §7 «Distinta materiali», lavoro/excel.py; REVISIONE-INDIPENDENTE.md rilievi 10, 11, 13",
@@ -129,8 +129,11 @@
   },
   "righe_h": 6,
   "intestazione": [
-    "Offerta richiesta: PREZZO A CORPO, FISSO E INVARIABILE, per l'impianto finito e funzionante. Le quantità sono indicative e già maggiorate: l'installatore le verifica nel SOPRALLUOGO OBBLIGATORIO prima dell'offerta e ne risponde; quanto manca va aggiunto nella sezione H.",
-    "Si compilano solo le celle gialle, in € oltre IVA: prezzo unitario e importo per le sezioni B-F e H, importo a corpo per la sezione G, solo prezzo unitario per le varianti V (fuori dal totale). Righe grigie: forniture escluse da questa offerta (vedi la colonna Fornitura), non si quotano. Le righe DA DEFINIRE aspettano un dato del progettista."
+    "Offerta richiesta: PREZZO A CORPO, FISSO E INVARIABILE, per l'impianto finito e funzionante, in euro oltre IVA: un importo a corpo per le voci da quotare, le attività G e le voci H; per le varianti V solo il prezzo unitario, fuori dal corpo.",
+    "Le quantità sono INDICATIVE e già maggiorate: sono la base comune delle offerte, non un elenco da prezzare voce per voce.",
+    "SOPRALLUOGO OBBLIGATORIO prima dell'offerta: l'installatore verifica le quantità e ne risponde; quanto manca per l'impianto finito lo aggiunge fra le voci H.",
+    "Le forniture escluse da questa offerta (colonna Fornitura: Nove C, Committente) non si quotano; le voci DA DEFINIRE aspettano un dato del progettista.",
+    "La distinta non progetta: lunghezze, sezioni, portate e protezioni sono del progettista; la distinta le conta e le maggiora con regole scritte, ciascuna con la sua fonte."
   ],
   "chiusura": "Validità dell'offerta, tempi di esecuzione (posa prima della chiusura del controsoffitto, messa in servizio al secondo accesso) e referente tecnico dell'installatore:"
 }

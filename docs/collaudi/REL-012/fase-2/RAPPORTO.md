@@ -2,6 +2,13 @@
 
 **Data:** 29 ottobre 2026 · **Base:** `710475c` · **Stato:** sul ramo, da mostrare al PO.
 
+> **Rifatta il 30 ottobre 2026 (REL-015, I-232, I-233).** Sulla tavola restano la tabella delle apparecchiature e la
+> legenda: la M.02 esce in **A3** (prima A1), con 0 rilievi bloccanti e 0 tratte cedute; il piano non ha più
+> `zone_tabelle` e `rifai.sh` non passa `--tabelle`. Tratte, note, attività e computo stanno nel PDF della distinta
+> (`docs/collaudi/REL-015/distinta/`); la `distinta/` qui accanto è in Markdown (senza la skill dei report). Le note
+> di progetto del kit (`note-di-progetto.json`) non vanno più sulla tavola. `confronto-tratte.png` non c'è più. Il
+> testo qui sotto è quello del 29 ottobre.
+
 ## 1. Le tavole, per prime
 
 | file | che cos'è |

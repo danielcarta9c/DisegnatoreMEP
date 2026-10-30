@@ -2,12 +2,12 @@
 name: disegnatore-mep
 description: Disegna in PDF e DXF lo schema funzionale di centrali termiche e impianti aria-aria, con elettrico e comando; su richiesta pianta dei tracciati e distinta materiali. Da usare quando chiede la tavola.
 license: MIT, il testo completo in LICENSE.txt
-compatibility: Richiede l'esecuzione del codice (claude.ai, Claude Cowork o Claude Code) con Python 3.11 o più recente. Al primo uso il comando installa pydantic 2 da PyPI se manca, e per questo serve la rete verso PyPI; ezdxf per il DXF, pypdfium2 per l'anteprima e openpyxl per l'Excel della distinta sono facoltative. Da usare con Opus o Sonnet.
+compatibility: Richiede l'esecuzione del codice (claude.ai, Claude Cowork o Claude Code) con Python 3.11 o più recente. Al primo uso il comando installa pydantic 2 da PyPI se manca, e per questo serve la rete verso PyPI; ezdxf per il DXF e pypdfium2 per l'anteprima sono facoltative; il PDF della distinta vuole la skill nove-c-report installata accanto. Da usare con Opus o Sonnet.
 ---
 
 # Disegnatore MEP
 
-**Versione 1.6.0** — 29 ottobre 2026.
+**Versione 1.7.0** — 30 ottobre 2026.
 
 Il progettista ha già deciso e dimensionato l'impianto, e te lo descrive a parole. Tu ne fai la
 **tavola dello schema funzionale**: la leggi, chiedi quello che manca, la fai approvare, la componi e
@@ -18,7 +18,7 @@ termostati, bus).
 
 **Solo se il progettista li chiede**, due elaborati in più dallo stesso impianto: la **pianta dei
 posizionamenti e dei tracciati** sulla sua planimetria, e la **distinta materiali** per
-l'installatore che fa il prezzo a corpo (Excel e tabella sulla tavola).
+l'installatore che fa il prezzo a corpo (un PDF a parte, impaginato come i report Nove C).
 
 Il lavoro è fatto di cinque pezzi. Tre li fai tu, con istruzioni scritte apposta — **Capire**,
 **Comporre**, **Rivedere** —; due li fa il comando della skill, che è deterministico e misura —
@@ -206,12 +206,9 @@ quelli in linea, che posa il motore; il manifesto intero di un simbolo lo stampa
 python3 scripts/mep.py disegna $L/grafo-completo.json --piano $L/piano.json --out $L/tavola
 ```
 
-Se la tavola porta tabelle — la distinta materiali, le note del progettista — il piano lascia loro
-le zone (`zone_tabelle`, [riferimenti/comporre.md](riferimenti/comporre.md)) e il comando le riceve:
-`--tabelle $L/distinta/tabelle-del-foglio.json`, ripetibile per un secondo file nello stesso
-formato. La distinta quindi si lancia **prima** di questo passo (sotto, «Su richiesta — la
-distinta materiali»). Il comando dice dove ha messo ciascuna tabella; se non entrano si ferma
-prima di scrivere, e si allargano le zone o si prende il formato successivo.
+Sulla tavola vanno **la tabella delle apparecchiature e la legenda, nient'altro** (I-233): tratte,
+note e computo stanno nel PDF della distinta, così il disegno sta nel foglio più piccolo — di
+solito un A3. Il piano non riserva zone per altre tabelle e il comando non riceve `--tabelle`.
 
 Il comando dice per prima cosa l'area del disegno del formato e quanto ne occupa la posa; poi
 esegue il piano, disegna, misura e scrive in `$L/tavola/` l'SVG, **il PDF**, il DXF e
@@ -236,9 +233,8 @@ piano lo dice con la vista; il criterio misurabile, che ne è l'applicazione, è
 
 #### Le tabelle sul foglio
 
-La tabella delle tratte, le note e la distinta stanno nelle **zone delle tabelle** che il piano
-riserva a destra e in basso (`zone_tabelle`, [riferimenti/comporre.md](riferimenti/comporre.md));
-il comando `disegna` le posa e dice se non ci stanno.
+Solo la tabella delle apparecchiature e la legenda, che il comando posa da sé. La tabella delle
+tratte, il computo e le note della distinta sono nel suo PDF, non sulla tavola (I-233).
 
 ### 7. Rivedere — si guarda la tavola, e si torna al piano
 
@@ -329,17 +325,20 @@ guardi tu e lo dici nella consegna.
 
 ### Su richiesta — la distinta materiali
 
-Solo se il progettista l'ha chiesta, **dopo il passo 4 e prima del passo 6**: le sue tabelle vanno
-sul foglio. Leggi **per intero** [riferimenti/distinta.md](riferimenti/distinta.md), poi:
+Solo se il progettista l'ha chiesta, dopo il passo 4: è un documento a parte, la tavola non cambia.
+Leggi **per intero** [riferimenti/distinta.md](riferimenti/distinta.md): dice come trovi la skill
+dei report Nove C (`nove-c-report`), che fa il PDF; poi:
 
 ```bash
-python3 scripts/mep.py distinta $L/grafo-completo.json --out $L/distinta
+python3 scripts/mep.py distinta $L/grafo-completo.json --out $L/distinta --report <nove-c-report>
 ```
 
-Scrive l'Excel per l'installatore — **solo valori, a corpo, quantità indicative, sopralluogo
-obbligatorio** —, la distinta in JSON, il foglio dei calcoli con la regola di ogni quantità, e le
-tabelle per la tavola. Dove manca un dato la voce dice «DA DEFINIRE» e diventa una domanda: non
-inventi la quantità. Esce con **2** se ci sono voci da definire.
+Scrive il **PDF per l'installatore** — copertina dei report Nove C, **a corpo, quantità
+indicative, sopralluogo obbligatorio**, le tratte, il computo per sezioni, nessun prezzo —, la
+distinta in JSON e il foglio dei calcoli. Senza la skill dei report scrive lo stesso contenuto in
+Markdown, e lo dice. Le pagine del PDF le guardi una per una. Dove manca un dato la voce dice «DA
+DEFINIRE» e diventa una domanda: non inventi la quantità. Esce con **2** se ci sono voci da
+definire.
 
 ### Su richiesta — la pianta dei posizionamenti e dei tracciati
 
@@ -369,8 +368,8 @@ python3 scripts/mep.py consegna $L/tavola $L/distinta $L/pianta /mnt/user-data/o
 
 Poi, in poche righe:
 
-- **il PDF**, il DXF (si apre in AutoCAD) e i rilievi della tavola; la pianta e la distinta
-  (l'Excel), se le ha chieste;
+- **il PDF**, il DXF (si apre in AutoCAD) e i rilievi della tavola; la pianta e il PDF della
+  distinta, accanto alle tavole, se le ha chieste;
 - **che cosa resta aperto**: le assunzioni non confermate, i punti aperti, i rilievi che restano
   — detti con parole sue, non con i codici —, i campi del cartiglio «DA DEFINIRE» (la tavola
   allora è una **bozza**), un carattere che il PDF ha dovuto sostituire;
