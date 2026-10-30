@@ -1,0 +1,154 @@
+{
+ "formato": "A2",
+ "vista": "idraulica",
+ "note": [
+  "La villetta del collaudo della 1.7.0 (piano buono, ../casi-del-collaudo/villetta-piano-buono.json) con il collettore a sei vie al posto del pannello rappresentativo; il resto della posa non cambia. PdC e volano allo stesso y: mandata e ritorno rette (D-159). Bollitore sotto la coppia, servito dalla terza via della deviatrice (D-196).",
+  "Il collettore dopo il circolatore, con l'ingresso alla quota della mandata del volano; un pannello sotto ogni coppia, a x +5 + 20 per via e 35 mm piu' in basso, girato a 270 e specchiato (comporre, §5, la distribuzione). Largo 120 mm, porta la posa a 405 mm: non sta nei 350 dell'A3, e si prende l'A2 invece di comprimere il disegno (D3, D-170)."
+ ],
+ "pezzi": {
+  "pdc": {
+   "x": -120.0,
+   "y": 0,
+   "regola": "D-159"
+  },
+  "tee-valve-safety-pdc-water-supply": {
+   "x": -70.0,
+   "y": 2.5
+  },
+  "valve-safety-pdc-water-supply": {
+   "x": -70.0,
+   "y": -10
+  },
+  "deviatrice": {
+   "x": 55.0,
+   "y": 0,
+   "rotazione": 0
+  },
+  "volano": {
+   "x": 90.0,
+   "y": 0
+  },
+  "air-vent-volano-secondary-out": {
+   "x": 100.0,
+   "y": -7.5
+  },
+  "drain-connection-volano-secondary-out": {
+   "x": 100.0,
+   "y": 50
+  },
+  "sonda-volano": {
+   "x": 75.0,
+   "y": 30
+  },
+  "confluenza": {
+   "x": 20.0,
+   "y": 17.5
+  },
+  "tee-pressure-gauge-pdc-water-return": {
+   "x": -5.0,
+   "y": 17.5
+  },
+  "pressure-gauge-pdc-water-return": {
+   "x": -5.0,
+   "y": 40,
+   "rotazione": 180
+  },
+  "tee-filling-unit-pdc-water-return-b": {
+   "x": -20.0,
+   "y": 17.5
+  },
+  "filling-unit-pdc-water-return": {
+   "x": -20.0,
+   "y": 30,
+   "rotazione": 180,
+   "regola": "b verso il raccordo, a verso l'acquedotto"
+  },
+  "inlet-filling-unit-pdc-water-return": {
+   "x": -20.0,
+   "y": 50
+  },
+  "tee-expansion-connection-pdc-water-return": {
+   "x": -35.0,
+   "y": 17.5,
+   "regola": "ordine della catena: vaso piu' vicino alla pdc"
+  },
+  "expansion-connection-pdc-water-return": {
+   "x": -35.0,
+   "y": 40
+  },
+  "bollitore": {
+   "x": 70.0,
+   "y": 85
+  },
+  "mixing-valve-thermostatic-bollitore-dhw-out": {
+   "x": 105.0,
+   "y": 62.5,
+   "rotazione": 0
+  },
+  "inlet-mixing-valve-thermostatic-bollitore-dhw-out": {
+   "x": 105.0,
+   "y": 90
+  },
+  "utenze": {
+   "x": 150.0,
+   "y": 65
+  },
+  "sonda-acs": {
+   "x": 105.0,
+   "y": 102.5
+  },
+  "af": {
+   "x": -40,
+   "y": 120
+  },
+  "tee-drain-connection-cold-bollitore-cold-in": {
+   "x": -5,
+   "y": 120
+  },
+  "drain-connection-cold-bollitore-cold-in": {
+   "x": -5,
+   "y": 132.5
+  },
+  "collettore": {
+   "x": 165.0,
+   "y": 2.5,
+   "regola": "dopo il circolatore, ingresso alla quota della mandata del volano"
+  },
+  "pannello-1": {
+   "x": 170.0,
+   "y": 37.5,
+   "rotazione": 270,
+   "specchio": true
+  },
+  "pannello-2": {
+   "x": 190.0,
+   "y": 37.5,
+   "rotazione": 270,
+   "specchio": true
+  },
+  "pannello-3": {
+   "x": 210.0,
+   "y": 37.5,
+   "rotazione": 270,
+   "specchio": true
+  },
+  "pannello-4": {
+   "x": 230.0,
+   "y": 37.5,
+   "rotazione": 270,
+   "specchio": true
+  },
+  "pannello-5": {
+   "x": 250.0,
+   "y": 37.5,
+   "rotazione": 270,
+   "specchio": true
+  },
+  "pannello-6": {
+   "x": 270.0,
+   "y": 37.5,
+   "rotazione": 270,
+   "specchio": true
+  }
+ }
+}

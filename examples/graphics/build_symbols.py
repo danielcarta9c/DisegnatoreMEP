@@ -1502,6 +1502,12 @@ SOURCE_REL009_HEAT_METER = (
     "posizione sul ritorno, sonda sulla mandata: Caleffi CAL1913, SRC-021"
 )
 SOURCE_REL009_PROPOSAL = "proposta della sessione, REL-009 (I-194): la forma la approva il PO sulla tavola"
+SOURCE_REL016_MANIFOLD = (
+    "proposta della sessione del 30/10/2026 (REL-016, D3 del collaudo della 1.7.0, collettore a "
+    "pavimento a sei vie): lo stesso disegno del collettore con ritorno a due vie, con le coppie "
+    "che il collettore ha a passo 20; forma da approvare dal PO sulla tavola"
+)
+"""La fonte dei collettori con ritorno da tre a dodici vie."""
 
 HEAT_METER = (10.0, 5.0)
 HEAT_METER_GLYPH_ID = "sigla"
@@ -1559,8 +1565,57 @@ alternati, ogni terminale pagava quattro pieghe — il PO: «paghiamo inutilment
 curve inutili a causa di una cattiva impostazione su quei simboli». Fra un terminale e
 l'altro, larghi 15 mm, restano 5 mm."""
 
+MANIFOLD_PAIR_PITCH = 20.0
+"""Il passo delle vie: una coppia di attacchi ogni 20 mm, come le due del collettore a
+coppia. Un terminale largo 15 sotto ogni coppia, e 5 mm fra l'uno e l'altro."""
+MANIFOLD_PAIR_WAY_COUNTS = tuple(range(3, 13))
+"""Le vie del collettore con ritorno oltre le due (REL-016, D3 del collaudo della
+1.7.0): da tre a dodici, una voce per numero come il plenum di zona. Il collettore a
+pavimento di una villetta ne ha sei o otto; i costruttori arrivano a dodici.
+La voce a due vie resta `zone-manifold-pair`, senza numero, byte per byte quella di
+prima."""
+MANIFOLD_VIE_IN_LETTERE = {
+    3: "tre", 4: "quattro", 5: "cinque", 6: "sei", 7: "sette", 8: "otto", 9: "nove",
+    10: "dieci", 11: "undici", 12: "dodici",
+}
+"""Il numero delle vie come lo dice il nome: «a sei vie»."""
 
-def manifold_pair_body(w: float, h: float) -> str:
+
+def manifold_pair_size(vie: int) -> tuple[float, float]:
+    """Il riquadro del collettore a `vie` vie: largo una coppia ogni 20 mm, alto 15
+    come quello a due — 40 × 15 per due vie, 120 × 15 per sei."""
+    return (MANIFOLD_PAIR_PITCH * vie, MANIFOLD_PAIR[1])
+
+
+def manifold_pair_supply(vie: int) -> tuple[float, ...]:
+    """Le mandate: la prima a 7,5 dal bordo sinistro, poi una ogni 20 mm."""
+    return tuple(MANIFOLD_PAIR_SUPPLY[0] + MANIFOLD_PAIR_PITCH * indice for indice in range(vie))
+
+
+def manifold_pair_return(vie: int) -> tuple[float, ...]:
+    """I rientri: ciascuno 10 mm a destra della sua mandata."""
+    return tuple(MANIFOLD_PAIR_RETURN[0] + MANIFOLD_PAIR_PITCH * indice for indice in range(vie))
+
+
+def manifold_pair_ports(vie: int) -> list[dict[str, Any]]:
+    """Le porte del collettore a `vie` vie: ingresso e uscita a sinistra, a 10 mm come
+    i terminali (D-167) — le due intercettazioni che le regole ci posano non si
+    toccano —, e sotto le coppie `out_n`, `ret_n`."""
+    size = manifold_pair_size(vie)
+    return [
+        port_at("in", "left", 2.5, *size),
+        port_at("out", "left", size[1] - 2.5, *size),
+        *(port_at(f"out_{indice + 1}", "bottom", x, *size) for indice, x in enumerate(manifold_pair_supply(vie))),
+        *(port_at(f"ret_{indice + 1}", "bottom", x, *size) for indice, x in enumerate(manifold_pair_return(vie))),
+    ]
+
+
+def manifold_pair_body(
+    w: float,
+    h: float,
+    supply: tuple[float, ...] = MANIFOLD_PAIR_SUPPLY,
+    ritorni: tuple[float, ...] = MANIFOLD_PAIR_RETURN,
+) -> str:
     """Collettore d'appartamento con mandata e ritorno: due barre **continue**, la
     mandata sopra e il ritorno sotto, e per ogni circuito la sua coppia di attacchi in
     basso.
@@ -1572,7 +1627,11 @@ def manifold_pair_body(w: float, h: float) -> str:
     un collettore». Adesso si interrompe la **discesa della mandata**, che passa dietro
     la barra del ritorno: la linea si ferma un varco prima della barra e riprende un
     varco dopo, fino all'attacco — il segno di un tubo che ne scavalca un altro senza
-    toccarlo. Le porte non cambiano."""
+    toccarlo. Le porte non cambiano.
+
+    **Lo stesso disegno per tutte le vie** (REL-016): le barre si allungano fino al
+    bordo destro, e le coppie si ripetono a passo 20. Senza `supply` e `ritorni` e'
+    il collettore a due vie di sempre."""
     mandata_y, ritorno_y, mezza = 2.5, h - 2.5, 1.0
     varco = 0.75
     inizio = 2.0
@@ -1583,12 +1642,12 @@ def manifold_pair_body(w: float, h: float) -> str:
         f'<rect x="{n(inizio)}" y="{n(ritorno_y - mezza)}" width="{n(w - inizio)}" height="{n(2 * mezza)}"/>'
     )
     # Le discese della mandata, interrotte davanti alla barra del ritorno.
-    for x in MANIFOLD_PAIR_SUPPLY:
+    for x in supply:
         corpo += (
             f'<line x1="{n(x)}" y1="{n(mandata_y + mezza)}" x2="{n(x)}" y2="{n(ritorno_y - mezza - varco)}"/>'
             f'<line x1="{n(x)}" y1="{n(ritorno_y + mezza + varco)}" x2="{n(x)}" y2="{n(h)}"/>'
         )
-    for x in MANIFOLD_PAIR_RETURN:
+    for x in ritorni:
         corpo += f'<line x1="{n(x)}" y1="{n(ritorno_y + mezza)}" x2="{n(x)}" y2="{n(h)}"/>'
     return corpo
 
@@ -3154,6 +3213,24 @@ SYMBOLS: list[SymbolSpec] = [
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
         # Il ritorno continuo (REL-015): il segno cambia forma, sale di minore.
         version="1.1.0",
+    ),
+    # Il collettore con ritorno da tre a dodici vie (REL-016, D3 del collaudo della
+    # 1.7.0): lo stesso disegno di quello a due — due barre continue, le discese
+    # della mandata che passano dietro il ritorno —, una coppia ogni 20 mm, e la
+    # larghezza che segue le vie. Quello a due resta la voce qui sopra.
+    *(
+        SymbolSpec(
+            id=f"zone-manifold-pair-{vie}",
+            name=f"Collettore di zona con ritorno a {MANIFOLD_VIE_IN_LETTERE[vie]} vie",
+            width_mm=manifold_pair_size(vie)[0],
+            height_mm=manifold_pair_size(vie)[1],
+            inline=False,
+            ports=manifold_pair_ports(vie),
+            body=manifold_pair_body(*manifold_pair_size(vie), manifold_pair_supply(vie), manifold_pair_return(vie)),
+            source=SOURCE_REL016_MANIFOLD,
+            allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+        )
+        for vie in MANIFOLD_PAIR_WAY_COUNTS
     ),
     # --- REL-012, l'aria-aria del kit del PO (I-224): proposte, le approva il PO ---
     # Unita' esterna, unita' interna, plenum, centrale di zona e quadro si

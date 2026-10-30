@@ -62,6 +62,7 @@ Questi sono quelli che incontri quasi sempre:
 | `dhw-heat-pump` (pompa di calore per ACS) | 25 × 45 | `cold_in` sinistra +37,5 · `dhw_out` sopra, a x +12,5 |
 | `zone-manifold` (collettore di zona) | 40 × 5 | `in` sinistra +2,5 · `out_1` sotto, a x +12,5 · `out_2` sotto, a x +27,5 |
 | `zone-manifold-pair` (collettore con ritorno) | **40 × 15** | `in` sinistra +2,5 · `out` sinistra +12,5 · sotto, **a coppie a 10 mm come i terminali**: `out_1` a x +7,5 e `ret_1` a x +17,5, `out_2` a x +27,5 e `ret_2` a x +37,5 |
+| `zone-manifold-pair-3` … `-12` (collettore con ritorno a N vie) | **20·N × 15** | come quello a due, una coppia ogni **20 mm**: `out_n` a x +7,5 + 20·(n−1), `ret_n` 10 mm più in là · `in` e `out` a sinistra |
 | `buffer-six-port` (volano a sei attacchi) | 25 × 45 | come `buffer-four-port` · in più `aux_in` destra +27,5 e `aux_out` destra +37,5, gli attacchi predisposti |
 | `capped-connection` (attacco predisposto) | 5 × 5 | `a` destra +2,5: il tappo è dall'altra parte |
 | `buffer-combined` | 25 × 45 | `primary_in` **sinistra +5** · `primary_out` **sinistra +20** · `secondary_out` **destra +5** · `secondary_in` **destra +20** · `dhw_out` sopra, a x +7,5 · `cold_in` sinistra +37,5 |
@@ -149,6 +150,13 @@ la posa, non il grafo**: il motore gira il raccordo e gli assegna le porte guard
 stanno i vicini — chi è allineato con l'uscita entra dritto, l'altro dalla derivazione.
 Misurato: scambiando di posto le due zone che un raccordo riunisce, la mappa delle porte si
 inverte con loro.
+
+**I raccordi di una catena si posano nell'ordine della catena.** `python3 scripts/mep.py pezzi
+<grafo>` finisce con «In che ordine stanno lungo le tratte»: per ogni catena, i pezzi dal primo
+capo all'ultimo — `pdc.water_return → … → tee-vaso → tee-riempimento → tee-manometro →
+confluenza.b`. Posali in quella fila, dal capo da cui parte verso quello a cui arriva, senza
+scambiarne due. Il collaudo della 1.7.0 li ha posati al contrario: il ritorno è tornato
+indietro, si è scavalcato due volte e la tavola non esce (`RUN_CROSSES_ITSELF`).
 
 ---
 
@@ -486,6 +494,9 @@ verso destra o su o giù, ma non una da una parte e una dall'altra».
    pannello con `"rotazione": 270, "specchio": true` — gli attacchi in alto, la mandata a
    sinistra —, a x **+5** e **+25** dal collettore, **35 mm più in basso** (la discesa tiene la
    valvola dell'uscita). Due linee dritte per terminale; collettori uno ogni **60 mm**.
+   **A N vie è lo stesso** (`zone-manifold-pair-N`): il terminale della via *n* a x **+5 + 20·(n−1)**,
+   tutti alla stessa `y`, 35 mm sotto il collettore. Il collettore è largo 20 mm per via — 120 a sei,
+   240 a dodici —: misura la posa prima di scegliere il foglio (D3).
 
 **Prima le autostrade**, anche per il motore (I-201, I-203): instrada le autostrade, poi la
 distribuzione, per ultimi gli stacchi, e un'autostrada disegnata non si sposta più.
@@ -693,6 +704,7 @@ Rispondi a queste, e se una risposta è «no» torna indietro:
 
 - [ ] **Ogni pezzo che posi tu ha un'entrata in `pezzi`, e nessun organo in linea ce l'ha?**
 - [ ] **Le `x` e le `y` sono multipli di 2,5?**
+- [ ] **I raccordi di ogni catena stanno nell'ordine che `pezzi` stampa?**
 - [ ] **Le porte che un'autostrada unisce stanno alla stessa quota?** Per pompa, caldaia,
       volano a quattro attacchi e scambiatore vuol dire lo stesso `y`; per chi ha le porte ad
       altre quote no (§2.1). Se no, hai una ragione scritta nelle note?

@@ -27,9 +27,39 @@ DA_DEFINIRE = "DA DEFINIRE"
 
 SEGNAPOSTO = re.compile(r"\{([a-z_]+(?:\.[a-z0-9_-]+)?)\}")
 
+UNA_DELLE_MACCHINE = "una delle macchine della linea frigorifera"
+
+DATI_DI_MACCHINA = ("precarica_fino_a_m", "carica_aggiuntiva_g_m", "refrigerante")
+"""I dati della scheda della macchina che la riserva di refrigerante legge."""
+
 CALCOLI_CON_LA_LUNGHEZZA = frozenset(
     {"lunghezza", "confezioni", "passo", "per_metro", "metri_arrotondati", "carica_refrigerante"}
 )
+
+
+MARCA_E_MODELLO = "marca e modello"
+
+PEZZO = "pezzo"
+TRATTO = "tratto"
+REGOLE = "regole"
+
+
+@dataclass(frozen=True)
+class Mancante:
+    """Un dato che manca alla distinta, detto in modo che lo si possa chiedere al
+    progettista **prima** del primo lancio (REL-016, D4): quale dato (`dato`, il campo
+    del grafo; «marca e modello» per i due insieme), su che cosa (`su`: un pezzo, un
+    tratto, o le regole della distinta, che il progettista non sa) e di chi (`chi`, la
+    sigla del pezzo o il numero del tratto; `di`, il suo nome in parole).
+
+    Nasce **nello stesso punto** in cui nasce la domanda della voce DA DEFINIRE: le
+    domande di `mep.py distinta --domande` e le voci DA DEFINIRE del documento vengono
+    dalla stessa fonte, e non possono divergere."""
+
+    dato: str
+    su: str
+    chi: str
+    di: str
 
 
 @dataclass
@@ -52,6 +82,8 @@ class Voce:
     domande: list[str] = field(default_factory=list)
     rif: str = ""
     contributi: list[tuple[str, float]] = field(default_factory=list, repr=False)
+    mancanti: list[Mancante] = field(default_factory=list, repr=False)
+    """I dati che mancano a questa voce, uno per domanda (`Mancante`)."""
 
 
 @dataclass(frozen=True)
@@ -87,9 +119,24 @@ class Distinta:
     """Chi fornisce che cosa in questa offerta, in una frase: confermata dal progettista,
     o le predefinite «da confermare» (`Fornitura.in_parole`). La dice il PDF fra le
     avvertenze, confermata o no."""
+    mancanti_dei_tratti: list[Mancante] = field(default_factory=list)
+    """Le lunghezze dei tratti che mancano (le `domande_dei_tratti`, come dati)."""
+    mancanti_della_verifica: list[Mancante] = field(default_factory=list)
+    """I dati senza i quali una verifica non si fa (la portata, la lunghezza massima
+    della linea frigorifera): non fanno voci DA DEFINIRE, ma la verifica resta muta."""
 
     def voci_della_sezione(self, lettera: str) -> list[Voce]:
         return [voce for voce in self.voci if voce.sezione == lettera]
+
+    @property
+    def mancanti(self) -> list[Mancante]:
+        """I dati che mancano alle voci DA DEFINIRE e ai tratti, senza ripetizioni,
+        nell'ordine in cui la distinta li incontra."""
+        tutti: list[Mancante] = []
+        for mancante in [*self.mancanti_dei_tratti, *(m for v in self.voci for m in v.mancanti)]:
+            if mancante not in tutti:
+                tutti.append(mancante)
+        return tutti
 
     @property
     def domande(self) -> list[str]:
@@ -179,6 +226,8 @@ class _Lavoro:
     voci: list[Voce] = field(default_factory=list)
     avvisi: list[str] = field(default_factory=list)
     domande_dei_tratti: list[str] = field(default_factory=list)
+    mancanti_dei_tratti: list[Mancante] = field(default_factory=list)
+    mancanti_della_verifica: list[Mancante] = field(default_factory=list)
 
     @property
     def sigle(self) -> dict[str, str]:
@@ -194,6 +243,12 @@ class _Lavoro:
 
     def nome_del_fluido(self, fluido: str) -> str:
         return str(self.nomi_dei_fluidi.get(fluido, fluido))
+
+    def del_pezzo(self, dato: str, pezzo: Pezzo) -> Mancante:
+        return Mancante(dato, PEZZO, pezzo.sigla, self.nome_della_voce(pezzo.voce))
+
+    def del_tratto(self, dato: str, tratta: Tratta) -> Mancante:
+        return Mancante(dato, TRATTO, tratta.num or "", f"{tratta.rete.nome}: {self.da_a(tratta)}")
 
     @property
     def fornitura_installatore(self) -> str:
@@ -276,6 +331,7 @@ def _lunghezze(lavoro: _Lavoro) -> None:
                 f"{nome}: la lunghezza di {_in_parole_le_tubazioni(lavoro.impianto, tratta, tratta.illeggibili)} "
                 "non e' un numero."
             )
+            lavoro.mancanti_dei_tratti.append(lavoro.del_tratto("lunghezza_m", tratta))
         if tratta.diretta:
             continue
         if tratta.lunghezza_m is None:
@@ -283,6 +339,7 @@ def _lunghezze(lavoro: _Lavoro) -> None:
                 f"{nome}: quanto e' lungo? Serve `lunghezza_m` (la lunghezza stimata) su una sua tubazione, "
                 "o 0 se e' un raccordo diretto."
             )
+            lavoro.mancanti_dei_tratti.append(lavoro.del_tratto("lunghezza_m", tratta))
             continue
         if tratta.senza_lunghezza:
             lavoro.avvisi.append(
@@ -361,15 +418,20 @@ def _voce_del_fluido(
     def una_voce(quantita: float | None, conto: str, note: str = "", extra: Mapping[str, Any] | None = None) -> Voce:
         testo, mancanti = riempi(str(voce["testo"]), {**valori, **(extra or {})})
         domande = []
+        dati: list[Mancante] = []
         for mancante in mancanti:
             if mancante == "sezione":
-                senza = [t.num for t in gruppo if not t.sezione]
+                senza = [t for t in gruppo if not t.sezione]
                 domande.append(
-                    f"{', '.join(senza)} ({lavoro.nome_del_fluido(fluido)}): che sezione hanno? "
+                    f"{', '.join(t.num for t in senza)} ({lavoro.nome_del_fluido(fluido)}): che sezione hanno? "
                     "Serve `sezione` sul tratto (es. «Ø200», «3G2,5»)."
                 )
+                dati.extend(lavoro.del_tratto("sezione", t) for t in senza)
             else:
                 domande.append(f"{', '.join(nomi)}: manca il dato «{mancante}» per «{testo}».")
+                if mancante not in DATI_DI_MACCHINA:
+                    # I dati della macchina li chiede la riserva di refrigerante, sul pezzo.
+                    dati.extend(lavoro.del_tratto(mancante, t) for t in gruppo)
         sezione, fornitura = lavoro.sezione_e_fornitura(voce)
         return Voce(
             sezione=sezione,
@@ -384,13 +446,16 @@ def _voce_del_fluido(
             note=note,
             da_definire=quantita is None or bool(mancanti),
             domande=domande,
+            mancanti=dati,
         )
 
     senza_lunghezza = [t for t in gruppo if t.da_quotare_m is None]
-    if tipo in CALCOLI_CON_LA_LUNGHEZZA and senza_lunghezza:
+    if tipo in CALCOLI_CON_LA_LUNGHEZZA and senza_lunghezza and tipo != "carica_refrigerante":
         quali = ", ".join(t.num for t in senza_lunghezza)
         if len(senza_lunghezza) == len(gruppo):
-            return [una_voce(None, f"manca la lunghezza di {quali}", f"lunghezza di {quali} {DA_DEFINIRE}")]
+            senza = una_voce(None, f"manca la lunghezza di {quali}", f"lunghezza di {quali} {DA_DEFINIRE}")
+            senza.mancanti[:0] = [lavoro.del_tratto("lunghezza_m", t) for t in senza_lunghezza]
+            return [senza]
         # Collaudo REL-012 t1, §2.4.1: una lunghezza che manca non cancella quelle date.
         # La parte nota si conta, e quella che manca e' una riga sua, DA DEFINIRE.
         noti = [t for t in gruppo if t.da_quotare_m is not None]
@@ -506,11 +571,12 @@ def _voce_del_fluido(
                 voce_del_valore.domande = [
                     f"{t.num} ({t.rete.nome}): manca `{nome}` sul tratto." for t in tratte_del_valore
                 ]
+                voce_del_valore.mancanti = [lavoro.del_tratto(nome, t) for t in tratte_del_valore]
             voci.append(voce_del_valore)
         return voci
     if tipo == "carica_refrigerante":
         minimo_kg = float(calcolo.get("minimo_kg", 0))
-        dati = ("precarica_fino_a_m", "carica_aggiuntiva_g_m", "refrigerante")
+        dati = DATI_DI_MACCHINA
         voci = []
         for tratta in gruppo:
             macchina = _pezzo_con(lavoro, tratta, dati)
@@ -518,37 +584,60 @@ def _voce_del_fluido(
             precarica = numero(proprieta.get("precarica_fino_a_m"))
             grammi = numero(proprieta.get("carica_aggiuntiva_g_m"))
             refrigerante = proprieta.get("refrigerante")
+            # Collaudo REL-012 t1, §2.4.3: si chiede solo quello che manca. Il
+            # refrigerante dato (la voce lo scrive gia', «R32») non si richiede.
+            mancano = [
+                d for d in dati if proprieta.get(d) in (None, "") or (d != "refrigerante" and numero(proprieta.get(d)) is None)
+            ]
+            chi = macchina.sigla if macchina else " o ".join(lavoro.sigle.get(c, c) for c in tratta.capi)
+            # REL-016, D4: i dati di macchina si chiedono anche quando manca la
+            # lunghezza, perche' le domande si fanno tutte nello stesso giro.
+            di_macchina = [
+                lavoro.del_pezzo(d, macchina)
+                if macchina
+                else Mancante(d, PEZZO, chi, UNA_DELLE_MACCHINE)
+                for d in mancano
+            ]
+            if tratta.da_quotare_m is None and not (precarica is None or grammi is None):
+                senza = una_voce(
+                    None,
+                    f"manca la lunghezza di {tratta.num}",
+                    f"lunghezza di {tratta.num} {DA_DEFINIRE}",
+                    extra={"refrigerante": refrigerante},
+                )
+                senza.mancanti[:0] = [lavoro.del_tratto("lunghezza_m", tratta)]
+                senza.mancanti.extend(di_macchina)
+                voci.append(senza)
+                continue
             if precarica is None or grammi is None:
-                chi = macchina.sigla if macchina else " o ".join(lavoro.sigle.get(c, c) for c in tratta.capi)
                 voce_mancante = una_voce(
                     None, "mancano i dati di macchina", extra={"refrigerante": refrigerante}
                 )
-                # Collaudo REL-012 t1, §2.4.3: si chiede solo quello che manca. Il
-                # refrigerante dato (la voce lo scrive gia', «R32») non si richiede.
-                mancano = [
-                    f"`{d}`" for d in dati if proprieta.get(d) in (None, "") or (d != "refrigerante" and numero(proprieta.get(d)) is None)
-                ]
-                elenco = mancano[0] if len(mancano) == 1 else f"{', '.join(mancano[:-1])} e {mancano[-1]}"
-                verbo = "serve" if len(mancano) == 1 else "servono"
+                in_codice = [f"`{d}`" for d in mancano]
+                elenco = in_codice[0] if len(in_codice) == 1 else f"{', '.join(in_codice[:-1])} e {in_codice[-1]}"
+                verbo = "serve" if len(in_codice) == 1 else "servono"
                 voce_mancante.domande.append(
                     f"{tratta.num}: su {chi} {verbo} {elenco} (dati di macchina del progettista) per la riserva "
                     "di refrigerante."
                 )
+                if tratta.da_quotare_m is None:
+                    voce_mancante.mancanti.append(lavoro.del_tratto("lunghezza_m", tratta))
+                voce_mancante.mancanti.extend(di_macchina)
                 voci.append(voce_mancante)
                 continue
             oltre = max(0.0, (tratta.da_quotare_m or 0) - precarica)
             grezza = oltre * grammi / 1000
             quantita = max(minimo_kg, per_eccesso(grezza, 0.05))
-            voci.append(
-                una_voce(
-                    quantita,
-                    f"{tratta.num}: ({in_parole(tratta.da_quotare_m or 0)} - {in_parole(precarica)} m) × "
-                    f"{in_parole(grammi)} g/m = {in_parole(grezza, 3)} kg, almeno {in_parole(minimo_kg)} kg → "
-                    f"{in_parole(quantita)} kg",
-                    f"precarica fino a {in_parole(precarica)} m; oltre, {in_parole(grammi)} g/m",
-                    extra={"refrigerante": refrigerante},
-                )
+            con_la_carica = una_voce(
+                quantita,
+                f"{tratta.num}: ({in_parole(tratta.da_quotare_m or 0)} - {in_parole(precarica)} m) × "
+                f"{in_parole(grammi)} g/m = {in_parole(grezza, 3)} kg, almeno {in_parole(minimo_kg)} kg → "
+                f"{in_parole(quantita)} kg",
+                f"precarica fino a {in_parole(precarica)} m; oltre, {in_parole(grammi)} g/m",
+                extra={"refrigerante": refrigerante},
             )
+            con_la_carica.mancanti.extend(di_macchina)
+            voci.append(con_la_carica)
         return voci
     raise ValueError(f"{ident}: calcolo {tipo!r} sconosciuto")
 
@@ -592,6 +681,9 @@ def _voci_dei_fluidi(lavoro: _Lavoro) -> None:
                         domande=[
                             f"Il fluido «{lavoro.nome_del_fluido(fluido)}» non ha regole di distinta: materiale, "
                             "corredo e accessori a metro sono da scrivere nelle regole della distinta (fluidi)."
+                        ],
+                        mancanti=[
+                            Mancante("fluido", REGOLE, ", ".join(t.num or "" for t in parte), lavoro.nome_del_fluido(fluido))
                         ],
                     )
                 )
@@ -715,6 +807,7 @@ def _apparecchiature(lavoro: _Lavoro) -> None:
                 note="; ".join([sigle, *note]),
                 da_definire=senza,
                 domande=[f"{sigle} ({nome}): marca e modello li dà il progettista."] if senza else [],
+                mancanti=[lavoro.del_pezzo(MARCA_E_MODELLO, p) for p in pezzi] if senza else [],
             )
         )
 
@@ -785,6 +878,7 @@ def _corredo(lavoro: _Lavoro) -> None:
             for mancante in mancanti:
                 domanda = f"{pezzo.sigla} ({lavoro.nome_della_voce(pezzo.voce)}): manca il dato «{mancante}» per «{testo}»."
                 riga.domande.append(domanda)
+                riga.mancanti.append(lavoro.del_pezzo(mancante, pezzo))
             if senza_locale:
                 riga.da_definire = True
                 riga.domande.append(
@@ -792,6 +886,7 @@ def _corredo(lavoro: _Lavoro) -> None:
                     "bocchetta (o un'etichetta col nome del locale): le griglie di transito si contano per locale, "
                     "e intanto questa bocchetta ne conta una sua."
                 )
+                riga.mancanti.append(lavoro.del_pezzo("locale", pezzo))
     for riga in righe.values():
         if id(riga) in per_locale:
             locali, senza = per_locale[id(riga)]
@@ -842,6 +937,7 @@ def _corredo(lavoro: _Lavoro) -> None:
                     f"«{nome}» ({sigle}) non ha corredo di posa nelle regole della distinta: chi lo fornisce e che "
                     "cosa porta con se'? Si scrive nelle regole della distinta (corredo)."
                 ],
+                mancanti=[Mancante("corredo", REGOLE, sigle, nome)],
             )
         )
 
@@ -886,6 +982,7 @@ def _attivita(lavoro: _Lavoro) -> None:
                 calcolo=perche_vera + ("; solo prezzo unitario" if variante else ""),
                 da_definire=bool(mancanti),
                 domande=[f"manca il dato «{m}» per «{testo}»" for m in mancanti],
+                mancanti=[Mancante(m, REGOLE, "", testo) for m in mancanti],
             )
         )
 
@@ -921,6 +1018,10 @@ def _verifica(lavoro: _Lavoro) -> tuple[list[EsitoDellaVerifica], dict[str, str]
         massima = float(soglia["massima_m_s"])
         if portata is None or area is None:
             manca = "la portata (`portata_m3h`)" if portata is None else "una sezione che si legge (Ø o lati)"
+            if portata is None:
+                lavoro.mancanti_della_verifica.append(lavoro.del_tratto("portata_m3h", tratta))
+            elif tratta.sezione:
+                lavoro.mancanti_della_verifica.append(lavoro.del_tratto("sezione", tratta))
             esiti.append(
                 EsitoDellaVerifica(tratta.num, "velocità", f"manca {manca}", f"≤ {in_parole(massima)} m/s", "non verificabile", str(soglia["fonte_in_parole"]))
             )
@@ -969,11 +1070,23 @@ def _verifica(lavoro: _Lavoro) -> tuple[list[EsitoDellaVerifica], dict[str, str]
                 )
             )
     for tratta in lavoro.tratte:
-        if not tratta.fluido.startswith("refrigerant") or tratta.da_quotare_m is None:
+        if not tratta.fluido.startswith("refrigerant") or tratta.diretta:
             continue
         macchina = _pezzo_con(lavoro, tratta, ("lunghezza_max_m",))
         massima_m = numero(macchina.proprieta.get("lunghezza_max_m")) if macchina else None
         if macchina is None or massima_m is None:
+            # REL-016, D4: la verifica non si fa, e il dato si chiede con gli altri — anche
+            # se manca la lunghezza, perche' le domande si fanno tutte nello stesso giro.
+            # Si chiede alla macchina che ha gli altri dati della scheda, se c'e'.
+            con_la_scheda = _pezzo_con(lavoro, tratta, DATI_DI_MACCHINA)
+            macchine = [lavoro.impianto.pezzi[c] for c in tratta.capi if c in lavoro.impianto.pezzi]
+            lavoro.mancanti_della_verifica.append(
+                lavoro.del_pezzo("lunghezza_max_m", con_la_scheda)
+                if con_la_scheda
+                else Mancante("lunghezza_max_m", PEZZO, " o ".join(m.sigla for m in macchine), UNA_DELLE_MACCHINE)
+            )
+            continue
+        if tratta.da_quotare_m is None:
             continue
         esiti.append(
             EsitoDellaVerifica(
@@ -1146,6 +1259,8 @@ def componi_la_distinta(
         avvisi=lavoro.avvisi,
         note=_note(lavoro, esiti),
         domande_dei_tratti=lavoro.domande_dei_tratti,
+        mancanti_dei_tratti=lavoro.mancanti_dei_tratti,
+        mancanti_della_verifica=lavoro.mancanti_della_verifica,
         da_confermare=[] if lavoro.fornitura.confermata else [lavoro.fornitura.in_parole()],
         fornitura=lavoro.fornitura.in_parole(),
     )

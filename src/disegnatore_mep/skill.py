@@ -66,6 +66,7 @@ from disegnatore_mep.graphics.tabelle import (
 )
 from disegnatore_mep.io.canonical import canonical_json
 from disegnatore_mep.io.project_json import load_project
+from disegnatore_mep.layout.autostrade import autostrade_in_tavola, tratte_del_progetto
 from disegnatore_mep.layout.errors import LayoutError
 from disegnatore_mep.layout.geometry import (
     ColonnaDellaTabella,
@@ -714,7 +715,12 @@ def _rilievi_in_parole(
     cartiglio: Sequence[str],
     sostituzioni: Sequence[str],
 ) -> str:
-    """I rilievi della tavola, scritti per il progettista: si consegnano col PDF."""
+    """I rilievi della tavola, scritti per il progettista: si consegnano col PDF.
+
+    Una regola del piano che ferma la tavola (B4, REL-016) sta fra i bloccanti, e non
+    una seconda volta fra le regole."""
+    preflight = [*preflight, *(item for item in regole if item.severity == IssueSeverity.BLOCKING)]
+    regole = [item for item in regole if item.severity != IssueSeverity.BLOCKING]
     bloccanti = [item for item in preflight if item.severity == IssueSeverity.BLOCKING]
     righe = [
         f"# Rilievi della tavola — {titolo}",
@@ -846,10 +852,17 @@ def _disegna(args: argparse.Namespace, cartelle: Cartelle) -> int:
         return 2
 
     regole = rilievi_delle_regole(esito.disegno, esito.frame, dati.catalogo, modello)
-    _stampa_rilievi(esito.rilievi)
-    if regole:
+    # **Una regola che ferma la tavola** (B4, REL-016) si conta e si stampa coi
+    # bloccanti del preflight: chi legge non deve cercarla fra gli avvisi.
+    bloccanti = [
+        *esito.bloccanti,
+        *(item for item in regole if item.severity == IssueSeverity.BLOCKING),
+    ]
+    _stampa_rilievi([*esito.rilievi, *(item for item in regole if item.severity == IssueSeverity.BLOCKING)])
+    regole_avvisi = [item for item in regole if item.severity != IssueSeverity.BLOCKING]
+    if regole_avvisi:
         print("\nLe regole del piano")
-        for item in regole:
+        for item in regole_avvisi:
             print(f"  - {item.message}")
             print(f"    codice: {item.code} · {', '.join(item.entity_ids)}")
     else:
@@ -909,11 +922,11 @@ def _disegna(args: argparse.Namespace, cartelle: Cartelle) -> int:
     punti = misura(esito, [*esito.rilievi, *regole])
     print(
         f"\nFormato {piano.formato} · tratte {sum(len(f.routes) for f in esito.disegno.sheets)} · "
-        f"tratte cedute {len(esito.cedute)} · rilievi bloccanti {len(esito.bloccanti)} · "
+        f"tratte cedute {len(esito.cedute)} · rilievi bloccanti {len(bloccanti)} · "
         f"pieghe {punti.pieghe} · sormonti {punti.incroci} · "
         f"avvisi e regole: {', '.join(f'{c} x{n}' for c, n in sorted(codici.items())) or 'nessuno'}"
     )
-    if esito.bloccanti or esito.cedute:
+    if bloccanti or esito.cedute:
         print("\nLa tavola non si consegna: c'e' un rilievo bloccante o una tratta ceduta (D-063).")
         return 2
     return 0
@@ -948,7 +961,81 @@ def _pezzi(args: argparse.Namespace, cartelle: Cartelle) -> int:
     print("\n".join(f"  {r}" for r in da_posare))
     print(f"\nIn linea, li posa il motore sulla loro tratta ({len(in_linea)}): non vanno nel piano.")
     print("\n".join(f"  {r.splitlines()[0]}" for r in in_linea))
+    catene, tratte = ordine_lungo_le_tratte(modello, catalogo)
+    print(
+        "\nIn che ordine stanno lungo le tratte: posa i pezzi del piano in quest'ordine, dal "
+        "primo capo all'ultimo. Un raccordo posato fuori ordine fa scavalcare la linea a se' "
+        "stessa, e la tavola non esce (RUN_CROSSES_ITSELF)."
+    )
+    if catene:
+        print("  Le catene principali:")
+        print("\n".join(f"    {riga}" for riga in catene))
+    if tratte:
+        print("  Le altre tratte con organi in linea o fra due raccordi:")
+        print("\n".join(f"    {riga}" for riga in tratte))
     return 0
+
+
+def ordine_lungo_le_tratte(modello: ProjectModel, catalogo: ComponentRegistry) -> tuple[list[str], list[str]]:
+    """In che ordine i pezzi stanno lungo le tratte del grafo (REL-016, D1).
+
+    Il collaudo della 1.7.0 ha posato i raccordi del ritorno nell'ordine inverso a quello
+    della catena, e per saperlo avrebbe dovuto leggere le `connections`: `pezzi` non lo
+    diceva. Qui si dice, in due elenchi di righe «pezzo.porta → pezzo → … → pezzo.porta»:
+
+    - **le catene principali**, cioe' le autostrade, intere e nel loro verso: i raccordi
+      che toccano e, fra un raccordo e l'altro, gli organi in linea;
+    - **le altre tratte** che hanno organi in linea o che uniscono due raccordi: quelle
+      dove un ordine c'e' da rispettare. Una tratta fra due pezzi senza niente in mezzo
+      non ha ordine da dire.
+
+    Gli organi in linea li posa il motore e portano «(in linea)»: non vanno nel piano, ma
+    dicono da che parte sta il raccordo che li segue."""
+    in_linea = frozenset(
+        item.id for item in modello.components if catalogo.resolve(item.definition_id).is_inline
+    )
+    raccordi = frozenset(
+        item.id for item in modello.components if catalogo.get(item.definition_id).is_a_fitting
+    )
+    tratte = tratte_del_progetto(modello, catalogo)
+    per_chiave = {tratta.connection_ids: tratta for tratta in tratte}
+
+    def organi(nomi: Sequence[str]) -> list[str]:
+        return [f"{nome} (in linea)" if nome in in_linea else nome for nome in nomi]
+
+    catene: list[str] = []
+    nelle_catene: set[tuple[str, ...]] = set()
+    for catena in autostrade_in_tavola(modello, catalogo, tratte):
+        primo = catena.passi[0][0]
+        pezzi = [f"{primo.component_id}.{primo.port_id}"]
+        for chiave, (entrata, uscita) in zip(catena.catene, catena.passi, strict=True):
+            tratta = per_chiave[chiave]
+            nelle_catene.add(chiave)
+            dentro = list(tratta.inline_component_ids)
+            if entrata != tratta.start:
+                dentro.reverse()
+            pezzi += organi(dentro)
+            pezzi.append(uscita.component_id)
+        ultimo = catena.passi[-1][1]
+        pezzi[-1] = f"{ultimo.component_id}.{ultimo.port_id}"
+        catene.append(" → ".join(pezzi))
+    altre: list[str] = []
+    for tratta in tratte:
+        if tratta.connection_ids in nelle_catene:
+            continue
+        fra_raccordi = {tratta.start.component_id, tratta.end.component_id} <= raccordi
+        if not tratta.inline_component_ids and not fra_raccordi:
+            continue
+        altre.append(
+            " → ".join(
+                [
+                    f"{tratta.start.component_id}.{tratta.start.port_id}",
+                    *organi(tratta.inline_component_ids),
+                    f"{tratta.end.component_id}.{tratta.end.port_id}",
+                ]
+            )
+        )
+    return catene, altre
 
 
 def _riga_del_catalogo(voce: dict[str, object]) -> str:
@@ -1269,7 +1356,13 @@ def costruisci_il_parser() -> argparse.ArgumentParser:
         "distinta", help="la distinta materiali per l'installatore (proposta D-213): solo se il progettista la chiede"
     )
     distinta.add_argument("grafo", type=Path, help="il grafo completo, con lunghezze e sezioni sui tratti")
-    distinta.add_argument("--out", type=Path, required=True, help="la cartella della distinta")
+    distinta.add_argument("--out", type=Path, help="la cartella della distinta (non serve con --domande)")
+    distinta.add_argument(
+        "--domande",
+        action="store_true",
+        help="non scrive niente: dice in parole i dati da chiedere al progettista perche' nessuna voce esca DA "
+        "DEFINIRE, da chiedere insieme alle domande del disegno",
+    )
     distinta.add_argument(
         "--report",
         type=Path,
@@ -1292,8 +1385,14 @@ def costruisci_il_parser() -> argparse.ArgumentParser:
 
 def _distinta(args: argparse.Namespace, cartelle: Cartelle) -> int:
     # REL-013, proposta D-213: un modulo a parte, che nessun altro comando chiama.
-    from disegnatore_mep.distinta.comando import esegui
+    from disegnatore_mep.distinta.comando import domande, esegui
 
+    if args.domande:
+        return domande(
+            args.grafo, args.regole, cartelle.regole, cartelle.catalogo, cartelle.naming, fornitura=args.fornitura
+        )
+    if args.out is None:
+        raise ValueError("distinta: serve --out <cartella> (o --domande, che non scrive niente)")
     return esegui(
         args.grafo,
         args.out,

@@ -248,6 +248,7 @@ def definition(
     composite: bool = False,
     variant: dict[str, Any] | None = None,
     sources: list[str] | None = None,
+    passaggi: list[list[str]] | None = None,
 ) -> dict[str, Any]:
     """Una voce di catalogo. `traits` non ha default **per scelta**: un
     componente che non dichiara come si isola non deve poter nascere da qui piu'
@@ -266,6 +267,10 @@ def definition(
         "functions": functions,
         "traits": traits,
     }
+    # I passaggi interni di un pezzo che ne ha piu' d'uno (il collettore con ritorno):
+    # solo chi li ha li dichiara, e gli altri restano com'erano.
+    if passaggi is not None:
+        entry["passaggi"] = passaggi
     # Cio' che la macchina porta a bordo di fabbrica (D-106): un fatto della
     # macchina, dichiarato dal suo catalogo, che le regole leggono per non
     # aggiungere cio' che sta gia' dentro il mantello.
@@ -558,6 +563,19 @@ PANEL_T1 = (
 )
 PLENUM_OUTLET_COUNTS = (2, 3, 4, 5, 6)
 """Da due a sei serrande: Airzone e gli altri costruttori fanno plenum da 2 a 6-8 bocche."""
+MANIFOLD_T1 = (
+    "proposta della sessione del 30/10/2026 (REL-016, D3 del collaudo della 1.7.0, collettore a "
+    "pavimento a sei vie): la voce del collettore con ritorno a due vie, con le vie che il "
+    "collettore ha; da approvare dal PO sulla tavola"
+)
+MANIFOLD_WAY_COUNTS = tuple(range(3, 13))
+"""Da tre a dodici vie: il collettore a pavimento di una villetta ne ha sei o otto, i
+costruttori arrivano a dodici. Quello a due e' `zone-manifold-pair`, la voce scritta a
+mano di REL-009, che resta com'e'."""
+MANIFOLD_VIE_IN_LETTERE = {
+    3: "tre", 4: "quattro", 5: "cinque", 6: "sei", 7: "sette", 8: "otto", 9: "nove",
+    10: "dieci", 11: "undici", 12: "dodici",
+}
 NUMERI_IN_LETTERE = {2: "due", 3: "tre", 4: "quattro", 5: "cinque", 6: "sei"}
 QUIET = [SHUTOFF_ORDINARY, INLINE]
 """I caratteri delle voci dell'aria, del refrigerante e dell'elettrico: si
@@ -1224,6 +1242,30 @@ DEFINITIONS: list[dict[str, Any]] = [
     ),
     *REL_003,
     *REL_012,
+    # Il collettore con ritorno da tre a dodici vie (REL-016, D3): una voce per numero,
+    # come il plenum di zona, con le vie tutte obbligatorie — una via che non porta a un
+    # circuito si tappa, e il disegno non la mostra aperta. I passaggi sono quelli del
+    # collettore a due: l'ingresso con tutte le mandate, i ritorni con l'uscita.
+    *(
+        definition(
+            f"zone-manifold-pair-{vie}",
+            f"Collettore di zona con ritorno a {MANIFOLD_VIE_IN_LETTERE[vie]} vie",
+            ["distribution"],
+            [MAINTAINABLE, SHUTOFF_ORDINARY, INLINE],
+            [
+                hydronic_port("in", "in"),
+                hydronic_port("out", "out"),
+                *(hydronic_port(f"out_{indice}", "out") for indice in range(1, vie + 1)),
+                *(hydronic_port(f"ret_{indice}", "in") for indice in range(1, vie + 1)),
+            ],
+            sources=[MANIFOLD_T1],
+            passaggi=[
+                ["in", *(f"out_{indice}" for indice in range(1, vie + 1))],
+                [*(f"ret_{indice}" for indice in range(1, vie + 1)), "out"],
+            ],
+        )
+        for vie in MANIFOLD_WAY_COUNTS
+    ),
 ]
 
 NETWORKS = [
