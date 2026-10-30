@@ -1,0 +1,116 @@
+{
+ "formato": "A3",
+ "vista": "idraulica",
+ "note": [
+  "Centrale: idraulica e elettrico su due tavole. PdC e volano allo stesso y: mandata e ritorno rette (D-159). Bollitore sotto la coppia, servito dalla terza via della deviatrice (D-196)."
+ ],
+ "pezzi": {
+  "pdc": {
+   "x": -120,
+   "y": 0,
+   "regola": "D-159"
+  },
+  "tee-valve-safety-pdc-water-supply": {
+   "x": -70,
+   "y": 2.5
+  },
+  "valve-safety-pdc-water-supply": {
+   "x": -70,
+   "y": -10
+  },
+  "deviatrice": {
+   "x": 55,
+   "y": 0,
+   "rotazione": 0
+  },
+  "volano": {
+   "x": 90,
+   "y": 0
+  },
+  "air-vent-volano-secondary-out": {
+   "x": 100,
+   "y": -7.5
+  },
+  "drain-connection-volano-secondary-out": {
+   "x": 100,
+   "y": 50
+  },
+  "sonda-volano": {
+   "x": 75,
+   "y": 30
+  },
+  "pannelli": {
+   "x": 165,
+   "y": 2.5
+  },
+  "confluenza": {
+   "x": 20,
+   "y": 17.5
+  },
+  "tee-pressure-gauge-pdc-water-return": {
+   "x": -5,
+   "y": 17.5
+  },
+  "pressure-gauge-pdc-water-return": {
+   "x": -5,
+   "y": 40,
+   "rotazione": 180
+  },
+  "tee-filling-unit-pdc-water-return-b": {
+   "x": -20,
+   "y": 17.5
+  },
+  "filling-unit-pdc-water-return": {
+   "x": -20,
+   "y": 30,
+   "rotazione": 180,
+   "regola": "b verso il raccordo, a verso l'acquedotto"
+  },
+  "inlet-filling-unit-pdc-water-return": {
+   "x": -20,
+   "y": 50
+  },
+  "tee-expansion-connection-pdc-water-return": {
+   "x": -35,
+   "y": 17.5,
+   "regola": "ordine della catena: vaso piu' vicino alla pdc"
+  },
+  "expansion-connection-pdc-water-return": {
+   "x": -35,
+   "y": 40
+  },
+  "bollitore": {
+   "x": 70,
+   "y": 85
+  },
+  "mixing-valve-thermostatic-bollitore-dhw-out": {
+   "x": 105,
+   "y": 62.5,
+   "rotazione": 0
+  },
+  "inlet-mixing-valve-thermostatic-bollitore-dhw-out": {
+   "x": 105,
+   "y": 90
+  },
+  "utenze": {
+   "x": 150,
+   "y": 65
+  },
+  "sonda-acs": {
+   "x": 105,
+   "y": 102.5
+  },
+  "af": {
+   "x": -40,
+   "y": 120
+  },
+  "tee-drain-connection-cold-bollitore-cold-in": {
+   "x": -5,
+   "y": 120
+  },
+  "drain-connection-cold-bollitore-cold-in": {
+   "x": -5,
+   "y": 132.5
+  }
+ }
+}
