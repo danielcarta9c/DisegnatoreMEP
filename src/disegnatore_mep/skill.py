@@ -94,12 +94,12 @@ GRAVITA: dict[IssueSeverity, str] = {
     IssueSeverity.WARNING: "Avvisi — la tavola si consegna, e si sa",
 }
 
-ESTENSIONI_DA_CONSEGNARE = (".pdf", ".dxf", ".md", ".jpg", ".xlsx")
-"""Quello che il progettista riceve: il PDF, il DXF, i rilievi, il logo del cartiglio e
-l'Excel della distinta. L'SVG resta nella cartella di lavoro (collaudo T2 di REL-012,
-§1). Il logo no: il DXF lo nomina (`graphics.dxf`), e aperto senza il logo accanto
-AutoCAD mostra il riquadro del logo vuoto. L'Excel e la pianta: collaudo T3 di
-REL-012, §2 punto 8 — prima si copiavano a mano."""
+ESTENSIONI_DA_CONSEGNARE = (".pdf", ".dxf", ".md", ".jpg")
+"""Quello che il progettista riceve: il PDF, il DXF, i rilievi, il logo del cartiglio, e
+il PDF della distinta (REL-015, I-232: niente piu' Excel). L'SVG resta nella cartella di
+lavoro (collaudo T2 di REL-012, §1). Il logo no: il DXF lo nomina (`graphics.dxf`), e
+aperto senza il logo accanto AutoCAD mostra il riquadro del logo vuoto. La distinta e la
+pianta: collaudo T3 di REL-012, §2 punto 8 — prima si copiavano a mano."""
 
 
 @dataclass(frozen=True)
