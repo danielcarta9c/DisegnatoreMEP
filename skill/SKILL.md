@@ -203,7 +203,8 @@ vale prima del passo 4, se le dice già nel testo o nelle risposte del passo 2.
 Leggi **per intero** [riferimenti/comporre.md](riferimenti/comporre.md). Scrivi `$L/piano.json`:
 dice dove sta ogni pezzo sul foglio, e niente altro. `python3 scripts/mep.py pezzi
 $L/grafo-completo.json` elenca i pezzi che il piano posa — ingombro, rotazioni ammesse, porte — e
-quelli in linea, che posa il motore; il manifesto intero di un simbolo lo stampa
+quelli in linea, che posa il motore, e in che ordine stanno lungo ciascuna tratta: i raccordi si
+posano in quell'ordine. Il manifesto intero di un simbolo lo stampa
 `python3 scripts/mep.py simbolo <id>`.
 
 ### 6. Eseguire — la tavola e i rilievi

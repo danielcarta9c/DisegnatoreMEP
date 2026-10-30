@@ -1,0 +1,16 @@
+In che ordine stanno lungo le tratte: posa i pezzi del piano in quest'ordine, dal primo capo all'ultimo. Un raccordo posato fuori ordine fa scavalcare la linea a se' stessa, e la tavola non esce (RUN_CROSSES_ITSELF).
+  Le catene principali:
+    volano.primary_in → valve-isolation-volano-primary-in (in linea) → deviatrice → valve-isolation-deviatrice-in (in linea) → tee-valve-safety-pdc-water-supply → pdc.water_supply
+    volano.primary_out → valve-isolation-volano-primary-out (in linea) → confluenza → valve-isolation-bollitore-coil-out (in linea) → bollitore.coil_out
+    volano.secondary_out → valve-isolation-volano-secondary-out (in linea) → circolatore (in linea) → valve-isolation-circolatore-b (in linea) → pannelli.in
+    bollitore.coil_in → valve-isolation-bollitore-coil-in (in linea) → deviatrice.out_b
+    pdc.water_return → strainer-pdc-water-return (in linea) → valve-isolation-dirt-separator-pdc-water-return-b (in linea) → dirt-separator-pdc-water-return (in linea) → valve-isolation-dirt-separator-pdc-water-return-a (in linea) → tee-expansion-connection-pdc-water-return → tee-filling-unit-pdc-water-return-b → tee-pressure-gauge-pdc-water-return → confluenza.b
+    pannelli.out → valve-isolation-volano-secondary-in (in linea) → volano.secondary_in
+  Le altre tratte con organi in linea o fra due raccordi:
+    af.a → valve-isolation-dhw-af-a (in linea) → tee-drain-connection-cold-bollitore-cold-in.a
+    tee-drain-connection-cold-bollitore-cold-in.b → dhw-safety-group-bollitore-cold-in (in linea) → bollitore.cold_in
+    bollitore.dhw_out → valve-isolation-dhw-hot-bollitore-dhw-out (in linea) → mixing-valve-thermostatic-bollitore-dhw-out.hot_in
+    mixing-valve-thermostatic-bollitore-dhw-out.out → valve-isolation-dhw-hot-utenze-a (in linea) → utenze.a
+    inlet-mixing-valve-thermostatic-bollitore-dhw-out.a → valve-isolation-dhw-inlet-mixing-valve-thermostatic-bollitore-dhw-out-a (in linea) → mixing-valve-thermostatic-bollitore-dhw-out.cold_in
+    tee-expansion-connection-pdc-water-return.branch → valve-isolation-locked-open-expansion-connection-pdc-water-return-a (in linea) → expansion-connection-pdc-water-return.a
+    tee-pressure-gauge-pdc-water-return.branch → valve-gauge-cock-3way-pressure-gauge-pdc-water-return-a (in linea) → pressure-gauge-pdc-water-return.a
