@@ -46,10 +46,88 @@
       "medium": "control_bus",
       "flow": "bidirectional",
       "required": false
+    },
+    {
+      "id": "comando_a_filo",
+      "domain": "control",
+      "medium": "control_bus",
+      "flow": "bidirectional",
+      "required": false
+    },
+    {
+      "id": "sonda_acs",
+      "domain": "control",
+      "medium": "control_bus",
+      "flow": "in",
+      "required": false
+    },
+    {
+      "id": "sonda_accumulo",
+      "domain": "control",
+      "medium": "control_bus",
+      "flow": "in",
+      "required": false
+    },
+    {
+      "id": "sonda_zona_2",
+      "domain": "control",
+      "medium": "control_bus",
+      "flow": "in",
+      "required": false
+    },
+    {
+      "id": "termostato",
+      "domain": "control",
+      "medium": "control_bus",
+      "flow": "in",
+      "required": false
+    },
+    {
+      "id": "out_acs",
+      "domain": "control",
+      "medium": "power_supply",
+      "flow": "out",
+      "required": false
+    },
+    {
+      "id": "out_miscelatrice",
+      "domain": "control",
+      "medium": "power_supply",
+      "flow": "out",
+      "required": false
+    },
+    {
+      "id": "out_pompa_zona_1",
+      "domain": "control",
+      "medium": "power_supply",
+      "flow": "out",
+      "required": false
+    },
+    {
+      "id": "out_pompa_zona_2",
+      "domain": "control",
+      "medium": "power_supply",
+      "flow": "out",
+      "required": false
+    },
+    {
+      "id": "out_pompa_ricircolo",
+      "domain": "control",
+      "medium": "power_supply",
+      "flow": "out",
+      "required": false
+    },
+    {
+      "id": "out_ausiliario",
+      "domain": "control",
+      "medium": "power_supply",
+      "flow": "out",
+      "required": false
     }
   ],
   "sources": [
     "CONV-FOUNDATION",
-    "porte elettriche e di comando: proposta della sessione del 29/10/2026 (REL-012 fase 3, I-226), da approvare dal PO sulla tavola"
+    "porte elettriche e di comando: proposta della sessione del 29/10/2026 (REL-012 fase 3, I-226), da approvare dal PO sulla tavola",
+    "pompa di calore con la regolazione a bordo: ingressi sonda_acs (T_DHW), sonda_accumulo (T_BT), sonda_zona_2 (T_FW2), termostato (S_H/S_C); uscite out_acs (SV1), out_miscelatrice (SV2), out_pompa_zona_1 (P_C1), out_pompa_zona_2 (P_C2), out_pompa_ricircolo (P_C4), out_ausiliario (AHS); comando_a_filo (CN35); bus verso un sistema superiore (CN36). Le sigle sono della scheda del modulo idraulico Shenling ThermaX R290 6-15 kW, manuale d'installazione e d'uso, §5.3, pp. 39-41 (§4.1-4.2, pp. 24-29 per le applicazioni). Proposta della sessione del 30/10/2026 (REL-015 punto 4, I-230), da approvare dal PO sulla tavola"
   ]
 }

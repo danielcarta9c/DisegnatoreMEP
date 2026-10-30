@@ -2400,6 +2400,70 @@ def machine_control_ports(width_mm: float, height_mm: float) -> list[dict[str, A
     ]
 
 
+# --- la pompa di calore con la regolazione a bordo (REL-015 punto 4, I-230) ----
+# **Proposta della sessione del 30 ottobre 2026, da approvare dal PO sulla tavola.**
+# Il PO: «anche la pdc va alimentata ovviamente poi ci sono le sonde della psc che
+# vanno nei bollitori e volano ecc. comunque nel manuale Shenling c'e' tutto» (I-230).
+# Una pompa di calore come la Shenling ThermaX R290 6-15 kW ha la regolazione **sulla
+# scheda del suo modulo idraulico** (manuale d'installazione e d'uso, §5.3, pp. 39-41):
+# le sonde del bollitore e del volano, le valvole a tre vie, i circolatori di zona e del
+# ricircolo si cablano alla macchina, non a un regolatore esterno. Le porte hanno nomi
+# **generici**; la sigla del costruttore sta solo qui, come riferimento:
+#
+# - **sotto**, dove gia' stavano alimentazione (10) e bus (20, verso un sistema
+#   superiore: CN36, BMS Modbus), il **comando a filo** (30; CN35);
+# - **a sinistra**, la faccia libera dall'acqua, gli **ingressi**, a 5 mm come il
+#   passo delle uscite: `sonda_acs` (T_DHW, CN27, nel bollitore), `sonda_accumulo` (T_BT,
+#   CN26, nel volano), `sonda_zona_2` (T_FW2, CN28, mandata della zona miscelata),
+#   `termostato` (S_H/S_C, CN4, termostato ambiente);
+# - **sopra**, le **uscite** (CN8), a 5 mm: `out_acs` (SV1, la deviatrice dell'acqua
+#   calda sanitaria), `out_miscelatrice` (SV2), `out_pompa_zona_1` (P_C1),
+#   `out_pompa_zona_2` (P_C2), `out_pompa_ricircolo` (P_C4), `out_ausiliario` (AHS1/AHS2,
+#   il consenso alla fonte ausiliaria). Sei uscite su quaranta millimetri: cinque e' il
+#   passo che ci sta, sulla griglia.
+#
+# Le altre uscite e gli altri ingressi della scheda (SV3, P_C3, H_TB, H_IB, T_FW, T_SP,
+# smart grid, contatore, cascata) non hanno una porta: si aggiungono quando un
+# impianto li chiede. La sonda esterna (T_AM) e' sulla scheda principale della macchina
+# (§5.3, p. 42): non si cabla in campo, e non ha una porta.
+HEAT_PUMP_INPUTS_ALONG = (7.5, 12.5, 17.5, 22.5)
+"""Gli ingressi sulla faccia sinistra, dall'alto: le tre sonde e il termostato. A 5 mm,
+centrati sul fianco: il corpo della macchina va da 3 a 27, e un ingresso fuori dal corpo
+non avrebbe il moncone su cui finisce il cavo."""
+HEAT_PUMP_OUTPUTS_ALONG = (7.5, 12.5, 17.5, 22.5, 27.5, 32.5)
+"""Le uscite sulla faccia di sopra, da sinistra."""
+HEAT_PUMP_WIRED_REMOTE_ALONG = 30.0
+"""Il comando a filo sotto, dopo alimentazione e bus."""
+
+
+def heat_pump_control_ports(width_mm: float, height_mm: float) -> list[dict[str, Any]]:
+    """Le porte di comando di una pompa di calore con la regolazione a bordo.
+
+    Alimentazione e bus restano dove stavano (`machine_control_ports`): un grafo che
+    collega solo quelle si disegna come prima."""
+    ingressi = ("sonda_acs", "sonda_accumulo", "sonda_zona_2", "termostato")
+    uscite = (
+        "out_acs",
+        "out_miscelatrice",
+        "out_pompa_zona_1",
+        "out_pompa_zona_2",
+        "out_pompa_ricircolo",
+        "out_ausiliario",
+    )
+    return [
+        *machine_control_ports(width_mm, height_mm),
+        port_at("comando_a_filo", "bottom", HEAT_PUMP_WIRED_REMOTE_ALONG, width_mm, height_mm),
+        *(
+            port_at(porta, "left", y, width_mm, height_mm)
+            for porta, y in zip(ingressi, HEAT_PUMP_INPUTS_ALONG, strict=True)
+        ),
+        *(
+            port_at(porta, "top", x, width_mm, height_mm)
+            for porta, x in zip(uscite, HEAT_PUMP_OUTPUTS_ALONG, strict=True)
+        ),
+    ]
+
+
 DHW_HEAT_PUMP_CONTROL_PORTS = [
     port_at("power", "bottom", 7.5, STORAGE_W, STORAGE_H),
     port_at("bus", "bottom", 17.5, STORAGE_W, STORAGE_H),
@@ -2840,8 +2904,8 @@ SYMBOLS: list[SymbolSpec] = [
         body=heat_pump_body(HEAT_PUMP_W, HEAT_PUMP_H, HEAT_PUMP_PORTS),
         source=SOURCE_PRACTICE_HYDRONIC,
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
-        version="2.2.0",
-        control_ports=machine_control_ports(HEAT_PUMP_W, HEAT_PUMP_H),
+        version="2.3.0",
+        control_ports=heat_pump_control_ports(HEAT_PUMP_W, HEAT_PUMP_H),
     ),
     SymbolSpec(
         id="dhw-cylinder",
@@ -2947,8 +3011,8 @@ SYMBOLS: list[SymbolSpec] = [
         body=large_heat_pump_body(*LARGE_MACHINE, LARGE_HEAT_PUMP_PORTS),
         source=SOURCE_REL003_LARGE_HEAT_PUMP,
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
-        version="1.2.0",
-        control_ports=machine_control_ports(*LARGE_MACHINE),
+        version="1.3.0",
+        control_ports=heat_pump_control_ports(*LARGE_MACHINE),
     ),
     SymbolSpec(
         id="gas-boiler-modular",
