@@ -150,6 +150,13 @@ stanno i vicini — chi è allineato con l'uscita entra dritto, l'altro dalla de
 Misurato: scambiando di posto le due zone che un raccordo riunisce, la mappa delle porte si
 inverte con loro.
 
+**I raccordi di una catena si posano nell'ordine della catena.** `python3 scripts/mep.py pezzi
+<grafo>` finisce con «In che ordine stanno lungo le tratte»: per ogni catena, i pezzi dal primo
+capo all'ultimo — `pdc.water_return → … → tee-vaso → tee-riempimento → tee-manometro →
+confluenza.b`. Posali in quella fila, dal capo da cui parte verso quello a cui arriva, senza
+scambiarne due. Il collaudo della 1.7.0 li ha posati al contrario: il ritorno è tornato
+indietro, si è scavalcato due volte e la tavola non esce (`RUN_CROSSES_ITSELF`).
+
 ---
 
 ## 4. Il file che produci
@@ -693,6 +700,7 @@ Rispondi a queste, e se una risposta è «no» torna indietro:
 
 - [ ] **Ogni pezzo che posi tu ha un'entrata in `pezzi`, e nessun organo in linea ce l'ha?**
 - [ ] **Le `x` e le `y` sono multipli di 2,5?**
+- [ ] **I raccordi di ogni catena stanno nell'ordine che `pezzi` stampa?**
 - [ ] **Le porte che un'autostrada unisce stanno alla stessa quota?** Per pompa, caldaia,
       volano a quattro attacchi e scambiatore vuol dire lo stesso `y`; per chi ha le porte ad
       altre quote no (§2.1). Se no, hai una ragione scritta nelle note?

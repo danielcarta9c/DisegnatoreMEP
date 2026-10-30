@@ -25,7 +25,7 @@ prima. Tutte vivono in `docs/regole-del-piano.md`:
 coordinate e le sovrascrive. Un vincolo che nessun rilievo misura **sulla tavola
 finita** e' un vincolo che il piano rompe in silenzio, e questo l'ha rotto.
 
-**Perche' tutte escono `WARNING`, e non bloccanti.** Una violazione di
+**Perche' escono `WARNING`, e non bloccanti.** Una violazione di
 regola e' un **difetto del piano**, e il piano lo corregge il revisore: e' il
 suo mestiere, ed e' il motivo per cui questi controlli esistono
 (`ARCHITETTURA-DEL-PIANO.md` §1). Il **cancello di consegna** resta quello del
@@ -34,6 +34,15 @@ tratta non risolta, un simbolo senza fonte, due linee sovrapposte. Far bloccare
 una regola di composizione significherebbe rifiutare una tavola che il PO puo'
 guardare e giudicare, e **una tavola segnata vale piu' di nessuna tavola**
 (D-150).
+
+**L'eccezione e' B4, dal collaudo della 1.7.0** (REL-016, D1): un organo in linea
+sulla piega del suo tubo esce **bloccante**. Il collaudo ha consegnato «con 0
+rilievi bloccanti» una tavola col defangatore del ritorno sulla piega, e a vista
+non era una tavola da guardare e giudicare: era sbagliata. Sul banco delle 24
+tavole idroniche e sulle tavole di riferimento dell'aria il rilievo non compare
+mai: nessuna tavola approvata lo prende. Le altre regole restano avvisi, perche'
+tavole approvate le portano (B1, B8, B9, B11 sul banco). Chi conta i bloccanti di
+una tavola somma quelli del preflight e quelli di questo modulo.
 
 **Lo stile e' quello del preflight**, e non per simmetria: ogni misura e' una
 funzione pura che riceve la tavola e restituisce `ValidationIssue`, e ogni
@@ -135,12 +144,15 @@ catalogo con `off_the_run`, e non un elenco di nomi (D-069, D-093).
 
 
 def _rilievo(
-    code: str, message: str, entity_ids: list[str]
+    code: str,
+    message: str,
+    entity_ids: list[str],
+    severity: IssueSeverity = IssueSeverity.WARNING,
 ) -> ValidationIssue:
-    """Ogni rilievo di questo modulo e' un **avviso**: vedi il perche' in testa."""
+    """Un rilievo di questo modulo e' un **avviso**, tranne B4: vedi il perche' in testa."""
     return ValidationIssue(
         code=code,
-        severity=IssueSeverity.WARNING,
+        severity=severity,
         message=message,
         entity_ids=entity_ids,
     )
@@ -1065,6 +1077,8 @@ def organi_che_spezzano_il_tratto(
     regola dice «al pezzo», e questo controllo misura li'; una tratta che si
     piega dieci millimetri piu' in la' la conta **B1** se e' un'autostrada, e
     `RUN_WITH_TOO_MANY_BENDS` altrimenti.
+
+    **Esce bloccante** (REL-016, D1): e' l'eccezione dichiarata in testa al modulo.
     """
     definizioni = _definizioni(project, catalog)
     trovati: list[ValidationIssue] = []
@@ -1117,6 +1131,8 @@ def organi_che_spezzano_il_tratto(
                             for connection_id in route.connection_ids
                         ],
                     ],
+                    # **Bloccante** (REL-016, D1): vedi in testa al modulo.
+                    IssueSeverity.BLOCKING,
                 )
             )
     return trovati
