@@ -1,93 +1,102 @@
-# REL-015 — La distinta in un documento a parte, la tavola in A3, l'elettrico dopo l'idraulica
+# REL-011 — Le regole del corredo contro il manuale Shenling
 
-> **▶ Il pacchetto attivo, per l'ordine del PO** — «si fondi la 1.6.0 e procedi con la 1.7.0» (I-234), sulle sue
-> osservazioni alla 1.6.0 (I-230 … I-233). Scritto il 30 ottobre 2026, sulla 1.6.0.
+> **Attivo dal 30 ottobre 2026**, dopo la 1.7.0 (`REL-015`, PR #81, I-235). Era in coda dal 29 ottobre (I-228): il PO
+> aveva portato il kit aria-aria, e prima sono venuti `REL-012` e `REL-015`. Il pacchetto resta com'era scritto.
+> **Prima di cominciare**, le domande lasciate aperte dalla 1.7.0 (`docs/plans/pacchetti/REL-015.md`): i circolatori
+> sulla tavola dell'elettrico (alimentati dal quadro, o dalle uscite P_C della pompa di calore), e i rilievi D1, D3, D4
+> del collaudo — se entrano qui o in un pacchetto a parte lo dice il PO.
+
+> **▶ Il pacchetto attivo, per l'ordine del PO** — «il manuale shenling pensavo piu' di usarlo non per il revisore ma
+> proprio per verificare nella skill le regole dell'agente "capire" o composizione. non ricordo dove avevamo messo le
+> regole che dicono vaso d'espansione se ci va quanto grande ecc. quel pezzo li dico. pero' facciamo una cosa alla
+> volta. prima l'agente revisore esterno.» (I-218). Il revisore esterno è nella 1.5.0 (I-223). Scritto il 25 ottobre
+> 2026, sulla 1.5.0.
 
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
-**Stato:** **COSTRUITA SUL RAMO, AL PO** — la 1.7.0 aspetta il suo sì sulle tavole e sul PDF della distinta.
-**Base:** `main` dopo la PR #80 (la 1.6.0).
+**Stato:** **DA COMINCIARE**.
+**Base:** `main` dopo la PR #79 (la 1.5.0).
 **Ramo:** quello che l'ambiente della sessione assegna.
-**Approvazione della fusione:** **del PO**, guardando le tavole e il PDF della distinta (D-146, D-147).
-**Dopo:** `REL-011` (le tre proposte sul manuale Shenling e il dubbio sul vaso, `docs/plans/pacchetti/REL-011.md`).
+**Approvazione della fusione:** **del PO**, guardando le tavole (D-146, D-147).
 
 ---
 
 ## Perché
 
-Il PO ha guardato le tavole della 1.6.0: «In generale va tutto bene» (I-230), con quattro osservazioni.
+Le regole che dicono **se un accessorio ci va** — il vaso d'espansione, la valvola di sicurezza, lo sfiato, il ritegno —
+sono di **Completare**, in `rules/hydronic/` (un file per regola, 16 in tutto), non di Capire né di Comporre. Il PO
+vuole verificarle sul manuale della marca che usa di più. Il manuale Shenling ThermaX R290 6–15 kW è già stato letto e
+ricontrollato sulle pagine 40–43 e 51–53 (`docs/collaudi/REL-010/RAPPORTO.md` §2): il vaso non è a bordo, la valvola di
+sicurezza sì (3 bar), il volume minimo dell'impianto è 40 l, in cascata vuole un ritegno sull'uscita di ogni unità e un
+tampone che cresce con il numero delle unità.
 
-1. **La centrale va alimentata tutta, con le sonde della pompa di calore** (I-230): «anche la pdc va alimentata
-   ovviamente poi ci sono le sonde della psc che vanno nei bollitori e volano ecc. comunque nel manuale Shenling c'è
-   tutto».
-2. **Prima l'idronico e l'aeraulico, poi l'elettrico e il comando** (I-231): «Non vorrei che le linee elettriche
-   facciano spostare le linee idrauliche. Un collettore aveva una forma strana le tubazioni.»
-3. **La distinta in un PDF a parte** (I-232): «Non foglio Excel meglio documento pdf con copertina e impaginazione
-   generata con la skill report di nove c (senza kpi di copertina e senza la sezione chi siamo).»
-4. **Sulla tavola solo la tabella delle apparecchiature e la legenda** (I-233), così i disegni «stanno in a3 più
-   facilmente».
+**Una cosa da dire al PO per prima:** la skill decide **se** un accessorio si disegna, non **quanto è grande**. La
+taglia del vaso è del progettista («Non progetti», `SKILL.md`); se il PO vuole che la tavola la scriva, è un dato da
+chiedere, non un calcolo.
 
-## Le cose da fare
+## Le cose da fare, in quest'ordine
 
-### 1. La tavola: apparecchiature e legenda, nient'altro (I-233)
+### 1. Dove stanno le regole
 
-- Tabella delle tratte, note e computo escono dal foglio: vanno nel PDF della distinta. Il flusso della skill non
-  riserva più le zone (`zone_tabelle`) e non passa `--tabelle`; il motore le tiene come capacità, non usata dal flusso.
-- La M.02 di riferimento e il canalizzato del collaudo T3 rifatti: devono uscire in **A3** (o dire perché no).
-- `SKILL.md`, `comporre.md`, `distinta.md` allineati.
+Una tabella per il PO: le regole di `rules/hydronic/` che il manuale tocca — `expansion-on-closed-circuit`,
+`expansion-on-the-stored-volume-feed`, `safety-relief-where-heat-enters-the-water`, `air-release-where-the-water-is-hottest`,
+`air-vent-on-the-stored-volume`, `dhw-check-on-cold-inlet`, `isolate-what-is-serviced` e le altre — con, per ciascuna,
+**quando** scatta e **che cosa** mette, in parole sue.
 
-### 2. La distinta in PDF con la skill dei report Nove C (I-232)
+### 2. Il confronto
 
-- Il documento: copertina senza KPI (`KPI_DATA` vuoto, verificato sul codice della skill `nove-c-report` rev9), senza
-  «Chi siamo»; capitoli: l'impianto e le avvertenze (a corpo, quantità indicative, sopralluogo obbligatorio, fornitura
-  da confermare), le tratte con diametri e lunghezze, il computo per sezioni, le attività a corpo, le varianti, le
-  opere del committente, le voci da definire e le domande; niente dati interni, niente prezzi.
-- **Niente Excel.**
-- **Come**: la Disegnatore MEP prepara il contenuto; il PDF lo costruisce il motore della skill `nove-c-report`,
-  installata accanto, importato dal suo percorso — **non si copia nel repository**, che è pubblico (assunzione detta al
-  PO il 30 ottobre, non contraddetta). Se la skill dei report non c'è, la distinta lo dice e scrive il contenuto in
-  Markdown.
-- Il controllo finale della skill dei report (`fill_report`, `qa_pdf`, la verifica a vista delle pagine) si fa sempre.
+Regola per regola: che cosa dice la skill, che cosa dice il manuale Shenling (con la pagina), che cosa dice la §2.4 della
+*Specifica tecnica di installazione* Nove C. Dove sono d'accordo, dove no, che cosa manca — il ritegno su ogni unità in
+cascata, il volume minimo, il tampone. **Il contenuto MEP è del PO**: la sessione mostra il confronto e propone; il PO
+decide che cosa cambia.
 
-### 3. Prima l'idraulica, poi l'elettrico (I-231)
+### 3. Il dubbio del PO sul vaso
 
-- **La prova**: su una tavola unica, la parte idronica e aeraulica — tubazioni, pezzi **e sigle** — è identica alla
-  stessa tavola nella vista `idraulica`. Oggi le tubazioni lo sono già; le sigle no (VMR-01, CIR-01, la sonda si
-  spostano). Le sigle si posano con l'acqua, i cavi e le loro scritte dopo, nello spazio che resta.
-- **Il collettore con il ritorno a barrette** (`zone-manifold-pair`), visto dal PO e dal collaudo T2: si disegna come un
-  collettore, con il ritorno continuo. Cambia le tavole idroniche che lo usano: al PO, prima e dopo.
+«Ho anche un dubbio sul vaso di espansione» (I-220, sul caso rifatto). Si chiede al PO qual è, con la tavola in mano.
 
-### 4. La pompa di calore alimentata, con le sue sonde (I-230)
+### 4. Le correzioni
 
-- Dal **manuale Shenling ThermaX R290 6–15 kW** (OneDrive del PO, connettore Microsoft 365; non entra nel repository):
-  che cosa alimenta e che cosa comanda la scheda della macchina — le sonde del bollitore e del volano, la valvola a tre
-  vie, i circolatori, il bus — con la pagina. Il contenuto MEP è del PO: si mostra, si propone.
-- Le porte di comando della pompa di calore che servono (sonde, uscite), facoltative come le altre; la tavola
-  dell'elettrico di una centrale con le sonde della macchina.
+Quelle che il PO decide: le regole, le prove, il banco di regressione, e **le tavole che cambiano, al PO, prima dei
+numeri**.
 
 ### 5. La release
 
-**1.7.0**, con `scripts/costruisci-skill.py` e `tests/test_le_release.py` verde (D-200); un collaudo indipendente sullo
-ZIP prima della PR.
+Con `scripts/costruisci-skill.py`, e `tests/test_le_release.py` verde (D-200).
+
+## Da decidere col PO — rimasti da `REL-010` e `REL-009`
+
+- **la soglia** (I-223): la tavola del caso rifatto, con le colonne della cascata lontane, si consegna o va ricomposta?
+  Con la soglia tre revisori su tre dicono «si consegna»; al primo giro il PO aveva dato giusto «va ricomposta»
+  (`docs/collaudi/REL-010/RAPPORTO.md` §5). La domanda è anche sulla pagina della prova;
+- **quattro difetti del disegno** visti dai revisori esterni: i tre simboli in testa alla legenda che si toccano, la
+  miscelatrice termostatica e il rubinetto portamanometro quasi uguali, la barra di ritorno del collettore di zona
+  spezzata, la freccia sullo scarico dell'acqua fredda;
+- **il segno della commutatrice** (I-221): una «c» sopra, o un simbolo leggermente diverso;
+- **i difetti del prodotto** della taratura e della prova (`docs/plans/pacchetti/REL-010.md`, «Quello che la taratura ha
+  riportato sul prodotto»): in quale pacchetto;
+- gli esempi del revisore: gli schemi tipologici A, B, C della specifica tecnica;
+- da `REL-009`, punto 9: la distanza della valvola di sicurezza sopra il suo raccordo; B3 contro B1 nell'ordine dei
+  collettori primari; la quota del primo raccordo della zona vicina; da dove arriva la fredda del bollitore. E il
+  **limite d'intervento** facoltativo (I-195, D-202).
 
 ## Perimetro
 
-**Dentro:** `src/**`, `assets/symbols/**`, `examples/**`, `naming/**`, `rules/**`, `skill/**`, `tests/**`, `schemas/**`,
-`scripts/costruisci-skill.py`, `docs/collaudi/REL-015/`, `releases/`, il registro, il registro delle decisioni (come
-proposte), `HANDOFF.md`, questo file.
+**Dentro:** `rules/hydronic/**`, `skill/**`, `src/**`, `tests/**`, `docs/collaudi/REL-011/`, `releases/`, il registro,
+il registro delle decisioni (come proposte), `HANDOFF.md`, questo file.
 
-**Fuori:** il motore della skill `nove-c-report` (si usa, non si copia); i manuali dei costruttori e la specifica
-tecnica Nove C (si citano con la pagina); i dati del cliente, in qualunque file; un contenuto MEP o una convenzione
-grafica decisi dalla sessione.
+**Fuori:** i manuali dei costruttori e la specifica tecnica Nove C nel repository — si citano con la pagina, non si
+copiano (il repository è pubblico); i dati del cliente, in qualunque file; un contenuto MEP o una convenzione grafica
+decisi dalla sessione.
 
-## Criteri di accettazione
+## Criteri di accettazione — per ogni PR
 
 Ogni criterio si chiude con **il comando eseguito e il suo output**.
 
-0. **Le tavole e il PDF della distinta, per primi**, al PO.
-1. **La suite**: `0 failed`; nessuno `skip` e nessuno `xfail` nuovi; `ruff check src tests` verde.
-2. **La regressione**: il banco `docs/collaudi/REL-011/banco.py` fra `main` e il ramo; ogni tavola cambiata spiegata
-   (il collettore cambia apposta).
+0. **Le tavole, per prime**: quelle che la PR cambia, prima e dopo, al PO.
+1. **La suite**: `0 failed`; nessuno `skip` e nessuno `xfail` nuovi; `ruff check src tests` verde; `mypy` verde dove
+   l'ambiente lo lascia girare.
+2. **La regressione**: il banco di `REL-009` (`docs/collaudi/REL-009/la-1.4-sulle-tavole-agli-atti/banco.py`, più le
+   tre prove pulite) fra `main` e il ramo, ogni tavola cambiata spiegata.
 3. **Ogni correzione ha la sua prova**, rossa sul commit di partenza.
 4. **Gli input del PO nel registro** il giorno in cui arrivano.
-5. **Nessun dato di cliente nel diff**, e nessuna pagina dei manuali.
+5. **Nessun dato di cliente nel diff**, e nessuna pagina dei manuali: il comando di ricerca e il suo output vuoto.
 6. **La release**: `tests/test_le_release.py` verde — la skill si carica (D-200).

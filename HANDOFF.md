@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-10-30 — **la 1.7.0 è costruita sul ramo** (`REL-015`, D-214 proposta): sulla tavola solo apparecchiature e legenda (A3), la distinta in PDF coi report Nove C, prima l'acqua poi i cavi, il collettore a coppia col ritorno continuo, la pompa di calore che regola da sé con le sue sonde. **Aspetta il PO** sulle tavole e sul PDF della distinta (D-146, D-147).
+**Aggiornato:** 2026-10-30 — **la 1.7.0 è su `main`** (PR #81, I-235, D-214 approvata): sulla tavola solo apparecchiature e legenda (A3), la distinta in PDF coi report Nove C, prima l'acqua poi i cavi, il collettore a coppia col ritorno continuo, la pompa di calore che regola da sé. **Il pacchetto è `REL-011`.**
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -11,11 +11,11 @@
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
 
-## ▶ Da dove riparte la prossima sessione — scritto il 30 ottobre 2026, sera
+## ▶ Da dove riparte la prossima sessione — scritto il 30 ottobre 2026, dopo la fusione della 1.7.0
 
-**Prima cosa: la PR della 1.7.0.** Il PO guarda le tavole e il PDF della distinta e approva la fusione, oppure no.
-**Non fondere senza il suo sì.** Dopo il sì: fondere, registrare l'approvazione di D-214 col suo testo, e lui chiude
-I-230 … I-233 (oggi «fatta sul ramo, al PO»). Poi `REL-011` (`docs/plans/pacchetti/REL-011.md`).
+**Il pacchetto è `REL-011`** (`ACTIVE_WORK_PACKAGE.md`): le regole del corredo contro il manuale Shenling. Prima di
+cominciare, al PO le domande lasciate aperte dalla 1.7.0 (in testa al pacchetto). La 1.7.0 (`REL-015`) è archiviata in
+`docs/plans/pacchetti/REL-015.md`; quello che segue è com'era il ramo prima della fusione.
 
 - **Che cosa c'è**: `ACTIVE_WORK_PACKAGE.md` punto per punto; le prove in `docs/collaudi/REL-015/` (`distinta/`,
   `pdc-regola/`, `collettore/`, `idraulica-prima/` con il suo `rifai.sh`).
@@ -25,7 +25,7 @@ I-230 … I-233 (oggi «fatta sul ramo, al PO»). Poi `REL-011` (`docs/plans/pac
   facce opposte e sembrano attraversati da un cavo; dal manuale Shenling le uscite P_C della scheda possono alimentare
   direttamente le pompe — una linea sola.
 - **Il banco**: 19/24 identiche, 5 cambiate solo nel simbolo del collettore.
-- **I numeri**: il prossimo input è **I-235**, la prossima decisione **D-215**.
+- **I numeri**: il prossimo input è **I-236**, la prossima decisione **D-215**.
 
 ## Com'era la mattina del 30 ottobre 2026
 
