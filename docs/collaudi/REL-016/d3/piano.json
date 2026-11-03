@@ -77,8 +77,9 @@
    "y": 40
   },
   "bollitore": {
-   "x": 70.0,
-   "y": 85
+   "x": 75.0,
+   "y": 85,
+   "regola": "5 mm a destra della posa del collaudo: la terza via della deviatrice scende dritta, a sinistra della valvola della serpentina, ed e' una L sola (osservazione del PO del 3 novembre 2026)"
   },
   "mixing-valve-thermostatic-bollitore-dhw-out": {
    "x": 105.0,

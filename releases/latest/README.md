@@ -1,7 +1,7 @@
 # L'ultima release: 1.8.0
 
-`DisegnatoreMEP-v1.8.0.zip` — sha256 `91f55afb7f7427a6…`, 135 file — sono **i tre rilievi del collaudo della 1.7.0**
-(`REL-016`, I-237, D-216 proposta). Si carica come ogni skill personale, dallo ZIP così com'è.
+`DisegnatoreMEP-v1.8.0.zip` — sha256 `37906a8c12cefce7…`, 135 file — sono **i tre rilievi del collaudo della 1.7.0**
+(`REL-016`, I-237, I-239, D-216). Si carica come ogni skill personale, dallo ZIP così com'è.
 
 Rispetto alla 1.7.1:
 - **una tavola aggrovigliata non si consegna**: una linea che scavalca sé stessa e un organo in linea su una piega sono
