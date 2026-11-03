@@ -392,8 +392,9 @@ più** di quelle imposte, e quelle in più si tolgono spostando le macchine.
 - **fra due pezzi** le cui porte stanno su **assi perpendicolari** — una uscita orizzontale e
   una verticale: è una **L**, e non la toglie niente. È il gomito dell'ultima macchina in
   fondo al collettore verticale, la terza via della deviatrice che va alla serpentina del
-  bollitore (una L sola se la discesa dalla deviatrice passa **a sinistra della valvola**
-  sull'ingresso della serpentina: il bollitore un passo più a destra, non sotto la discesa),
+  bollitore (una L sola se la discesa dalla deviatrice **corre accanto al ritorno della
+  serpentina, all'interasse delle autostrade**: si sposta la deviatrice, non il bollitore — B11,
+  B12, I-240),
   la testa della colonna del pettine;
 - il **gradino di una coppia** fra due macchine con interassi diversi — il volano a 15, il
   terminale a 10: una delle due linee corre dritta, l'altra scala di 5 mm, e quello è il suo
