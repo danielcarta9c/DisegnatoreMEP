@@ -1,0 +1,517 @@
+{
+ "schema_version": "1.1.0",
+ "metadata": {
+  "project_id": "canalizzato-appartamento-primo-piano",
+  "client": "Committente di prova",
+  "project_name": "Climatizzazione canalizzata aria-aria appartamento",
+  "commission_code": "PROVA-01",
+  "revision": "00",
+  "issue_date": "2026-10-30",
+  "address": "Via di Prova 1, Comune di Prova (XX)",
+  "sheet_title": "Schema funzionale climatizzazione canalizzata",
+  "sheet_number": "T1"
+ },
+ "networks": [
+  {
+   "id": "liquido",
+   "name": "Linea del liquido",
+   "domain": "refrigerant",
+   "medium": "refrigerant_liquid"
+  },
+  {
+   "id": "gas",
+   "name": "Linea del gas",
+   "domain": "refrigerant",
+   "medium": "refrigerant_gas"
+  },
+  {
+   "id": "mandata-aria",
+   "name": "Mandata dell'aria",
+   "domain": "aeraulic",
+   "medium": "supply_air"
+  },
+  {
+   "id": "ripresa-aria",
+   "name": "Ripresa dell'aria",
+   "domain": "aeraulic",
+   "medium": "return_air"
+  },
+  {
+   "id": "condensa",
+   "name": "Scarico della condensa",
+   "domain": "condensate",
+   "medium": "condensate"
+  },
+  {
+   "id": "alim-ue",
+   "name": "Alimentazione unità esterna",
+   "domain": "control",
+   "medium": "power_supply"
+  },
+  {
+   "id": "alim-cz",
+   "name": "Alimentazione centrale di zona",
+   "domain": "control",
+   "medium": "power_supply"
+  },
+  {
+   "id": "collegamento",
+   "name": "Collegamento UE-UI",
+   "domain": "control",
+   "medium": "interconnection"
+  },
+  {
+   "id": "bus",
+   "name": "Bus di comando",
+   "domain": "control",
+   "medium": "control_bus"
+  }
+ ],
+ "components": [
+  {
+   "id": "ue",
+   "definition_id": "split-outdoor-unit",
+   "tag": null,
+   "properties": {
+    "power_kw": 5,
+    "posizione": "sul balcone"
+   }
+  },
+  {
+   "id": "ui",
+   "definition_id": "ducted-indoor-unit",
+   "tag": null,
+   "properties": {
+    "posizione": "controsoffitto del corridoio"
+   }
+  },
+  {
+   "id": "plenum",
+   "definition_id": "zoning-plenum-3",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "centrale-zona",
+   "definition_id": "zone-controller",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "b-camera",
+   "definition_id": "air-supply-terminal",
+   "tag": null,
+   "properties": {
+    "etichetta": "Camera"
+   }
+  },
+  {
+   "id": "b-cameretta",
+   "definition_id": "air-supply-terminal",
+   "tag": null,
+   "properties": {
+    "etichetta": "Cameretta"
+   }
+  },
+  {
+   "id": "b-soggiorno",
+   "definition_id": "air-supply-terminal",
+   "tag": null,
+   "properties": {
+    "etichetta": "Soggiorno"
+   }
+  },
+  {
+   "id": "ripresa",
+   "definition_id": "return-air-terminal",
+   "tag": null,
+   "properties": {
+    "etichetta": "Corridoio"
+   }
+  },
+  {
+   "id": "sifone",
+   "definition_id": "condensate-trap",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "scarico",
+   "definition_id": "condensate-outlet",
+   "tag": null,
+   "properties": {
+    "etichetta": "scarico del bagno"
+   }
+  },
+  {
+   "id": "quadro",
+   "definition_id": "electrical-panel",
+   "tag": null,
+   "properties": {
+    "etichetta": "Quadro appartamento"
+   }
+  },
+  {
+   "id": "sezionatore",
+   "definition_id": "isolator-switch",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "t-camera",
+   "definition_id": "room-thermostat",
+   "tag": null,
+   "properties": {
+    "etichetta": "Camera"
+   }
+  },
+  {
+   "id": "t-cameretta",
+   "definition_id": "room-thermostat",
+   "tag": null,
+   "properties": {
+    "etichetta": "Cameretta"
+   }
+  },
+  {
+   "id": "t-soggiorno",
+   "definition_id": "room-thermostat",
+   "tag": null,
+   "properties": {
+    "etichetta": "Soggiorno"
+   }
+  },
+  {
+   "id": "comando",
+   "definition_id": "wired-remote",
+   "tag": null,
+   "properties": {
+    "etichetta": "Soggiorno"
+   }
+  }
+ ],
+ "connections": [
+  {
+   "id": "c1",
+   "network_id": "liquido",
+   "endpoint_a": {
+    "component_id": "ue",
+    "port_id": "liquid"
+   },
+   "endpoint_b": {
+    "component_id": "ui",
+    "port_id": "liquid"
+   },
+   "properties": {},
+   "sezione": "1/4\"",
+   "lunghezza_m": 8
+  },
+  {
+   "id": "c2",
+   "network_id": "gas",
+   "endpoint_a": {
+    "component_id": "ue",
+    "port_id": "gas"
+   },
+   "endpoint_b": {
+    "component_id": "ui",
+    "port_id": "gas"
+   },
+   "properties": {},
+   "sezione": "3/8\"",
+   "lunghezza_m": 8
+  },
+  {
+   "id": "c3",
+   "network_id": "mandata-aria",
+   "endpoint_a": {
+    "component_id": "ui",
+    "port_id": "supply"
+   },
+   "endpoint_b": {
+    "component_id": "plenum",
+    "port_id": "in"
+   },
+   "properties": {},
+   "lunghezza_m": 0
+  },
+  {
+   "id": "c4",
+   "network_id": "mandata-aria",
+   "endpoint_a": {
+    "component_id": "plenum",
+    "port_id": "out_1"
+   },
+   "endpoint_b": {
+    "component_id": "b-camera",
+    "port_id": "a"
+   },
+   "properties": {},
+   "sezione": "Ø160",
+   "lunghezza_m": 5
+  },
+  {
+   "id": "c5",
+   "network_id": "mandata-aria",
+   "endpoint_a": {
+    "component_id": "plenum",
+    "port_id": "out_2"
+   },
+   "endpoint_b": {
+    "component_id": "b-cameretta",
+    "port_id": "a"
+   },
+   "properties": {},
+   "sezione": "Ø160",
+   "lunghezza_m": 4
+  },
+  {
+   "id": "c6",
+   "network_id": "mandata-aria",
+   "endpoint_a": {
+    "component_id": "plenum",
+    "port_id": "out_3"
+   },
+   "endpoint_b": {
+    "component_id": "b-soggiorno",
+    "port_id": "a"
+   },
+   "properties": {},
+   "sezione": "Ø160",
+   "lunghezza_m": 6
+  },
+  {
+   "id": "c7",
+   "network_id": "ripresa-aria",
+   "endpoint_a": {
+    "component_id": "ripresa",
+    "port_id": "a"
+   },
+   "endpoint_b": {
+    "component_id": "ui",
+    "port_id": "return"
+   },
+   "properties": {},
+   "sezione": "Ø200",
+   "lunghezza_m": 1.5
+  },
+  {
+   "id": "c8",
+   "network_id": "condensa",
+   "endpoint_a": {
+    "component_id": "ui",
+    "port_id": "drain"
+   },
+   "endpoint_b": {
+    "component_id": "sifone",
+    "port_id": "a"
+   },
+   "properties": {},
+   "sezione": "Ø32",
+   "lunghezza_m": 3
+  },
+  {
+   "id": "c9",
+   "network_id": "condensa",
+   "endpoint_a": {
+    "component_id": "sifone",
+    "port_id": "b"
+   },
+   "endpoint_b": {
+    "component_id": "scarico",
+    "port_id": "a"
+   },
+   "properties": {},
+   "sezione": "Ø32"
+  },
+  {
+   "id": "c10",
+   "network_id": "alim-ue",
+   "endpoint_a": {
+    "component_id": "quadro",
+    "port_id": "out_1"
+   },
+   "endpoint_b": {
+    "component_id": "sezionatore",
+    "port_id": "a"
+   },
+   "properties": {},
+   "sezione": "3G2,5",
+   "lunghezza_m": 12
+  },
+  {
+   "id": "c11",
+   "network_id": "alim-ue",
+   "endpoint_a": {
+    "component_id": "sezionatore",
+    "port_id": "b"
+   },
+   "endpoint_b": {
+    "component_id": "ue",
+    "port_id": "power"
+   },
+   "properties": {},
+   "sezione": "3G2,5"
+  },
+  {
+   "id": "c12",
+   "network_id": "alim-cz",
+   "endpoint_a": {
+    "component_id": "quadro",
+    "port_id": "out_3"
+   },
+   "endpoint_b": {
+    "component_id": "centrale-zona",
+    "port_id": "power"
+   },
+   "properties": {},
+   "sezione": "3G1,5",
+   "lunghezza_m": 10
+  },
+  {
+   "id": "c13",
+   "network_id": "collegamento",
+   "endpoint_a": {
+    "component_id": "ue",
+    "port_id": "link"
+   },
+   "endpoint_b": {
+    "component_id": "ui",
+    "port_id": "link"
+   },
+   "properties": {},
+   "sezione": "4G1,5",
+   "lunghezza_m": 8
+  },
+  {
+   "id": "c14",
+   "network_id": "bus",
+   "endpoint_a": {
+    "component_id": "ui",
+    "port_id": "p1p2_a"
+   },
+   "endpoint_b": {
+    "component_id": "centrale-zona",
+    "port_id": "p1p2"
+   },
+   "properties": {},
+   "scritta": "P1-P2 · di fabbrica",
+   "lunghezza_m": 0
+  },
+  {
+   "id": "c15",
+   "network_id": "bus",
+   "endpoint_a": {
+    "component_id": "centrale-zona",
+    "port_id": "serrande"
+   },
+   "endpoint_b": {
+    "component_id": "plenum",
+    "port_id": "motori"
+   },
+   "properties": {},
+   "scritta": "di fabbrica",
+   "lunghezza_m": 0
+  },
+  {
+   "id": "c16",
+   "network_id": "bus",
+   "endpoint_a": {
+    "component_id": "t-camera",
+    "port_id": "a"
+   },
+   "endpoint_b": {
+    "component_id": "centrale-zona",
+    "port_id": "bus_1"
+   },
+   "properties": {},
+   "sezione": "2×0,75",
+   "lunghezza_m": 6
+  },
+  {
+   "id": "c17",
+   "network_id": "bus",
+   "endpoint_a": {
+    "component_id": "t-cameretta",
+    "port_id": "a"
+   },
+   "endpoint_b": {
+    "component_id": "centrale-zona",
+    "port_id": "bus_2"
+   },
+   "properties": {},
+   "sezione": "2×0,75",
+   "lunghezza_m": 5
+  },
+  {
+   "id": "c18",
+   "network_id": "bus",
+   "endpoint_a": {
+    "component_id": "t-soggiorno",
+    "port_id": "a"
+   },
+   "endpoint_b": {
+    "component_id": "centrale-zona",
+    "port_id": "bus_3"
+   },
+   "properties": {},
+   "sezione": "2×0,75",
+   "lunghezza_m": 7
+  },
+  {
+   "id": "c19",
+   "network_id": "bus",
+   "endpoint_a": {
+    "component_id": "comando",
+    "port_id": "a"
+   },
+   "endpoint_b": {
+    "component_id": "ui",
+    "port_id": "p1p2_b"
+   },
+   "properties": {},
+   "sezione": "2×0,75",
+   "lunghezza_m": 7
+  }
+ ],
+ "assumptions": [
+  {
+   "id": "a1",
+   "text": "Il testo non dice da dove si alimenta la centrale di zona: si è assunta una linea dedicata dal quadro dell'appartamento (risposta del progettista: sì, 3G1,5 L 10 m).",
+   "status": "approved"
+  },
+  {
+   "id": "a2",
+   "text": "Il comando a filo si collega al bus P1-P2 dell'unità interna (seconda coppia), non alla centrale di zona (risposta del progettista: sì).",
+   "status": "approved"
+  },
+  {
+   "id": "a3",
+   "text": "Lunghezze dei rami d'aria, della ripresa, della condensa e delle linee elettriche date dal progettista in risposta (camera 5 m, cameretta 4 m, soggiorno 6 m; ripresa Ø200 1,5 m; condensa Ø32 3 m; quadro-sezionatore 3G2,5 12 m; collegamento 4G1,5 8 m; termostati 2×0,75).",
+   "status": "approved"
+  },
+  {
+   "id": "a4",
+   "text": "L'unità interna è alimentata dall'unità esterna attraverso il collegamento fra le unità (risposta del progettista: sì).",
+   "status": "approved"
+  },
+  {
+   "id": "a5",
+   "text": "Marca e modello di unità esterna, unità interna, plenum: non dati; nella tabella restano vuoti.",
+   "status": "approved"
+  },
+  {
+   "id": "a6",
+   "text": "Distinta materiali: richiesta in PDF. Pianta dei tracciati: non richiesta.",
+   "status": "approved"
+  },
+  {
+   "id": "a7",
+   "text": "Dati per la distinta dati dal progettista: R32, precarica 15 m, 20 g/m, max 30 m; attacco condensa Øe 20; bocchette 300×100; protezioni; portate. Fornitura predefinita confermata.",
+   "status": "approved"
+  }
+ ],
+ "rule_applications": [],
+ "subsystems": [],
+ "sheets": []
+}

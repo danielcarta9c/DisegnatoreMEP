@@ -823,7 +823,8 @@ def test_b4_un_organo_sulla_piega_e_un_rilievo() -> None:
     rilievi = organi_che_spezzano_il_tratto(tavola(symbols, routes), registry, project)
 
     assert [item.code for item in rilievi] == ["INLINE_ORGAN_BREAKS_THE_RUN"]
-    assert rilievi[0].severity is IssueSeverity.WARNING
+    # Bloccante dal collaudo della 1.7.0 (REL-016, D1): nessuna tavola approvata lo prende.
+    assert rilievi[0].severity is IssueSeverity.BLOCKING
     detto = rilievi[0].message
     assert "pompa" in detto
     assert " a " in detto and " b " in detto

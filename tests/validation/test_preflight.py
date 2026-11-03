@@ -263,6 +263,55 @@ def test_two_runs_on_the_same_stretch_are_blocking_with_the_length() -> None:
     assert findings[0].entity_ids == ["o1", "o2", "t1"]
 
 
+def _catena_di_due(prima: str, seconda: str) -> AutostradaInTavola:
+    """Un'autostrada di due tratte unite da un raccordo, dichiarata a mano."""
+    pdc = PortRef(component_id="pdc", port_id="water_return")
+    entra = PortRef(component_id="tee", port_id="a")
+    esce = PortRef(component_id="tee", port_id="b")
+    volano = PortRef(component_id="volano", port_id="primary_out")
+    return AutostradaInTavola(
+        connection_ids=frozenset({prima, seconda}),
+        pezzi=("pdc", "tee", "volano"),
+        nome="pdc -> tee -> volano",
+        catene=((prima,), (seconda,)),
+        passi=((pdc, entra), (esce, volano)),
+    )
+
+
+def test_una_tratta_che_scavalca_se_stessa_blocca() -> None:
+    """REL-016, D1: la linea passa due volte dallo stesso posto, e la tavola non esce."""
+    nodo = run("nodo", [at(100, 220), at(140, 220), at(140, 240), at(120, 240), at(120, 210)])
+    trovato = only(preflight.runs_crossing_themselves(drawing(sheet(routes=[nodo]))), "RUN_CROSSES_ITSELF")
+    assert trovato.severity is IssueSeverity.BLOCKING
+    assert "1 volta" in trovato.message
+    assert "x=120.0, y=220.0" in trovato.message
+
+
+def test_due_tratte_della_stessa_catena_che_si_scavalcano_bloccano() -> None:
+    """Il groviglio del collaudo: le tratte sono due, la linea e' una — la catena."""
+    andata = run("r1", [at(100, 100), at(60, 100), at(60, 90), at(75, 90)])
+    ritorno = run("r2", [at(80, 90), at(80, 110), at(40, 110)])
+    tavola = drawing(sheet(routes=[andata, ritorno]))
+    assert preflight.runs_crossing_themselves(tavola) == [], "senza la catena le tratte sono due linee"
+    trovato = only(
+        preflight.runs_crossing_themselves(tavola, [_catena_di_due("r1", "r2")]), "RUN_CROSSES_ITSELF"
+    )
+    assert trovato.severity is IssueSeverity.BLOCKING
+    assert "la catena pdc -> tee -> volano" in trovato.message
+    assert "x=80.0, y=100.0" in trovato.message
+
+
+def test_il_sormonto_fra_due_linee_diverse_non_e_un_groviglio() -> None:
+    """Un incrocio fra due linee diverse si minimizza, non si blocca (D-171); e due
+    tratte della stessa catena che si toccano al raccordo non si scavalcano."""
+    mandata = run("m", [at(20, 50), at(120, 50)])
+    montante = run("v", [at(70, 20), at(70, 80)])
+    prima = run("r1", [at(20, 100), at(60, 100)])
+    seconda = run("r2", [at(60, 100), at(60, 130)])
+    tavola = drawing(sheet(routes=[mandata, montante, prima, seconda]))
+    assert preflight.runs_crossing_themselves(tavola, [_catena_di_due("r1", "r2")]) == []
+
+
 def test_a_derivation_on_a_shared_port_is_the_exception_d062_declares() -> None:
     """Un solo passo di griglia contro una porta capo di entrambe le tratte."""
     first = run("o1", [at(220, 60), at(240, 60)])
@@ -616,6 +665,8 @@ def everything_wrong() -> DrawingGeometry:
             run("o2", [at(227.5, 60), at(235, 60)]),
             run("c", [at(245, 56.5), at(280, 56.5)]),
             run("u", [at(20, 150), at(80, 150), at(80, 170), at(60, 170)]),
+            # Una linea che scavalca se' stessa (REL-016, D1): il groviglio.
+            run("nodo", [at(100, 220), at(140, 220), at(140, 240), at(120, 240), at(120, 210)]),
             # **Una tratta ceduta** (D-150): il motore non l'ha instradata e la
             # spezzata che porta e' un ripiego dichiarato.
             run("perduta", [at(40, 200), at(90, 200)]).model_copy(
@@ -694,6 +745,7 @@ def test_preflight_runs_every_measure_in_the_declared_order() -> None:
     by_measure = [
         preflight.unresolved_runs(broken),
         preflight.bends_per_run(broken),
+        preflight.runs_crossing_themselves(broken),
         preflight.longitudinal_overlap(broken, FRAME),
         preflight.clearances(broken, FRAME),
         preflight.u_turns(broken, FRAME),

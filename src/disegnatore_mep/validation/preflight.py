@@ -163,6 +163,7 @@ QUADRANT_NAMES: tuple[str, ...] = (
 MEASURE_ORDER: tuple[str, ...] = (
     "unresolved_runs",
     "bends_per_run",
+    "runs_crossing_themselves",
     "longitudinal_overlap",
     "clearances",
     "u_turns",
@@ -398,6 +399,93 @@ def bends_per_run(
                     f"la piega in piu' la chiede un ostacolo, e l'ostacolo si "
                     f"sposta (B4, D-078)",
                     _run_ids(sheet, route),
+                )
+            )
+    return findings
+
+
+def _punto_d_incrocio(first: tuple[Point, Point], second: tuple[Point, Point]) -> Point:
+    """Dove due tratti ortogonali che si attraversano si incontrano: l'ascissa di
+    quello verticale e l'ordinata di quello orizzontale."""
+    verticale, orizzontale = (
+        (first, second) if abs(first[0].x_mm - first[1].x_mm) <= TOLERANCE_MM else (second, first)
+    )
+    return Point(x_mm=verticale[0].x_mm, y_mm=orizzontale[0].y_mm)
+
+
+def runs_crossing_themselves(
+    drawing: DrawingGeometry, autostrade: Iterable[AutostradaInTavola] = ()
+) -> list[ValidationIssue]:
+    """Una linea che scavalca sé stessa è un groviglio, e la tavola non si consegna.
+
+    *Fonte:* il collaudo della 1.7.0 (REL-016, D1): con i raccordi del ritorno posati
+    nell'ordine inverso a quello della catena, il ritorno verso la pompa di calore
+    «sale, torna indietro, scavalca sé stesso due volte», e la tavola usciva con zero
+    rilievi bloccanti. Lo vedevano soltanto le regole del piano, che sono avvisi.
+
+    **Che cosa si misura.** Due tratti della **stessa linea** che si attraversano in
+    un punto interno a entrambi. La linea è la catena intera quando la tratta sta su
+    un'autostrada — le tratte fra un raccordo e l'altro sono pezzi di un tubo solo, e
+    il groviglio del collaudo stava proprio **fra** tratte diverse della stessa
+    catena —, ed è la tratta da sola altrimenti. Il sormonto fra due linee diverse
+    non si conta qui: quello lo minimizza chi compone, e un massimo non c'è (D-171).
+
+    **Nessuna soglia**: una linea che si scavalca anche una volta sola è passata due
+    volte dallo stesso posto, e nessun collegamento lo chiede. Si scioglie posando i
+    pezzi nell'ordine in cui stanno lungo la catena, che `mep.py pezzi` stampa.
+    """
+    findings: list[ValidationIssue] = []
+    conosciute = tuple(autostrade)
+    for sheet in drawing.sheets:
+        linee: dict[object, list[RoutedTrunk]] = {}
+        for route in sheet.routes:
+            catena = e_autostrada(route, conosciute)
+            chiave = catena.connection_ids if catena is not None else ("tratta", id(route))
+            linee.setdefault(chiave, []).append(route)
+        for chiave, routes in linee.items():
+            tratti = [
+                (route, move)
+                for route in routes
+                for segment in route.segments
+                for move in moves_of(segment)
+            ]
+            incroci: list[tuple[RoutedTrunk, RoutedTrunk, Point]] = []
+            for first in range(len(tratti)):
+                for second in range(first + 1, len(tratti)):
+                    one, other = tratti[first], tratti[second]
+                    if segments_cross(one[1], other[1]):
+                        incroci.append((one[0], other[0], _punto_d_incrocio(one[1], other[1])))
+            if not incroci:
+                continue
+            catena = next(
+                (item for item in conosciute if item.connection_ids == chiave), None
+            )
+            volte = f"{len(incroci)} {'volta' if len(incroci) == 1 else 'volte'}"
+            dove = "; ".join(
+                (
+                    f"la tratta {_run_name(sheet, prima)} passa sopra quella "
+                    f"{_run_name(sheet, poi)}"
+                    if prima is not poi
+                    else f"la tratta {_run_name(sheet, prima)} passa sopra sé stessa"
+                )
+                + f" a x={punto.x_mm:.1f}, y={punto.y_mm:.1f}"
+                for prima, poi, punto in incroci
+            )
+            soggetto = (
+                f"la catena {catena.nome}" if catena is not None and len(routes) > 1
+                else f"la tratta {_run_name(sheet, routes[0])}"
+            )
+            findings.append(
+                _finding(
+                    "RUN_CROSSES_ITSELF",
+                    IssueSeverity.BLOCKING,
+                    f"la tavola {sheet.sheet_id}: {soggetto} scavalca sé stessa {volte} "
+                    f"— {dove}: una linea che si scavalca è un groviglio. Si scioglie "
+                    f"posando i raccordi e i pezzi nell'ordine in cui stanno lungo la "
+                    f"catena, quello che `mep.py pezzi` stampa (REL-016, D1)",
+                    sorted(
+                        {sheet.sheet_id, *(c for route in routes for c in route.connection_ids)}
+                    ),
                 )
             )
     return findings
@@ -1655,6 +1743,7 @@ def preflight_drawing(
         # la tavola non e' finita, e chi legge non deve doverlo cercare.
         *unresolved_runs(drawing),
         *bends_per_run(drawing, autostrade),
+        *runs_crossing_themselves(drawing, autostrade),
         *longitudinal_overlap(drawing, frame),
         *clearances(drawing, frame),
         *u_turns(drawing, frame),

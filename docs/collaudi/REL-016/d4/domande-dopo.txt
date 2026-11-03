@@ -1,0 +1,4 @@
+Le domande della distinta — 1, da fare al progettista nello stesso giro di quelle del disegno (senza risposta, le voci escono DA DEFINIRE):
+  1. Marca e modello — CZ-01 (Centrale di zona); CF-01 (Comando a filo dell'unità); PLZ-01 (Plenum motorizzato di zona a tre serrande); TZ-01, TZ-02, TZ-03 (Termostato di zona); UE-01 (Unità esterna split a pompa di calore); UI-01 (Unità interna canalizzata ad espansione diretta). Nel grafo: «marca» e «modello» sul pezzo; se il progettista li lascia aperti di proposito, nel documento restano da definire.
+Da confermare nello stesso giro (poi --fornitura confermata, o le scelte sue):
+  - Fornitura: apparecchiature fornite da Nove C; bocchette e griglie del Committente; opere edili del Committente; messa in servizio con Nove C — come da regole predefinite di Nove C; confermare per questa offerta.

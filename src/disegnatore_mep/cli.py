@@ -343,7 +343,8 @@ def _print_regole(findings: list[ValidationIssue]) -> None:
     **Non si sommano ai rilievi del preflight e non ne cambiano il verdetto**:
     il preflight dice se la tavola e' consegnabile (D-063), questo dice se il
     **piano** e' fatto secondo le regole. Una violazione qui e' lavoro per il
-    revisore, non un motivo per non scrivere la tavola.
+    revisore, non un motivo per non scrivere la tavola. L'eccezione e' B4 (REL-016):
+    esce bloccante, e chi chiama la stampa coi bloccanti del preflight.
     """
     if not findings:
         print("\nLe regole del piano (D-154): nessuna violazione.")
@@ -513,8 +514,11 @@ def _piano(args: argparse.Namespace) -> int:
             )
         return 2
 
-    _print_preflight(esito.rilievi)
-    _print_regole(rilievi_delle_regole(esito.disegno, esito.frame, catalogo, modello))
+    regole = rilievi_delle_regole(esito.disegno, esito.frame, catalogo, modello)
+    # Una regola che ferma la tavola (B4, REL-016) sta coi bloccanti del preflight.
+    regole_bloccanti = [item for item in regole if item.severity is IssueSeverity.BLOCKING]
+    _print_preflight([*esito.rilievi, *regole_bloccanti])
+    _print_regole([item for item in regole if item.severity is not IssueSeverity.BLOCKING])
 
     args.out.mkdir(parents=True, exist_ok=True)
     for foglio in esito.disegno.sheets:
@@ -535,7 +539,7 @@ def _piano(args: argparse.Namespace) -> int:
         )
         print(f"Geometria scritta: {args.geometry}")
 
-    bloccanti = esito.bloccanti
+    bloccanti = [*esito.bloccanti, *regole_bloccanti]
     print(
         f"\nTratte cedute: {len(esito.cedute)} · rilievi bloccanti: {len(bloccanti)}"
     )

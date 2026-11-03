@@ -145,6 +145,9 @@ def test_every_other_shipped_symbol_admits_all_four_rotations() -> None:
         # collettore con ritorno, nel proprio verso come i loro fratelli.
         "buffer-six-port",
         "zone-manifold-pair",
+        # Il collettore con ritorno da tre a dodici vie (REL-016, D3): nel proprio
+        # verso come quello a due.
+        *(f"zone-manifold-pair-{vie}" for vie in range(3, 13)),
         # `REL-012` (I-224, I-226): le macchine dell'aria-aria, il quadro e le
         # centrali di comando, nel proprio verso.
         *AIR_AND_CONTROL_MACHINES,

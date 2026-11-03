@@ -1,0 +1,13 @@
+Le domande della distinta — 7, da fare al progettista nello stesso giro di quelle del disegno (senza risposta, le voci escono DA DEFINIRE):
+  1. Marca e modello — CZ-01 (Centrale di zona); CF-01 (Comando a filo dell'unità); PLZ-01 (Plenum motorizzato di zona a tre serrande); TZ-01, TZ-02, TZ-03 (Termostato di zona); UE-01 (Unità esterna split a pompa di calore); UI-01 (Unità interna canalizzata ad espansione diretta). Nel grafo: «marca» e «modello» sul pezzo; se il progettista li lascia aperti di proposito, nel documento restano da definire.
+  2. Il refrigerante della macchina (es. «R32») — UE-01 o UI-01 (una delle macchine della linea frigorifera). Nel grafo: «refrigerante» sul pezzo.
+  3. Dalla scheda della macchina: fino a quanti metri di linea basta la precarica — UE-01 o UI-01 (una delle macchine della linea frigorifera). Nel grafo: «precarica_fino_a_m» sul pezzo.
+  4. Dalla scheda della macchina: la carica aggiuntiva oltre la precarica, in grammi per metro di linea — UE-01 o UI-01 (una delle macchine della linea frigorifera). Nel grafo: «carica_aggiuntiva_g_m» sul pezzo.
+  5. L'attacco dello scarico della condensa sull'unità (es. «VP20 (Øe 26)») — UI-01 (Unità interna canalizzata ad espansione diretta). Nel grafo: «attacco_condensa» sul pezzo.
+  6. La dimensione della bocchetta (es. «400×200») — TA-01, TA-02, TA-03 (Bocchetta di mandata con plenum di raccordo). Nel grafo: «dimensione» sul pezzo.
+  7. La protezione della linea nel quadro, dalla targa della macchina (es. «Magnetotermico-differenziale 1P+N C16, Idn 30 mA, tipo A, 6 kA») — T08 (Alimentazione centrale di zona: QE-01 - CZ-01); T09 (Alimentazione unità esterna: QE-01 - SZ-01 - UE-01). Nel grafo: «protezione» su una tubazione del tratto.
+Per la verifica (senza, la verifica non si fa; non fanno voci DA DEFINIRE):
+  - La portata d'aria, in m³/h — T01 (Mandata dell'aria: PLZ-01 - TA-01); T02 (Mandata dell'aria: PLZ-01 - TA-02); T03 (Mandata dell'aria: PLZ-01 - TA-03); T04 (Ripresa dell'aria: RA-01 - UI-01). Nel grafo: «portata_m3h» su una tubazione del tratto.
+  - Dalla scheda della macchina: la lunghezza massima della linea frigorifera, in metri — UE-01 o UI-01 (una delle macchine della linea frigorifera). Nel grafo: «lunghezza_max_m» sul pezzo.
+Da confermare nello stesso giro (poi --fornitura confermata, o le scelte sue):
+  - Fornitura: apparecchiature fornite da Nove C; bocchette e griglie del Committente; opere edili del Committente; messa in servizio con Nove C — come da regole predefinite di Nove C; confermare per questa offerta.

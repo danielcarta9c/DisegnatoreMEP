@@ -13,6 +13,31 @@ La distinta è **un documento a parte**, in PDF, con la copertina e l'impaginazi
 e **niente tabelle della distinta sulla tavola**: sulla tavola restano la tabella delle apparecchiature e la legenda
 (I-232, I-233). Si lancia dopo `completa`, prima o dopo `disegna`: la tavola non cambia.
 
+## Le domande: al passo 2, prima del primo lancio
+
+Le domande della distinta si fanno **nello stesso giro** di quelle del disegno, non dopo che la
+distinta è uscita con le voci «DA DEFINIRE». Subito dopo `completa`:
+
+```
+python3 scripts/mep.py distinta <grafo-completo.json> --domande
+```
+
+Non scrive niente e non serve `--out`. Compone la distinta in memoria e stampa, in parole, un dato
+per riga: che cosa chiedere, a quali pezzi o tratti manca (con le sigle della tavola) e in che campo
+del grafo va la risposta. Le domande vengono dagli stessi punti del calcolo che fanno le voci «DA
+DEFINIRE»: se `--domande` non chiede un dato, il documento non lo lascerà da definire. Stampa anche:
+
+- **per la verifica**: i dati senza i quali la verifica non si fa (le portate dell'aria, la lunghezza
+  massima della linea frigorifera); non fanno voci da definire, ma chiedili nello stesso giro;
+- **senza regole nella distinta**: i pezzi e i fluidi che la distinta non sa contare (sezione X);
+  una risposta del progettista non basta, e glielo dici;
+- **da confermare**: la fornitura dell'offerta (vedi sotto).
+
+Esce con `2` se ci sono domande, `0` se non ce n'è nessuna. Porta le domande al progettista nel
+messaggio del passo 2 — se non sai ancora se vuole la distinta, sotto «se vuoi la distinta, mi
+servono anche:» —, trascrivi le risposte nel grafo, rilancia `completa`, e solo allora `distinta`.
+Marca e modello il progettista può lasciarli aperti di proposito: restano «DA DEFINIRE», e va bene.
+
 ## La skill dei report Nove C, accanto
 
 Il PDF lo fa il motore della skill **`nove-c-report`**, che deve essere installata accanto a questa. Non è dentro
@@ -70,7 +95,7 @@ La copertina dei report Nove C **senza le card dei KPI**, **senza la pagina «Ch
 ## Che dati chiedi al progettista
 
 La distinta **non progetta**: conta e maggiora i dati che il progettista scrive nel grafo. Chiedi quelli che
-mancano; non li stimi tu.
+mancano — `--domande` te li elenca —; non li stimi tu.
 
 | dove | dato | che cos'è |
 |---|---|---|
@@ -156,7 +181,8 @@ Le scelte predefinite stanno in `distinta.json`, `fornitura`: si cambiano lì so
 
 ## Come la consegni
 
-Riporta al progettista, in quest'ordine: le **domande** (le voci DA DEFINIRE), quello che è **da confermare** (la
+Riporta al progettista, in quest'ordine: le **domande** (le voci DA DEFINIRE: se le hai fatte al passo 2,
+restano solo quelle che ha lasciato aperte), quello che è **da confermare** (la
 fornitura), le **segnalazioni** della verifica, che cosa hai visto guardando le pagine del PDF, poi i file:
 `mep.py consegna` copia il PDF della distinta accanto alle tavole se gli dai anche la sua cartella
 (`consegna $L/tavola $L/distinta … <destinazione>`). Non riempire tu una voce DA DEFINIRE e non ritoccare il PDF:
