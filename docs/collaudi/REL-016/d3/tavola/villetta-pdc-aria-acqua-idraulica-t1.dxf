@@ -8993,7 +8993,7 @@ AcDbPolyline
  20
 286.5
  10
-235.0
+212.5
  20
 286.5
   0
@@ -9011,7 +9011,7 @@ AcDbBlockReference
   2
 NoveC_FlowArrow
  10
-180.0
+168.75
  20
 286.5
  30
@@ -9033,11 +9033,11 @@ AcDbPolyline
  70
 128
  10
-240.0
+217.5
  20
 286.5
  10
-245.0
+222.5
  20
 286.5
   0
@@ -9055,7 +9055,7 @@ AcDbBlockReference
   2
 NoveC_FlowArrow
  10
-242.5
+220.0
  20
 286.5
  30
@@ -9213,7 +9213,7 @@ AcDbPolyline
  20
 169.0
  10
-265.0
+260.0
  20
 169.0
   0
@@ -9231,7 +9231,7 @@ AcDbBlockReference
   2
 NoveC_FlowArrow
  10
-236.25
+233.75
  20
 169.0
  30
@@ -9253,11 +9253,11 @@ AcDbPolyline
  70
 128
  10
-272.5
+267.5
  20
 206.5
  10
-272.5
+267.5
  20
 224.0
  10
@@ -9279,7 +9279,7 @@ AcDbBlockReference
   2
 NoveC_FlowArrow
  10
-272.5
+267.5
  20
 215.25
  30
@@ -9435,7 +9435,7 @@ AcDbPolyline
  70
 128
  10
-290.0
+285.0
  20
 186.5
  10
@@ -9483,7 +9483,7 @@ AcDbPolyline
  70
 128
  10
-255.0
+232.5
  20
 286.5
  10
@@ -9505,7 +9505,7 @@ AcDbBlockReference
   2
 NoveC_FlowArrow
  10
-262.5
+251.25
  20
 286.5
  30
@@ -9663,11 +9663,11 @@ AcDbPolyline
  70
 128
  10
-250.0
+227.5
  20
 281.5
  10
-250.0
+227.5
  20
 272.75
   0
@@ -9687,15 +9687,15 @@ AcDbPolyline
  70
 128
  10
-250.0
+227.5
  20
 270.25
  10
-250.0
+227.5
  20
 199.0
  10
-255.0
+250.0
  20
 199.0
   0
@@ -9713,7 +9713,7 @@ Continuous
 100
 AcDbCircle
  10
-250.0
+227.5
  20
 271.5
  30
@@ -9741,7 +9741,7 @@ AcDbBlockReference
   2
 NoveC_FlowArrow
  10
-250.0
+227.5
  20
 240.25
  30
@@ -9765,11 +9765,11 @@ AcDbPolyline
  70
 128
  10
-260.0
+255.0
  20
 199.0
  10
-265.0
+260.0
  20
 199.0
   0
@@ -9787,7 +9787,7 @@ AcDbBlockReference
   2
 NoveC_FlowArrow
  10
-262.5
+257.5
  20
 199.0
  30
@@ -9809,11 +9809,11 @@ AcDbPolyline
  70
 128
  10
-265.0
+260.0
  20
 189.0
  10
-260.0
+255.0
  20
 189.0
   0
@@ -9831,7 +9831,7 @@ AcDbBlockReference
   2
 NoveC_FlowArrow
  10
-262.5
+257.5
  20
 189.0
  30
@@ -9855,7 +9855,7 @@ AcDbPolyline
  70
 128
  10
-255.0
+250.0
  20
 189.0
  10
@@ -12333,7 +12333,7 @@ AcDbBlockReference
   2
 NoveC_DhwCylinder
  10
-265.0
+260.0
  20
 206.5
  30
@@ -12527,7 +12527,7 @@ AcDbBlockReference
   2
 NoveC_DivertingValve3way
  10
-245.0
+222.5
  20
 291.5
  30
@@ -12767,7 +12767,7 @@ AcDbBlockReference
   2
 NoveC_ValveIsolation
  10
-235.0
+212.5
  20
 289.0
  30
@@ -12907,7 +12907,7 @@ AcDbBlockReference
   2
 NoveC_ValveIsolation
  10
-255.0
+250.0
  20
 201.5
  30
@@ -12927,7 +12927,7 @@ AcDbBlockReference
   2
 NoveC_ValveIsolation
  10
-255.0
+250.0
  20
 191.5
  30
@@ -13439,7 +13439,7 @@ M-ANNO-IDEN
 100
 AcDbText
  10
-272.5
+267.5
  20
 156.825
  30
@@ -13451,7 +13451,7 @@ BOL-01
   7
 NOVEC_ARIAL
  11
-272.5
+267.5
  21
 156.825
  31
@@ -13663,7 +13663,7 @@ M-ANNO-IDEN
 100
 AcDbText
  10
-256.5
+234.0
  20
 281.23749999999995
  30
@@ -13675,7 +13675,7 @@ VD-01
   7
 NOVEC_ARIAL
  11
-256.5
+234.0
  21
 281.23749999999995
  31

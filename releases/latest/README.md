@@ -1,7 +1,10 @@
-# L'ultima release: 1.8.0
+# L'ultima release: 1.8.1
 
-`DisegnatoreMEP-v1.8.0.zip` — sha256 `37906a8c12cefce7…`, 135 file — sono **i tre rilievi del collaudo della 1.7.0**
-(`REL-016`, I-237, I-239, D-216). Si carica come ogni skill personale, dallo ZIP così com'è.
+`DisegnatoreMEP-v1.8.1.zip` — sha256 `c5b306fd4f86b5fe…`, 135 file — è la 1.8.0 con una regola di Comporre precisata (I-240): la
+terza via della deviatrice verso la serpentina del bollitore corre accanto al ritorno, all'interasse delle autostrade,
+spostando la deviatrice e non il bollitore. Si carica come ogni skill personale, dallo ZIP così com'è.
+
+La 1.8.0 sono **i tre rilievi del collaudo della 1.7.0** (`REL-016`, I-237, I-239, D-216).
 
 Rispetto alla 1.7.1:
 - **una tavola aggrovigliata non si consegna**: una linea che scavalca sé stessa e un organo in linea su una piega sono

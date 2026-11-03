@@ -58,3 +58,5 @@ Il comando della skill li riapre da sé.
   del PO). 134 file.
 - **1.8.0** — 30 ottobre 2026: **i tre rilievi del collaudo della 1.7.0** (`REL-016`, I-237, I-239, D-216): la tavola
   aggrovigliata non si consegna, il collettore di zona da 3 a 12 vie, le domande della distinta al passo 2. 135 file.
+- **1.8.1** — 3 novembre 2026: la terza via della deviatrice corre accanto al ritorno della serpentina, all'interasse
+  delle autostrade: si sposta la deviatrice, non il bollitore (I-240). 135 file.

@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-11-03 — **la 1.8.0 è su `main`** (PR #83, I-239, D-216 approvata): la tavola aggrovigliata non si consegna, il collettore di zona da 3 a 12 vie, le domande della distinta al passo 2. **Il pacchetto è `REL-011`** (I-238).
+**Aggiornato:** 2026-11-03 — **la 1.8.0 è su `main`** (PR #83, I-239, D-216); sul ramo la **1.8.1** (I-240): la terza via della deviatrice corre accanto al ritorno della serpentina, spostando la deviatrice. **Il pacchetto è `REL-011`** (I-238).
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -24,7 +24,7 @@ in `docs/plans/pacchetti/REL-016.md`; quello che segue è com'era il ramo prima 
 - **I circolatori** (I-236, D-215, fatto nella 1.7.1): alimentazione e comando dalla morsettiera della pompa di
   calore, un cavo solo; il quadro più cronotermostato è una scelta del progettista, non lo standard.
 - **Il banco**: 19/24 identiche, 5 cambiate solo nel simbolo del collettore.
-- **I numeri**: il prossimo input è **I-240**, la prossima decisione **D-217**.
+- **I numeri**: il prossimo input è **I-241**, la prossima decisione **D-217**.
 
 ## Com'era la mattina del 30 ottobre 2026
 
