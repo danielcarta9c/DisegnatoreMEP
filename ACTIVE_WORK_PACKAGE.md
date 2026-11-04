@@ -6,7 +6,7 @@
 > defangatore —, e che il suo `grafo-completo.json` agli atti è ancora quello delle regole della 1.8.
 
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
-**Stato:** **IN CORSO** — un agente della sessione del 4 novembre ricompone il piano sul ramo `rel011-villetta`.
+**Stato:** **IN CONSEGNA** (4 novembre 2026) — piano ricomposto, grafo e tavole rigenerati, la prova di rigenerazione; PR al PO.
 **Base:** `main` dopo la PR #85 (la 1.9.0).
 **Ramo:** quello che l'ambiente della sessione assegna.
 **Approvazione della fusione:** **del PO**, guardando le tavole (D-146, D-147).
