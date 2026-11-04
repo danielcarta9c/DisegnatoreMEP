@@ -24,7 +24,7 @@ from disegnatore_mep.catalog.schema import ComponentTrait
 from disegnatore_mep.graphics.frame import NOVE_C_A3
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.io.project_json import load_project
-from disegnatore_mep.layout.compose import compose_on_ordinary_frame, inline_component_ids
+from disegnatore_mep.layout.compose import inline_component_ids
 from disegnatore_mep.layout.geometry import DrawingGeometry, PlacedSymbol, box_of
 from disegnatore_mep.layout.grid import GridSpace
 from disegnatore_mep.layout.inline import (
@@ -38,6 +38,8 @@ from disegnatore_mep.layout.place import place_sheet
 from disegnatore_mep.layout.route import port_aprons
 from disegnatore_mep.layout.trunks import build_trunks
 from disegnatore_mep.model.project import PortRef, ProjectModel
+from disegnatore_mep.piano.esecutore import esegui_piano
+from disegnatore_mep.piano.formato import carica_piano
 from disegnatore_mep.rules.apply import saturate
 from disegnatore_mep.rules.proposal import RuleGap, RuleProposal
 from disegnatore_mep.rules.registry import RuleRegistry
@@ -45,6 +47,7 @@ from disegnatore_mep.rules.registry import RuleRegistry
 ROOT = Path(__file__).resolve().parents[2]
 PROJECT = ROOT / "examples" / "layout" / "heat-pump-dhw-buffer-two-zones.json"
 PROVA_2 = ROOT / "examples" / "prova" / "prova-2-pdc-deviatrice-acs.json"
+PIANO_2 = ROOT / "docs" / "collaudi" / "DRAW-018" / "prova-camera-pulita-2026-09-24" / "piano-completo-2.json"
 RULES = ROOT / "rules" / "hydronic"
 CATALOG = ROOT / "examples" / "layout" / "catalog"
 SYMBOLS = ROOT / "assets" / "symbols"
@@ -272,6 +275,23 @@ def _fuori_regola(measured: dict[str, float]) -> dict[str, float]:
     }
 
 
+def _tavola_2(project: ProjectModel, registry: ComponentRegistry) -> DrawingGeometry:
+    """La tavola 2 **dal suo piano**, come la compone la skill (D-151).
+
+    Fino al 4 novembre 2026 si componeva senza piano (`compose_on_ordinary_frame`). Con
+    le regole di REL-011 il defangatore sta coi suoi due rubinetti fra il manometro e il
+    raccordo del ritorno (D-218), e la via senza piano piegava la tratta subito dopo il
+    raccordo: un rubinetto sulla salita, il defangatore dopo la curva, i due riquadri a
+    contatto sullo spigolo (0 mm, D-120 ne vuole 2,5). Il piano agli atti, ricomposto per
+    le regole nuove, da' alla fila il suo tratto dritto. Il difetto del motore — due pezzi
+    di una coppia ai due lati di una curva si toccano — resta, ed e' riferito nel rapporto
+    di REL-011.
+    """
+    esito = esegui_piano(project, carica_piano(PIANO_2), registry, SymbolRegistry.from_directory(SYMBOLS), ROOT / "naming")
+    assert esito.disegno is not None, esito.errore
+    return esito.disegno
+
+
 def test_l_organo_in_coppia_con_un_accessorio_gli_sta_stretto() -> None:
     """Il terzo caso di D-120: due pezzi in fila, non ai capi della tratta.
 
@@ -283,8 +303,7 @@ def test_l_organo_in_coppia_con_un_accessorio_gli_sta_stretto() -> None:
     """
     registry = _catalog()
     project, _, _ = _completato(PROVA_2)
-    frame, drawn = compose_on_ordinary_frame(project, registry)
-    assert frame is not None
+    drawn = _tavola_2(project, registry)
     measured = _misure_d120(project, drawn, registry)
     coppie = {
         name: value
@@ -305,7 +324,7 @@ def test_ogni_organo_della_tavola_2_sta_sul_pezzo_che_serve() -> None:
     """
     registry = _catalog()
     project, _, _ = _completato(PROVA_2)
-    _, drawn = compose_on_ordinary_frame(project, registry)
+    drawn = _tavola_2(project, registry)
     measured = _misure_d120(project, drawn, registry)
     assert measured, "la tavola 2 non porta nessun organo governato da D-120"
     assert _fuori_regola(measured) == {}

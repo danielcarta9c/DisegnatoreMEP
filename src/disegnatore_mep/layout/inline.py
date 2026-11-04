@@ -339,10 +339,30 @@ def place_inline_accessories(
     strict_head, strict_tail = bool(head_ids), bool(tail_ids)
     head_chain = [position[item] for item in head_ids]
     tail_chain = [position[item] for item in tail_ids]
+    # **Chi isola l'apparecchio che gli sta accanto in linea resta con lui** (D-120, la
+    # coppia), anche se dall'altra parte c'e' un raccordo passante. Dal 4 novembre 2026
+    # (D-218) il defangatore sta fra i raccordi del ritorno e il volano, coi suoi due
+    # rubinetti: quello verso i raccordi e' il primo organo della tratta dal raccordo del
+    # manometro, e la posa morbida lo stringeva al raccordo, a 20 mm dal defangatore,
+    # mentre il defangatore si appoggiava al rubinetto del volano. Sulla tavola il
+    # defangatore restava con un rubinetto solo, e l'altro sembrava dei raccordi. Il
+    # rubinetto si posa allora con la fila, accanto al suo apparecchio; e dal raccordo
+    # passante la fila si tiene lo stacco stretto della posa morbida, non quello da un
+    # componente: e' sempre un raccordo, e un rubinetto gli puo' stare a un passo.
+    def con_il_suo_apparecchio(vicino: int) -> bool:
+        return 0 <= vicino < len(resolved) and serviced[vicino]
+
+    stretto_in_testa = stretto_in_coda = False
     if not strict_head and isolates[0] and services(trunk.start):
-        head_chain = [0]
+        if con_il_suo_apparecchio(1):
+            stretto_in_testa = True
+        else:
+            head_chain = [0]
     if not strict_tail and isolates[last] and services(trunk.end):
-        tail_chain = [last]
+        if con_il_suo_apparecchio(last - 1):
+            stretto_in_coda = True
+        else:
+            tail_chain = [last]
 
     def alimentato(ref: PortRef) -> bool:
         """Il capo della tratta e' l'attacco in cui il fluido **entra** in una macchina."""
@@ -650,8 +670,16 @@ def place_inline_accessories(
 
     # Il resto della fila si posa come sempre, avanzando dal cursore: dopo la
     # catena di testa, e prima di quella di coda, a un passo da ciascuna.
-    head_mm = head_reach if head_reach is not None else END_CLEARANCE_MM
-    tail_mm = tail_reach if tail_reach is not None else END_CLEARANCE_MM
+    head_mm = (
+        head_reach
+        if head_reach is not None
+        else (SNUG_CLEARANCE_MM if stretto_in_testa else END_CLEARANCE_MM)
+    )
+    tail_mm = (
+        tail_reach
+        if tail_reach is not None
+        else (SNUG_CLEARANCE_MM if stretto_in_coda else END_CLEARANCE_MM)
+    )
     remaining = [index for index in range(len(resolved)) if index not in chained]
 
     def has_a_pump(item: Trunk) -> bool:

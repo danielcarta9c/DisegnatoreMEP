@@ -29,7 +29,7 @@ from disegnatore_mep.catalog.schema import CLOSING_FUNCTIONS, ComponentTrait
 from disegnatore_mep.graphics.frame import NOVE_C_A3
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.graphics.symbol import PortFace
-from disegnatore_mep.layout.compose import compose_drawing, inline_component_ids
+from disegnatore_mep.layout.compose import inline_component_ids
 from disegnatore_mep.layout.errors import LayoutError
 from disegnatore_mep.layout.geometry import (
     DrawingGeometry,
@@ -486,9 +486,10 @@ def _composed(index: int) -> tuple[ProjectModel, DrawingGeometry]:
     done, _, gaps = saturate(CASI[index](), catalog(), rules())
     altri = [gap for gap in gaps if gap.reason is not GapReason.NO_SOURCE_NETWORK]
     assert not altri, [(gap.rule_id, gap.reason.value) for gap in altri]
-    if CASI[index] is due_macchine_con_accumulo_combinato:
-        return done, _dal_piano(done, "due_macchine_con_accumulo_combinato")
-    return done, compose_drawing(done, catalog(), NOVE_C_A3)
+    # Dal 4 novembre 2026 anche le due macchine sul volano si compongono dal piano: con
+    # giunto (D-222), antigelo (D-230) e ritegno (D-217) sugli attacchi la via senza piano
+    # non trova il tratto dritto del giunto, come il 2 ottobre per l'altra configurazione.
+    return done, _dal_piano(done, CASI[index].__name__)
 
 
 class Chains:
@@ -591,11 +592,17 @@ def test_le_catene_di_ritorno_delle_due_macchine_sono_congruenti(index: int) -> 
         length = abs(end[0] - start[0]) + abs(end[1] - start[1])
         axis = ((end[0] - start[0]) / length, (end[1] - start[1]) / length)
         chain = chains.chain_of(generator)
+        # Dal 4 novembre 2026 i primi pezzi dalla porta sono il giunto antivibrante (D-222) e
+        # la valvola antigelo (D-230); poi, come prima, il filtro e la valvola che chiude.
+        assert [chains.definitions[item].id for item in chain[:2]] == [
+            "flexible-joint", "valve-antifreeze"
+        ], (generator, chain)
         assert [
             "filtration" in chains.definitions[item].functions for item in chain
-        ] == [True, False], (generator, chain)
+        ] == [False, False, True, False], (generator, chain)
         assert CLOSING_FUNCTIONS & set(chains.definitions[chain[-1]].functions)
-        # Sul primo rettilineo, prima della curva, nell'ordine porta -> filtro -> valvola.
+        # Sul primo rettilineo, prima della curva, nell'ordine porta -> giunto -> antigelo ->
+        # filtro -> valvola.
         found: list[float] = []
         for item in chain:
             symbol = chains.placed[item]
@@ -606,9 +613,10 @@ def test_le_catene_di_ritorno_delle_due_macchine_sono_congruenti(index: int) -> 
             assert 0 < along < length + TOLERANCE_MM, (generator, item, along, length)
             found.append(round(along, 6))
         assert found == sorted(found), (generator, found)
-        first, second = (chains.placed[item] for item in chain)
-        assert abs(_gap_to_point(first, *port) - CHAIN_PORT_GAP_MM) <= TOLERANCE_MM, generator
-        assert abs(_gap_between(first, second) - MIN_SPACING_MM) <= TOLERANCE_MM, generator
+        posati = [chains.placed[item] for item in chain]
+        assert abs(_gap_to_point(posati[0], *port) - CHAIN_PORT_GAP_MM) <= TOLERANCE_MM, generator
+        for first, second in zip(posati, posati[1:], strict=False):
+            assert abs(_gap_between(first, second) - MIN_SPACING_MM) <= TOLERANCE_MM, (generator, second.component_id)
         offsets[generator] = found
     values = list(offsets.values())
     assert values[0] == values[1], offsets

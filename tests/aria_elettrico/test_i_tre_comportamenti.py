@@ -111,11 +111,15 @@ def test_l_idronico_scritto_al_contrario_si_ferma_anche_lui(catalogo_aria: Compo
     capovolta. Prima nessun rilievo, e la tabella perdeva le sigle che non sono
     dell'ingegnere. **Rossa sul commit di partenza.**"""
     grafo = json.loads((APPROVATI / "grafo-completo-1.json").read_text(encoding="utf-8"))
-    tubo = next(item for item in grafo["connections"] if item["id"] == "p1-a-a-1")
+    # Il tubo che esce dalla mandata della pompa di calore. Dal 4 novembre 2026 il primo
+    # pezzo dopo la macchina e' il giunto antivibrante (D-222), e il tubo si chiama «p1-a»;
+    # prima andava al raccordo della sicurezza e si chiamava «p1-a-a-1».
+    tubo = next(item for item in grafo["connections"] if item["id"] == "p1-a")
+    assert tubo["endpoint_a"] == {"component_id": "pdc-master", "port_id": "water_supply"}
     tubo["endpoint_a"], tubo["endpoint_b"] = tubo["endpoint_b"], tubo["endpoint_a"]
     esito = validate_project(ProjectModel.model_validate(grafo), catalogo_aria)
     assert [item.entity_ids[0] for item in esito.issues if item.code == "CONNECTION_WRITTEN_BACKWARDS"] == [
-        "p1-a-a-1"
+        "p1-a"
     ]
 
 

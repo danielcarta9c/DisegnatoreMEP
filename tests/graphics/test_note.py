@@ -128,12 +128,15 @@ def test_nel_definitivo_e_senza_livello_non_ci_sono_note(
 def test_nell_esecutivo_le_note_dei_pezzi_che_ci_sono_nell_ordine(
     catalogo: ComponentRegistry,
 ) -> None:
-    """L'impianto 1: due pompe di calore, un accumulo, un vaso, nessuna valvola antigelo.
-    Escono l'isolamento, sfiati e scarichi, il vaso e la sonda — con la cascata, perche'
-    le pompe sono due. Non esce la nota delle valvole antigelo."""
+    """L'impianto 1: due pompe di calore, un accumulo, un vaso, e dal 4 novembre 2026 le
+    valvole antigelo sugli attacchi delle pompe (D-230: fino a 35 kW, senza glicole), che
+    il grafo completo rigenerato porta. Escono l'isolamento, le valvole antigelo, sfiati e
+    scarichi, il vaso e la sonda — con la cascata, perche' le pompe sono due: le cinque
+    note, il tetto di D-232."""
     modello = _modello(APPROVATI / "grafo-completo-1.json", "esecutivo")
     assert note_di_posa(modello, catalogo, *_tutto(modello)) == [
         NOTA_ISOLAMENTO,
+        NOTA_ANTIGELO,
         NOTA_SFIATI_E_SCARICHI,
         NOTA_VASO,
         NOTA_SONDA_DEL_VOLANO + IN_CASCATA,
@@ -149,8 +152,14 @@ def test_ogni_nota_esce_solo_con_il_suo_pezzo(catalogo: ComponentRegistry) -> No
 
     vaso = "expansion-connection-collettore-ritorno-a"
     assert NOTA_VASO not in senza(vaso)
-    # Senza le pompe di calore: niente sfiati e scarichi, e niente sonda del volano.
-    assert senza("pdc-master", "pdc-slave") == [NOTA_ISOLAMENTO, NOTA_VASO]
+    # Le valvole antigelo stanno sugli attacchi delle pompe di calore (D-230): senza di
+    # loro la loro nota non esce.
+    antigelo = [item for item in pezzi if item.startswith("valve-antifreeze-")]
+    assert len(antigelo) == 4
+    assert NOTA_ANTIGELO in senza() and NOTA_ANTIGELO not in senza(*antigelo)
+    # Senza le pompe di calore, e con loro le loro valvole antigelo: niente sfiati e
+    # scarichi, e niente sonda del volano.
+    assert senza("pdc-master", "pdc-slave", *antigelo) == [NOTA_ISOLAMENTO, NOTA_VASO]
     # Senza l'accumulo: niente sonda.
     assert not any(item.startswith(NOTA_SONDA_DEL_VOLANO) for item in senza("accumulo"))
     # Con una pompa sola la sonda c'e', senza la cascata.
@@ -201,8 +210,13 @@ def test_con_la_valvola_antigelo_le_note_sono_cinque_e_non_di_piu() -> None:
     ]
     assert len(note) == MASSIMO_DELLE_NOTE
     pezzi, reti = _tutto(modello)
+    # Dal 4 novembre 2026 il grafo dell'impianto 1 porta anche le valvole antigelo vere
+    # (D-230): la nota sparisce solo senza quella di prova e senza le vere.
     assert NOTA_ANTIGELO not in note_di_posa(
-        modello, catalogo, [item for item in pezzi if item != "antigelo"], reti
+        modello,
+        catalogo,
+        [item for item in pezzi if item != "antigelo" and not item.startswith("valve-antifreeze-")],
+        reti,
     )
     riquadro = impagina_le_note(note, None, NOVE_C_A3)
     assert riquadro is not None and len(riquadro.note) == MASSIMO_DELLE_NOTE
@@ -391,7 +405,8 @@ def test_nell_svg_ci_sono_le_note_numerate(
     assert blocco is not None
     testi = [html.unescape(item) for item in re.findall(r">([^<]+)</text>", blocco.group(0))]
     assert testi[0] == TITOLO
-    assert [item for item in testi if re.fullmatch(r"\d\.", item)] == ["1.", "2.", "3.", "4."]
+    # Cinque: dal 4 novembre 2026 l'impianto 1 porta le valvole antigelo, e la loro nota (D-230).
+    assert [item for item in testi if re.fullmatch(r"\d\.", item)] == ["1.", "2.", "3.", "4.", "5."]
     # Il testo e' quello che il PDF puo' scrivere: le sostituzioni dichiarate, prima.
     assert all(per_winansi(item) == item for item in testi)
     assert "conduttività massima 0,040 W/mK" in " ".join(testi)

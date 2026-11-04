@@ -1,7 +1,8 @@
 {
   "formato": "A3",
   "note": [
-    "C — come B, con il volano 10 mm piu' in basso: lo sfiato lascia libera la quota della mandata."
+    "C — come B, con il volano 10 mm piu' in basso: lo sfiato lascia libera la quota della mandata.",
+    "Il 4 novembre 2026 (REL-011) la pompa di calore porta il giunto antivibrante (D-222) e la valvola antigelo (D-230), e defangatore e rubinetti passano dalla parte del volano (D-218): la valvola di sicurezza 12,5 mm a destra per il giunto, volano, sfiato, scarico e raccordo del ritorno 12,5 mm a destra per il defangatore. La tavola si instrada di nuovo con pieghe 11 contro 9 (sormonti 1 come prima); e' una delle composizioni di confronto, e non si e' cercato di migliorarla."
   ],
   "pezzi": {
     "pdc": {
@@ -9,11 +10,11 @@
       "y": 160
     },
     "tee-valve-safety-pdc-water-supply": {
-      "x": 62.5,
+      "x": 75,
       "y": 162.5
     },
     "valve-safety-pdc-water-supply": {
-      "x": 62.5,
+      "x": 75,
       "y": 142.5
     },
     "tee-expansion-connection-pdc-water-return": {
@@ -47,20 +48,20 @@
       "rotazione": 180
     },
     "volano": {
-      "x": 155,
+      "x": 167.5,
       "y": 185,
       "specchio": true
     },
     "air-vent-volano-b": {
-      "x": 165,
+      "x": 177.5,
       "y": 175
     },
     "drain-connection-volano-a": {
-      "x": 165,
+      "x": 177.5,
       "y": 230
     },
     "ritorno": {
-      "x": 210,
+      "x": 222.5,
       "y": 177.5
     },
     "deviatrice": {

@@ -119,12 +119,17 @@ def test_pezzi_dice_l_ordine_dei_raccordi_lungo_la_catena() -> None:
     uscita = testo.getvalue()
     assert "In che ordine stanno lungo le tratte" in uscita
     ritorno = next(riga for riga in uscita.splitlines() if "pdc.water_return" in riga)
+    # Dal 4 novembre 2026 il giunto e la valvola antigelo sono i primi pezzi dalla macchina
+    # (D-222, D-230), e vaso, riempimento e manometro stanno fra le macchine e il defangatore
+    # (D-218): il defangatore viene dopo i tre raccordi, non prima.
     fila = [
         "pdc.water_return",
-        "dirt-separator-pdc-water-return (in linea)",
+        "flexible-joint-pdc-water-return (in linea)",
+        "valve-antifreeze-pdc-water-return (in linea)",
         "tee-expansion-connection-pdc-water-return",
         "tee-filling-unit-pdc-water-return-b",
         "tee-pressure-gauge-pdc-water-return",
+        "dirt-separator-pdc-water-return (in linea)",
         "confluenza.b",
     ]
     posti = [ritorno.find(pezzo) for pezzo in fila]
