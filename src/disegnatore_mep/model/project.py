@@ -36,6 +36,10 @@ DEL_CARTIGLIO: tuple[str, ...] = (
 progetto (REL-011, D-224)."""
 
 
+MaterialeDelleTubazioni = Literal["multistrato", "acciaio", "rame"]
+"""I materiali delle tubazioni che il calcolo dei diametri conosce (I-279,
+`diametri.tubi`)."""
+
 SoggettoDellaNota = Literal["isolamento", "antigelo", "sfiati", "vaso", "sonda"]
 """I soggetti delle cinque note di posa che la skill genera (D-232, `graphics.note`): la
 parola con cui una nota del progettista ne prende il posto, e il nome con cui la toglie
@@ -149,16 +153,23 @@ class NetworkModel(IdentifiedModel):
     cambiano. Una rete esistente si disegna come le altre e **non porta il DN**
     (D-193, punto 8). Facoltativo e additivo: assente vuol dire nuova, e un
     documento scritto prima non cambia di un byte."""
+    materiale_tubazioni: MaterialeDelleTubazioni | None = None
+    """Il materiale delle tubazioni di questa rete, se e' diverso da quello del
+    progetto (I-279): il calcolo dei diametri sceglie il tubo commerciale di questo
+    materiale. Assente vale quello del progetto, e assente non si scrive."""
 
     @model_serializer(mode="wrap")
     def _senza_l_esistente_non_detto(
         self, handler: SerializerFunctionWrapHandler
     ) -> dict[str, Any]:
         """Una rete nuova non scrive `esistente`: i grafi agli atti restano
-        identici byte per byte, e cosi' la loro impronta (`io.canonical`)."""
+        identici byte per byte, e cosi' la loro impronta (`io.canonical`). Lo stesso
+        per il materiale, quando non c'e'."""
         dati: dict[str, Any] = handler(self)
         if not dati.get("esistente"):
             dati.pop("esistente", None)
+        if dati.get("materiale_tubazioni") is None:
+            dati.pop("materiale_tubazioni", None)
         return dati
 
 
@@ -502,6 +513,12 @@ class ProjectModel(StrictModel):
     D-230): con il **glicole** nell'acqua, o con le **valvole antigelo** che scaricano il
     tratto esterno. Lo dichiara il progettista. Assente: nelle case (fino a 35 kW) le
     regole mettono le valvole, nelle centrali grandi chiedono. Assente non si scrive."""
+    materiale_tubazioni: MaterialeDelleTubazioni | None = None
+    """Il materiale delle tubazioni (I-279): **multistrato**, **acciaio** o **rame**. Il
+    calcolo dei diametri sceglie il tubo commerciale di questo materiale e la tavola lo
+    scrive nella sua notazione — «MS 32×3», «DN 25 (1")», «Cu 28×1». Una rete lo puo'
+    cambiare (`NetworkModel.materiale_tubazioni`). Assente vale **multistrato**, lo
+    standard di Nove C, e non si scrive."""
 
     @model_validator(mode="after")
     def schema_version_is_the_current_one(self) -> "ProjectModel":
@@ -593,4 +610,6 @@ class ProjectModel(StrictModel):
             dati.pop("accessori_tolti", None)
         if dati.get("antigelo") is None:
             dati.pop("antigelo", None)
+        if dati.get("materiale_tubazioni") is None:
+            dati.pop("materiale_tubazioni", None)
         return dati

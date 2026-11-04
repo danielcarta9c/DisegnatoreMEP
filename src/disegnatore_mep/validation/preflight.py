@@ -20,11 +20,15 @@ no (D-083: vietato inventare, e vietato far passare una taratura per una norma).
 """
 
 import math
-from collections.abc import Iterable
+from collections.abc import Iterable, Sequence
 
 from disegnatore_mep.catalog.errors import CatalogError
 from disegnatore_mep.catalog.registry import ComponentRegistry
-from disegnatore_mep.diametri.scritte import ScrittaDelTratto, tratti_da_scrivere
+from disegnatore_mep.diametri.scritte import (
+    ScrittaDelTratto,
+    detto_da_un_vicino,
+    tratti_da_scrivere,
+)
 from disegnatore_mep.diametri.tratti import TrattoDelDiametro
 from disegnatore_mep.graphics.frame import ORDINARY_FRAMES, Rect, SheetFrame
 from disegnatore_mep.graphics.tabelle import riquadro_della_tabella_posata
@@ -36,6 +40,7 @@ from disegnatore_mep.layout.autostrade import (
 )
 from disegnatore_mep.layout.diametri import (
     FRANCO_DELLA_STACCATA_EM,
+    lato_del_tratto,
     riquadri_delle_frecce,
     riquadro_del_diametro,
 )
@@ -1042,8 +1047,17 @@ def diameter_tags(
                         [sheet.sheet_id, *sorted(nominate)[:1]],
                     )
                 )
+        scritti = [item for item in tratti if item.connection_ids in per_tratto]
+
+        def lato(item: ScrittaDelTratto | TrattoDelDiametro, routes: Sequence[RoutedTrunk] = sheet.routes) -> bool | None:
+            return lato_del_tratto(item.connection_ids, routes)
+
         for scritta in scritte:
             if not scritta.connection_ids <= disegnate or scritta.connection_ids in per_tratto:
+                continue
+            if scritta.ripetuto or detto_da_un_vicino(scritta, scritti, lato):
+                # Fra due raccordi, o accanto a un tratto che porta gia' lo stesso tubo
+                # dalla stessa parte: cede (I-279).
                 continue
             findings.append(
                 _finding(
@@ -1059,9 +1073,10 @@ def diameter_tags(
         for tratto in calcolati:
             if not tratto.connection_ids <= disegnate or tratto.connection_ids in per_tratto:
                 continue
-            if not tratto.strada_principale:
+            if not tratto.strada_principale or tratto.ripetuto or detto_da_un_vicino(tratto, scritti, lato):
                 # Il DN di una strada secondaria si sacrifica quando non c'e' posto
-                # (I-161): non e' un difetto della tavola.
+                # (I-161), e cede quello di un tratto che continua il tubo del vicino
+                # (I-279): non e' un difetto della tavola.
                 continue
             capo, fine = tratto.capi
             findings.append(

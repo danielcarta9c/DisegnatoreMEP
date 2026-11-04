@@ -105,7 +105,7 @@ mancano — `--domande` te li elenca —; non li stimi tu.
 | dove | dato | che cos'è |
 |---|---|---|
 | ogni tratto | `lunghezza_m` | la lunghezza **stimata** del tratto (pianta, sopralluogo); `0` se è un raccordo diretto (plenum sulla macchina, cablaggio di fabbrica) |
-| ogni tubazione | `sezione` | «Ø200», «Ø6,35 (1/4")», «Ø32», «3G2,5», «2×0,75 (P1-P2)»: diametro, lati o cavo |
+| ogni tubazione | `sezione` | «Ø200», «Ø6,35 (1/4")», «MS 32×3», «3G2,5», «2×0,75 (P1-P2)»: diametro, lati o cavo; sull'acqua il tubo, nella notazione del materiale (I-279), e dove manca vale quello della tavola |
 | mandata e ripresa | `portata_m3h` | per la verifica della velocità e delle griglie di transito |
 | ogni tubazione | `attraversamenti` | quante pareti interne passa; se manca, la distinta ne assume uno per l'aria, la condensa e la linea del gas, e lo dice |
 | linee di alimentazione | `protezione` | il dispositivo nel quadro, dalla targa della macchina: «Magnetotermico-differenziale 1P+N C16, Idn 30 mA, tipo A o F, 6 kA» |
@@ -120,6 +120,10 @@ mancano — `--domande` te li elenca —; non li stimi tu.
 
 I campi del tratto (`sezione`, `lunghezza_m`, `scritta`) si scrivono sulla tubazione o nelle sue `properties`: la
 distinta li legge in tutti e due i posti.
+
+**Sull'acqua il tubo è quello della tavola** (I-279): la linea si dice come lo schema, «multistrato MS 32×3», e gli
+accessori in linea — valvole, filtri, giunti, la deviatrice — portano il pollice del tubo su cui stanno (MS 32×3 →
+1"), dalla tabella di equivalenza del produttore.
 
 **La lunghezza di un tratto spezzato basta su una tubazione.** Un tratto è la linea che l'installatore posa in un
 pezzo, da macchina a macchina: il sezionatore sulla linea dell'unità esterna e il sifone sullo scarico della condensa

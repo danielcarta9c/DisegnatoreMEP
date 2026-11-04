@@ -30,14 +30,16 @@ import pytest
 ROOT = Path(__file__).resolve().parents[2]
 IMPIANTO_6 = ROOT / "docs" / "collaudi" / "REL-003" / "impianto-6"
 IMPIANTO_7 = ROOT / "docs" / "collaudi" / "REL-001" / "impianto-7"
-TAVOLA_7 = ROOT / "docs" / "collaudi" / "REL-011" / "piani" / "impianto-7-finale-opus-A2-REL-017.pdf"
+TAVOLA_7 = ROOT / "docs" / "collaudi" / "REL-011" / "piani" / "impianto-7-finale-opus-A2-I-279.pdf"
 """La tavola dell'impianto 7 consegnata in REL-001 (`docs/collaudi/REL-001/tavole/
 impianto-7-finale-opus-A2.pdf`, approvata dal PO), rifatta il 4 novembre 2026 dallo stesso
 grafo e dallo stesso piano: la geometria e' la stessa. Le differenze: in legenda il gruppo di
 riempimento che si chiama «con disconnettore» (D-229); e da REL-017 i due scarichi senza
 freccia, quello in fondo al volano del colore del ritorno (I-273), e i simboli della legenda
-alti al piu' 6 mm, che non si toccano piu' (I-275). La tavola approvata resta agli atti
-com'era."""
+alti al piu' 6 mm, che non si toccano piu' (I-275); da I-279 il tubo da comprare al posto
+dell'Øi — col grafo agli atti, che non dice il materiale, multistrato: i due rami delle
+pompe di calore da 45 kW sono MS 50×4, e i tratti piu' grandi, oltre il MS 63×4,5, restano
+senza tubo (e `disegna` lo dice). La tavola approvata resta agli atti com'era."""
 BOZZA_6 = ROOT / "docs" / "collaudi" / "REL-003" / "capire-giro-2" / "grafo.json"
 
 

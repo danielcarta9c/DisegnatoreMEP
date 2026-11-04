@@ -9,11 +9,12 @@ contro la prevalenza utile della pompa a bordo».
 ritorno comune passa la portata della macchina, non la somma dei rami. Qui lo si misura
 sulla villetta di riferimento (`docs/collaudi/REL-015/pdc-regola/`), che ha la stessa
 centrale: 12 kW con 5 K sono 2,067 m³/h su **ogni** tratto del primario, ritorno comune
-compreso. Sul ritorno comune il DN e' 32 e non 25 **per D-223**, non per una somma:
-l'attacco della ThermaX 12 kW e' 1¼", e sul tratto fra la macchina e il collettore il
-DN non scende sotto. Senza la marca Shenling lo stesso tratto e' Øi 25 — la portata
-della macchina, 1,17 m/s, sotto gli 1,3 del DN 25 —, ed e' la prova che la portata non
-e' sommata: sommata (4,13 m³/h) darebbe Øi 32 anche senza il manuale.
+compreso. **Dal 4 novembre 2026 (I-279, I-281)** la tavola scrive il tubo da comprare e
+l'attacco della macchina non e' piu' un minimo: ogni tratto del primario e' **MS 32×3**,
+2,067 m³/h a 1,08 m/s nei suoi 26 mm, sotto gli 1,3 del suo pollice (1"), ed e' la prova
+che la portata non e' sommata — sommata (4,13 m³/h) darebbe 2,16 m/s nel 32×3, e MS
+40×3,5. Prima di I-281 il ritorno comune era Øi 32 per D-223 (l'attacco 1¼" della
+ThermaX 12 kW); ora all'attacco c'e' una riduzione, detta come informazione.
 
 **La prevalenza.** Con la prevalenza utile della pompa e le lunghezze dei tratti la
 skill verifica il giro piu' costoso; i numeri sono fatti a mano qui sotto.
@@ -90,37 +91,59 @@ def test_sul_ritorno_comune_passa_la_portata_della_macchina_non_la_somma(
         assert tratto.portata_m3h == pytest.approx(q), (tratto.capi, tratto.portata_m3h)
     comune = _tratto(tratti, "conf-ritorno-pdc", "pdc")
     assert comune.portata_m3h == pytest.approx(q)
-    # Øi 32 e' l'attacco 1¼" della ThermaX 12 kW (D-223), non una somma.
-    assert comune.diametro is not None and comune.diametro.dn == 32
-    # I due rami della deviatrice, che il manuale non tocca: la portata della macchina in Øi 25.
-    for da, a in (("volano", "conf-ritorno-pdc"), ("bollitore", "conf-ritorno-pdc")):
-        ramo = _tratto(tratti, da, a)
-        assert ramo.diametro is not None and ramo.diametro.dn == 25
+    # Prima di I-279 e I-281 qui c'era «Øi 32», l'attacco 1¼" (D-223): ora il tubo lo
+    # sceglie la sola velocita', e sul ritorno comune e' quello dei rami.
+    for da, a in (("conf-ritorno-pdc", "pdc"), ("volano", "conf-ritorno-pdc"), ("bollitore", "conf-ritorno-pdc")):
+        tratto = _tratto(tratti, da, a)
+        assert tratto.diametro is not None and tratto.diametro.scritta == "MS 32×3", (da, a)
+        assert tratto.diametro.velocita_m_s == pytest.approx(1.081, abs=1e-3)
 
 
-def test_senza_il_manuale_il_ritorno_comune_e_quello_della_portata_della_macchina(
+def test_con_o_senza_il_manuale_il_tubo_e_quello_della_velocita(
     catalogo: ComponentRegistry,
 ) -> None:
-    """Tolta la marca, D-223 non vale: il ritorno comune prende il DN della sola portata
-    della macchina, Øi 25. Sommata, 4,13 m³/h, darebbe Øi 32 (1,43 m/s in DN 32)."""
+    """Tolta la marca il ritorno comune e' lo stesso MS 32×3: l'attacco non entra nella
+    scelta (I-281). Sommata, 4,13 m³/h, la portata darebbe MS 40×3,5."""
+    from disegnatore_mep.diametri.tubi import tubo_per
+
     modello, del_progetto = _modello(_villetta(senza=("marca",)), catalogo)
     comune = _tratto(tratti_del_diametro(modello, del_progetto), "conf-ritorno-pdc", "pdc")
     assert comune.portata_m3h == pytest.approx(portata_da_potenza(12, 5))
-    assert comune.diametro is not None and comune.diametro.dn == 25
-    assert comune.diametro.velocita_m_s == pytest.approx(1.170, abs=1e-3)
+    assert comune.diametro is not None and comune.diametro.scritta == "MS 32×3"
+    sommata = tubo_per(2 * portata_da_potenza(12, 5))
+    assert sommata is not None and sommata.scritta == "MS 40×3,5"
+
+
+def test_l_attacco_piu_grande_del_tubo_e_una_riduzione(catalogo: ComponentRegistry) -> None:
+    """La ThermaX 12 kW ha l'attacco 1¼", il tubo e' MS 32×3 (1"): una riduzione per
+    attacco, in una funzione sola (I-281), che il passo dopo legge per posarla."""
+    from disegnatore_mep.diametri.costruttori import riduzioni_all_attacco
+
+    modello, del_progetto = _modello(_villetta(), catalogo)
+    riduzioni = riduzioni_all_attacco(modello, del_progetto)
+    assert len(riduzioni) == 2 and {item.macchina for item in riduzioni} == {"pdc"}
+    assert all(item.in_parole == 'attacco 1¼", tubo MS 32×3 (1"): riduzione all\'attacco' for item in riduzioni)
+    # Senza la marca il manuale non si conosce: nessuna riduzione.
+    modello, del_progetto = _modello(_villetta(senza=("marca",)), catalogo)
+    assert riduzioni_all_attacco(modello, del_progetto) == []
 
 
 def test_la_perdita_distribuita_fatta_a_mano() -> None:
     """2,067 m³/h d'acqua a 40 °C in acciaio (ε 0,045 mm), a mano:
 
-    - DN 32: v = 0,5742·10⁻³ / 8,042·10⁻⁴ = 0,7139 m/s; Re = 0,7139 · 0,032 / 0,658·10⁻⁶
-      = 34 719; f = 0,25 / log₁₀(3,801·10⁻⁴ + 4,699·10⁻⁴)² = 0,02652;
+    - 32 mm interni: v = 0,5742·10⁻³ / 8,042·10⁻⁴ = 0,7139 m/s; Re = 0,7139 · 0,032 /
+      0,658·10⁻⁶ = 34 719; f = 0,25 / log₁₀(3,801·10⁻⁴ + 4,699·10⁻⁴)² = 0,02652;
       Δp/L = 0,02652 / 0,032 · 1000 · 0,7139² / 2 = 211,2 Pa/m;
-    - DN 25: v = 1,1697 m/s; Re = 44 441; f = 0,02663; Δp/L = 728,6 Pa/m.
+    - 25 mm interni: v = 1,1697 m/s; Re = 44 441; f = 0,02663; Δp/L = 728,6 Pa/m;
+
+    e nel multistrato MS 32×3 (26 mm interni, ε 0,007 mm, I-279): v = 1,0814 m/s,
+    Re = 42 731, f = 0,25 / log₁₀(7,277·10⁻⁵ + 3,902·10⁻⁴)² = 0,02248,
+    Δp/L = 0,02248 / 0,026 · 1000 · 1,0814² / 2 = 505,7 Pa/m.
     """
     q = portata_da_potenza(12, 5)
     assert perdita_distribuita_pa_m(q, 32) == pytest.approx(211.2, rel=2e-3)
     assert perdita_distribuita_pa_m(q, 25) == pytest.approx(728.6, rel=2e-3)
+    assert perdita_distribuita_pa_m(q, 26, rugosita_m=0.007e-3) == pytest.approx(505.7, rel=2e-3)
     assert fattore_d_attrito(34719, 0.045e-3, 0.032) == pytest.approx(0.02652, rel=2e-3)
     # In laminare 64/Re, e il rame liscio perde meno dell'acciaio.
     assert fattore_d_attrito(1000, 0.045e-3, 0.032) == pytest.approx(0.064)
@@ -129,9 +152,9 @@ def test_la_perdita_distribuita_fatta_a_mano() -> None:
 
 @pytest.mark.parametrize("grafo", ["grafo.json", "grafo-completo.json"])
 def test_il_giro_del_serpentino_e_il_piu_costoso(grafo: str, catalogo: ComponentRegistry) -> None:
-    """Due giri, uno per posizione della deviatrice. Volano: 26 m in Øi 32 e 2 m in Øi 25,
-    211,2 · 26 + 728,6 · 2 = 6,95 kPa. Serpentino: 24 m in Øi 32 e 8 m in Øi 25,
-    211,2 · 24 + 728,6 · 8 = 10,90 kPa; con il 30 % di concentrate 14,17 kPa.
+    """Due giri, uno per posizione della deviatrice, tutti in MS 32×3 (I-279; prima Øi 32 e
+    Øi 25 d'acciaio, 14,17 kPa). Volano: 28 m, 505,7 · 28 = 14,16 kPa. Serpentino: 32 m,
+    505,7 · 32 = 16,18 kPa; con il 30 % di concentrate 21,04 kPa.
 
     Sul grafo completo le regole hanno spezzato le tubazioni coi T di servizio e
     riordinato il ritorno: la lunghezza data resta su un pezzo solo, e il conto e' lo
@@ -142,16 +165,16 @@ def test_il_giro_del_serpentino_e_il_piu_costoso(grafo: str, catalogo: Component
     assert verifica.macchina == "pdc"
     assert verifica.giri == 2
     assert verifica.attraverso == ("bollitore",)
-    assert [(t.da, t.a, t.dn, t.lunghezza_m) for t in verifica.giro] == [
-        ("pdc", "deviatrice", 32, 12.0),
-        ("deviatrice", "bollitore", 25, 4.0),
-        ("bollitore", "conf-ritorno-pdc", 25, 4.0),
-        ("conf-ritorno-pdc", "pdc", 32, 12.0),
+    assert [(t.da, t.a, t.tubo.scritta, t.lunghezza_m) for t in verifica.giro] == [
+        ("pdc", "deviatrice", "MS 32×3", 12.0),
+        ("deviatrice", "bollitore", "MS 32×3", 4.0),
+        ("bollitore", "conf-ritorno-pdc", "MS 32×3", 4.0),
+        ("conf-ritorno-pdc", "pdc", "MS 32×3", 12.0),
     ]
-    assert verifica.distribuite_kpa == pytest.approx(10.90, abs=0.02)
+    assert verifica.distribuite_kpa == pytest.approx(16.18, abs=0.03)
     assert MAGGIORAZIONE_CONCENTRATE == 0.30
-    assert verifica.totale_kpa == pytest.approx(14.17, abs=0.03)
-    assert verifica.supera
+    assert verifica.totale_kpa == pytest.approx(21.04, abs=0.04)
+    assert verifica.supera and not verifica.assunta
 
 
 def _lunghezze_per(grafo: str) -> dict[str, float]:
@@ -167,7 +190,8 @@ def test_l_avviso_solo_se_il_giro_costa_piu_della_prevalenza(catalogo: Component
         _villetta(pdc={"prevalenza_utile_kpa": 10}, lunghezze=LUNGHEZZE), catalogo
     )
     (avviso,) = avvisi_della_prevalenza(modello, del_progetto)
-    assert "14,2 kPa" in avviso and "10,0 utili" in avviso and "bollitore" in avviso
+    assert "21,0 kPa" in avviso and "10,0 utili" in avviso and "bollitore" in avviso
+    assert "indicativo" not in avviso
     modello, del_progetto = _modello(
         _villetta(pdc={"prevalenza_utile_kpa": 40}, lunghezze=LUNGHEZZE), catalogo
     )
@@ -179,7 +203,8 @@ def test_l_avviso_solo_se_il_giro_costa_piu_della_prevalenza(catalogo: Component
 @pytest.mark.parametrize(
     ("pdc", "lunghezze", "senza"),
     [
-        pytest.param({}, LUNGHEZZE, (), id="senza-prevalenza"),
+        # Senza la marca: per una Shenling la prevalenza c'e' comunque, indicativa (I-281).
+        pytest.param({}, LUNGHEZZE, ("marca",), id="senza-prevalenza"),
         pytest.param({"prevalenza_utile_kpa": 10}, None, (), id="senza-lunghezze"),
         pytest.param(
             {"prevalenza_utile_kpa": 10},
@@ -202,6 +227,24 @@ def test_senza_i_dati_non_si_dice_niente(
     assert avvisi_della_prevalenza(modello, del_progetto) == []
 
 
+def test_la_shenling_senza_prevalenza_si_verifica_con_8_metri(catalogo: ComponentRegistry) -> None:
+    """Il PO: la pompa a bordo «dovrebbe stare sui 8/9 metri» (I-281). Senza il dato del
+    progettista si verifica con 8 m (78,45 kPa), e l'avviso dice che e' indicativo. Sul
+    giro di 32 m in MS 32×3 (21,0 kPa) basta; con le lunghezze quadruplicate, 128 m, il giro
+    perde 84,1 kPa e non basta: e' la «troppa distanza» del PO."""
+    modello, del_progetto = _modello(_villetta(lunghezze=LUNGHEZZE), catalogo)
+    (verifica,) = verifiche_della_prevalenza(modello, del_progetto)
+    assert verifica.assunta and verifica.prevalenza_utile_kpa == pytest.approx(8 * 9.80665)
+    assert not verifica.supera
+    assert avvisi_della_prevalenza(modello, del_progetto) == []
+    lontano = {chi: 4 * metri for chi, metri in LUNGHEZZE.items()}
+    modello, del_progetto = _modello(_villetta(lunghezze=lontano), catalogo)
+    (verifica,) = verifiche_della_prevalenza(modello, del_progetto)
+    assert verifica.totale_kpa == pytest.approx(84.14, abs=0.15) and verifica.supera
+    (avviso,) = avvisi_della_prevalenza(modello, del_progetto)
+    assert "8 m, indicativo del PO; il valore vero è la curva del manuale alla portata" in avviso
+
+
 def test_senza_la_richiesta_dei_diametri_non_si_verifica(catalogo: ComponentRegistry) -> None:
     testo = _villetta(pdc={"prevalenza_utile_kpa": 10}, lunghezze=LUNGHEZZE)
     del testo["diametri"]
@@ -209,11 +252,12 @@ def test_senza_la_richiesta_dei_diametri_non_si_verifica(catalogo: ComponentRegi
     assert verifiche_della_prevalenza(modello, del_progetto) == ()
 
 
-@pytest.mark.parametrize(("metri", "supera"), [(1.4, True), (1.5, False)])
+@pytest.mark.parametrize(("metri", "supera"), [(2.1, True), (2.2, False)])
 def test_la_prevalenza_in_metri_di_colonna_d_acqua(
     metri: float, supera: bool, catalogo: ComponentRegistry
 ) -> None:
-    """1,4 m c.a. sono 1,4 · 9,807 = 13,73 kPa, sotto i 14,17 del giro; 1,5 m sono 14,71."""
+    """2,1 m c.a. sono 2,1 · 9,807 = 20,59 kPa, sotto i 21,04 del giro in MS 32×3; 2,2 m
+    sono 21,57 (prima di I-279, in Øi 32 e Øi 25 d'acciaio, il giro era 14,17 kPa)."""
     modello, del_progetto = _modello(
         _villetta(pdc={"prevalenza_utile_m": metri}, lunghezze=LUNGHEZZE), catalogo
     )
@@ -242,7 +286,11 @@ def test_completa_e_disegna_dicono_l_avviso_e_il_grafo_completo_tiene_le_lunghez
     assert main(["completa", str(grafo), "--out", str(completo)], cartelle) == 0
     uscita = capsys.readouterr().out
     assert "Avvisi della prevalenza della pompa a bordo" in uscita
-    assert "GT-01: il giro primario piu' costoso (32,0 m di tubo, attraverso BOL-01) perde 14,2 kPa" in uscita
+    assert "GT-01: il giro primario piu' costoso (32,0 m di tubo, attraverso BOL-01) perde 21,0 kPa" in uscita
+    # L'attacco 1¼" della ThermaX 12 kW sul tubo MS 32×3: una riduzione, detta come
+    # informazione (I-281).
+    assert "Riduzioni agli attacchi delle macchine (informazione)" in uscita
+    assert 'GT-01, mandata: attacco 1¼", tubo MS 32×3 (1"): riduzione all\'attacco' in uscita
     tubi = json.loads(completo.read_text(encoding="utf-8"))["connections"]
     date = {
         tubo["id"]: tubo["lunghezza_m"]

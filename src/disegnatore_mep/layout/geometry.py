@@ -285,7 +285,7 @@ class DiametroSullaTavola(StrictModel):
 
 
 class NotaDellaLegenda(StrictModel):
-    """Una riga della legenda che spiega una scritta, non un simbolo: «Øi» (I-155)."""
+    """Una riga della legenda che spiega una scritta, non un simbolo: «MS», «DN», «Cu» (I-279)."""
 
     campione: str = Field(min_length=1)
     righe: list[str] = Field(min_length=1)
@@ -298,7 +298,7 @@ class NotaDellaLegenda(StrictModel):
     (collaudo T2 di REL-012, §3.9). Con «Vedi» nella colonna dei simboli e il resto in
     quella dei nomi si leggeva come un simbolo che si chiama «la tavola …». Allora
     `righe` porta gia' il campione in testa, e il campione non si scrive a parte.
-    `False` — le righe «Øi» e «Ø · L», che spiegano un campione — non si scrive."""
+    `False` — le righe dei materiali e «Ø · L», che spiegano un campione — non si scrive."""
 
     @model_serializer(mode="wrap")
     def _senza_la_frase_di_sempre(self, handler: SerializerFunctionWrapHandler) -> dict[str, Any]:
@@ -497,7 +497,7 @@ class SheetGeometry(StrictModel):
     """Le etichette del DN, una per tratto (REL-007). Facoltative e additive come
     la tabella."""
     note_della_legenda: list[NotaDellaLegenda] = Field(default_factory=list)
-    """Le righe della legenda che spiegano una scritta: «Øi» (REL-007, I-155)."""
+    """Le righe della legenda che spiegano una scritta: i materiali dei tubi (REL-007, I-279)."""
     tabelle: list[TabellaPosata] = Field(default_factory=list)
     """Le tabelle nelle zone del foglio (REL-012): le passa chi esegue il piano, le
     posa `graphics.tabelle`. Facoltative e additive come le altre."""

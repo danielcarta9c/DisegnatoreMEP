@@ -319,6 +319,7 @@ def _completa(args: argparse.Namespace, cartelle: Cartelle) -> int:
         for avviso in avvisi_del_manuale:
             print(f"  - {avviso}")
     _stampa_la_prevalenza(completo, dati.catalogo, cartelle)
+    _stampa_i_tubi(completo, dati.catalogo, cartelle, con_le_riduzioni=True)
 
     _stampa_le_scelte_del_progettista(modello, risultato.withheld, proposte, dati)
     _stampa_il_corredo_sull_esistente(completo, proposte)
@@ -358,6 +359,34 @@ def _stampa_la_prevalenza(modello: ProjectModel, catalogo: ComponentRegistry, ca
         print("\nAvvisi della prevalenza della pompa a bordo")
         for avviso in avvisi:
             print(f"  - {avviso}")
+
+
+def _stampa_i_tubi(
+    modello: ProjectModel, catalogo: ComponentRegistry, cartelle: Cartelle, con_le_riduzioni: bool = False
+) -> None:
+    """Il tubo del progettista piu' piccolo di quello del calcolo (I-279): un avviso, la
+    tavola scrive il suo. E, in `completa`, le riduzioni agli attacchi delle macchine
+    (I-281): un'informazione, non un avviso — il tubo lo sceglie la velocita'."""
+    from disegnatore_mep.diametri.costruttori import riduzioni_all_attacco
+    from disegnatore_mep.diametri.tratti import avvisi_dei_tubi
+    from disegnatore_mep.piano.vista import sigle_del_grafo_intero
+
+    if modello.diametri is None and not any(item.sezione for item in modello.connections):
+        return
+    sigle = sigle_del_grafo_intero(modello, catalogo, cartelle.naming)
+    avvisi = avvisi_dei_tubi(modello, catalogo, sigle)
+    if avvisi:
+        print("\nAvvisi dei tubi")
+        for avviso in avvisi:
+            print(f"  - {avviso}")
+    if not con_le_riduzioni:
+        return
+    riduzioni = riduzioni_all_attacco(modello, catalogo)
+    if riduzioni:
+        print("\nRiduzioni agli attacchi delle macchine (informazione)")
+        for item in riduzioni:
+            lato = "mandata" if "supply" in item.porta else "ritorno" if "return" in item.porta else item.porta
+            print(f"  - {sigle.get(item.macchina, item.macchina)}, {lato}: {item.in_parole}")
 
 
 def _stampa_le_scelte_del_progettista(
@@ -908,6 +937,7 @@ def _disegna(args: argparse.Namespace, cartelle: Cartelle) -> int:
     idrauliche = {item.id for item in modello.networks if item.domain is Domain.HYDRONIC}
     if any(item.network_id in idrauliche for item in modello.connections):
         _stampa_la_prevalenza(intero, catalogo_intero, cartelle)
+        _stampa_i_tubi(intero, catalogo_intero, cartelle)
 
     args.out.mkdir(parents=True, exist_ok=True)
     dxf = not args.senza_dxf and _ha_ezdxf()
@@ -1472,7 +1502,8 @@ def _distinta(args: argparse.Namespace, cartelle: Cartelle) -> int:
 
     if args.domande:
         return domande(
-            args.grafo, args.regole, cartelle.regole, cartelle.catalogo, cartelle.naming, fornitura=args.fornitura
+            args.grafo, args.regole, cartelle.regole, cartelle.catalogo, cartelle.naming, fornitura=args.fornitura,
+            cartella_dei_simboli=cartelle.simboli,
         )
     if args.out is None:
         raise ValueError("distinta: serve --out <cartella> (o --domande, che non scrive niente)")
@@ -1487,6 +1518,7 @@ def _distinta(args: argparse.Namespace, cartelle: Cartelle) -> int:
         fornitura=args.fornitura,
         report=args.report,
         lista=args.lista,
+        cartella_dei_simboli=cartelle.simboli,
     )
 
 

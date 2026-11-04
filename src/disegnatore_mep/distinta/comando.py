@@ -35,7 +35,7 @@ from pathlib import Path
 from .calcolo import Distinta, componi_la_distinta
 from .documento import documento_della_distinta, documento_della_lista
 from .domande import domande_in_parole
-from .grafo import sigle_dello_schema
+from .grafo import sigle_dello_schema, tubi_dello_schema
 from .impaginazione import scrivi_il_documento
 from .regole import ErroreDelleRegole, carica_regole, la_fornitura, regole_predefinite
 from .uscite import TABELLE_DEL_FOGLIO, scrivi_le_uscite, tabelle_scelte
@@ -73,6 +73,7 @@ def _componi(
     cartella_del_catalogo: Path,
     cartella_dei_nomi: Path,
     fornitura: str | None,
+    cartella_dei_simboli: Path | None = None,
 ) -> Distinta:
     percorso_delle_regole = regole or regole_predefinite(cartella_delle_regole, cartella_dei_nomi)
     if percorso_delle_regole is None:
@@ -91,6 +92,7 @@ def _componi(
         nomi_dei_fluidi(cartella_dei_nomi),
         sigle_dello_schema(dati, cartella_del_catalogo, cartella_dei_nomi),
         la_fornitura(regole_caricate, fornitura),
+        tubi_dello_schema(dati, cartella_del_catalogo, cartella_dei_simboli),
     )
 
 
@@ -101,9 +103,13 @@ def domande(
     cartella_del_catalogo: Path,
     cartella_dei_nomi: Path,
     fornitura: str | None = None,
+    cartella_dei_simboli: Path | None = None,
 ) -> int:
     """`--domande`: i dati da chiedere prima del primo lancio, in parole; nessun file."""
-    distinta = _componi(grafo, regole, cartella_delle_regole, cartella_del_catalogo, cartella_dei_nomi, fornitura)
+    distinta = _componi(
+        grafo, regole, cartella_delle_regole, cartella_del_catalogo, cartella_dei_nomi, fornitura,
+        cartella_dei_simboli,
+    )
     righe, quante = domande_in_parole(distinta)
     for riga in righe:
         print(riga)
@@ -121,9 +127,13 @@ def esegui(
     fornitura: str | None = None,
     report: Path | None = None,
     lista: bool = False,
+    cartella_dei_simboli: Path | None = None,
 ) -> int:
     tabelle = tabelle_scelte(sul_foglio)
-    distinta = _componi(grafo, regole, cartella_delle_regole, cartella_del_catalogo, cartella_dei_nomi, fornitura)
+    distinta = _componi(
+        grafo, regole, cartella_delle_regole, cartella_del_catalogo, cartella_dei_nomi, fornitura,
+        cartella_dei_simboli,
+    )
     scritti = scrivi_le_uscite(distinta, uscita, tabelle)
     documento, esito, perche = scrivi_il_documento(
         (documento_della_lista if lista else documento_della_distinta)(distinta), uscita, report

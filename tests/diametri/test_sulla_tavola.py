@@ -23,11 +23,20 @@ import ezdxf
 import pytest
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
-from disegnatore_mep.diametri.tratti import TrattoDelDiametro, tratti_da_etichettare
+from disegnatore_mep.diametri.scritte import (
+    ScrittaDelTratto,
+    detto_da_un_vicino,
+    tratti_da_scrivere,
+)
+from disegnatore_mep.diametri.tratti import TrattoDelDiametro
 from disegnatore_mep.graphics.dxf import LAYER_DIAMETRI, write_dxf
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.graphics.sheet import render_sheet
-from disegnatore_mep.layout.diametri import STACCO_DALLA_LINEA_MM, riquadro_del_diametro
+from disegnatore_mep.layout.diametri import (
+    STACCO_DALLA_LINEA_MM,
+    lato_del_tratto,
+    riquadro_del_diametro,
+)
 from disegnatore_mep.layout.geometry import SheetGeometry, zona_della_tabella
 from disegnatore_mep.layout.labels import text_width_mm
 from disegnatore_mep.model.project import ProjectModel
@@ -69,7 +78,9 @@ def tavola(
                 esito=esito,
                 foglio=esito.disegno.sheets[0],
                 senza=senza.disegno.sheets[0],
-                tratti=tratti_da_etichettare(con, catalogo),
+                # I tratti che la tavola scrive, con quelli fra due raccordi con lo
+                # stesso tubo di un tratto accanto segnati `ripetuto` (I-279).
+                tratti=tratti_da_scrivere(con, catalogo)[1],
             )
         return _TAVOLE[impianto]
 
@@ -95,6 +106,16 @@ def _segmenti(foglio: SheetGeometry, connessioni: frozenset[str] | None = None) 
     return trovati
 
 
+SENZA_POSTO: dict[str, set[tuple[str, str]]] = {
+    "5": {("secondario-mandata-b", "ventilconvettori")},
+    "6": {("rip-mandata-secondario", "fancoil")},
+}
+"""I tratti di strada principale che sulle tavole di prova **restano senza scritta**
+(I-279): «MS 32×3» e «DN 40 (1½")» sono lunghi una volta e mezza «Øi 32», e in questi
+due punti stretti non entrano ne' in linea ne' staccati. Il preflight
+lo dice (`DIAMETER_TAG_MISSING`, un avviso), e la sessione lo porta al PO con le tavole."""
+
+
 @pytest.mark.parametrize("impianto", IMPIANTI)
 def test_un_etichetta_per_tratto(impianto: str, tavola: Callable[[str], Tavola]) -> None:
     t = tavola(impianto)
@@ -106,16 +127,34 @@ def test_un_etichetta_per_tratto(impianto: str, tavola: Callable[[str], Tavola])
         per_tratto[chiave] += 1
     # REL-008 (I-161, I-162): un tratto di strada principale ha la sua etichetta,
     # accanto alla linea o — ultima spiaggia — staccata con freccia; quello di una
-    # strada secondaria ne ha al piu' una, e dove non c'e' posto si sacrifica.
+    # strada secondaria ne ha al piu' una, e dove non c'e' posto si sacrifica. I-279: cede
+    # anche il tratto che continua il tubo del vicino — fra due raccordi, o attraverso un
+    # volano in serie dalla stessa parte — se accanto alla linea non c'e' posto.
+    scritti = [item for item in t.tratti if per_tratto[item.connection_ids]]
+
+    def lato(item: TrattoDelDiametro | ScrittaDelTratto) -> bool | None:
+        return lato_del_tratto(item.connection_ids, t.foglio.routes)
+
+    cedono = {
+        item.connection_ids
+        for item in t.tratti
+        if not item.strada_principale or item.ripetuto or detto_da_un_vicino(item, scritti, lato)
+    }
+    senza_posto = {
+        (item.capi[0].component_id, item.capi[1].component_id)
+        for item in t.tratti
+        if item.connection_ids not in cedono and not per_tratto[item.connection_ids]
+    }
+    assert senza_posto == SENZA_POSTO.get(impianto, set())
     for item in t.tratti:
         quante = per_tratto[item.connection_ids]
-        assert quante == 1 if item.strada_principale else quante <= 1, (item.capi, quante)
+        assert quante <= 1, (item.capi, quante)
     staccate = [e for e in t.foglio.diametri if e.richiamo is not None]
-    principali = {item.connection_ids for item in t.tratti if item.strada_principale}
-    assert all(frozenset(e.connection_ids) in principali for e in staccate)
+    assert all(frozenset(e.connection_ids) not in cedono for e in staccate)
     scritte = {item.connection_ids: item.scritta for item in t.tratti}
     assert all(e.testo == scritte[frozenset(e.connection_ids)] for e in t.foglio.diametri)
-    assert not [r.code for r in t.esito.rilievi if r.code.startswith("DIAMETER_")]
+    mancanti = [r for r in t.esito.rilievi if r.code.startswith("DIAMETER_")]
+    assert [r.code for r in mancanti] == ["DIAMETER_TAG_MISSING"] * len(SENZA_POSTO.get(impianto, set()))
 
 
 @pytest.mark.parametrize("impianto", IMPIANTI)
@@ -205,8 +244,14 @@ def test_il_disegno_non_si_muove_e_senza_richiesta_non_c_e_niente(
     assert "diametri" not in t.senza.model_dump(mode="json")
     assert "note_della_legenda" not in t.senza.model_dump(mode="json")
     assert 'class="diameter"' not in render_sheet(t.senza, t.esito.frame, simboli)
-    assert t.foglio.note_della_legenda, "con il DN la legenda lo spiega (I-155)"
-    assert t.foglio.note_della_legenda[0].campione == "Øi"
+    assert t.foglio.note_della_legenda, "con il tubo la legenda lo spiega"
+    # I-279: la riga «Øi» (I-155) lascia il posto a quella del materiale dei tubi; la
+    # cascata dell'impianto 5 e' in acciaio.
+    materiale = {"DN": "diametro nominale acciaio", "MS": "multistrato, diametro esterno × spessore"}
+    campione = "DN" if impianto == "5" else "MS"
+    assert t.foglio.note_della_legenda[0].campione == campione
+    assert " ".join(t.foglio.note_della_legenda[0].righe) == materiale[campione]
+    assert all(nota.campione != "Øi" for nota in t.foglio.note_della_legenda)
 
 
 @pytest.mark.parametrize("impianto", ("1", "5"))

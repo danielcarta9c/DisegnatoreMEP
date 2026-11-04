@@ -197,7 +197,10 @@ def test_il_sanitario_prende_la_portata_di_progetto_delle_utenze(
     assert _tratto(tratti, "acquedotto", "bollitore").portata_m3h == pytest.approx(2)
     ricircolo = _tratto(tratti, "bollitore", "ricircolo-utenze")
     assert ricircolo.portata_m3h == pytest.approx(0.8)
-    assert ricircolo.diametro is not None and ricircolo.diametro.dn == 20
+    # Era Øi 20 (DN della serie, 15 mm interni a 1,26 m/s). Con il tubo vero (I-279), in
+    # acciaio: il DN 15 (½") ha 16,1 mm interni, e 0,8 m³/h ci vanno a 1,09 m/s ≤ 1,1.
+    assert ricircolo.diametro is not None and ricircolo.diametro.scritta == 'DN 15 (½")'
+    assert ricircolo.diametro.velocita_m_s == pytest.approx(1.092, abs=1e-3)
 
 
 def test_deterministico(modello: Costruttore, catalogo: ComponentRegistry) -> None:

@@ -1,4 +1,4 @@
-"""I numeri del manuale Shenling che la skill controlla (REL-011, D-223, D-226)."""
+"""I numeri del manuale Shenling che la skill controlla (REL-011, D-223, D-226, I-281)."""
 
 import json
 from pathlib import Path
@@ -7,7 +7,6 @@ from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.diametri.costruttori import (
     avvisi_del_costruttore,
     dati_del_modello,
-    dn_della_macchina,
 )
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.io.project_json import load_project
@@ -29,11 +28,16 @@ def _pdc(potenza: float, marca: str = "Shenling") -> ComponentInstance:
     )
 
 
-def test_l_attacco_e_il_dn_minimo() -> None:
-    assert dn_della_macchina(["gt-01"], {"gt-01": _pdc(6)}) == 25
-    assert dn_della_macchina(["gt-01"], {"gt-01": _pdc(15)}) == 32
-    assert dn_della_macchina(["gt-01"], {"gt-01": _pdc(15, "Daikin")}) is None
+def test_l_attacco_in_pollici() -> None:
+    """L'attacco non e' piu' un DN minimo (I-281, che supera D-223 punto 1): e' il
+    pollice della macchina, con cui si dice la riduzione."""
+    attacco_6 = dati_del_modello(_pdc(6))
+    attacco_15 = dati_del_modello(_pdc(15))
+    assert attacco_6 is not None and attacco_6.attacco == '1"'
+    assert attacco_15 is not None and attacco_15.attacco == '1¼"'
+    assert dati_del_modello(_pdc(15, "Daikin")) is None
     assert dati_del_modello(_pdc(11)) is None, "una taglia che il manuale non ha non si indovina"
+    assert attacco_15.prevalenza_indicativa_m == 8.0, "il valore basso degli «8/9 metri» del PO (I-281)"
 
 
 def test_sul_caso_reale_i_volani_bastano() -> None:

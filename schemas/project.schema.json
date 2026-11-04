@@ -389,6 +389,23 @@
           "default": false,
           "title": "Esistente",
           "type": "boolean"
+        },
+        "materiale_tubazioni": {
+          "anyOf": [
+            {
+              "enum": [
+                "multistrato",
+                "acciaio",
+                "rame"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Materiale Tubazioni"
         }
       },
       "required": [
@@ -853,6 +870,23 @@
       ],
       "default": null,
       "title": "Antigelo"
+    },
+    "materiale_tubazioni": {
+      "anyOf": [
+        {
+          "enum": [
+            "multistrato",
+            "acciaio",
+            "rame"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Materiale Tubazioni"
     }
   },
   "required": [
