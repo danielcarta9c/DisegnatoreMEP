@@ -175,6 +175,13 @@
           "title": "A Bordo",
           "type": "array"
         },
+        "non_a_bordo": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Non A Bordo",
+          "type": "array"
+        },
         "esistente": {
           "default": false,
           "title": "Esistente",
@@ -563,6 +570,27 @@
           ],
           "default": null,
           "title": "Livello"
+        },
+        "note_di_posa": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Note Di Posa",
+          "type": "array"
+        },
+        "note_tolte": {
+          "items": {
+            "enum": [
+              "isolamento",
+              "antigelo",
+              "sfiati",
+              "vaso",
+              "sonda"
+            ],
+            "type": "string"
+          },
+          "title": "Note Tolte",
+          "type": "array"
         }
       },
       "required": [

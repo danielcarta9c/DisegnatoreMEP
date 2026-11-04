@@ -11,9 +11,10 @@ posto sul foglio lo sgombra l'esecutore del piano (`layout.compose.sgombra_la_ta
 
 - **che cosa dice** (`note_di_posa`): al massimo cinque note, **solo nel progetto
   esecutivo-costruttivo** (`ProjectMetadata.livello`). Ciascuna la genera il suo
-  pezzo, ed esce solo se il pezzo e' sulla tavola: nessuna nota si scrive a mano,
-  e nel definitivo — o senza livello — il riquadro non esiste e la tavola resta
-  quella di prima, byte per byte;
+  pezzo, ed esce solo se il pezzo e' sulla tavola; il progettista ne aggiunge di sue,
+  che vengono prima e prendono il posto di quelle sullo stesso soggetto, o ne toglie
+  (REL-017, I-271). Nel definitivo — o senza livello — il riquadro non esiste e la
+  tavola resta quella di prima, byte per byte;
 - **quanto e' grande e dove sta** (`impagina_le_note`): in cima all'area del
   disegno, a destra della tabella, largo quanto serve fino a un massimo, e mai
   sopra la fascia della legenda;
@@ -39,7 +40,7 @@ from disegnatore_mep.layout.geometry import (
     RiquadroDelleNote,
     TabellaDelleApparecchiature,
 )
-from disegnatore_mep.model.project import ProjectModel
+from disegnatore_mep.model.project import ProjectModel, SoggettoDellaNota
 
 from .cartiglio import PT_MM, larghezza_mm
 from .frame import SheetFrame
@@ -98,6 +99,11 @@ NOTA_SONDA_DEL_VOLANO = "Sonda del volano (T_BT) nel pozzetto a metà altezza."
 IN_CASCATA = " In cascata sonde e comando solo sulla macchina principale."
 """Quello che la nota (5) aggiunge con due generatori o piu'."""
 
+SOGGETTI: tuple[SoggettoDellaNota, ...] = ("isolamento", "antigelo", "sfiati", "vaso", "sonda")
+"""Il soggetto di ciascuna delle cinque note, nell'ordine (REL-017, I-271): una nota del
+progettista che **comincia con questa parola** — «Isolamento: tratto interrato…» — prende il
+posto della nota generata, e `metadata.note_tolte` la toglie senza sostituirla."""
+
 MASSIMO_DELLE_NOTE = 5
 """Al massimo cinque (D-232): «non esageriamo ovviamente altrimenti diventa una tavola
 di tutte note» (I-263)."""
@@ -129,7 +135,12 @@ def note_di_posa(
     delle sue tubazioni. **Vuote nel definitivo**, o senza livello (D-232), e vuote
     su una tavola senza tubazioni d'acqua dell'impianto — la tavola dell'elettrico
     e del comando, una tavola dell'aria: le cinque note parlano tutte del circuito
-    dell'acqua. Ciascuna esce solo se il suo pezzo e' sulla tavola."""
+    dell'acqua. Ciascuna esce solo se il suo pezzo e' sulla tavola.
+
+    **Le note del progettista** (`metadata.note_di_posa`, REL-017, I-271) vengono prima,
+    nel suo ordine, sulle stesse tavole e solo nell'esecutivo; una sua nota che comincia
+    con il soggetto di una generata (`SOGGETTI`) ne prende il posto, e
+    `metadata.note_tolte` toglie una generata senza sostituirla. Il tetto resta cinque."""
     if modello.metadata.livello != ESECUTIVO:
         return []
     fluido = {rete.id: rete.medium for rete in modello.networks}
@@ -148,16 +159,35 @@ def note_di_posa(
         ]
 
     generatori = sull_acqua("heat_generation")
-    note = [NOTA_ISOLAMENTO]
+    generate: list[tuple[SoggettoDellaNota, str]] = [("isolamento", NOTA_ISOLAMENTO)]
     if any("frost_protection" in voce.functions for voce in voci):
-        note.append(NOTA_ANTIGELO)
+        generate.append(("antigelo", NOTA_ANTIGELO))
     if generatori:
-        note.append(NOTA_SFIATI_E_SCARICHI)
+        generate.append(("sfiati", NOTA_SFIATI_E_SCARICHI))
     if sull_acqua("expansion"):
-        note.append(NOTA_VASO)
+        generate.append(("vaso", NOTA_VASO))
     if generatori and any("thermal_storage" in voce.functions for voce in voci):
-        note.append(NOTA_SONDA_DEL_VOLANO + (IN_CASCATA if len(generatori) >= 2 else ""))
+        generate.append(
+            ("sonda", NOTA_SONDA_DEL_VOLANO + (IN_CASCATA if len(generatori) >= 2 else ""))
+        )
+    # Prima le note del progettista, nel suo ordine (I-271); poi le generate di cui non ha
+    # gia' scritto il soggetto, e che non ha tolto.
+    sue = list(modello.metadata.note_di_posa)
+    coperti = {soggetto_della_nota(item) for item in sue} | set(modello.metadata.note_tolte)
+    note = [*sue, *(testo for soggetto, testo in generate if soggetto not in coperti)]
     return note[:MASSIMO_DELLE_NOTE]
+
+
+def soggetto_della_nota(nota: str) -> str:
+    """La prima parola di una nota, in minuscolo e senza la punteggiatura che la segue:
+    «Isolamento: tratto interrato…» ha il soggetto «isolamento». E' con questa parola che
+    una nota del progettista prende il posto di una nota generata (`SOGGETTI`)."""
+    parola = ""
+    for carattere in nota.strip():
+        if not carattere.isalpha():
+            break
+        parola += carattere
+    return parola.lower()
 
 
 def _rientro_del_numero(quante: int, corpo_pt: float) -> float:
@@ -281,9 +311,11 @@ __all__ = [
     "NOTA_SFIATI_E_SCARICHI",
     "NOTA_SONDA_DEL_VOLANO",
     "NOTA_VASO",
+    "SOGGETTI",
     "TITOLO",
     "impagina_le_note",
     "note_di_posa",
+    "soggetto_della_nota",
     "svg_delle_note",
     "tratti_delle_note",
 ]
