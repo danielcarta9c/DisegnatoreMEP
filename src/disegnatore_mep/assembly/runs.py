@@ -526,8 +526,9 @@ def assemble(
         wanted = ordered(run)
         if [item.component_id for item in wanted] == list(run.component_ids):
             continue
-        for pipe in run.pipes:
-            connections.pop(pipe, None)
+        vecchie = [connections.pop(pipe) for pipe in run.pipes if pipe in connections]
+        dati_del_tratto = _dati_del_tratto(vecchie)
+        esistente = bool(vecchie) and all(item.esistente for item in vecchie)
         stops: list[PortRef] = [run.head]
         for item in wanted:
             stops.append(PortRef(component_id=item.component_id, port_id=item.entry))
@@ -539,9 +540,33 @@ def assemble(
                 network_id=run.network_id,
                 endpoint_a=stops[index],
                 endpoint_b=stops[index + 1],
+                esistente=esistente,
+                **(dati_del_tratto if index == 0 else {}),
             )
             connections[fresh.id] = fresh
     return project.model_copy(update={"connections": list(connections.values())})
+
+
+def _dati_del_tratto(tubazioni: Iterable[ConnectionModel]) -> dict[str, object]:
+    """Quello che il progettista ha scritto sulle tubazioni di una tratta, da tenere
+    quando la tratta si ricollega (I-270).
+
+    Riordinare i pezzi non cambia il tratto: la sua lunghezza resta la somma di
+    quelle date, e sezione e scritta restano le sue se sono una sola. Vanno sulla
+    prima tubazione nuova, come quando una regola spezza un tubo (`rules.apply`):
+    scritte due volte, la tavola le ripeterebbe e la distinta conterebbe due volte la
+    lunghezza. Prima si perdevano, e con loro le lunghezze per la verifica della
+    prevalenza."""
+    elenco = list(tubazioni)
+    dati: dict[str, object] = {}
+    lunghezze = [item.lunghezza_m for item in elenco if item.lunghezza_m is not None]
+    if lunghezze:
+        dati["lunghezza_m"] = float(sum(lunghezze))
+    for campo in ("sezione", "scritta"):
+        valori = {getattr(item, campo) for item in elenco if getattr(item, campo) is not None}
+        if len(valori) == 1:
+            (dati[campo],) = valori
+    return dati
 
 
 __all__ = ["AssemblyError", "Piece", "Run", "assemble", "ordered", "runs_of"]

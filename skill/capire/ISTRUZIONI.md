@@ -152,6 +152,7 @@ Regole di forma:
   | portata | `flow_rate_m3h` | un numero, in m³/h: `"flow_rate_m3h": 2.5` |
   | prevalenza | `head_kpa` oppure `head_m` | un numero, in kPa o in metri di colonna d'acqua, **nell'unità del testo** |
   | salto termico di progetto | `delta_t_k` | un numero, in kelvin: `"delta_t_k": 5` (§4.7) |
+  | prevalenza utile della pompa a bordo | `prevalenza_utile_kpa` oppure `prevalenza_utile_m` | un numero, sul generatore, in kPa o in metri di colonna d'acqua, **nell'unità del testo** (§4.7) |
   | marca | `marca` | il testo com'è scritto |
   | modello | `modello` | il testo com'è scritto: `"modello": "ECOcombi"` |
 
@@ -538,6 +539,19 @@ Il salto termico, se il testo dà le **temperature di mandata e di ritorno** di 
 circuito, è la loro differenza: «45/40 °C» è `"delta_t_k": 5`. È aritmetica sui dati del
 progettista, come il regime (§4.6). **Non scriverne uno «tipico»**: 5 K per una pompa di
 calore è un'abitudine, non un dato del testo.
+
+**La prevalenza della pompa a bordo.** Se il testo dà la **prevalenza utile** della pompa
+che la macchina porta dentro — quella che resta all'impianto, fuori dalla macchina, alla
+portata di progetto — scrivila sul generatore **nell'unità del testo**, come la prevalenza
+dei circolatori: `"prevalenza_utile_kpa": 45`, oppure `"prevalenza_utile_m": 4.5` se la dà
+in metri di colonna d'acqua. Con le **lunghezze** dei tratti del primario, `lunghezza_m` su ogni
+tubazione (§4.8), `completa` e `disegna` verificano il giro più costoso — dalla macchina
+al volano o al serpentino e ritorno — e **avvisano** se perde più di quella prevalenza:
+il DN non cambia, e che cosa fare lo decide il progettista. Senza la prevalenza o senza
+una lunghezza la verifica non si fa, e non si dice niente: **non scriverne una tipica**,
+e non chiederla se il progettista non parla di perdite di carico. Diglielo: oggi un tratto
+con `lunghezza_m` porta in tavola «L 12 m» **al posto** del DN calcolato, perché il dato
+del progettista vince sul conto (§4.8).
 
 **Quelli che mancano li chiedi in una voce sola** di `assumptions`, pezzo per pezzo, e la
 ripeti nella risposta: *«Per i diametri mancano: il salto termico della pompa di calore;

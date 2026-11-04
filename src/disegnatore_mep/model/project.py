@@ -135,6 +135,8 @@ CHIAVI_DEI_DATI_NUMERICI: dict[str, str] = {
     "head_kpa": "kPa",
     "head_m": "m c.a.",
     "delta_t_k": "K",
+    "prevalenza_utile_kpa": "kPa",
+    "prevalenza_utile_m": "m c.a.",
 }
 """I dati tecnici con un nome fisso, e l'unita' in cui si scrivono (REL-006).
 
@@ -150,7 +152,13 @@ non cambiargli il numero. Le legge la tabella delle apparecchiature
 di un'utenza, in kelvin: con `power_kw` da' la portata da cui il calcolatore dei
 diametri sceglie il DN (REL-007, D-193). Lo da' il progettista, e se manca
 «Capire» lo chiede (I-145): la tavola non lo scrive, perche' il dato che si legge
-e' il DN."""
+e' il DN.
+
+`prevalenza_utile_kpa` e' la **prevalenza utile della pompa a bordo** di un
+generatore, in kPa, alla portata di progetto — `prevalenza_utile_m` la stessa in metri
+di colonna d'acqua, come `head_m` —: con le `lunghezza_m` dei tratti, la skill
+verifica che il giro primario non costi di piu' (I-270, `diametri.perdite`). Non si
+scrive in tavola, e la tabella non la porta."""
 
 MARCA = "marca"
 """La marca di un pezzo, come il progettista l'ha data (I-144): un testo."""
