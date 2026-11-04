@@ -2,7 +2,12 @@
 
 import pytest
 
-from disegnatore_mep.vaso import DatiDelVaso, coefficiente_di_espansione, densita_dell_acqua, dimensiona_il_vaso
+from disegnatore_mep.vaso import (
+    DatiDelVaso,
+    coefficiente_di_espansione,
+    densita_dell_acqua,
+    dimensiona_il_vaso,
+)
 
 SHENLING = {"taratura_sicurezza_bar": 3.0, "pressione_minima_bar": 1.5, "pressione_di_riempimento_bar": 2.0}
 """ThermaX R290: valvola di sicurezza a 3 bar, almeno 1,5 bar per la portata, si riempie a
