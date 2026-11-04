@@ -378,6 +378,35 @@ class TabellaDelleApparecchiature(StrictModel):
         )
 
 
+class RiquadroDelleNote(StrictModel):
+    """Il riquadro «Note» in alto, a destra della tabella delle apparecchiature
+    (REL-011, D-231, D-232), gia' impaginato: dove sta, quanto e' grande, e le note
+    che porta, nell'ordine in cui si numerano.
+
+    Esce solo nel progetto esecutivo-costruttivo, con al massimo cinque note di
+    posa. Lo compone `graphics/note.py`; l'SVG e il DXF lo disegnano dalle stesse
+    misure, come la tabella."""
+
+    x_mm: FiniteFloat
+    y_mm: FiniteFloat
+    larghezza_mm: FiniteFloat = Field(gt=0)
+    altezza_mm: FiniteFloat = Field(gt=0)
+    riga_mm: FiniteFloat = Field(gt=0)
+    """L'altezza della riga del titolo: la stessa dell'intestazione della tabella."""
+    note: list[str] = Field(min_length=1, max_length=5)
+    """Il testo delle note, gia' con le sostituzioni del PDF (`pdf.per_winansi`)."""
+
+    @property
+    def riquadro(self) -> tuple[float, float, float, float]:
+        """`(sinistra, alto, destra, basso)`, in millimetri di carta."""
+        return (
+            self.x_mm,
+            self.y_mm,
+            self.x_mm + self.larghezza_mm,
+            self.y_mm + self.altezza_mm,
+        )
+
+
 class ColonnaDellaTabella(StrictModel):
     """Una colonna di una tabella nelle zone del foglio (REL-012)."""
 
@@ -467,6 +496,9 @@ class SheetGeometry(StrictModel):
     tabelle: list[TabellaPosata] = Field(default_factory=list)
     """Le tabelle nelle zone del foglio (REL-012): le passa chi esegue il piano, le
     posa `graphics.tabelle`. Facoltative e additive come le altre."""
+    note_di_posa: RiquadroDelleNote | None = None
+    """Il riquadro delle note di posa, a destra della tabella (REL-011, D-231,
+    D-232): solo nell'esecutivo. Facoltativo e additivo come la tabella."""
 
     @model_serializer(mode="wrap")
     def _senza_la_tabella_che_non_c_e(
@@ -475,10 +507,11 @@ class SheetGeometry(StrictModel):
         """Una tabella che non c'e' non si scrive, nemmeno come `null`, e cosi' le
         etichette del DN e le note della legenda quando non ce ne sono: le
         geometrie scritte prima di REL-006 e di REL-007 restano identiche byte
-        per byte."""
+        per byte. Lo stesso per il riquadro delle note di posa (REL-011)."""
         dati: dict[str, Any] = handler(self)
-        if dati.get("tabella") is None:
-            dati.pop("tabella", None)
+        for campo in ("tabella", "note_di_posa"):
+            if dati.get(campo) is None:
+                dati.pop(campo, None)
         for campo in ("diametri", "note_della_legenda", "tabelle"):
             if not dati.get(campo):
                 dati.pop(campo, None)
@@ -785,6 +818,16 @@ def zona_della_tabella(
         riquadro[1] - stacco_mm,
         riquadro[2] + stacco_mm,
         riquadro[3] + stacco_mm,
+    )
+
+
+def riquadri_in_alto(sheet: SheetGeometry) -> tuple[tuple[float, float, float, float], ...]:
+    """I riquadri che stanno in alto a sinistra sopra l'area del disegno: la tabella
+    delle apparecchiature e, nell'esecutivo, le note di posa alla sua destra (REL-011,
+    D-231). Il disegno non entra in nessuno dei due, allargato dello stesso stacco
+    (`zona_della_tabella`)."""
+    return tuple(
+        item.riquadro for item in (sheet.tabella, sheet.note_di_posa) if item is not None
     )
 
 

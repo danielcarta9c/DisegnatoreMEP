@@ -61,6 +61,7 @@ from disegnatore_mep.model.types import PortFlow
 from .cartiglio import CartiglioDellaTavola, disegna_cartiglio
 from .frame import Rect, SheetFrame
 from .glyphs import _DIRECTION
+from .note import tratti_delle_note
 from .registry import Symbol, SymbolRegistry
 from .sheet import (
     ARROW_HALF_WIDTH_MM,
@@ -81,7 +82,7 @@ from .sheet import (
     stati_della_tavola,
 )
 from .symbol import FlowGlyph, PortFace, StrokeWeight
-from .tabella import tratti_della_tabella
+from .tabella import TrattiDellaTabella, tratti_della_tabella
 from .tabelle import tratti_della_tabella_posata
 
 if TYPE_CHECKING:
@@ -721,14 +722,17 @@ class _Tavola:
         self.layer(LAYER_SIGLE, "Sigle e richiami", None, "none", thin)
         self.layer(LAYER_TESTI, "Testi e rimandi", None, "none", thin)
         self.layer(LAYER_LEGENDA, "Legenda", None, "none", thin)
-        if self.sheet.tabella is not None or self.sheet.tabelle:
-            # Le tabelle nelle zone (REL-012) stanno sullo stesso layer: sono anche
-            # loro «Schedules». Senza, la descrizione e' quella di sempre.
+        if self.sheet.tabella is not None or self.sheet.tabelle or self.sheet.note_di_posa:
+            # Le tabelle nelle zone (REL-012) e le note di posa (REL-011) stanno sullo
+            # stesso layer: sono anche loro «Schedules». Senza, la descrizione e'
+            # quella di sempre.
             descrizione = (
                 "Tabella delle apparecchiature"
                 if not self.sheet.tabelle
                 else "Tabelle della tavola: apparecchiature e tabelle nelle zone del foglio"
             )
+            if self.sheet.note_di_posa is not None:
+                descrizione = f"{descrizione}, e note di posa"
             self.layer(LAYER_TABELLA, descrizione, None, "none", thin)
         if self.sheet.diametri:
             scritte = any(
@@ -1158,7 +1162,16 @@ class _Tavola:
         spazio modello come la legenda, perche' e' parte dello schema."""
         if self.sheet.tabella is None:
             return
-        tratti = tratti_della_tabella(self.sheet.tabella, self.standard)
+        self._tratti_sul_layer_della_tabella(tratti_della_tabella(self.sheet.tabella, self.standard))
+
+    def note_di_posa(self) -> None:
+        """Il riquadro delle note di posa (REL-011, D-231), dalle stesse linee e dagli
+        stessi testi dell'SVG (`note.tratti_delle_note`), sul layer della tabella."""
+        if self.sheet.note_di_posa is None:
+            return
+        self._tratti_sul_layer_della_tabella(tratti_delle_note(self.sheet.note_di_posa, self.standard))
+
+    def _tratti_sul_layer_della_tabella(self, tratti: TrattiDellaTabella) -> None:
         for x1, y1, x2, y2 in tratti.linee:
             self.msp.add_line(self.p(x1, y1), self.p(x2, y2), dxfattribs={"layer": LAYER_TABELLA})
         for item in tratti.testi:
@@ -1379,6 +1392,7 @@ def write_dxf(
         tavola.diametri()
         tavola.legenda()
         tavola.tabella()
+        tavola.note_di_posa()
         tavola.tabelle()
         tavola.rimandi()
         _classi_in_ordine(tavola.doc)

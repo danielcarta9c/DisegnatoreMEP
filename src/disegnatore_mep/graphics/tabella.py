@@ -477,9 +477,15 @@ def svg_della_tabella(
     tabella: TabellaDelleApparecchiature, standard: GraphicStandard
 ) -> str:
     """La tabella nell'SVG della tavola: un gruppo, in nero come la legenda."""
-    tratti = tratti_della_tabella(tabella, standard)
+    return svg_dei_tratti(tratti_della_tabella(tabella, standard), "tabella-apparecchiature")
+
+
+def svg_dei_tratti(tratti: TrattiDellaTabella, classe: str) -> str:
+    """Linee e testi di una tabella come un gruppo SVG di quella classe: la tabella
+    delle apparecchiature e il riquadro delle note di posa (REL-011) si scrivono
+    allo stesso modo."""
     parti = [
-        f'<g class="tabella-apparecchiature" stroke="black" '
+        f'<g class="{classe}" stroke="black" '
         f'stroke-width="{tratti.spessore_mm:g}" fill="none">'
     ]
     parti.extend(
@@ -509,6 +515,7 @@ __all__ = [
     "formatta_il_dato",
     "impagina_la_tabella",
     "righe_della_tabella",
+    "svg_dei_tratti",
     "svg_della_tabella",
     "tabella_della_tavola",
     "tratti_della_tabella",

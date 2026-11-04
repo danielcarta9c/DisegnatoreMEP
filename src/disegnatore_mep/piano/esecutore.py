@@ -41,6 +41,7 @@ from disegnatore_mep.diametri.scritte import CAMPIONE_DELLA_LEGENDA as CAMPIONE_
 from disegnatore_mep.diametri.scritte import TESTO_DELLA_LEGENDA as TESTO_DELLA_SCRITTA
 from disegnatore_mep.diametri.scritte import tratti_da_scrivere
 from disegnatore_mep.graphics.frame import ORDINARY_FRAMES, SheetFrame
+from disegnatore_mep.graphics.note import impagina_le_note, note_di_posa
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.graphics.symbol import PortFace, SymbolManifest
 from disegnatore_mep.graphics.tabella import (
@@ -1021,13 +1022,33 @@ def esegui_piano(
     # entrerebbe. Le apparecchiature della tabella portano la loro sigla anche
     # sul disegno — quella che l'ingegnere ha scritto, o quella della famiglia
     # (D-097) — e i loro dati stanno nella tabella, non accanto al pezzo.
+    #
+    # **E le note di posa, a destra della tabella** (REL-011, D-231, D-232): solo
+    # nell'esecutivo, al massimo cinque, ciascuna dal suo pezzo sulla tavola. Il
+    # disegno fa spazio ai due riquadri insieme, e le scritte non entrano in nessuno
+    # dei due. Nel definitivo non ci sono, e il conto e' quello di prima.
     ostacoli: tuple[tuple[float, float, float, float], ...] = ()
     in_tabella: frozenset[str] = frozenset()
     tabella = tabella_della_tavola(modello, catalogo, naming, foglio, frame)
-    if tabella is not None:
+    delle_note = impagina_le_note(
+        note_di_posa(
+            modello,
+            catalogo,
+            (item.component_id for item in foglio.symbols),
+            (item.network_id for item in foglio.routes),
+        ),
+        tabella,
+        frame,
+    )
+    riquadri = [item.riquadro for item in (tabella, delle_note) if item is not None]
+    if riquadri:
         foglio = sgombra_la_tabella(
-            foglio, area, tabella.riquadro, frame.standard.grid_mm, SHEET_MARGIN_MIN_MM
+            foglio, area, riquadri[0], frame.standard.grid_mm, SHEET_MARGIN_MIN_MM, riquadri[1:]
         )
+        ostacoli = tuple(zona_della_tabella(item) for item in riquadri)
+    if delle_note is not None:
+        foglio = foglio.model_copy(update={"note_di_posa": delle_note})
+    if tabella is not None:
         codici = {riga.component_id: riga.codice for riga in tabella.righe if riga.codice}
         foglio = foglio.model_copy(
             update={
@@ -1040,7 +1061,6 @@ def esegui_piano(
                 ],
             }
         )
-        ostacoli = (zona_della_tabella(tabella.riquadro),)
         in_tabella = frozenset(riga.component_id for riga in tabella.righe)
 
     # **I pezzi fuori dall'acqua portano la loro sigla** (collaudo T1 di REL-012):

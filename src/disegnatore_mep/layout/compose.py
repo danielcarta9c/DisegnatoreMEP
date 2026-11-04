@@ -14,7 +14,7 @@ La partizione precede il layout: tagliare un disegno gia' disposto spezzerebbe
 circuiti in modo arbitrario (D-028).
 """
 
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass, field, replace
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
@@ -292,6 +292,7 @@ def sgombra_la_tabella(
     riquadro: Box,
     step_mm: float,
     margine_mm: float,
+    altri: Sequence[Box] = (),
 ) -> SheetGeometry:
     """Il disegno fa spazio alla tabella delle apparecchiature (REL-006).
 
@@ -307,14 +308,24 @@ def sgombra_la_tabella(
     dell'area; se non c'e', uno che lo tenga almeno dentro. **Se nemmeno cosi' il
     disegno esce dalla tabella, resta centrato**: la tabella si disegna lo
     stesso, e il preflight lo dice come rilievo bloccante — il foglio e'
-    troppo piccolo, e il formato lo sceglie il piano (D-151)."""
-    zona = zona_della_tabella(riquadro)
+    troppo piccolo, e il formato lo sceglie il piano (D-151).
+
+    **`altri`** sono gli altri riquadri in alto che il disegno lascia liberi allo
+    stesso modo: nell'esecutivo, le note di posa a destra della tabella (REL-011,
+    D-231). Senza, il conto e' quello di sempre."""
+    zone = [zona_della_tabella(item) for item in (riquadro, *altri)]
+
+    def dentro(box: Box) -> bool:
+        return any(_dentro(box, zona) for zona in zone)
+
     boxes = _ingombri_del_disegno(sheet)
-    if not any(_dentro(box, zona) for box in boxes):
+    if not any(dentro(box) for box in boxes):
         return sheet
     # Spostandosi verso destra e verso il basso, un riquadro che sta gia' tutto a
-    # destra o tutto sotto la zona non ci entra piu': si guardano solo gli altri.
-    vicini = [box for box in boxes if box[0] < zona[2] and box[1] < zona[3]]
+    # destra o tutto sotto le zone non ci entra piu': si guardano solo gli altri.
+    vicini = [
+        box for box in boxes if any(box[0] < zona[2] and box[1] < zona[3] for zona in zone)
+    ]
     destra = max(box[2] for box in boxes)
     basso = max(box[3] for box in boxes)
     for margine in (margine_mm, 0.0):
@@ -326,7 +337,7 @@ def sgombra_la_tabella(
         )
         for across, delta in candidati:
             if not any(
-                _dentro((box[0] + across, box[1] + delta, box[2] + across, box[3] + delta), zona)
+                dentro((box[0] + across, box[1] + delta, box[2] + across, box[3] + delta))
                 for box in vicini
             ):
                 return _translated(sheet, delta, across)
