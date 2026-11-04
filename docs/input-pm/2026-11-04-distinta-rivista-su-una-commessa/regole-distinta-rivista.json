@@ -1,0 +1,1778 @@
+{
+ "fascio": "distinta",
+ "file": {
+  "attivita.json": {
+   "id": "attivita",
+   "versione": "1.1.0",
+   "nota": "Le attività a corpo (sezione G), le varianti a prezzo unitario (V) e le voci generali di assistenze e opere del committente (F, Z), per dominio. Una voce esce se la sua condizione `se` è vera sul grafo: `voci` (c'è almeno un pezzo di una di queste voci di catalogo), `fluidi` (c'è almeno una tubazione di uno di questi fluidi), `sempre`. Nei testi, `{conta.<voce>}` è il numero dei pezzi di quella voce e `{tratte.<fluido>}` il numero dei tratti di quel fluido con una lunghezza da quotare. `{fornitura.<scelta>}` è il testo della scelta dell'offerta (`distinta.json`, fornitura): «con Nove C», «fornite da Nove C».",
+   "voci": [
+    {
+     "id": "chiusure-e-ripristini",
+     "sezione": "Z",
+     "fornitura": "opere_edili",
+     "testo": "Chiusura e ripristino di fori, tracce e passaggi",
+     "um": "a corpo",
+     "se": {
+      "sempre": true
+     },
+     "fonte": "kit AA-01: lavoro/dimensionamento.py, voce Z.7; REVISIONE-INDIPENDENTE.md rilievo 11 (l'offerta esclude chiusure e ripristini)",
+     "fonte_in_parole": "regola Nove C per le offerte a corpo (aperture all'installatore, chiusure a chi fa le opere edili)",
+     "perche": "Le aperture sono dell'installatore, chiusure e ripristini del committente: va scritto, o diventa una lite."
+    },
+    {
+     "id": "posa-unita-interna",
+     "sezione": "G",
+     "testo": "Posa dell'unità interna in controsoffitto su sospensioni antivibranti, con il plenum di zona flangiato sulla mandata e il plenum di ripresa.",
+     "um": "a corpo",
+     "se": {
+      "voci": [
+       "ducted-indoor-unit"
+      ]
+     },
+     "fonte": "revisione [commessa aria-aria] del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+     "fonte_in_parole": "regola Nove C rivista sulla commessa [commessa aria-aria]",
+     "perche": "La posa delle macchine fornite da Nove C è manodopera dell'installatore, a corpo."
+    },
+    {
+     "id": "posa-unita-esterna",
+     "sezione": "G",
+     "testo": "Posa dell'unità esterna su staffe antivibranti, con gli spazi minimi del manuale (portico sopra l'unità); canalina esterna e scarico dell'unità esterna.",
+     "um": "a corpo",
+     "se": {
+      "voci": [
+       "split-outdoor-unit"
+      ]
+     },
+     "fonte": "revisione [commessa aria-aria] del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+     "fonte_in_parole": "regola Nove C rivista sulla commessa [commessa aria-aria]",
+     "perche": "Come sopra."
+    },
+    {
+     "id": "linee-frigorifere-e-prove",
+     "sezione": "G",
+     "testo": "Linee frigorifere: posa e cartelle; prova in azoto alla pressione del manuale del costruttore per 24 h, con verbale, prima della chiusura del controsoffitto, poi circuito a pressione ridotta con manometro fino al secondo accesso; vuoto max. 500 micron con prova di tenuta del vuoto, apertura rubinetti, registrazione F-Gas. Nessuna carica aggiuntiva: linee entro la lunghezza precaricata.",
+     "um": "a corpo",
+     "se": {
+      "fluidi": [
+       "refrigerant_liquid",
+       "refrigerant_gas"
+      ]
+     },
+     "fonte": "revisione [commessa aria-aria] del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+     "fonte_in_parole": "regola Nove C rivista sulla commessa [commessa aria-aria]",
+     "perche": "La tenuta si prova prima di chiudere il controsoffitto: dopo, una perdita costa la demolizione. Il manometro fino al secondo accesso dice se il circuito ha tenuto nel frattempo."
+    },
+    {
+     "id": "distribuzione-aria",
+     "sezione": "G",
+     "testo": "Distribuzione aria: {tratte.supply_air} rami flessibili interi dal plenum alle bocchette, senza curve rigide: curve del flessibile ampie (raggio in asse non inferiore a un diametro), senza schiacciamenti né anse; UI e plenum arretrati verso il portico quanto serve a curvare ampi all'uscita delle serrande; plenum porta-bocchetta, sostegni e sigillature; bocche protette fino alla posa delle bocchette.",
+     "um": "a corpo",
+     "se": {
+      "fluidi": [
+       "supply_air"
+      ]
+     },
+     "fonte": "revisione [commessa aria-aria] del 04/11/2026 (flessibili senza curve rigide, indicazione del PO)",
+     "fonte_in_parole": "regola Nove C rivista sulla commessa [commessa aria-aria]",
+     "perche": "Le bocche aperte in cantiere si riempiono di polvere, che poi esce dalle bocchette."
+    },
+    {
+     "id": "scarico-condensa-e-prova",
+     "sezione": "G",
+     "testo": "Scarico condensa con sifone e allaccio allo scarico; prova di scarico e della pompa prima della chiusura del controsoffitto.",
+     "um": "a corpo",
+     "se": {
+      "fluidi": [
+       "condensate"
+      ]
+     },
+     "fonte": "kit AA-01: lavoro/dimensionamento.py, ATTIVITA[4]; REVISIONE-INDIPENDENTE.md rilievo 14",
+     "fonte_in_parole": "regola Nove C per le offerte a corpo",
+     "perche": "Come la tenuta: la condensa si prova a controsoffitto aperto."
+    },
+    {
+     "id": "linee-elettriche-e-comandi",
+     "sezione": "G",
+     "testo": "Linee elettriche dedicate dal quadro, collegamento fra le unità, linee di comando e bus; posa di termostati e comandi a parete.",
+     "um": "a corpo",
+     "se": {
+      "fluidi": [
+       "power_supply",
+       "interconnection",
+       "control_bus"
+      ]
+     },
+     "fonte": "kit AA-01: lavoro/dimensionamento.py, ATTIVITA[5]",
+     "fonte_in_parole": "regola Nove C per le offerte a corpo",
+     "perche": "La posa e i collegamenti del materiale della sezione E."
+    },
+    {
+     "id": "messa-in-servizio",
+     "sezione": "G",
+     "testo": "Messa in servizio {fornitura.messa_in_servizio}, al secondo accesso: taratura automatica della prevalenza dell'unità interna con tutte le serrande aperte e il filtro pulito e misura delle portate per zona, configurazione della zonizzazione e dei comandi, app; collaudo con verbale.",
+     "um": "a corpo",
+     "se": {
+      "voci": [
+       "ducted-indoor-unit",
+       "split-outdoor-unit"
+      ]
+     },
+     "fonte": "revisione [commessa aria-aria] del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+     "fonte_in_parole": "regola Nove C rivista sulla commessa [commessa aria-aria]",
+     "perche": "La prevalenza si regola sulla rete vera, e le portate misurate sono la prova che l'impianto fa quello che promette."
+    },
+    {
+     "id": "dico-elettrico",
+     "sezione": "G",
+     "testo": "Dichiarazione di conformità D.M. 37/2008, art. 1 lettera a) (impianti elettrici), con lo schema del quadro aggiornato e gli allegati.",
+     "um": "a corpo",
+     "se": {
+      "fluidi": [
+       "power_supply"
+      ]
+     },
+     "fonte": "kit AA-01: lavoro/dimensionamento.py, ATTIVITA[7]; REVISIONE-INDIPENDENTE.md rilievo 16 (due DiCo)",
+     "fonte_in_parole": "D.M. 37/2008",
+     "perche": "Le linee dedicate sono un impianto elettrico: la sua dichiarazione è distinta da quella della climatizzazione."
+    },
+    {
+     "id": "dico-climatizzazione",
+     "sezione": "G",
+     "testo": "Dichiarazione di conformità D.M. 37/2008, art. 1 lettera c) (impianti di climatizzazione), con allegati; documenti per libretto di impianto, catasto regionale e F-Gas.",
+     "um": "a corpo",
+     "se": {
+      "fluidi": [
+       "refrigerant_liquid",
+       "refrigerant_gas",
+       "supply_air"
+      ]
+     },
+     "fonte": "kit AA-01: lavoro/dimensionamento.py, ATTIVITA[7]; REVISIONE-INDIPENDENTE.md rilievo 16",
+     "fonte_in_parole": "D.M. 37/2008",
+     "perche": "Come sopra."
+    },
+    {
+     "id": "cantiere",
+     "sezione": "G",
+     "testo": "Cantiere: POS e oneri della sicurezza (presenza dell'impresa del Committente), trabattello e mezzi di sollevamento.",
+     "um": "a corpo",
+     "se": {
+      "sempre": true
+     },
+     "fonte": "kit AA-01: lavoro/dimensionamento.py, ATTIVITA[8]; REVISIONE-INDIPENDENTE.md rilievo 13",
+     "fonte_in_parole": "regola Nove C per le offerte a corpo",
+     "perche": "Mancavano nella prima stesura del kit: sono costi veri dell'installatore, e se non sono a corpo diventano extra."
+    },
+    {
+     "id": "custodia-e-protezioni",
+     "sezione": "G",
+     "testo": "Trasporto, ricevimento e custodia delle apparecchiature {fornitura.apparecchiature} fino al collaudo; protezioni delle macchine e delle bocche durante le opere edili.",
+     "um": "a corpo",
+     "se": {
+      "voci": [
+       "split-outdoor-unit",
+       "ducted-indoor-unit",
+       "zoning-plenum-5",
+       "zoning-plenum-2",
+       "zoning-plenum-3",
+       "zoning-plenum-4",
+       "zoning-plenum-6"
+      ]
+     },
+     "fonte": "kit AA-01: lavoro/dimensionamento.py, ATTIVITA[9]; REVISIONE-INDIPENDENTE.md rilievo 13",
+     "fonte_in_parole": "regola Nove C per le offerte a corpo",
+     "perche": "Le macchine di Nove C stanno in cantiere settimane prima della posa."
+    },
+    {
+     "id": "pulizia-e-smaltimenti",
+     "sezione": "G",
+     "testo": "Pulizia finale e smaltimento di imballi e residui di lavorazione.",
+     "um": "a corpo",
+     "se": {
+      "sempre": true
+     },
+     "fonte": "kit AA-01: lavoro/dimensionamento.py, ATTIVITA[10]; REVISIONE-INDIPENDENTE.md rilievo 13",
+     "fonte_in_parole": "regola Nove C per le offerte a corpo",
+     "perche": "Come sopra."
+    },
+    {
+     "id": "variante-linea-frigorifera",
+     "sezione": "V",
+     "testo": "Linea frigorifera completa oltre la quantità di computo (coppia pre-isolata, cavo di collegamento, canalina, refrigerante)",
+     "um": "m",
+     "se": {
+      "fluidi": [
+       "refrigerant_liquid",
+       "refrigerant_gas"
+      ]
+     },
+     "fonte": "kit AA-01: lavoro/dimensionamento.py, VARIANTI V.1; REVISIONE-INDIPENDENTE.md rilievi 10 e 20",
+     "fonte_in_parole": "regola Nove C per le varianti a prezzo unitario",
+     "perche": "Se l'unità esterna va su un'altra facciata, il metro in più ha già un prezzo, fissato prima."
+    },
+    {
+     "id": "variante-flessibile",
+     "sezione": "V",
+     "testo": "Flessibile posato oltre la quantità di computo, con fascette e sostegni",
+     "um": "m",
+     "se": {
+      "fluidi": [
+       "supply_air"
+      ]
+     },
+     "fonte": "kit AA-01: lavoro/dimensionamento.py, VARIANTI V.2",
+     "fonte_in_parole": "regola Nove C per le varianti a prezzo unitario",
+     "perche": "Come sopra."
+    },
+    {
+     "id": "variante-cavo",
+     "sezione": "V",
+     "testo": "Cavo di alimentazione in corrugato oltre la quantità di computo, stessa sezione",
+     "um": "m",
+     "se": {
+      "fluidi": [
+       "power_supply"
+      ]
+     },
+     "fonte": "kit AA-01: lavoro/dimensionamento.py, VARIANTI V.3",
+     "fonte_in_parole": "regola Nove C per le varianti a prezzo unitario",
+     "perche": "La posizione del quadro si conferma in sopralluogo."
+    },
+    {
+     "id": "variante-accesso",
+     "sezione": "V",
+     "testo": "Accesso aggiuntivo in cantiere (oltre i due previsti)",
+     "um": "n",
+     "se": {
+      "sempre": true
+     },
+     "fonte": "kit AA-01: lavoro/dimensionamento.py, VARIANTI V.4; REVISIONE-INDIPENDENTE.md rilievo 14 (terzo accesso)",
+     "fonte_in_parole": "regola Nove C per le varianti a prezzo unitario",
+     "perche": "Il prezzo a corpo vale per due accessi: posa con le prove, poi messa in servizio."
+    },
+    {
+     "id": "variante-centralino",
+     "sezione": "V",
+     "testo": "Centralino aggiuntivo 8 moduli, se il quadro non ha i moduli liberi per le protezioni nuove",
+     "um": "n",
+     "se": {
+      "voci": [
+       "electrical-panel"
+      ]
+     },
+     "fonte": "kit AA-01: lavoro/dimensionamento.py, VARIANTI V.5; REVISIONE-INDIPENDENTE.md rilievo 12",
+     "fonte_in_parole": "regola Nove C per le varianti a prezzo unitario",
+     "perche": "Lo spazio nel quadro esistente si vede solo in sopralluogo."
+    },
+    {
+     "id": "variante-basamento",
+     "sezione": "V",
+     "testo": "Basamento a terra con piedini antivibranti al posto delle staffe dell'unità esterna, se la posizione lo richiede",
+     "um": "n",
+     "se": {
+      "sempre": true
+     },
+     "fonte": "revisione [commessa aria-aria] del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+     "fonte_in_parole": "regola Nove C rivista sulla commessa [commessa aria-aria]",
+     "perche": "Il prezzo a corpo vale per due accessi: posa con le prove, poi messa in servizio."
+    },
+    {
+     "id": "variante-cavo-scaldante",
+     "sezione": "V",
+     "testo": "Cavo scaldante autoregolante sul tratto esterno dello scarico dell'unità esterna, con collegamento elettrico",
+     "um": "m",
+     "se": {
+      "sempre": true
+     },
+     "fonte": "revisione [commessa aria-aria] del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+     "fonte_in_parole": "regola Nove C rivista sulla commessa [commessa aria-aria]",
+     "perche": "Il prezzo a corpo vale per due accessi: posa con le prove, poi messa in servizio."
+    }
+   ]
+  },
+  "corredo.json": {
+   "id": "corredo",
+   "versione": "1.1.0",
+   "nota": "Il corredo di posa di ogni voce del catalogo, per id di voce (`definition_id` del pezzo). Il catalogo non si tocca: il corredo sta qui. `apparecchiatura`: il pezzo è una macchina fornita da Nove C e va nella sezione A, una riga per marca e modello (un pezzo con la proprietà `compreso_in` è nella fornitura di un altro e non ha riga sua). `fornitura`: chi la fornisce, una scelta dell'offerta di `distinta.json` («opere_edili», «bocchette_e_griglie») o «committente»; senza, l'installatore. `per_locale` conta una volta per locale servito (il dato `locale` del pezzo, o la sua etichetta), e niente per un locale con `varco`. `passante`: il pezzo sta in mezzo a una linea (sezionatore, sifone), e il tratto lo attraversa. `voci`: il materiale e le opere che il pezzo porta con sé; `calcolo` è `per_pezzo` (n per pezzo) o `per_linea` (n per ogni tratto di quel fluido che arriva al pezzo). Nei testi, `{proprieta}` è un dato del progettista sul pezzo (o la `sezione` del tratto che gli arriva): se manca, il testo dice DA DEFINIRE e la distinta fa la domanda. **Copre l'aria-aria e l'elettrico del kit AA-01; le voci idroniche non hanno corredo**: escono nella sezione X, DA DEFINIRE, finché il PO non decide il corredo (le regole contro il manuale Shenling sono REL-011).",
+   "voci": {
+    "split-outdoor-unit": {
+     "nome": "Unità esterna split a pompa di calore",
+     "apparecchiatura": true,
+     "fonte": "kit AA-01: lavoro/dimensionamento.py, voci A.1, C.5, C.6, C.8, C.9, F.1; REVISIONE-INDIPENDENTE.md rilievo 18",
+     "fonte_in_parole": "regola Nove C per la posa dell'unità esterna",
+     "perche": "L'unità esterna sta fuori: porta con sé il foro nella parete esterna, la canalina delle linee, le staffe e lo scarico della sua condensa.",
+     "voci": [
+      {
+       "id": "carotaggio-parete-esterna",
+       "sezione": "F",
+       "testo": "Carotaggio parete esterna Ø125 con guaina passante e sigillatura (linee frigo, cavo di collegamento, alimentazione dell'unità esterna)",
+       "um": "n",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 1
+       },
+       "fonte": "revisione [commessa aria-aria] del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+       "fonte_in_parole": "regola Nove C rivista sulla commessa [commessa aria-aria]",
+       "perche": "Le linee frigorifere e il cavo di collegamento escono dall'involucro una volta."
+      },
+      {
+       "id": "canalina-esterna",
+       "sezione": "C",
+       "testo": "Canalina coprilinee esterna 110×75 (linee frigo isolate, cavo di collegamento, alimentazione dell'unità esterna)",
+       "um": "m",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 4
+       },
+       "fonte": "revisione [commessa aria-aria] del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+       "fonte_in_parole": "regola Nove C rivista sulla commessa [commessa aria-aria]",
+       "perche": "Il tratto a vista sulla facciata, dal foro all'unità esterna."
+      },
+      {
+       "id": "accessori-canalina",
+       "sezione": "C",
+       "testo": "Accessori canalina: curva 2, terminale a muro 1, giunto 2",
+       "um": "kit",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 1
+       },
+       "fonte": "kit AA-01: lavoro/dimensionamento.py, voce C.6; REVISIONE-INDIPENDENTE.md rilievo 18 («canalina con accessori a numero»)",
+       "fonte_in_parole": "regola Nove C per la posa dell'unità esterna",
+       "perche": "Una canalina senza curve e terminali non si chiude."
+      },
+      {
+       "id": "staffe-unita-esterna",
+       "sezione": "S",
+       "testo": "Staffe a parete per unità esterna, portata almeno doppia del peso della macchina, con tasselli chimici e antivibranti; scostamento dalla parete min. 150 mm",
+       "um": "kit",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 1
+       },
+       "fonte": "revisione [commessa aria-aria] del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+       "fonte_in_parole": "regola Nove C rivista sulla commessa [commessa aria-aria]",
+       "perche": "Nota: o piedini a terra, secondo la posizione."
+      },
+      {
+       "id": "scarico-condensa-unita-esterna",
+       "sezione": "D",
+       "testo": "Scarico dell'unità esterna (sbrinamento): raccordo sul foro di scarico Ø26, tappi sui fori non usati, tubo Ø25 in pendenza fino a pluviale o pozzetto",
+       "um": "m",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 4
+       },
+       "fonte": "revisione [commessa aria-aria] del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+       "fonte_in_parole": "regola Nove C rivista sulla commessa [commessa aria-aria]",
+       "perche": "In riscaldamento l'unità esterna sbrina e scarica acqua: senza scarico gela sul marciapiede."
+      },
+      {
+       "id": "potenza-contrattuale",
+       "sezione": "Z",
+       "fornitura": "opere_edili",
+       "testo": "Potenza contrattuale adeguata all'unità esterna (MCA 19,6 A) e alle altre utenze, prima della messa in servizio",
+       "um": "a corpo",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 1
+       },
+       "fonte": "revisione [commessa aria-aria] del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+       "fonte_in_parole": "regola Nove C rivista sulla commessa [commessa aria-aria]",
+       "perche": "L'unità esterna assorbe fino a 19,6 A (MCA): con le altre utenze la potenza del contatore va verificata."
+      }
+     ]
+    },
+    "ducted-indoor-unit": {
+     "nome": "Unità interna canalizzata ad espansione diretta",
+     "apparecchiatura": true,
+     "fonte": "kit AA-01: lavoro/dimensionamento.py, voci A.2, B.4, B.10, D.2, Z.1, Z.2; REVISIONE-INDIPENDENTE.md rilievi 4, 6",
+     "fonte_in_parole": "regola Nove C per la posa dell'unità interna canalizzata",
+     "perche": "L'unità interna sta appesa in controsoffitto: sospensioni, giunto sulla ripresa, raccordo della condensa, e il controsoffitto con la botola che sono del committente.",
+     "voci": [
+      {
+       "id": "sospensione-unita-interna",
+       "sezione": "S",
+       "testo": "Sospensione dell'unità interna: 4 barre filettate M10, ancoranti per carichi sospesi su laterocemento, dadi, rondelle e antivibranti",
+       "um": "kit",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 1
+       },
+       "fonte": "revisione [commessa aria-aria] del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+       "fonte_in_parole": "regola Nove C rivista sulla commessa [commessa aria-aria]",
+       "perche": "Quattro punti di sospensione per la macchina, con antivibrante."
+      },
+      {
+       "id": "giunto-antivibrante-ripresa",
+       "sezione": "B",
+       "testo": "Giunto antivibrante in tela fra unità interna e plenum di ripresa",
+       "um": "n",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 1
+       },
+       "fonte": "kit AA-01: lavoro/dimensionamento.py, voce B.4",
+       "fonte_in_parole": "regola Nove C per la posa dell'unità interna canalizzata",
+       "perche": "La vibrazione del ventilatore non deve passare al plenum di ripresa e alla griglia."
+      },
+      {
+       "id": "raccordo-condensa-unita-interna",
+       "sezione": "D",
+       "testo": "Raccordo di adattamento dall'attacco condensa dell'unità interna ({attacco_condensa}) al tubo di scarico, con fascetta",
+       "um": "n",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 1
+       },
+       "fonte": "kit AA-01: lavoro/dimensionamento.py, voce D.2; REVISIONE-INDIPENDENTE.md rilievo 6",
+       "fonte_in_parole": "scheda tecnica dell'unità interna (attacco della condensa)",
+       "perche": "L'attacco della macchina (VP20 nel caso) non è il diametro del PVC: senza il raccordo lo scarico non si collega. L'attacco è un dato di macchina del progettista (`attacco_condensa`)."
+      },
+      {
+       "id": "controsoffitto-zona-macchina",
+       "sezione": "Z",
+       "fornitura": "opere_edili",
+       "testo": "Controsoffitto in zona unità interna e plenum: altezza libera ≥ 35 cm sotto il solaio",
+       "um": "a corpo",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 1
+       },
+       "fonte": "kit AA-01: lavoro/dimensionamento.py, voce Z.1 (altezza della FBA60A9 245 mm più sospensioni e pendenza della condensa)",
+       "fonte_in_parole": "regola Nove C per la posa dell'unità interna canalizzata (ingombro della macchina)",
+       "perche": "Senza l'altezza libera la macchina non entra: è un'opera del committente da coordinare prima della gara."
+      },
+      {
+       "id": "botola-di-ispezione",
+       "sezione": "Z",
+       "fornitura": "opere_edili",
+       "testo": "Botola di ispezione ≥ 600×600 sotto la macchina (filtro, pompa, scheda)",
+       "um": "n",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 1
+       },
+       "fonte": "kit AA-01: lavoro/dimensionamento.py, voce Z.2",
+       "fonte_in_parole": "regola Nove C per la posa dell'unità interna canalizzata",
+       "perche": "Filtro, pompa della condensa e scheda si raggiungono da sotto."
+      }
+     ]
+    },
+    "zoning-plenum-5": {
+     "nome": "Plenum motorizzato di zona a cinque serrande",
+     "apparecchiatura": true,
+     "fonte": "kit AA-01: lavoro/dimensionamento.py, voci A.3, B.10, B.11, Z.2",
+     "fonte_in_parole": "regola Nove C per la posa del plenum di zona",
+     "perche": "Il plenum di zona è appeso accanto alla macchina e si ispeziona per i motori delle serrande.",
+     "voci": [
+      {
+       "id": "sospensione-plenum-di-zona",
+       "sezione": "S",
+       "testo": "Sospensione del plenum motorizzato (flangiato sulla mandata dell'unità interna): 4 barre filettate M10 con ancoranti, dadi e antivibranti",
+       "um": "kit",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 1
+       },
+       "fonte": "revisione [commessa aria-aria] del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+       "fonte_in_parole": "regola Nove C rivista sulla commessa [commessa aria-aria]",
+       "perche": "Il plenum (1425 mm nel caso) non si regge sulla bocca della macchina."
+      },
+      {
+       "id": "isolamento-raccordi-plenum",
+       "sezione": "B",
+       "testo": "Isolamento elastomerico adesivo 13 mm per manicotti, raccordi, derivazione e plenum",
+       "um": "rotolo",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 2
+       },
+       "fonte": "revisione [commessa aria-aria] del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+       "fonte_in_parole": "regola Nove C rivista sulla commessa [commessa aria-aria]",
+       "perche": "I raccordi rigidi fra macchina, plenum e derivazione fanno condensa se non si isolano."
+      },
+      {
+       "id": "botola-di-ispezione",
+       "sezione": "Z",
+       "fornitura": "opere_edili",
+       "testo": "Botola di ispezione ≥ 600×600 sotto la macchina (filtro, pompa, scheda)",
+       "um": "n",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 1
+       },
+       "fonte": "kit AA-01: lavoro/dimensionamento.py, voce Z.2 («sotto UI … e sotto plenum e centrale», n 2)",
+       "fonte_in_parole": "regola Nove C per la posa del plenum di zona",
+       "perche": "I motori delle serrande e la centrale si raggiungono da sotto."
+      },
+      {
+       "id": "copertura-wifi",
+       "sezione": "Z",
+       "fornitura": "opere_edili",
+       "testo": "Copertura Wi-Fi in zona plenum e centrale di zona, per la configurazione e l'app",
+       "um": "a corpo",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 1
+       },
+       "fonte": "revisione [commessa aria-aria] del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+       "fonte_in_parole": "regola Nove C rivista sulla commessa [commessa aria-aria]",
+       "perche": "La centrale di zona si configura e si comanda da app via Wi-Fi."
+      }
+     ]
+    },
+    "zoning-plenum-2": {
+     "nome": "Plenum motorizzato di zona a due serrande",
+     "apparecchiatura": true,
+     "fonte": "kit AA-01: lavoro/dimensionamento.py, voci A.3, B.10, B.11, Z.2",
+     "fonte_in_parole": "regola Nove C per la posa del plenum di zona",
+     "perche": "Il plenum di zona è appeso accanto alla macchina e si ispeziona per i motori delle serrande.",
+     "voci": [
+      {
+       "id": "kit-sospensione",
+       "sezione": "B",
+       "testo": "Kit sospensione: barra filettata M10, tassello per solaio in laterocemento, antivibrante",
+       "um": "n",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 4
+       },
+       "fonte": "kit AA-01: RAPPORTO.md §7 («kit sospensione: UI 4, plenum 4, ripresa 2»)",
+       "fonte_in_parole": "regola Nove C per la posa del plenum di zona",
+       "perche": "Il plenum (1425 mm nel caso) non si regge sulla bocca della macchina."
+      },
+      {
+       "id": "isolamento-raccordi-plenum",
+       "sezione": "B",
+       "testo": "Isolamento elastomerico adesivo per raccordi e plenum",
+       "um": "rotolo",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 1
+       },
+       "fonte": "kit AA-01: lavoro/dimensionamento.py, voce B.11",
+       "fonte_in_parole": "regola Nove C per la posa del plenum di zona",
+       "perche": "I raccordi rigidi fra macchina, plenum e curve fanno condensa se non si isolano."
+      },
+      {
+       "id": "botola-di-ispezione",
+       "sezione": "Z",
+       "fornitura": "opere_edili",
+       "testo": "Botola di ispezione ≥ 600×600 sotto la macchina (filtro, pompa, scheda)",
+       "um": "n",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 1
+       },
+       "fonte": "kit AA-01: lavoro/dimensionamento.py, voce Z.2 («sotto UI … e sotto plenum e centrale», n 2)",
+       "fonte_in_parole": "regola Nove C per la posa del plenum di zona",
+       "perche": "I motori delle serrande e la centrale si raggiungono da sotto."
+      }
+     ]
+    },
+    "zoning-plenum-3": {
+     "nome": "Plenum motorizzato di zona a tre serrande",
+     "apparecchiatura": true,
+     "fonte": "kit AA-01: lavoro/dimensionamento.py, voci A.3, B.10, B.11, Z.2",
+     "fonte_in_parole": "regola Nove C per la posa del plenum di zona",
+     "perche": "Il plenum di zona è appeso accanto alla macchina e si ispeziona per i motori delle serrande.",
+     "voci": [
+      {
+       "id": "kit-sospensione",
+       "sezione": "B",
+       "testo": "Kit sospensione: barra filettata M10, tassello per solaio in laterocemento, antivibrante",
+       "um": "n",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 4
+       },
+       "fonte": "kit AA-01: RAPPORTO.md §7 («kit sospensione: UI 4, plenum 4, ripresa 2»)",
+       "fonte_in_parole": "regola Nove C per la posa del plenum di zona",
+       "perche": "Il plenum (1425 mm nel caso) non si regge sulla bocca della macchina."
+      },
+      {
+       "id": "isolamento-raccordi-plenum",
+       "sezione": "B",
+       "testo": "Isolamento elastomerico adesivo per raccordi e plenum",
+       "um": "rotolo",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 1
+       },
+       "fonte": "kit AA-01: lavoro/dimensionamento.py, voce B.11",
+       "fonte_in_parole": "regola Nove C per la posa del plenum di zona",
+       "perche": "I raccordi rigidi fra macchina, plenum e curve fanno condensa se non si isolano."
+      },
+      {
+       "id": "botola-di-ispezione",
+       "sezione": "Z",
+       "fornitura": "opere_edili",
+       "testo": "Botola di ispezione ≥ 600×600 sotto la macchina (filtro, pompa, scheda)",
+       "um": "n",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 1
+       },
+       "fonte": "kit AA-01: lavoro/dimensionamento.py, voce Z.2 («sotto UI … e sotto plenum e centrale», n 2)",
+       "fonte_in_parole": "regola Nove C per la posa del plenum di zona",
+       "perche": "I motori delle serrande e la centrale si raggiungono da sotto."
+      }
+     ]
+    },
+    "zoning-plenum-4": {
+     "nome": "Plenum motorizzato di zona a quattro serrande",
+     "apparecchiatura": true,
+     "fonte": "kit AA-01: lavoro/dimensionamento.py, voci A.3, B.10, B.11, Z.2",
+     "fonte_in_parole": "regola Nove C per la posa del plenum di zona",
+     "perche": "Il plenum di zona è appeso accanto alla macchina e si ispeziona per i motori delle serrande.",
+     "voci": [
+      {
+       "id": "sospensione-plenum-di-zona",
+       "sezione": "S",
+       "testo": "Sospensione del plenum motorizzato (flangiato sulla mandata dell'unità interna): 4 barre filettate M10 con ancoranti, dadi e antivibranti",
+       "um": "kit",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 1
+       },
+       "fonte": "revisione [commessa aria-aria] del 04/11/2026 (plenum a quattro serrande)",
+       "fonte_in_parole": "regola Nove C rivista sulla commessa [commessa aria-aria]",
+       "perche": "Il plenum (1140 mm nel caso) non si regge sulla bocca della macchina."
+      },
+      {
+       "id": "isolamento-raccordi-plenum",
+       "sezione": "B",
+       "testo": "Isolamento elastomerico adesivo 13 mm per manicotti, raccordi, derivazione e plenum",
+       "um": "rotolo",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 2
+       },
+       "fonte": "revisione [commessa aria-aria] del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+       "fonte_in_parole": "regola Nove C rivista sulla commessa [commessa aria-aria]",
+       "perche": "I raccordi rigidi fra macchina, plenum e derivazione fanno condensa se non si isolano."
+      },
+      {
+       "id": "botola-di-ispezione",
+       "sezione": "Z",
+       "fornitura": "opere_edili",
+       "testo": "Botola di ispezione ≥ 600×600 sotto la macchina (filtro, pompa, scheda)",
+       "um": "n",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 1
+       },
+       "fonte": "kit AA-01: lavoro/dimensionamento.py, voce Z.2 («sotto UI … e sotto plenum e centrale», n 2)",
+       "fonte_in_parole": "regola Nove C per la posa del plenum di zona",
+       "perche": "I motori delle serrande e la centrale si raggiungono da sotto."
+      },
+      {
+       "id": "copertura-wifi",
+       "sezione": "Z",
+       "fornitura": "opere_edili",
+       "testo": "Copertura Wi-Fi in zona plenum e centrale di zona, per la configurazione e l'app",
+       "um": "a corpo",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 1
+       },
+       "fonte": "revisione [commessa aria-aria] del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+       "fonte_in_parole": "regola Nove C rivista sulla commessa [commessa aria-aria]",
+       "perche": "La centrale di zona si configura e si comanda da app via Wi-Fi."
+      }
+     ]
+    },
+    "zoning-plenum-6": {
+     "nome": "Plenum motorizzato di zona a sei serrande",
+     "apparecchiatura": true,
+     "fonte": "kit AA-01: lavoro/dimensionamento.py, voci A.3, B.10, B.11, Z.2",
+     "fonte_in_parole": "regola Nove C per la posa del plenum di zona",
+     "perche": "Il plenum di zona è appeso accanto alla macchina e si ispeziona per i motori delle serrande.",
+     "voci": [
+      {
+       "id": "kit-sospensione",
+       "sezione": "B",
+       "testo": "Kit sospensione: barra filettata M10, tassello per solaio in laterocemento, antivibrante",
+       "um": "n",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 4
+       },
+       "fonte": "kit AA-01: RAPPORTO.md §7 («kit sospensione: UI 4, plenum 4, ripresa 2»)",
+       "fonte_in_parole": "regola Nove C per la posa del plenum di zona",
+       "perche": "Il plenum (1425 mm nel caso) non si regge sulla bocca della macchina."
+      },
+      {
+       "id": "isolamento-raccordi-plenum",
+       "sezione": "B",
+       "testo": "Isolamento elastomerico adesivo per raccordi e plenum",
+       "um": "rotolo",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 1
+       },
+       "fonte": "kit AA-01: lavoro/dimensionamento.py, voce B.11",
+       "fonte_in_parole": "regola Nove C per la posa del plenum di zona",
+       "perche": "I raccordi rigidi fra macchina, plenum e curve fanno condensa se non si isolano."
+      },
+      {
+       "id": "botola-di-ispezione",
+       "sezione": "Z",
+       "fornitura": "opere_edili",
+       "testo": "Botola di ispezione ≥ 600×600 sotto la macchina (filtro, pompa, scheda)",
+       "um": "n",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 1
+       },
+       "fonte": "kit AA-01: lavoro/dimensionamento.py, voce Z.2 («sotto UI … e sotto plenum e centrale», n 2)",
+       "fonte_in_parole": "regola Nove C per la posa del plenum di zona",
+       "perche": "I motori delle serrande e la centrale si raggiungono da sotto."
+      }
+     ]
+    },
+    "zone-controller": {
+     "nome": "Centrale di zona",
+     "apparecchiatura": true,
+     "fonte": "kit AA-01: lavoro/grafo.py (la centrale Easyzone e il gateway sono nel kit del plenum)",
+     "fonte_in_parole": "regola Nove C per la zonizzazione",
+     "perche": "Fornita da Nove C; quando è nel kit del plenum, il progettista lo dice con `compreso_in` e non ha riga sua.",
+     "voci": []
+    },
+    "air-supply-terminal": {
+     "nome": "Bocchetta di mandata con plenum di raccordo",
+     "fonte": "kit AA-01: lavoro/dimensionamento.py, voci B.2, Z.4, Z.6; REVISIONE-INDIPENDENTE.md rilievi 5 e 28",
+     "fonte_in_parole": "regola Nove C per le bocchette di mandata",
+     "perche": "La bocchetta è del committente (nell'offerta del kit), il plenum che la raccorda al flessibile è dell'installatore; ogni stanza servita ha bisogno di un passaggio per il ritorno dell'aria.",
+     "voci": [
+      {
+       "id": "plenum-porta-bocchetta",
+       "sezione": "B",
+       "testo": "Plenum porta-bocchetta coibentato per bocchetta {dimensione}, attacco {sezione} laterale",
+       "um": "n",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 1
+       },
+       "fonte": "revisione [commessa aria-aria] del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+       "fonte_in_parole": "regola Nove C rivista sulla commessa [commessa aria-aria]",
+       "perche": "Con velette da 30 cm l'attacco dall'alto non entra: plenum, isolamento e curva del flessibile superano 45 cm."
+      },
+      {
+       "id": "bocchetta-di-mandata",
+       "sezione": "Z",
+       "fornitura": "bocchette_e_griglie",
+       "testo": "Bocchetta di mandata {dimensione} a doppio filare con serranda",
+       "um": "n",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 1
+       },
+       "fonte": "kit AA-01: lavoro/dimensionamento.py, voce Z.4 (bocchette del committente nell'offerta del caso)",
+       "fonte_in_parole": "regola Nove C per le bocchette di mandata",
+       "perche": "Chi fornisce le bocchette è una scelta dell'offerta (`distinta.json`, fornitura «bocchette_e_griglie»): nelle offerte Nove C sono del Committente."
+      },
+      {
+       "id": "griglia-di-transito",
+       "sezione": "Z",
+       "fornitura": "bocchette_e_griglie",
+       "testo": "Griglia di transito o luce sotto porta per il ritorno dell'aria dal locale servito",
+       "um": "n",
+       "calcolo": {
+        "tipo": "per_locale",
+        "n": 1
+       },
+       "fonte": "kit AA-01: lavoro/dimensionamento.py, voce Z.6; REVISIONE-INDIPENDENTE.md rilievo 28; collaudo REL-012 t1, RAPPORTO.md §2.4.2 (per locale, non per bocchetta)",
+       "fonte_in_parole": "regola Nove C per il ritorno dell'aria",
+       "perche": "Senza un passaggio, l'aria immessa non torna alla ripresa: la portata cala e cresce il rumore. Una per locale servito, non per bocchetta: due bocchette nello stesso locale ne vogliono una sola, e un locale con un varco aperto verso la ripresa nessuna. Il locale è il dato `locale` della bocchetta (o, se manca, la sua etichetta senza le parentesi); il varco è `varco` sulla bocchetta. L'area efficace minima per locale è nella verifica dell'aria."
+      }
+     ]
+    },
+    "return-air-terminal": {
+     "nome": "Griglia di ripresa con plenum e filtro",
+     "fonte": "kit AA-01: lavoro/dimensionamento.py, voci B.3, B.10, Z.5; REVISIONE-INDIPENDENTE.md rilievo 4",
+     "fonte_in_parole": "regola Nove C per la ripresa dell'aria",
+     "perche": "La griglia è del committente, il plenum con il filtro sulla bocca della macchina dell'installatore.",
+     "voci": [
+      {
+       "id": "plenum-di-ripresa",
+       "sezione": "B",
+       "testo": "Plenum di ripresa in lamiera zincata, non coibentato, con filtro ispezionabile, bocca {sezione}, sulla bocca di aspirazione dell'unità interna; filtro unico: l'eventuale filtro di serie dell'unità interna si toglie",
+       "um": "n",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 1
+       },
+       "fonte": "revisione [commessa aria-aria] del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+       "fonte_in_parole": "regola Nove C rivista sulla commessa [commessa aria-aria]",
+       "perche": "Un filtro solo, ispezionabile: due filtri in serie (plenum e griglia) raddoppiano la perdita."
+      },
+      {
+       "id": "sospensione-plenum-di-ripresa",
+       "sezione": "S",
+       "testo": "Sospensione del plenum di ripresa: 2 barre filettate M8 con ancoranti e dadi",
+       "um": "kit",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 1
+       },
+       "fonte": "revisione [commessa aria-aria] del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+       "fonte_in_parole": "regola Nove C rivista sulla commessa [commessa aria-aria]",
+       "perche": "Il plenum di ripresa si appende per conto suo, sul lato libero."
+      },
+      {
+       "id": "griglia-di-ripresa",
+       "sezione": "Z",
+       "fornitura": "bocchette_e_griglie",
+       "testo": "Griglia di ripresa {sezione} senza filtro, apribile per accedere al filtro",
+       "um": "n",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 1
+       },
+       "fonte": "kit AA-01: lavoro/dimensionamento.py, voce Z.5",
+       "fonte_in_parole": "regola Nove C per la ripresa dell'aria",
+       "perche": "Apribile: il filtro sta dietro."
+      }
+     ]
+    },
+    "condensate-trap": {
+     "nome": "Sifone ispezionabile per condensa",
+     "passante": true,
+     "fonte": "kit AA-01: lavoro/dimensionamento.py, voce D.5",
+     "fonte_in_parole": "regola Nove C per lo scarico della condensa",
+     "perche": "Il sifone è materiale dell'installatore, e sta in mezzo allo scarico.",
+     "voci": [
+      {
+       "id": "sifone",
+       "sezione": "D",
+       "testo": "Sifone ispezionabile per condensa",
+       "um": "n",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 1
+       },
+       "fonte": "kit AA-01: lavoro/dimensionamento.py, voce D.5",
+       "fonte_in_parole": "regola Nove C per lo scarico della condensa",
+       "perche": "Senza sifone l'odore dello scarico risale nella macchina."
+      }
+     ]
+    },
+    "condensate-outlet": {
+     "nome": "Allaccio allo scarico",
+     "fonte": "kit AA-01: lavoro/dimensionamento.py, voci D.6, F.5",
+     "fonte_in_parole": "regola Nove C per lo scarico della condensa",
+     "perche": "Lo scarico esistente si apre e si raggiunge in traccia.",
+     "voci": [
+      {
+       "id": "innesto-sullo-scarico",
+       "sezione": "D",
+       "testo": "Innesto sullo scarico esistente con braga 45° Ø40, a valle del sifone dell'apparecchio",
+       "um": "n",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 1
+       },
+       "fonte": "revisione [commessa aria-aria] del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+       "fonte_in_parole": "regola Nove C rivista sulla commessa [commessa aria-aria]",
+       "perche": "L'allaccio della condensa a uno scarico esistente."
+      },
+      {
+       "id": "traccia-condensa",
+       "sezione": "F",
+       "testo": "Traccia per la condensa fino allo scarico",
+       "um": "m",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 3
+       },
+       "fonte": "kit AA-01: lavoro/dimensionamento.py, voce F.5 (3 m nel bagno)",
+       "fonte_in_parole": "stima Nove C (3 m di traccia fino allo scarico)",
+       "perche": "La discesa dal controsoffitto allo scarico è in traccia."
+      }
+     ]
+    },
+    "electrical-panel": {
+     "nome": "Quadro elettrico",
+     "fonte": "kit AA-01: lavoro/dimensionamento.py, voci E.6, F.6; REVISIONE-INDIPENDENTE.md rilievo 12",
+     "fonte_in_parole": "regola Nove C per le linee elettriche dedicate",
+     "perche": "Il quadro esiste: si aggiorna lo schema, e da lui partono le tracce delle linee dedicate.",
+     "voci": [
+      {
+       "id": "aggiornamento-schema-quadro",
+       "sezione": "E",
+       "testo": "Aggiornamento dello schema del quadro elettrico",
+       "um": "a corpo",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 1
+       },
+       "fonte": "kit AA-01: lavoro/dimensionamento.py, voce E.6; REVISIONE-INDIPENDENTE.md rilievo 12",
+       "fonte_in_parole": "regola Nove C per le linee elettriche dedicate",
+       "perche": "Una protezione nuova nel quadro cambia lo schema, che va aggiornato e allegato alla dichiarazione di conformità."
+      },
+      {
+       "id": "tracce-dal-quadro",
+       "sezione": "F",
+       "testo": "Tracce per le linee dal quadro al controsoffitto",
+       "um": "m",
+       "calcolo": {
+        "tipo": "per_linea",
+        "fluido": "power_supply",
+        "n": 2.5
+       },
+       "fonte": "kit AA-01: lavoro/dimensionamento.py, voce F.6 (5 m per due linee); 2,5 m di discesa per linea è della sessione di sviluppo, che riproduce il kit: da confermare",
+       "fonte_in_parole": "stima Nove C (2,5 m di traccia per linea)",
+       "perche": "Ogni linea dedicata scende dal controsoffitto al quadro in traccia."
+      }
+     ]
+    },
+    "isolator-switch": {
+     "nome": "Sezionatore onnipolare di prossimità",
+     "passante": true,
+     "fonte": "kit AA-01: lavoro/dimensionamento.py, voce E.3",
+     "fonte_in_parole": "regola Nove C per le linee elettriche dedicate",
+     "perche": "Il sezionatore è materiale dell'installatore, e sta in mezzo alla linea di alimentazione.",
+     "voci": [
+      {
+       "id": "sezionatore",
+       "sezione": "E",
+       "testo": "Sezionatore onnipolare di prossimità IP55, 25 A, apertura contatti ≥ 3 mm",
+       "um": "n",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 1
+       },
+       "fonte": "revisione [commessa aria-aria] del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+       "fonte_in_parole": "regola Nove C rivista sulla commessa [commessa aria-aria]",
+       "perche": "Chi fa manutenzione all'unità esterna la stacca lì accanto."
+      }
+     ]
+    },
+    "room-thermostat": {
+     "nome": "Termostato di zona",
+     "apparecchiatura": true,
+     "fonte": "kit AA-01: lavoro/dimensionamento.py, voci A.4, E.13, F.7",
+     "fonte_in_parole": "regola Nove C per gli apparecchi a parete",
+     "perche": "Un apparecchio a parete: scatola e traccia per il cavo.",
+     "voci": [
+      {
+       "id": "scatola-503",
+       "sezione": "E",
+       "testo": "Scatola 503 per termostati e comandi a parete",
+       "um": "n",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 1
+       },
+       "fonte": "kit AA-01: lavoro/dimensionamento.py, voce E.13",
+       "fonte_in_parole": "regola Nove C per gli apparecchi a parete",
+       "perche": "Il termostato si monta su una scatola da incasso."
+      },
+      {
+       "id": "traccia-per-apparecchio-a-parete",
+       "sezione": "F",
+       "testo": "Traccia per termostati e comandi a parete, dal controsoffitto alla scatola",
+       "um": "m",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 1.4
+       },
+       "fonte": "revisione [commessa aria-aria] del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+       "fonte_in_parole": "regola Nove C rivista sulla commessa [commessa aria-aria]",
+       "perche": "Il cavo scende dal controsoffitto alla scatola in traccia."
+      }
+     ]
+    },
+    "wired-remote": {
+     "nome": "Comando a filo dell'unità",
+     "apparecchiatura": true,
+     "fonte": "kit AA-01: lavoro/dimensionamento.py, voci A.5, E.13, F.7",
+     "fonte_in_parole": "regola Nove C per gli apparecchi a parete",
+     "perche": "Come il termostato: scatola e traccia.",
+     "voci": [
+      {
+       "id": "scatola-503",
+       "sezione": "E",
+       "testo": "Scatola 503 per termostati e comandi a parete",
+       "um": "n",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 1
+       },
+       "fonte": "kit AA-01: lavoro/dimensionamento.py, voce E.13",
+       "fonte_in_parole": "regola Nove C per gli apparecchi a parete",
+       "perche": "Il comando si monta su una scatola da incasso."
+      },
+      {
+       "id": "traccia-per-apparecchio-a-parete",
+       "sezione": "F",
+       "testo": "Traccia per termostati e comandi a parete, dal controsoffitto alla scatola",
+       "um": "m",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 1.4
+       },
+       "fonte": "revisione [commessa aria-aria] del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+       "fonte_in_parole": "regola Nove C rivista sulla commessa [commessa aria-aria]",
+       "perche": "Il cavo scende dal controsoffitto alla scatola in traccia."
+      }
+     ]
+    },
+    "air-split": {
+     "nome": "Derivazione aeraulica 1×Ø200 > 2×Ø200",
+     "apparecchiatura": false,
+     "fonte": "revisione [commessa aria-aria] del 04/11/2026 (plenum a quattro serrande)",
+     "fonte_in_parole": "regola Nove C rivista sulla commessa [commessa aria-aria]",
+     "perche": "Con quattro serrande il soggiorno-cucina ha una sola uscita: 550 m³/h in un Ø200 sono 4,9 m/s, quindi si divide subito in due rami Ø200 da 275 m³/h.",
+     "voci": [
+      {
+       "id": "derivazione-soggiorno",
+       "sezione": "B",
+       "testo": "Derivazione coibentata 1×Ø200 > 2×Ø200 (cassetta di derivazione o braga), sull'uscita della serranda del soggiorno-cucina, con fascette e nastro alluminio",
+       "um": "n",
+       "calcolo": {
+        "tipo": "per_pezzo",
+        "n": 1
+       },
+       "fonte": "revisione [commessa aria-aria] del 04/11/2026 (plenum a quattro serrande)",
+       "fonte_in_parole": "regola Nove C rivista sulla commessa [commessa aria-aria]",
+       "perche": "Il tratto a 4,9 m/s resta corto, sull'uscita del plenum; i due rami vanno a 2,4 m/s."
+      }
+     ]
+    }
+   }
+  },
+  "distinta.json": {
+   "id": "distinta",
+   "versione": "1.2.0",
+   "stato": "proposta (D-213, REL-013): il PO non ha ancora deciso se la skill fa la distinta; finché non decide, la distinta si fa solo col comando esplicito `mep.py distinta`",
+   "nota": "Le parti fisse della distinta materiali per l'installatore: le sezioni, l'intestazione, chi fornisce le apparecchiature, le righe vuote della sezione H. Le quantità vengono dalle altre regole di questa cartella: `lunghezze.json`, `fluidi.json`, `corredo.json`, `attivita.json`, `verifica.json`. Ogni voce di ogni file porta `fonte` e `perche`.",
+   "fonte": "kit AA-01 (I-224, I-225): docs/input-pm/2026-10-29-kit-aria-aria/RAPPORTO.md §7 «Distinta materiali», lavoro/excel.py; REVISIONE-INDIPENDENTE.md rilievi 10, 11, 13",
+   "fonte_in_parole": "regola Nove C per le offerte a corpo degli installatori",
+   "perche": "Il PO fa quotare l'impianto chiavi in mano agli installatori a corpo: la distinta è la base su cui l'installatore fa il prezzo, e quello che manca diventa un extra a carico di Nove C. Criterio del PO: «meglio sbagliare un po' in su che in giù» (RAPPORTO §2).",
+   "sezioni": [
+    {
+     "lettera": "A",
+     "titolo": "Apparecchiature (posa dell'installatore; chi le fornisce: colonna Fornitura)"
+    },
+    {
+     "lettera": "S",
+     "titolo": "Staffaggi e sospensioni delle apparecchiature"
+    },
+    {
+     "lettera": "B",
+     "titolo": "Distribuzione aria"
+    },
+    {
+     "lettera": "C",
+     "titolo": "Circuito frigorifero"
+    },
+    {
+     "lettera": "D",
+     "titolo": "Scarichi condensa (unità interna e unità esterna)"
+    },
+    {
+     "lettera": "E",
+     "titolo": "Elettrico, comando e regolazione"
+    },
+    {
+     "lettera": "F",
+     "titolo": "Assistenze murarie (aperture comprese)"
+    },
+    {
+     "lettera": "X",
+     "titolo": "Pezzi e linee senza regola di distinta (DA DEFINIRE)"
+    },
+    {
+     "lettera": "Z",
+     "titolo": "Opere del Committente (escluse dall'offerta, da coordinare)"
+    },
+    {
+     "lettera": "G",
+     "titolo": "Attività da quotare a corpo (manodopera, mezzi, prove, documenti)"
+    },
+    {
+     "lettera": "H",
+     "titolo": "Voci aggiunte dall'installatore dopo il sopralluogo (necessarie per l'impianto finito)"
+    },
+    {
+     "lettera": "V",
+     "titolo": "Prezzi unitari per varianti (fuori dal prezzo a corpo, solo se Nove C le ordina per iscritto)"
+    }
+   ],
+   "sezioni_sul_foglio": [
+    "A",
+    "S",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "X",
+    "Z"
+   ],
+   "fornitura_installatore": "installatore",
+   "fornitura": {
+    "nota": "Chi fornisce che cosa è una scelta dell'offerta, non un fatto dell'impianto (collaudo REL-012 t1, §2.4.4). Qui ci sono le scelte predefinite di Nove C; la distinta le dichiara fra le note come «da confermare per questa offerta», finché il progettista non le conferma o le cambia con `mep.py distinta --fornitura` (es. «apparecchiature=installatore,bocchette_e_griglie=installatore», o «confermata»). Nelle regole, una voce con `\"fornitura\": \"<id della scelta>\"` segue la scelta; se la scelta dà all'installatore una voce del Committente, la voce passa nella sezione `sezione_se_installatore` e si quota. `testi` è come la scelta si scrive in una frase (e nei testi delle attività, `{fornitura.<id>}`).",
+    "fonte": "kit AA-01: RAPPORTO.md §7 (apparecchiature Nove C; bocchette, griglie e opere edili escluse dall'offerta); collaudo REL-012 t1, RAPPORTO.md §2.4.4 (scelte commerciali scritte come fatti)",
+    "fonte_in_parole": "configurazione predefinita delle offerte Nove C",
+    "perche": "Il progettista può far quotare all'installatore anche le macchine o le bocchette: la distinta non lo sa, e quello che non sa lo dichiara.",
+    "scelte": [
+     {
+      "id": "apparecchiature",
+      "nome": "apparecchiature",
+      "predefinita": "Nove C",
+      "ammesse": [
+       "Nove C",
+       "installatore",
+       "committente"
+      ],
+      "testi": {
+       "Nove C": "fornite da Nove C",
+       "installatore": "fornite dall'installatore",
+       "committente": "fornite dal Committente"
+      }
+     },
+     {
+      "id": "bocchette_e_griglie",
+      "nome": "bocchette e griglie",
+      "predefinita": "committente",
+      "ammesse": [
+       "committente",
+       "installatore"
+      ],
+      "testi": {
+       "committente": "del Committente",
+       "installatore": "dell'installatore"
+      },
+      "sezione_se_installatore": "B"
+     },
+     {
+      "id": "opere_edili",
+      "nome": "opere edili",
+      "predefinita": "committente",
+      "ammesse": [
+       "committente",
+       "installatore"
+      ],
+      "testi": {
+       "committente": "del Committente",
+       "installatore": "dell'installatore"
+      },
+      "sezione_se_installatore": "F"
+     },
+     {
+      "id": "messa_in_servizio",
+      "nome": "messa in servizio",
+      "predefinita": "Nove C",
+      "ammesse": [
+       "Nove C",
+       "installatore"
+      ],
+      "testi": {
+       "Nove C": "con Nove C",
+       "installatore": "a cura dell'installatore"
+      }
+     }
+    ]
+   },
+   "righe_h": 6,
+   "intestazione": [
+    "Offerta richiesta: PREZZO A CORPO, FISSO E INVARIABILE, per l'impianto finito e funzionante, in euro oltre IVA: un importo a corpo per le voci da quotare, le attività G e le voci H; per le varianti V solo il prezzo unitario, fuori dal corpo.",
+    "Le quantità sono INDICATIVE e già maggiorate: sono la base comune delle offerte, non un elenco da prezzare voce per voce.",
+    "SOPRALLUOGO OBBLIGATORIO prima dell'offerta: l'installatore verifica le quantità e ne risponde; quanto manca per l'impianto finito lo aggiunge fra le voci H.",
+    "Le forniture escluse da questa offerta (colonna Fornitura: Nove C, Committente) non si quotano; le voci DA DEFINIRE aspettano un dato del progettista.",
+    "La distinta non progetta: lunghezze, sezioni, portate e protezioni sono del progettista; la distinta le conta e le maggiora con regole scritte, ciascuna con la sua fonte."
+   ],
+   "chiusura": "Validità dell'offerta, tempi di esecuzione (posa prima della chiusura del controsoffitto, messa in servizio al secondo accesso) e referente tecnico dell'installatore:"
+  },
+  "fluidi.json": {
+   "id": "fluidi",
+   "versione": "1.1.0",
+   "nota": "Che cosa costa a metro e a giunzione, fluido per fluido (il `medium` della rete). Un tratto è la catena di tubazioni di una rete che passa per i pezzi `passante` del corredo (sezionatore, sifone): la sua lunghezza è la somma delle `lunghezza_m` date, maggiorata con `lunghezze.json`. Le voci si contano sui tratti con una lunghezza da quotare; `raggruppa` dice se la voce si somma per sezione (default) o per fluido. Calcoli: `lunghezza` (somma delle L da quotare), `confezioni` (pezzi interi senza giunte in confezioni, con la riserva), `per_tratta` (n per tratto), `passo` (per tratto, L / passo per eccesso + in_piu), `per_metro` (L totale / ogni_m per eccesso, con un minimo), `metri_arrotondati` (L totale × fattore, per eccesso al passo), `fisso` (n per gruppo), `attraversamenti` (fori di parete del tratto: il dato `attraversamenti` del progettista, o quelli assunti dal fluido), `proprieta` (una voce per valore del dato del progettista sul tratto), `carica_refrigerante`. `fornitura` è una scelta dell'offerta (`distinta.json`, `fornitura`). Fluidi assenti da questo file: le loro linee escono nella sezione X, DA DEFINIRE.",
+   "fluidi": [
+    {
+     "fluido": "supply_air",
+     "materiale": "flessibile coibentato",
+     "attraversamenti_se_mancano": 1,
+     "fonte_attraversamenti": "kit AA-01: lavoro/dimensionamento.py, voce F «Foratura di tramezza … n 7: 5 bocchette e 2 nella tramezza fra i disimpegni»",
+     "fonte_attraversamenti_in_parole": "regola Nove C: una parete per ramo, se il progettista non dice quante",
+     "voci": [
+      {
+       "id": "flessibile-in-confezioni",
+       "sezione": "B",
+       "testo": "Condotto flessibile coibentato {sezione} (isolamento 25 mm, barriera vapore), confezione da 10 m",
+       "um": "conf.",
+       "calcolo": {
+        "tipo": "confezioni",
+        "confezione_m": 10.0,
+        "sfrido_m": 0.5,
+        "riserva": 0.25
+       },
+       "fonte": "kit AA-01: lavoro/dimensionamento.py (confezioni da 10 m, 0,5 m di sfrido, almeno 1,25 × la lunghezza); REVISIONE-INDIPENDENTE.md rilievo 17",
+       "fonte_in_parole": "regola Nove C per i canali flessibili",
+       "perche": "Ogni ramo è un pezzo intero, senza giunte: le giunte del flessibile perdono aria e rumore. I pezzi si mettono nelle confezioni dal più lungo (first-fit decreasing); la riserva del 25% copre i tagli sbagliati e la ricollocazione di una bocchetta."
+      },
+      {
+       "id": "manicotto-di-riserva",
+       "sezione": "B",
+       "testo": "Manicotto di giunzione {sezione}",
+       "um": "n",
+       "calcolo": {
+        "tipo": "fisso",
+        "n": 2
+       },
+       "fonte": "kit AA-01: lavoro/dimensionamento.py («Manicotto di giunzione Ø200», n 2, riserva)",
+       "fonte_in_parole": "regola Nove C per i canali flessibili",
+       "perche": "Riserva per una riparazione o un ramo da allungare in cantiere."
+      },
+      {
+       "id": "fascette",
+       "sezione": "B",
+       "testo": "Fascetta di serraggio {sezione} (anima e mantello)",
+       "um": "n",
+       "calcolo": {
+        "tipo": "per_tratta",
+        "n": 4
+       },
+       "fonte": "revisione [commessa aria-aria] del 04/11/2026 (flessibili senza curve rigide, indicazione del PO)",
+       "fonte_in_parole": "regola Nove C per i canali flessibili",
+       "perche": "Per ramo: le due estremità del flessibile, ciascuna con una fascetta sull'anima e una sul mantello isolante: 2 × 2 = 4."
+      },
+      {
+       "id": "nastro-alluminio",
+       "sezione": "B",
+       "testo": "Nastro alluminio rinforzato 50 mm",
+       "um": "rotolo",
+       "calcolo": {
+        "tipo": "per_metro",
+        "ogni_m": 20.0,
+        "minimo": 1,
+        "raggruppa": "fluido"
+       },
+       "fonte": "kit AA-01: lavoro/dimensionamento.py (2 rotoli per 26 m di flessibile); il passo di 20 m è della sessione di sviluppo, che riproduce il kit: da confermare",
+       "fonte_in_parole": "stima Nove C (un rotolo ogni 20 m di flessibile)",
+       "perche": "La sigillatura di giunzioni, raccordi e plenum."
+      },
+      {
+       "id": "sostegni",
+       "sezione": "B",
+       "testo": "Sostegno per flessibile (fascia o collare con pendino), passo ≤ 1,2 m",
+       "um": "n",
+       "calcolo": {
+        "tipo": "passo",
+        "passo_m": 1.2,
+        "in_piu": 1,
+        "raggruppa": "fluido"
+       },
+       "fonte": "kit AA-01: RAPPORTO.md §7 («sostegni ogni ≤ 1,2 m»); lavoro/dimensionamento.py, 25 sostegni",
+       "fonte_in_parole": "regola Nove C per i canali flessibili",
+       "perche": "Un flessibile che si imbarca fra due sostegni perde portata e fa condensa nelle anse: un sostegno ogni 1,2 m per tratto, più uno vicino all'attacco."
+      },
+      {
+       "id": "foratura-per-flessibile",
+       "sezione": "F",
+       "testo": "Foratura di tramezza Ø300 (o vano 470×270) per flessibili coibentati e plenum di bocchetta",
+       "um": "n",
+       "calcolo": {
+        "tipo": "attraversamenti",
+        "raggruppa": "fluido"
+       },
+       "fonte": "revisione [commessa aria-aria] del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+       "fonte_in_parole": "regola Nove C rivista sulla commessa [commessa aria-aria]",
+       "perche": "Il flessibile Ø200 con 25 mm di isolamento e il mantello misura circa 255-260 mm: in un foro Ø250 l'isolamento si schiaccia."
+      },
+      {
+       "id": "velette-per-le-bocchette",
+       "sezione": "Z",
+       "fornitura": "opere_edili",
+       "testo": "Velette o controsoffitti per le bocchette, altezza utile ≥ 30 cm",
+       "um": "a corpo",
+       "calcolo": {
+        "tipo": "fisso",
+        "n": 1,
+        "raggruppa": "fluido"
+       },
+       "fonte": "kit AA-01: lavoro/dimensionamento.py, voce Z.3; REVISIONE-INDIPENDENTE.md rilievo 5",
+       "fonte_in_parole": "regola Nove C per le bocchette in controsoffitto",
+       "perche": "Il plenum porta-bocchetta con l'attacco del flessibile ha bisogno di 30 cm: se manca la veletta, la bocchetta non si monta."
+      }
+     ]
+    },
+    {
+     "fluido": "return_air",
+     "materiale": "canale di ripresa coibentato",
+     "materiale_del_raccordo_diretto": "plenum di ripresa in lamiera",
+     "fonte_del_raccordo_diretto": "collaudo T3 di REL-012, §3: la ripresa montata sulla macchina era «canale» nella tabella delle tratte e «plenum di ripresa» nell'Excel; il nome è quello del corredo (corredo.json, return-air-terminal, plenum-di-ripresa)",
+     "attraversamenti_se_mancano": 0,
+     "fonte_attraversamenti": "kit AA-01: la ripresa sta nello stesso locale dell'unità interna (RAPPORTO.md §2, proposta 2)",
+     "fonte_attraversamenti_in_parole": "regola Nove C: la ripresa sta nel locale della macchina",
+     "voci": [
+      {
+       "id": "canale-di-ripresa",
+       "sezione": "B",
+       "testo": "Canale di ripresa coibentato {sezione}",
+       "um": "m",
+       "calcolo": {
+        "tipo": "lunghezza"
+       },
+       "fonte": "regola della sessione di sviluppo: nel kit la ripresa è un plenum montato sulla macchina (lunghezza 0), e questa voce non esce",
+       "fonte_in_parole": "regola Nove C per i canali d'aria",
+       "perche": "Se il progettista porta la ripresa lontano dalla macchina, il canale si quota a metro come gli altri, con la stessa maggiorazione."
+      }
+     ]
+    },
+    {
+     "fluido": "refrigerant_liquid",
+     "materiale": "Cu ricotto pre-isolato, isolamento ≥ 10 mm",
+     "attraversamenti_se_mancano": 0,
+     "fonte_attraversamenti": "le forature delle linee frigorifere si contano una volta sola, sulla linea del gas (le due linee passano negli stessi fori)",
+     "fonte_attraversamenti_in_parole": "regola Nove C: i fori si contano una volta, sulla linea del gas",
+     "voci": [
+      {
+       "id": "tubo-rame-liquido",
+       "sezione": "C",
+       "testo": "Tubo rame ricotto pre-isolato {sezione}, isolamento ≥ 10 mm, resistente a 120 °C",
+       "um": "m",
+       "calcolo": {
+        "tipo": "lunghezza"
+       },
+       "fonte": "kit AA-01: RAPPORTO.md §7 «Refrigerante» (isolamento dal manuale di installazione Daikin FTXM60-71A, citato in RAPPORTO.md §10)",
+       "fonte_in_parole": "manuale di installazione del costruttore della macchina (isolamento delle linee)",
+       "perche": "La linea del liquido, a metro, con la lunghezza da quotare."
+      },
+      {
+       "id": "manicotti-a-brasare-liquido",
+       "sezione": "C",
+       "testo": "Manicotto a brasare {sezione} (riserva, posa in tratta unica)",
+       "um": "n",
+       "calcolo": {
+        "tipo": "fisso",
+        "n": 2
+       },
+       "fonte": "kit AA-01: lavoro/dimensionamento.py («Manicotto a brasare 1/4\" e 1/2\"», n 4 per le due linee)",
+       "fonte_in_parole": "regola Nove C per le linee frigorifere",
+       "perche": "La linea si posa in un pezzo solo; due manicotti di riserva per linea coprono una giunta imprevista."
+      }
+     ]
+    },
+    {
+     "fluido": "refrigerant_gas",
+     "materiale": "Cu ricotto pre-isolato, isolamento ≥ 13 mm",
+     "attraversamenti_se_mancano": 1,
+     "fonte_attraversamenti": "kit AA-01: lavoro/dimensionamento.py, voce F.2 «Foratura di parete interna Ø80 per linee frigorifere e cavi», n 2 sul caso",
+     "fonte_attraversamenti_in_parole": "regola Nove C: una parete per linea, se il progettista non dice quante",
+     "voci": [
+      {
+       "id": "tubo-rame-gas",
+       "sezione": "C",
+       "testo": "Tubo rame ricotto pre-isolato {sezione}, isolamento ≥ 13 mm, resistente a 120 °C",
+       "um": "m",
+       "calcolo": {
+        "tipo": "lunghezza"
+       },
+       "fonte": "kit AA-01: RAPPORTO.md §7 «Refrigerante» (manuale di installazione Daikin FTXM60-71A, citato in RAPPORTO.md §10)",
+       "fonte_in_parole": "manuale di installazione del costruttore della macchina (isolamento delle linee)",
+       "perche": "La linea del gas, a metro, con la lunghezza da quotare."
+      },
+      {
+       "id": "manicotti-a-brasare-gas",
+       "sezione": "C",
+       "testo": "Manicotto a brasare {sezione} (riserva, posa in tratta unica)",
+       "um": "n",
+       "calcolo": {
+        "tipo": "fisso",
+        "n": 2
+       },
+       "fonte": "kit AA-01: lavoro/dimensionamento.py («Manicotto a brasare 1/4\" e 1/2\"», n 4 per le due linee)",
+       "fonte_in_parole": "regola Nove C per le linee frigorifere",
+       "perche": "Come per il liquido: due di riserva per linea."
+      },
+      {
+       "id": "nastro-e-manicotti-isolanti",
+       "sezione": "C",
+       "testo": "Nastro di finitura e manicotti isolanti per le giunzioni a cartella",
+       "um": "kit",
+       "calcolo": {
+        "tipo": "per_tratta",
+        "n": 1
+       },
+       "fonte": "kit AA-01: lavoro/dimensionamento.py, voce C.4",
+       "fonte_in_parole": "regola Nove C per le linee frigorifere",
+       "perche": "Una coppia di linee (liquido e gas) per kit: si conta sulla linea del gas, che ogni coppia ha una volta sola."
+      },
+      {
+       "id": "collari-linee-frigo",
+       "sezione": "C",
+       "testo": "Collare di sostegno linee frigorifere in controsoffitto",
+       "um": "n",
+       "calcolo": {
+        "tipo": "passo",
+        "passo_m": 1.2,
+        "in_piu": 0
+       },
+       "fonte": "kit AA-01: lavoro/dimensionamento.py, voce C.7 (10 collari per 12 m)",
+       "fonte_in_parole": "regola Nove C per le linee frigorifere",
+       "perche": "La coppia pre-isolata si sostiene ogni 1,2 m, come il flessibile: un collare per passo, sulla linea del gas che porta la coppia."
+      },
+      {
+       "id": "foratura-linee-frigo",
+       "sezione": "F",
+       "testo": "Foratura di parete interna Ø125 per linee frigorifere e cavi",
+       "um": "n",
+       "calcolo": {
+        "tipo": "attraversamenti",
+        "raggruppa": "fluido"
+       },
+       "fonte": "revisione [commessa aria-aria] del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+       "fonte_in_parole": "regola Nove C rivista sulla commessa [commessa aria-aria]",
+       "perche": "Le aperture sono dell'installatore (le chiusure del committente). Il progettista scrive sul tratto quante pareti interne passa; se non lo scrive, se ne conta una. Il foro nella parete esterna è nel corredo dell'unità esterna."
+      }
+     ]
+    },
+    {
+     "fluido": "condensate",
+     "materiale": "PVC rigido, pendenza ≥ 1%",
+     "attraversamenti_se_mancano": 1,
+     "fonte_attraversamenti": "kit AA-01: lavoro/dimensionamento.py, voce F.4 «Foratura per la condensa verso il bagno»",
+     "fonte_attraversamenti_in_parole": "regola Nove C: una parete, se il progettista non dice quante",
+     "voci": [
+      {
+       "id": "tubo-pvc",
+       "sezione": "D",
+       "testo": "Tubo PVC rigido {sezione}",
+       "um": "m",
+       "calcolo": {
+        "tipo": "lunghezza"
+       },
+       "fonte": "kit AA-01: RAPPORTO.md §7 «Condensa»",
+       "fonte_in_parole": "regola Nove C per lo scarico della condensa",
+       "perche": "Lo scarico della condensa, a metro, con la lunghezza da quotare."
+      },
+      {
+       "id": "curve-condensa",
+       "sezione": "D",
+       "testo": "Curva 87°-90° {sezione}",
+       "um": "n",
+       "calcolo": {
+        "tipo": "passo",
+        "passo_m": 2.0,
+        "in_piu": 1
+       },
+       "fonte": "kit AA-01: lavoro/dimensionamento.py, voce D.3 (6 curve su 10 m); il passo è della sessione di sviluppo, che riproduce il kit: da confermare",
+       "fonte_in_parole": "stima Nove C (una curva ogni 2 m)",
+       "perche": "Il percorso in controsoffitto con la pendenza cambia spesso direzione: una curva ogni 2 m più quella della discesa."
+      },
+      {
+       "id": "manicotti-condensa",
+       "sezione": "D",
+       "testo": "Manicotto {sezione}",
+       "um": "n",
+       "calcolo": {
+        "tipo": "passo",
+        "passo_m": 3.0,
+        "in_piu": -1
+       },
+       "fonte": "kit AA-01: lavoro/dimensionamento.py, voce D.4 (3 manicotti su 10 m); barre da 3 m, assunzione della sessione di sviluppo: da confermare",
+       "fonte_in_parole": "stima Nove C (barre da 3 m)",
+       "perche": "Una giunzione fra due barre."
+      },
+      {
+       "id": "collari-condensa",
+       "sezione": "D",
+       "testo": "Collare per tubo condensa",
+       "um": "n",
+       "calcolo": {
+        "tipo": "passo",
+        "passo_m": 1.0,
+        "in_piu": 0
+       },
+       "fonte": "kit AA-01: lavoro/dimensionamento.py, voce D.7 (10 collari su 10 m)",
+       "fonte_in_parole": "regola Nove C per lo scarico della condensa",
+       "perche": "Il tubo piccolo in pendenza si sostiene fitto, o la pendenza si perde fra due collari."
+      },
+      {
+       "id": "isolamento-anticondensa",
+       "sezione": "D",
+       "testo": "Isolamento anticondensa 9 mm per il tubo della condensa",
+       "um": "m",
+       "calcolo": {
+        "tipo": "lunghezza"
+       },
+       "fonte": "kit AA-01: lavoro/dimensionamento.py, voce D.8 (5 m, il solo tratto in controsoffitto, scritto a mano sul caso)",
+       "fonte_in_parole": "regola Nove C per lo scarico della condensa",
+       "perche": "La condensa fredda in controsoffitto gocciola fuori dal tubo. Su tutta la lunghezza, in dubbio per eccesso: la parte in controsoffitto la sa solo la pianta."
+      },
+      {
+       "id": "collante-pvc",
+       "sezione": "D",
+       "testo": "Collante e pulitore PVC",
+       "um": "n",
+       "calcolo": {
+        "tipo": "fisso",
+        "n": 1,
+        "raggruppa": "fluido"
+       },
+       "fonte": "kit AA-01: lavoro/dimensionamento.py, voce D.9",
+       "fonte_in_parole": "regola Nove C per lo scarico della condensa",
+       "perche": "Una confezione per lo scarico."
+      },
+      {
+       "id": "foratura-condensa",
+       "sezione": "F",
+       "testo": "Foratura per lo scarico della condensa (tramezze e parete del bagno)",
+       "um": "n",
+       "calcolo": {
+        "tipo": "attraversamenti",
+        "raggruppa": "fluido"
+       },
+       "fonte": "revisione [commessa aria-aria] del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+       "fonte_in_parole": "regola Nove C rivista sulla commessa [commessa aria-aria]",
+       "perche": "Lo scarico sta in un altro locale (il bagno più vicino): il progettista scrive le pareti passate; se non lo scrive, se ne conta una."
+      }
+     ]
+    },
+    {
+     "fluido": "power_supply",
+     "materiale": "FG16OR16",
+     "attraversamenti_se_mancano": 0,
+     "fonte_attraversamenti": "le linee elettriche passano nelle tracce e nei fori delle altre linee (kit AA-01, voci F)",
+     "fonte_attraversamenti_in_parole": "regola Nove C: le linee elettriche passano nelle tracce e nei fori delle altre linee",
+     "voci": [
+      {
+       "id": "cavo-di-alimentazione",
+       "sezione": "E",
+       "testo": "Cavo {materiale} {sezione}, {rete}",
+       "um": "m",
+       "calcolo": {
+        "tipo": "lunghezza"
+       },
+       "fonte": "kit AA-01: RAPPORTO.md §7 «Elettrico e bus» (linea dedicata in FG16OR16); la sezione del cavo è un dato del progettista (`sezione` del tratto)",
+       "fonte_in_parole": "regola Nove C per le linee elettriche dedicate",
+       "perche": "Una riga per sezione di cavo, a metro, con la lunghezza da quotare."
+      },
+      {
+       "id": "protezione-della-linea",
+       "sezione": "E",
+       "testo": "{protezione}, linea dedicata: {rete}",
+       "um": "n",
+       "calcolo": {
+        "tipo": "proprieta",
+        "proprieta": "protezione"
+       },
+       "fonte": "kit AA-01: RAPPORTO.md §7; REVISIONE-INDIPENDENTE.md rilievi 7 e 12 (la protezione della centrale a sé, verificare la targa della macchina)",
+       "fonte_in_parole": "targa della macchina (dato del progettista)",
+       "perche": "Ogni linea dedicata ha la sua protezione nel quadro. La taglia dipende dalla targa della macchina: è un dato del progettista (`protezione` del tratto); se manca, la voce è DA DEFINIRE."
+      },
+      {
+       "id": "scatola-di-derivazione",
+       "sezione": "E",
+       "testo": "Scatola di derivazione IP55",
+       "um": "n",
+       "calcolo": {
+        "tipo": "per_tratta",
+        "n": 1,
+        "raggruppa": "fluido"
+       },
+       "fonte": "kit AA-01: lavoro/dimensionamento.py, voce E.12 (2 scatole per 2 linee)",
+       "fonte_in_parole": "regola Nove C per le linee elettriche dedicate",
+       "perche": "Una scatola per linea, all'uscita dal controsoffitto o all'ingresso nella macchina."
+      },
+      {
+       "id": "corrugato-di-potenza",
+       "sezione": "E",
+       "testo": "Tubo corrugato Ø25 per le linee di alimentazione",
+       "um": "m",
+       "calcolo": {
+        "tipo": "metri_arrotondati",
+        "fattore": 1.0,
+        "passo_m": 10.0,
+        "raggruppa": "fluido"
+       },
+       "fonte": "kit AA-01: lavoro/dimensionamento.py, voce E.10 (40 m per 35 m di linee); l'arrotondamento a 10 m è della sessione di sviluppo, che riproduce il kit: da confermare",
+       "fonte_in_parole": "stima Nove C (corrugato a decine di metri)",
+       "perche": "Ogni metro di cavo di potenza corre in corrugato; si compra a decine di metri."
+      }
+     ]
+    },
+    {
+     "fluido": "interconnection",
+     "materiale": "a doppio isolamento",
+     "attraversamenti_se_mancano": 0,
+     "fonte_attraversamenti": "il collegamento passa nei fori delle linee frigorifere (kit AA-01, voce F.2)",
+     "fonte_attraversamenti_in_parole": "regola Nove C: il collegamento passa nei fori delle linee frigorifere",
+     "voci": [
+      {
+       "id": "cavo-di-collegamento",
+       "sezione": "E",
+       "testo": "Cavo di collegamento {sezione} {materiale}, {rete}",
+       "um": "m",
+       "calcolo": {
+        "tipo": "lunghezza"
+       },
+       "fonte": "kit AA-01: RAPPORTO.md §7 (cavo a 4 conduttori ≥ 1,5 mm² a doppio isolamento, dal manuale di installazione Daikin FTXM60-71A citato in RAPPORTO.md §10)",
+       "fonte_in_parole": "manuale di installazione del costruttore della macchina",
+       "perche": "Corre con le linee frigorifere, nella loro canalina: niente corrugato (kit, voci E.10 ed E.11)."
+      }
+     ]
+    },
+    {
+     "fluido": "control_bus",
+     "materiale": "cavo di bus",
+     "attraversamenti_se_mancano": 0,
+     "fonte_attraversamenti": "il bus passa nelle tracce dei termostati e nei fori delle altre linee (kit AA-01, voci F)",
+     "fonte_attraversamenti_in_parole": "regola Nove C: il bus passa nelle tracce dei termostati e nei fori delle altre linee",
+     "voci": [
+      {
+       "id": "cavo-di-bus",
+       "sezione": "E",
+       "testo": "Cavo {sezione}, {rete}",
+       "um": "m",
+       "calcolo": {
+        "tipo": "lunghezza"
+       },
+       "fonte": "kit AA-01: RAPPORTO.md §7 (bus a stella dalla centrale; P1-P2 per gateway e comando a filo)",
+       "fonte_in_parole": "regola Nove C per i bus e le linee di comando",
+       "perche": "Una riga per tipo di cavo (la `sezione` del tratto: «2×0,75 (P1-P2)», «bus Airzone, schermato»), a metro."
+      },
+      {
+       "id": "corrugato-di-bus",
+       "sezione": "E",
+       "testo": "Tubo corrugato Ø20 per bus e linee di comando",
+       "um": "m",
+       "calcolo": {
+        "tipo": "metri_arrotondati",
+        "fattore": 1.0,
+        "passo_m": 10.0,
+        "raggruppa": "fluido"
+       },
+       "fonte": "kit AA-01: lavoro/dimensionamento.py, voce E.11 (40 m per 37,5 m di bus); l'arrotondamento a 10 m è della sessione di sviluppo: da confermare",
+       "fonte_in_parole": "stima Nove C (corrugato a decine di metri)",
+       "perche": "Il bus corre separato dalle linee di potenza, nel suo corrugato."
+      }
+     ]
+    }
+   ]
+  },
+  "lunghezze.json": {
+   "id": "lunghezze",
+   "versione": "1.1.0",
+   "nota": "La regola delle lunghezze da quotare. La lunghezza di un tratto è un dato del progettista (`lunghezza_m` della tubazione: la lunghezza stimata, dalla pianta o dal sopralluogo); la distinta la maggiora così: L da quotare = (L + aggiunta) × fattore, arrotondata per eccesso al passo, mai sotto il minimo del fluido né sotto il minimo che il progettista scrive sul tratto (`lunghezza_minima_m`). Un tratto con `lunghezza_m` 0 è un raccordo diretto (il plenum montato sulla macchina, un cablaggio di fabbrica): niente materiale e niente maggiorazione.",
+   "regola": {
+    "aggiunta_m": 1.0,
+    "fattore": 1.15,
+    "passo_m": 0.5,
+    "fonte": "kit AA-01: RAPPORTO.md §7 «Lunghezze»; lavoro/dimensionamento.py, `da_quotare`; REVISIONE-INDIPENDENTE.md rilievo 23 (una regola sola, applicata ovunque)",
+    "fonte_in_parole": "regola Nove C per le quotazioni a corpo (lunghezze maggiorate)",
+    "perche": "Le lunghezze vengono da una pianta (nel kit il catastale 1:200, ±10-15%): il metro in più copre discese e raccordi, il 15% l'incertezza del rilievo, il mezzo metro per eccesso il taglio. In dubbio per eccesso: un metro che manca è un extra di Nove C."
+   },
+   "classi": [
+    {
+     "classe": "frigo",
+     "fluidi": [
+      "refrigerant_liquid",
+      "refrigerant_gas"
+     ],
+     "minimo_m": 12.0,
+     "fonte": "kit AA-01: RAPPORTO.md §7; REVISIONE-INDIPENDENTE.md rilievo 20 (8 m solo verso NE o NO, sul fronte SE 10-12 m)",
+     "fonte_in_parole": "regola Nove C per le linee frigorifere",
+     "perche": "La posizione dell'unità esterna si conferma in sopralluogo: la linea frigorifera è la voce che costa di più al metro, e il minimo copre lo spostamento della macchina su un'altra facciata."
+    },
+    {
+     "classe": "condensa",
+     "fluidi": [
+      "condensate"
+     ],
+     "minimo_m": 10.0,
+     "fonte": "kit AA-01: RAPPORTO.md §7; REVISIONE-INDIPENDENTE.md rilievo 21",
+     "fonte_in_parole": "regola Nove C per lo scarico della condensa",
+     "perche": "Il punto di scarico (il bagno più vicino) si conferma in sopralluogo, e il percorso in controsoffitto con la pendenza dell'1% è più lungo di quello in pianta."
+    },
+    {
+     "classe": "bus",
+     "fluidi": [
+      "control_bus"
+     ],
+     "minimo_m": 5.0,
+     "fonte": "kit AA-01: RAPPORTO.md §7 («bus 5 m»); nel codice del kit il minimo è applicato ai soli bus dei termostati",
+     "fonte_in_parole": "regola Nove C per i bus e le linee di comando",
+     "perche": "La posizione di termostati e comandi a parete si decide col committente: il minimo copre lo spostamento su un'altra parete. Applicato a tutto il bus, come dice il rapporto (in su rispetto al codice del kit)."
+    },
+    {
+     "classe": "ramo_aria",
+     "fluidi": [
+      "supply_air",
+      "return_air"
+     ],
+     "minimo_m": 2.0,
+     "fonte": "kit AA-01: RAPPORTO.md §7; lavoro/dimensionamento.py, MIN_FLEX",
+     "fonte_in_parole": "regola Nove C per i canali flessibili (acustica)",
+     "perche": "Acustica: un ramo di flessibile più corto di 2 m porta il rumore del plenum alla bocchetta; l'eccesso resta in ansa."
+    },
+    {
+     "classe": "potenza",
+     "fluidi": [
+      "power_supply",
+      "interconnection"
+     ],
+     "minimo_m": 0.0,
+     "fonte": "kit AA-01: lavoro/dimensionamento.py (i minimi delle linee E-1 ed E-3 sono scritti a mano per quel caso: qui diventano `lunghezza_minima_m` sul tratto)",
+     "fonte_in_parole": "regola Nove C per le linee elettriche",
+     "perche": "Nessun minimo generale: la posizione del quadro la dà il progettista, e se è incerta lo dice col minimo sul tratto."
+    }
+   ],
+   "segue": [
+    {
+     "fluido": "interconnection",
+     "fluidi_seguiti": [
+      "refrigerant_liquid",
+      "refrigerant_gas"
+     ],
+     "in_piu_m": 1.0,
+     "fonte": "kit AA-01: lavoro/dimensionamento.py, tratta E-2 (minimo = linea frigorifera da quotare + 1 m)",
+     "fonte_in_parole": "regola Nove C: il cavo di collegamento corre con le linee frigorifere",
+     "perche": "Il cavo di collegamento fra unità interna ed esterna corre con le linee frigorifere fra le stesse due macchine: non può essere più corto di loro, e il metro in più serve ai morsetti."
+    }
+   ]
+  },
+  "verifica.json": {
+   "id": "verifica",
+   "versione": "1.1.0",
+   "nota": "Le soglie della verifica dell'aria e delle linee: la verifica **segnala, non corregge**. Si fa sui tratti dove il progettista dà la portata (`portata_m3h`) e la sezione (`Ø200`, `1000×250`); un tratto senza uno dei due non si verifica, e lo si dice. Le soglie sono dati, con la loro fonte: il PO le giudica.",
+   "velocita": [
+    {
+     "fluido": "supply_air",
+     "massima_m_s": 3.0,
+     "fonte": "kit AA-01: RAPPORTO.md §2, proposta 5 approvata dal PO («flessibili ≤ 3 m/s»); proposta 3 (flessibili Ø200 a 2,4-2,6 m/s)",
+     "fonte_in_parole": "regola Nove C per il comfort acustico (mandata fino a 3 m/s)",
+     "perche": "Oltre i 3 m/s un flessibile residenziale si sente nelle camere."
+    },
+    {
+     "fluido": "return_air",
+     "massima_m_s": 2.0,
+     "fonte": "kit AA-01: RAPPORTO.md §2, proposta 5 («ripresa < 2 m/s»), sulla sezione lorda; REVISIONE-INDIPENDENTE.md rilievo 4 (1,9 m/s lordi diventano ~3 m/s reali con griglia e filtro)",
+     "fonte_in_parole": "regola Nove C per il comfort acustico (ripresa fino a 2 m/s)",
+     "perche": "La griglia di ripresa sta nel disimpegno, vicino alle porte delle camere: è la sorgente di rumore più vicina a chi dorme."
+    }
+   ],
+   "transito": {
+    "velocita_m_s": 1.5,
+    "fonte": "kit AA-01: RAPPORTO.md §7 («griglie di transito a 1,5 m/s»)",
+    "fonte_in_parole": "regola Nove C per il ritorno dell'aria (1,5 m/s nelle griglie di transito)",
+    "perche": "L'area efficace minima della griglia di transito (o della luce sotto la porta) di ogni locale servito è la portata delle sue bocchette divisa per 1,5 m/s: la distinta la scrive accanto alla voce del committente."
+   },
+   "linea_frigorifera": {
+    "fonte": "kit AA-01: RAPPORTO.md §7 (massimo 30 m dalla scheda Daikin RXM-A, citata in RAPPORTO.md §10)",
+    "fonte_in_parole": "scheda tecnica dell'unità esterna (lunghezza massima della linea)",
+    "perche": "Se la lunghezza da quotare supera la lunghezza massima che il progettista scrive sull'unità esterna (`lunghezza_max_m`), la macchina non funziona come dichiarato: si segnala."
+   },
+   "scritta": {
+    "fonte": "contratto con REL-012: la scritta di un tratto («Ø200 · L 6 m») è un dato del progettista",
+    "fonte_in_parole": "confronto con la scritta della tratta sulla tavola",
+    "perche": "Se la scritta sulla tavola dice una lunghezza diversa da quella che la distinta quota, l'installatore legge due numeri: si segnala."
+   }
+  }
+ }
+}
