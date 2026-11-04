@@ -213,6 +213,14 @@ Regole di forma:
   `drawn_by`, `checked_by`, `approved_by` — chi ha disegnato, verificato e approvato — e
   `header_note`, la dicitura che il cartiglio porta in testata a destra (per esempio
   «Conto Termico con sconto in fattura»). Senza, restano vuoti, e non si chiedono.
+  `livello`: `"definitivo"` o `"esecutivo"` (esecutivo-costruttivo), **solo se il testo
+  lo dice**; senza, vale definitivo, e lo chiedi in `assumptions` (D-224).
+- **`antigelo`**: come si protegge dal gelo il tratto esterno delle pompe di calore,
+  `"glicole"` o `"valvole"`, **solo se il testo lo dice**. Senza, nelle case le regole
+  mettono le valvole antigelo e sopra i 35 kW `completa` lo chiede (D-230).
+- **I dati che il vaso vuole** — il contenuto d'acqua dell'impianto, la temperatura
+  massima, il dislivello fra il vaso e il punto più alto — non vanno nel grafo: li dai al
+  comando `vaso` dopo `completa`. Se il testo li dice, tienili per quel momento.
 - Il campo `evidence` che lo schema prevede puoi lasciarlo vuoto: la tracciabilità la
   dai con la tabella di rilettura (§8, passo 6). Nelle assunzioni puoi usare
   `source_message_refs` per citare la frase del testo da cui nasce la voce.
