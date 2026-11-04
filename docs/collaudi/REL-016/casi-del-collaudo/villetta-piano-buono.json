@@ -2,7 +2,8 @@
  "formato": "A3",
  "vista": "idraulica",
  "note": [
-  "Centrale: idraulica e elettrico su due tavole. PdC e volano allo stesso y: mandata e ritorno rette (D-159). Bollitore sotto la coppia, servito dalla terza via della deviatrice (D-196)."
+  "Centrale: idraulica e elettrico su due tavole. PdC e volano allo stesso y: mandata e ritorno rette (D-159). Bollitore sotto la coppia, servito dalla terza via della deviatrice (D-196).",
+  "Il 4 novembre 2026 (REL-011) la pompa di calore porta il giunto antivibrante (D-222) e la valvola antigelo (D-230) sui due attacchi, e il defangatore coi suoi rubinetti passa fra il manometro e la confluenza (D-218): la valvola di sicurezza si sposta di 10 mm per dare al giunto il suo tratto dritto, e i 12 pezzi a destra del manometro di 12,5 mm a destra, per il defangatore fra i suoi rubinetti."
  ],
  "pezzi": {
   "pdc": {
@@ -11,40 +12,40 @@
    "regola": "D-159"
   },
   "tee-valve-safety-pdc-water-supply": {
-   "x": -70,
+   "x": -60,
    "y": 2.5
   },
   "valve-safety-pdc-water-supply": {
-   "x": -70,
+   "x": -60,
    "y": -10
   },
   "deviatrice": {
-   "x": 55,
+   "x": 67.5,
    "y": 0,
    "rotazione": 0
   },
   "volano": {
-   "x": 90,
+   "x": 102.5,
    "y": 0
   },
   "air-vent-volano-secondary-out": {
-   "x": 100,
+   "x": 112.5,
    "y": -7.5
   },
   "drain-connection-volano-secondary-out": {
-   "x": 100,
+   "x": 112.5,
    "y": 50
   },
   "sonda-volano": {
-   "x": 75,
+   "x": 87.5,
    "y": 30
   },
   "pannelli": {
-   "x": 165,
+   "x": 177.5,
    "y": 2.5
   },
   "confluenza": {
-   "x": 20,
+   "x": 32.5,
    "y": 17.5
   },
   "tee-pressure-gauge-pdc-water-return": {
@@ -80,24 +81,24 @@
    "y": 40
   },
   "bollitore": {
-   "x": 70,
+   "x": 82.5,
    "y": 85
   },
   "mixing-valve-thermostatic-bollitore-dhw-out": {
-   "x": 105,
+   "x": 117.5,
    "y": 62.5,
    "rotazione": 0
   },
   "inlet-mixing-valve-thermostatic-bollitore-dhw-out": {
-   "x": 105,
+   "x": 117.5,
    "y": 90
   },
   "utenze": {
-   "x": 150,
+   "x": 162.5,
    "y": 65
   },
   "sonda-acs": {
-   "x": 105,
+   "x": 117.5,
    "y": 102.5
   },
   "af": {

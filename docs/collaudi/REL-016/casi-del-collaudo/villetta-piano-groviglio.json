@@ -2,7 +2,8 @@
  "formato": "A3",
  "vista": "idraulica",
  "note": [
-  "Centrale: idraulica e elettrico su due tavole. PdC e volano allo stesso y: mandata e ritorno rette (D-159). Bollitore sotto la coppia, servito dalla terza via della deviatrice (D-196)."
+  "Centrale: idraulica e elettrico su due tavole. PdC e volano allo stesso y: mandata e ritorno rette (D-159). Bollitore sotto la coppia, servito dalla terza via della deviatrice (D-196).",
+  "Il 4 novembre 2026 (REL-011) la pompa di calore porta il giunto antivibrante (D-222) e la valvola antigelo (D-230): la valvola di sicurezza si sposta di 10 mm per dare al giunto il suo tratto dritto. Il resto resta dov'era, e non come nel piano buono, che sposta di 12,5 mm i pezzi a destra del manometro: qui il defangatore, che dal D-218 sta fra i raccordi e la confluenza, deve restare sulla piega del groviglio, ed e' quello che la prova (tests/piano/test_la_tavola_aggrovigliata_non_si_consegna.py) misura. Con lo stesso spostamento del piano buono il defangatore trova un tratto dritto e resta il solo groviglio."
  ],
  "pezzi": {
   "pdc": {
@@ -11,11 +12,11 @@
    "regola": "D-159"
   },
   "tee-valve-safety-pdc-water-supply": {
-   "x": -70,
+   "x": -60,
    "y": 2.5
   },
   "valve-safety-pdc-water-supply": {
-   "x": -70,
+   "x": -60,
    "y": -10
   },
   "deviatrice": {
