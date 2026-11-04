@@ -1706,6 +1706,11 @@ SOURCE_REL012_KIT = (
     "forma da approvare dal PO sulla tavola"
 )
 """La fonte dei simboli del kit, con le parole del kit (`RAPPORTO.md` §5.1)."""
+SOURCE_D228_RELAY = (
+    "proposta della sessione del 04/11/2026 (D-228, I-259): bobina e contatto di chiusura "
+    "nello stile CEI dei segni del kit; forma da approvare dal PO sulla tavola"
+)
+"""La fonte del segno del relè d'appoggio: nessuna fonte esterna acquisita."""
 
 SOURCE_REL012_PLENUM = (
     "proposta della sessione del 29/10/2026 (collaudo T1 di REL-012, plenum a quattro uscite): "
@@ -2088,6 +2093,41 @@ def isolator_switch_body(w: float, h: float) -> str:
         + _segment(w * 0.2, cy, w * 0.78, h * 0.14)
         + _segment(w * 0.8, cy, w, cy)
         + _segment(w * 0.8, h * 0.32, w * 0.8, h * 0.68)
+    )
+
+
+INTERFACE_RELAY = (10.0, 10.0)
+"""Il relè d'appoggio: il riquadro di un apparecchio, il doppio del sezionatore
+perche' gli attacchi sono tre (D-228)."""
+INTERFACE_RELAY_PORTS = [
+    # La bobina a sinistra, dove arriva il comando della macchina; il contatto a
+    # destra, con l'ingresso dal quadro sul fianco e l'uscita verso il carico sopra.
+    # Bobina e ingresso alla stessa quota: due porte su facce opposte a quote
+    # diverse fanno del pezzo un organo sulla piega (B4, D-154).
+    port_at("bobina", "left", 7.5, *INTERFACE_RELAY),
+    port_at("a", "right", 7.5, *INTERFACE_RELAY),
+    port_at("b", "top", 7.5, *INTERFACE_RELAY),
+]
+
+
+def interface_relay_body(w: float, h: float) -> str:
+    """Relè d'appoggio, nello stile CEI: la bobina, un rettangolo sul suo
+    moncone, e il contatto di chiusura, una lama aperta fra l'ingresso e
+    l'uscita; il legame meccanico fra le due e' a tratti, disegnato a segmenti."""
+    quota = h * 0.75
+    bx0, bx1, by0, by1 = w * 0.125, w * 0.375, quota - h * 0.225, quota + h * 0.225
+    perno_x = w * 0.75
+    punta_x, punta_y = w * 0.59, h * 0.29
+    fisso_y = h * 0.32
+    legame = h * 0.55
+    return (
+        _segment(0, quota, bx0, quota)
+        + f'<rect x="{n(bx0)}" y="{n(by0)}" width="{n(bx1 - bx0)}" height="{n(by1 - by0)}"/>'
+        + _segment(w, quota, perno_x, quota)
+        + _segment(perno_x, quota, punta_x, punta_y)
+        + _segment(perno_x, 0, perno_x, fisso_y)
+        + _segment(w * 0.42, legame, w * 0.49, legame)
+        + _segment(w * 0.54, legame, w * 0.61, legame)
     )
 
 
@@ -3325,6 +3365,18 @@ SYMBOLS: list[SymbolSpec] = [
     inline_symbol(
         "isolator-switch", "Sezionatore onnipolare", INLINE_ACCESSORY,
         isolator_switch_body, SOURCE_REL012_KIT,
+    ),
+    # Il relè d'appoggio del circolatore comandato dalla pompa di calore (D-228,
+    # I-259): tre attacchi su tre facce, un pezzo che il piano posa.
+    SymbolSpec(
+        id="interface-relay",
+        name="Relè d'appoggio 10 A",
+        width_mm=INTERFACE_RELAY[0],
+        height_mm=INTERFACE_RELAY[1],
+        inline=False,
+        ports=INTERFACE_RELAY_PORTS,
+        body=interface_relay_body(*INTERFACE_RELAY),
+        source=SOURCE_D228_RELAY,
     ),
     single_port_symbol(
         "room-thermostat", "Termostato di zona", DEVICE, "left",

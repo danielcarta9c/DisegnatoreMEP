@@ -574,7 +574,8 @@ parti. Una tubazione scritta al contrario la validazione la ferma
 dell'impianto si ferma e le sigle che non hai scritto non si assegnano.
 
 **L'elettrico e il comando si trascrivono solo dove il catalogo ha gli attacchi**: le
-voci dell'aria-aria, il quadro (`out_1`…`out_6`), il sezionatore, il regolatore
+voci dell'aria-aria, il quadro (`out_1`…`out_6`), il sezionatore, il relè d'appoggio
+(`bobina`, `a`, `b`), il regolatore
 (`power`, `bus`, `out_1`…`out_4` per i comandi, `probe_1`…`probe_3` per le sonde), le sonde
 (`signal`), e sulle macchine idroniche gli attacchi di comando facoltativi: caldaie `power` e
 `bus`; pompe di calore aria-acqua `power`, `bus` e quelli della regolazione a bordo (sotto);
@@ -609,12 +610,29 @@ Allora:
 
 La sonda nel bollitore e quella nel volano stanno sull'attacco `probe` del serbatoio, se la voce
 lo ha (§5); il loro cavo va dalla porta `signal` della sonda alla porta sonda della pompa di
-calore — `sonda_acs` il bollitore, `sonda_accumulo` il volano. **Un circolatore comandato dalla
-macchina prende alimentazione e comando dalla sua morsettiera, con un cavo solo**: dall'uscita
-della pompa di calore al `power` del circolatore, e il suo `comando` resta libero; dal quadro
-al circolatore non arriva niente (I-236, D-215: è lo standard). Il circolatore alimentato dal
-quadro e acceso da un cronotermostato è una scelta del progettista: la disegni solo se il
-testo la dice. **Non scrivere i morsetti della scheda**
+calore — `sonda_acs` il bollitore, `sonda_accumulo` il volano.
+
+**Un circolatore comandato dalla macchina non si alimenta mai dalla sua morsettiera: passa da
+un relè d'appoggio da 10 A** (D-228, I-259; supera D-215 per i circolatori). Per ogni
+circolatore un pezzo `interface-relay` («Relè d'appoggio 10 A», nel quadro) e **tre cavi**:
+
+- dall'uscita della pompa di calore (`out_pompa_zona_1`, `out_pompa_zona_2`,
+  `out_pompa_ricircolo`) alla `bobina` del relè — una rete sua, «Comando del relè del
+  circolatore …», `power_supply`;
+- da un'uscita libera del quadro (`out_n`) all'attacco `a` del relè, e dall'attacco `b` del
+  relè al `power` del circolatore — una rete sola per la linea del circolatore,
+  «Alimentazione circolatore … dal quadro, attraverso il relè», `power_supply`; il relè è un
+  pezzo `passante`, e la linea dal quadro al circolatore è un tratto;
+- **niente** sul `comando` del circolatore, e niente dall'uscita della macchina al `power`.
+
+Un relè per circolatore, mai uno in comune. Le **valvole** a tre vie restano come prima: dalla
+loro uscita della macchina al `comando` della valvola, con un cavo solo (D-215). Il relè sta
+nel quadro, con la protezione dedicata della linea del circolatore: scrivilo in `assumptions`
+(«Ogni circolatore ha il suo relè d'appoggio da 10 A nel quadro: l'uscita della macchina ne
+comanda la bobina, e il circolatore è alimentato attraverso il contatto da un'uscita del
+quadro.»). Il circolatore alimentato dal quadro e acceso da un cronotermostato, senza la
+pompa di calore, è una scelta del progettista: la disegni solo se il testo la dice.
+**Non scrivere i morsetti della scheda**
 (CN27, SV1…) se il progettista non li dà: il nome della porta dice già dove va il cavo.
 
 **Le uscite di un quadro e gli ingressi di un regolatore sono equivalenti**: scegli la prima
@@ -750,7 +768,7 @@ resta alle regole.
 **Entrano anche, quando il testo li dice, l'aria-aria e l'elettrico e il comando** (§4.8),
 che non sono ferramenta di servizio: i mestieri `refrigerant_generation`,
 `direct_expansion_terminal`, `air_zoning`, `zone_control`, `air_terminal`, `air_return`,
-`condensate_trap`, `power_source`, `power_isolation`, `room_control`, `unit_control`,
+`condensate_trap`, `power_source`, `power_isolation`, `power_switching`, `room_control`, `unit_control`,
 `plant_control`, `temperature_sensing`, `outdoor_temperature_sensing`. La **sonda a
 immersione** su una tubazione si appende come un termometro: un `tee-branch` in linea e dal
 braccio una tubazione corta alla porta `a` della sonda; nel bollitore o nel volano va

@@ -112,7 +112,9 @@ def test_the_libraries_are_not_empty() -> None:
     # serrande, accanto a quello a cinque del kit.
     # 90 da REL-016 (D3 del collaudo della 1.7.0): il collettore con ritorno da tre a
     # dodici vie, accanto a quello a due.
-    assert len(published()) == 90
+    # 91 dal 4 novembre 2026 (D-228, I-259): il relè d'appoggio del circolatore
+    # comandato dalla pompa di calore.
+    assert len(published()) == 91
 
 
 @pytest.mark.parametrize("symbol", published(), ids=lambda item: item.manifest.id)

@@ -230,6 +230,11 @@
       "name": "Sezionatore"
     },
     {
+      "function": "power_switching",
+      "prefix": "KA",
+      "name": "Relè d'appoggio"
+    },
+    {
       "function": "room_control",
       "prefix": "TZ",
       "name": "Termostato di zona"

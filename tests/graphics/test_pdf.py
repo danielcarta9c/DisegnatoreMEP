@@ -150,8 +150,9 @@ def test_ogni_simbolo_della_libreria_si_traduce(simboli: SymbolRegistry) -> None
     # 54 con lo sfiato con rubinetto (I-211); 68 con gli undici simboli del kit
     # aria-aria (I-224) e i tre del comando nell'idronico (I-226), `REL-012`; 72
     # con i plenum di zona da due a sei serrande (collaudo T1 di REL-012); 82 col
-    # collettore con ritorno da tre a dodici vie (REL-016, D3).
-    assert len(simboli.all()) == 82
+    # collettore con ritorno da tre a dodici vie (REL-016, D3); 83 col relè
+    # d'appoggio (D-228, I-259).
+    assert len(simboli.all()) == 83
 
 
 def test_il_foglio_di_riscontro_si_traduce(simboli: SymbolRegistry) -> None:
