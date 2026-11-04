@@ -2,7 +2,8 @@
   "formato": "A3",
   "note": [
     "D — la disposizione del PO con i simboli nuovi (D-196): volano a due attacchi coricato e in linea sul ritorno, sfiato 5 x 5 addosso al suo cielo; deviatrice dritta sulla mandata, terza via in basso verso il bollitore.",
-    "Il 5 ottobre 2026 lo sfiato e' diventato lo sfiato col suo rubinetto, alto 7,5 invece di 5 (I-211): addosso al volano sta 2,5 mm piu' in alto, e il suo attacco resta dov'era."
+    "Il 5 ottobre 2026 lo sfiato e' diventato lo sfiato col suo rubinetto, alto 7,5 invece di 5 (I-211): addosso al volano sta 2,5 mm piu' in alto, e il suo attacco resta dov'era.",
+    "Il 4 novembre 2026 (REL-011) la pompa di calore porta il giunto antivibrante (D-222) e la valvola antigelo (D-230) sui due attacchi, e defangatore e rubinetti passano dalla parte del volano (D-218): la valvola di sicurezza si sposta di 12,5 mm per dare al giunto il suo tratto dritto; volano, sfiato, scarico e raccordo del ritorno di 27,5 mm a destra, per il defangatore fra i suoi rubinetti e per lo stacco dello sfiato della prova delle autostrade (tests/acceptance/test_prima_le_autostrade.py); la deviatrice di 10 mm, per lasciare la colonna del ritorno del bollitore."
   ],
   "pezzi": {
     "pdc": {
@@ -10,11 +11,11 @@
       "y": 160
     },
     "tee-valve-safety-pdc-water-supply": {
-      "x": 62.5,
+      "x": 75,
       "y": 162.5
     },
     "valve-safety-pdc-water-supply": {
-      "x": 62.5,
+      "x": 75,
       "y": 142.5
     },
     "tee-expansion-connection-pdc-water-return": {
@@ -48,24 +49,24 @@
       "rotazione": 180
     },
     "volano": {
-      "x": 155,
+      "x": 182.5,
       "y": 175,
       "specchio": true
     },
     "air-vent-volano-b": {
-      "x": 165,
+      "x": 192.5,
       "y": 167.5
     },
     "drain-connection-volano-a": {
-      "x": 165,
+      "x": 192.5,
       "y": 185
     },
     "ritorno": {
-      "x": 200,
+      "x": 227.5,
       "y": 177.5
     },
     "deviatrice": {
-      "x": 225,
+      "x": 235,
       "y": 160,
       "rotazione": 0
     },

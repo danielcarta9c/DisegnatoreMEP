@@ -56,8 +56,13 @@ def _tavola(cartella: Path, nomi_dello_stacco: tuple[str, str]) -> tuple[str, st
     ]
     piano = json.loads((PROVA / "piano-D-volano-coricato.json").read_text(encoding="utf-8"))
     piano["pezzi"].pop("air-vent-volano-b")
-    piano["pezzi"]["tee-sfiato"] = {"x": 80, "y": 177.5}
-    piano["pezzi"]["sfiato-pdc"] = {"x": 80, "y": 140}
+    # Dal 4 novembre 2026 il defangatore e i suoi rubinetti stanno fra il manometro e il volano
+    # (D-218), e la pompa di calore porta giunto e valvola antigelo (D-222, D-230): lo stacco
+    # dello sfiato, che le regole mettono fra il defangatore e il rubinetto del volano, non sta
+    # piu' a x=80 accanto alla macchina ma fra defangatore e volano. Sale come prima oltre la
+    # mandata, ed e' quello che la prova vuole: uno stacco che incrocia l'autostrada.
+    piano["pezzi"]["tee-sfiato"] = {"x": 160, "y": 177.5}
+    piano["pezzi"]["sfiato-pdc"] = {"x": 160, "y": 140}
     cartella.mkdir()
     (cartella / "grafo.json").write_text(json.dumps(grafo), encoding="utf-8")
     (cartella / "piano.json").write_text(json.dumps(piano), encoding="utf-8")
@@ -76,7 +81,9 @@ def _tavola(cartella: Path, nomi_dello_stacco: tuple[str, str]) -> tuple[str, st
 def test_la_tavola_non_dipende_dal_nome_delle_tubazioni_di_uno_stacco(tmp_path: Path) -> None:
     dopo, numeri_dopo = _tavola(tmp_path / "dopo", ("s1", "s2"))
     prima, numeri_prima = _tavola(tmp_path / "prima", ("a-sfiato-1", "a-sfiato-2"))
-    assert "pieghe 19" in numeri_dopo
+    # Erano 19 pieghe sul piano del 3 ottobre; col defangatore dalla parte del volano (D-218)
+    # e lo stacco ricomposto accanto a lui la tavola ne ha 5, e nessun rilievo bloccante.
+    assert "rilievi bloccanti 0 · pieghe 5 ·" in numeri_dopo
     assert numeri_prima == numeri_dopo, "lo stacco che passa prima per nome non sposta l'autostrada"
     elementi = re.compile(r"<[^>]+>")
     assert Counter(elementi.findall(prima)) == Counter(elementi.findall(dopo))
