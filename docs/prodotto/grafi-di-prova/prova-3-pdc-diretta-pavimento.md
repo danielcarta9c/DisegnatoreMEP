@@ -78,6 +78,7 @@ famiglia vuol dire aggiungere una riga a una tabella, non toccare il programma.
 | **DEF** | Defangatore |
 | **DER** | Derivazione |
 | **FIL** | Filtro |
+| **GA** | Giunto antivibrante |
 | **GR** | Gruppo di riempimento |
 | **MN** | Manometro |
 | **PAV** | Terminale di emissione — sigla che hai scelto tu nel modello |
@@ -86,6 +87,7 @@ famiglia vuol dire aggiungere una riga a una tabella, non toccare il programma.
 | **RM** | Rubinetto portamanometro a tre vie |
 | **SC** | Attacco di scarico |
 | **SF** | Valvola di sfogo aria |
+| **VAG** | Valvola antigelo |
 | **VE** | Vaso di espansione |
 | **VI** | Valvola di intercettazione |
 | **VIB** | Valvola di intercettazione bloccabile aperta |
@@ -129,9 +131,11 @@ numerati. L'indirizzo dice dove sta il pezzo; la sigla che cos'e'.
 | ACS.01.N.04 | **VI-02** | Valvola di intercettazione | acqua calda sanitaria |
 | ACS.01.N.05 | **ACS-01** | Utenze sanitarie | acqua calda sanitaria |
 | CP.01.N.01 | **PDC-01** | Pompa di calore aria-acqua | acqua di riscaldamento |
-| CP.01.N.02 | **DER-01** | Derivazione a T | acqua di riscaldamento |
-| CP.01.N.03 | **VI-03** | Valvola di intercettazione | acqua di riscaldamento |
-| CP.01.N.04 | **COL-01** | Collettore di zona | acqua di riscaldamento |
+| CP.01.N.02 | **GA-01** | Giunto antivibrante | acqua di riscaldamento |
+| CP.01.N.03 | **DER-01** | Derivazione a T | acqua di riscaldamento |
+| CP.01.N.04 | **VAG-01** | Valvola antigelo | acqua di riscaldamento |
+| CP.01.N.05 | **VI-03** | Valvola di intercettazione | acqua di riscaldamento |
+| CP.01.N.06 | **COL-01** | Collettore di zona | acqua di riscaldamento |
 | CP.02.N.01 | **VI-04** | Valvola di intercettazione | acqua di riscaldamento |
 | CP.02.N.02 | **PAV-01** | Pannello radiante | acqua di riscaldamento |
 | RP.01.N.01 | **VI-05** | Valvola di intercettazione | acqua di riscaldamento |
@@ -139,23 +143,25 @@ numerati. L'indirizzo dice dove sta il pezzo; la sigla che cos'e'.
 | RP.01.N.03 | **VI-06** | Valvola di intercettazione | acqua di riscaldamento |
 | RP.01.N.04 | **VOL-01** | Volano termico a due attacchi · tiene in serbo acqua di riscaldamento | acqua di riscaldamento |
 | RP.02.N.01 | **VI-07** | Valvola di intercettazione | acqua di riscaldamento |
-| RP.02.N.02 | **DER-02** | Derivazione a T | acqua di riscaldamento |
-| RP.02.N.03 | **DER-03** | Derivazione a T | acqua di riscaldamento |
-| RP.02.N.04 | **DER-04** | Derivazione a T | acqua di riscaldamento |
-| RP.02.N.05 | **DEF-01** | Defangatore | acqua di riscaldamento |
-| RP.02.N.06 | **VI-08** | Valvola di intercettazione | acqua di riscaldamento |
+| RP.02.N.02 | **DEF-01** | Defangatore | acqua di riscaldamento |
+| RP.02.N.03 | **VI-08** | Valvola di intercettazione | acqua di riscaldamento |
+| RP.02.N.04 | **DER-02** | Derivazione a T | acqua di riscaldamento |
+| RP.02.N.05 | **DER-03** | Derivazione a T | acqua di riscaldamento |
+| RP.02.N.06 | **DER-04** | Derivazione a T | acqua di riscaldamento |
 | RP.02.N.07 | **FIL-01** | Filtro a Y | acqua di riscaldamento |
-| RP.02.N.04.1 | **VIB-01** | Valvola di intercettazione bloccabile aperta | acqua di riscaldamento |
-| RP.02.N.04.2 | **VE-01** | Vaso di espansione · pende dal tubo con una propria derivazione | acqua di riscaldamento |
-| RP.02.N.03.1 | **GR-01** | Gruppo di riempimento · pende dal tubo con una propria derivazione | acqua di riscaldamento, acqua fredda sanitaria |
-| RP.02.N.02.1 | **RM-01** | Rubinetto portamanometro a tre vie | acqua di riscaldamento |
-| RP.02.N.02.2 | **MN-01** | Manometro · pende dal tubo con una propria derivazione | acqua di riscaldamento |
+| RP.02.N.08 | **VAG-02** | Valvola antigelo | acqua di riscaldamento |
+| RP.02.N.09 | **GA-02** | Giunto antivibrante | acqua di riscaldamento |
+| RP.02.N.06.1 | **VIB-01** | Valvola di intercettazione bloccabile aperta | acqua di riscaldamento |
+| RP.02.N.06.2 | **VE-01** | Vaso di espansione · pende dal tubo con una propria derivazione | acqua di riscaldamento |
+| RP.02.N.05.1 | **GR-01** | Gruppo di riempimento con disconnettore · pende dal tubo con una propria derivazione | acqua di riscaldamento, acqua fredda sanitaria |
+| RP.02.N.04.1 | **RM-01** | Rubinetto portamanometro a tre vie | acqua di riscaldamento |
+| RP.02.N.04.2 | **MN-01** | Manometro · pende dal tubo con una propria derivazione | acqua di riscaldamento |
 | RP.01.N.04.1 | **SF-01** | Valvola di sfogo aria con rubinetto di intercettazione · pende dal tubo con una propria derivazione | acqua di riscaldamento |
 | RP.01.N.04.2 | **SC-01** | Attacco di scarico · pende dal tubo con una propria derivazione | acqua di riscaldamento |
 | RP.03.N.01 | **VI-09** | Valvola di intercettazione | acqua di riscaldamento |
 | CP.03.N.02 | **PAV-02** | Pannello radiante | acqua di riscaldamento |
 | CP.03.N.01 | **VI-10** | Valvola di intercettazione | acqua di riscaldamento |
-| CP.01.N.02.1 | **VS-01** | Valvola di sicurezza · pende dal tubo con una propria derivazione | acqua di riscaldamento |
+| CP.01.N.03.1 | **VS-01** | Valvola di sicurezza · pende dal tubo con una propria derivazione | acqua di riscaldamento |
 | AF.01.N.01 | **AF-01** | Alimentazione acqua fredda | acqua fredda sanitaria |
 | AF.01.N.02 | **VI-11** | Valvola di intercettazione | acqua fredda sanitaria |
 | AF.01.N.03 | **DER-05** | Derivazione a T sull'acqua fredda | acqua fredda sanitaria |
@@ -200,16 +206,18 @@ Da **PDC-01** a **COL-01**, circuito di riscaldamento.
 
 1. **CP.01.N.01 · PDC-01** Pompa di calore aria-acqua · la linea parte dal suo braccio 1
     - qui arriva **RP.02**, da **VOL-01**, entrando dal braccio 2
-2. **CP.01.N.02 · DER-01** Derivazione a T
-    - **CP.01.N.02.1 · VS-01** Valvola di sicurezza · pende dallo stacco
-3. **CP.01.N.03 · VI-03** Valvola di intercettazione
-4. **CP.01.N.04 · COL-01** Collettore di zona
+2. **CP.01.N.02 · GA-01** Giunto antivibrante
+3. **CP.01.N.03 · DER-01** Derivazione a T
+    - **CP.01.N.03.1 · VS-01** Valvola di sicurezza · pende dallo stacco
+4. **CP.01.N.04 · VAG-01** Valvola antigelo
+5. **CP.01.N.05 · VI-03** Valvola di intercettazione
+6. **CP.01.N.06 · COL-01** Collettore di zona
 
 ### CP.02 — mandata primaria
 
 Da **COL-01** a **PAV-01**, circuito di riscaldamento.
 
-1. **COL-01** Collettore di zona · gia' numerato, indirizzo CP.01.N.04 · la linea parte dal suo braccio 2
+1. **COL-01** Collettore di zona · gia' numerato, indirizzo CP.01.N.06 · la linea parte dal suo braccio 2
 2. **CP.02.N.01 · VI-04** Valvola di intercettazione
 3. **CP.02.N.02 · PAV-01** Pannello radiante
 
@@ -217,7 +225,7 @@ Da **COL-01** a **PAV-01**, circuito di riscaldamento.
 
 Da **COL-01** a **PAV-02**, circuito di riscaldamento.
 
-1. **COL-01** Collettore di zona · gia' numerato, indirizzo CP.01.N.04 · la linea parte dal suo braccio 3
+1. **COL-01** Collettore di zona · gia' numerato, indirizzo CP.01.N.06 · la linea parte dal suo braccio 3
 2. **CP.03.N.01 · VI-10** Valvola di intercettazione
 3. **CP.03.N.02 · PAV-02** Pannello radiante
 
@@ -240,18 +248,20 @@ Da **VOL-01** a **PDC-01**, circuito di riscaldamento.
 
 1. **VOL-01** Volano termico a due attacchi · gia' numerato, indirizzo RP.01.N.04 · la linea parte dal suo braccio 2
 2. **RP.02.N.01 · VI-07** Valvola di intercettazione
-3. **RP.02.N.02 · DER-02** Derivazione a T
-    - **RP.02.N.02.1 · RM-01** Rubinetto portamanometro a tre vie · pende dallo stacco
-    - **RP.02.N.02.2 · MN-01** Manometro · pende dallo stacco
-4. **RP.02.N.03 · DER-03** Derivazione a T
-    - **RP.02.N.03.1 · GR-01** Gruppo di riempimento · pende dallo stacco
-5. **RP.02.N.04 · DER-04** Derivazione a T
-    - **RP.02.N.04.1 · VIB-01** Valvola di intercettazione bloccabile aperta · pende dallo stacco
-    - **RP.02.N.04.2 · VE-01** Vaso di espansione · pende dallo stacco
-6. **RP.02.N.05 · DEF-01** Defangatore
-7. **RP.02.N.06 · VI-08** Valvola di intercettazione
+3. **RP.02.N.02 · DEF-01** Defangatore
+4. **RP.02.N.03 · VI-08** Valvola di intercettazione
+5. **RP.02.N.04 · DER-02** Derivazione a T
+    - **RP.02.N.04.1 · RM-01** Rubinetto portamanometro a tre vie · pende dallo stacco
+    - **RP.02.N.04.2 · MN-01** Manometro · pende dallo stacco
+6. **RP.02.N.05 · DER-03** Derivazione a T
+    - **RP.02.N.05.1 · GR-01** Gruppo di riempimento con disconnettore · pende dallo stacco
+7. **RP.02.N.06 · DER-04** Derivazione a T
+    - **RP.02.N.06.1 · VIB-01** Valvola di intercettazione bloccabile aperta · pende dallo stacco
+    - **RP.02.N.06.2 · VE-01** Vaso di espansione · pende dallo stacco
 8. **RP.02.N.07 · FIL-01** Filtro a Y
-9. **PDC-01** Pompa di calore aria-acqua · **qui il giro si richiude su PDC-01**, entrando dal suo braccio 2 (CP.01.N.01)
+9. **RP.02.N.08 · VAG-02** Valvola antigelo
+10. **RP.02.N.09 · GA-02** Giunto antivibrante
+11. **PDC-01** Pompa di calore aria-acqua · **qui il giro si richiude su PDC-01**, entrando dal suo braccio 2 (CP.01.N.01)
 
 ### RP.03 — ritorno primario
 
@@ -277,7 +287,7 @@ Da **AF-01** a **BPC-01**, acqua fredda sanitaria.
 Da **AF-02** a **GR-01**, acqua fredda sanitaria.
 
 1. **AF.02.N.01 · AF-02** Alimentazione acqua fredda · la linea parte dal suo braccio 1
-2. **GR-01** Gruppo di riempimento · **qui ci si innesta su GR-01**, che si e' gia' letto, entrando dal suo braccio 1 (RP.02.N.03.1)
+2. **GR-01** Gruppo di riempimento con disconnettore · **qui ci si innesta su GR-01**, che si e' gia' letto, entrando dal suo braccio 1 (RP.02.N.05.1)
 
 ### AF.03 — acqua fredda sanitaria
 

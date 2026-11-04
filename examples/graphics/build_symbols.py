@@ -1678,16 +1678,26 @@ def flexible_joint_body(w: float, h: float) -> str:
 
 
 def valve_antifreeze_body(w: float, h: float) -> str:
-    """Valvola antigelo (REL-011, D-230): il segno del valvolame, e sopra il fiocco
-    che dice perche' si apre — quando l'acqua sta per gelare scarica il tratto
-    esterno. Si apre da sola, senza corrente: niente attuatore."""
-    cx = w / 2
-    fiocco_y, braccio = -h * 0.35, h * 0.22
+    """Valvola antigelo (REL-011, D-230): il segno del valvolame alto 4 mm al centro, e
+    sopra, sullo stelo, il fiocco che dice perche' si apre — quando l'acqua sta per
+    gelare scarica il tratto esterno. Si apre da sola, senza corrente: niente attuatore.
+    Il simbolo e' alto 8 mm perche' il fiocco stia dentro il suo riquadro."""
+    cx, cy = w / 2, h / 2
+    inset = w / 6
+    left, right = inset, w - inset
+    top, bottom = cy - 2.0, cy + 2.0
+    fiocco_y, braccio = 1.1, 1.0
     raggi = "".join(
         f'<line x1="{n(cx - dx)}" y1="{n(fiocco_y - dy)}" x2="{n(cx + dx)}" y2="{n(fiocco_y + dy)}"/>'
         for dx, dy in ((braccio, 0.0), (braccio * 0.5, braccio * 0.866), (braccio * 0.5, -braccio * 0.866))
     )
-    return valve_isolation_body(w, h) + f'<line x1="{n(cx)}" y1="{n(h / 2)}" x2="{n(cx)}" y2="{n(fiocco_y)}"/>' + raggi
+    return (
+        stubs_horizontal(w, h, inset)
+        + f'<path d="M{n(left)} {n(top)} L{n(left)} {n(bottom)} L{n(cx)} {n(cy)} Z"/>'
+        f'<path d="M{n(right)} {n(top)} L{n(right)} {n(bottom)} L{n(cx)} {n(cy)} Z"/>'
+        f'<line x1="{n(cx)}" y1="{n(cy)}" x2="{n(cx)}" y2="{n(fiocco_y + braccio)}"/>'
+        + raggi
+    )
 
 
 def polyphosphate_doser_body(w: float, h: float) -> str:
@@ -3199,7 +3209,7 @@ SYMBOLS: list[SymbolSpec] = [
     ),
     # REL-011, D-230: le valvole antigelo sul tratto esterno della pompa di calore.
     inline_symbol(
-        "valve-antifreeze", "Valvola antigelo", INLINE_ACCESSORY, valve_antifreeze_body,
+        "valve-antifreeze", "Valvola antigelo", (5.0, 8.0), valve_antifreeze_body,
         "proposta della sessione, REL-011 (D-230): la forma la approva il PO sulla tavola",
     ),
     inline_symbol(

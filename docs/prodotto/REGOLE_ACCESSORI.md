@@ -125,7 +125,9 @@ pareti.
 ritorno si divida verso le macchine: è il punto più freddo — la membrana dura di più dove
 l'acqua è meno calda — ed è il tratto che serve tutti i generatori insieme. Con due
 macchine in parallelo il vaso non finisce più sul ramo di una sola: è la correzione che ci
-hai chiesto.
+hai chiesto. Dal 3 novembre 2026 sta **fra le macchine e il defangatore**, insieme al gruppo
+di riempimento e al manometro: chiuse le valvole del defangatore, le macchine restano
+collegate al vaso, che non hanno a bordo.
 
 **Quante volte.** Uno per circuito, perché la pressione è la stessa in tutto il circuito e
 un secondo vaso non aggiungerebbe niente. Se la macchina ne porta già uno dentro il
@@ -464,11 +466,146 @@ le quattro fasce chiedono più spazio di quanto una A3 ne offra. Non è un difet
 regole: è il passo della composizione, che deve ancora essere rifatto e che ha esattamente
 questo compito. Le regole si approvano su cosa mettono e dove, non su come ci sta.
 
+## 17 · Valvola di ritegno del generatore
+
+**Cos'è.** Una valvola che lascia passare l'acqua in un verso solo.
+
+**Perché esiste.** Quando due o più generatori con la propria pompa mandano nello stesso
+collettore, quello fermo è una via aperta all'indietro: l'acqua di chi lavora rientra dalla
+macchina spenta e torna al ritorno senza passare dall'impianto. Il manuale Shenling lo
+prescrive: «il tubo di uscita di ogni unità deve essere installato con una valvola di non
+ritorno».
+
+**Dove va, e perché proprio lì.** Sulla mandata di ogni generatore, **fra lo stacco della
+valvola di sicurezza e il rubinetto della macchina**: chiusi i due rubinetti di quella
+macchina si cambia senza svuotare il collettore e senza fermare le altre.
+
+**Quante volte.** Uno per generatore in parallelo con un altro. Un generatore da solo non lo
+vuole.
+
+**Come sappiamo che c'è già.** Se sul tratto proprio della macchina c'è già un ritegno.
+
+**Da dove viene.** Dal manuale Shenling ThermaX R290, sezione della cascata; la posizione è
+quella che hai scelto il 3 novembre 2026.
+
+## 18 · Giunto antivibrante
+
+**Cos'è.** Un tratto flessibile, in gomma o in acciaio inox, fra la macchina e il tubo
+rigido.
+
+**Perché esiste.** La pompa di calore ha compressore e ventilatore e vibra: con i tubi
+rigidi la vibrazione arriva nelle tubazioni e nell'edificio.
+
+**Dove va, e perché proprio lì.** Attaccato alla macchina, sulla mandata e sul ritorno: è il
+primo pezzo, e tutto il resto viene dopo. Non chiude niente, quindi la valvola di sicurezza
+resta collegata alla macchina.
+
+**Quante volte.** Due per pompa di calore. Non sulle caldaie né sui circolatori.
+
+**Come sappiamo che c'è già.** Se il progettista l'ha già scritto su quell'attacco.
+
+**Da dove viene.** Dalla specifica tecnica di installazione Nove C (corredo del primario
+della pompa di calore monoblocco: «giunti antivibranti sempre presenti»).
+
+## 19 · Volano termico
+
+**Cos'è.** Un serbatoio d'acqua tecnica fra le macchine e l'impianto. Questa regola non lo
+mette: lo **chiede**.
+
+**Perché esiste.** In sbrinamento la pompa di calore prende calore dall'acqua: con poca
+acqua va in blocco o fa cicli brevi. Il manuale Shenling vuole un tampone (almeno 25 l per
+6–9 kW, 40 l per 12–15 kW, 40 l per unità in cascata) e almeno 40 l d'acqua anche con le
+valvole di zona chiuse.
+
+**Dove va, e perché proprio lì.** La proposta standard è un volano a 4 attacchi che separa
+le macchine dall'impianto, con il circolatore dell'impianto dopo il volano. Lo schema in
+serie sul solo ritorno la specifica Nove C non lo ammette.
+
+**Quante volte.** Una domanda per circuito di generatori che non ha né volano né accumulo.
+
+**Come sappiamo che c'è già.** Se sul circuito c'è un serbatoio, o se il progettista scrive
+che il volume è verificato.
+
+**Da dove viene.** Dal manuale Shenling (tampone e volume minimo) e dalla specifica Nove C
+(sempre a 4 tubi).
+
+## 20 · Vaso di espansione sul circuito dei generatori
+
+**Cos'è.** Una domanda, non un pezzo: il vaso c'è, ma non sul circuito delle macchine.
+
+**Perché esiste.** Se il vaso sta oltre i rubinetti di un volano o di uno scambiatore,
+chiusi quei rubinetti le macchine — che il vaso a bordo non ce l'hanno — scaldano un volume
+chiuso con la sola valvola di sicurezza.
+
+**Dove va, e perché proprio lì.** Non sposta niente: chiede al progettista se il vaso va sul
+circuito delle macchine o se la separazione è voluta.
+
+**Quante volte.** Una domanda per circuito di generatori rimasto senza vaso.
+
+**Come sappiamo che c'è già.** Se il progettista ha scritto che la separazione è accettata.
+
+**Da dove viene.** Dal principio della Raccolta R (ogni generatore collegato al vaso, senza
+organi di chiusura in mezzo) e dalla tua decisione del 3 novembre 2026.
+
+## 21 · Valvola antigelo
+
+**Cos'è.** Una valvola che si apre da sola, senza corrente, quando l'acqua sta per gelare,
+e scarica il tratto esterno.
+
+**Perché esiste.** La pompa di calore sta fuori: senza corrente la sua protezione antigelo
+non funziona, e una notte di gelo rompe lo scambiatore.
+
+**Dove va, e perché proprio lì.** Sulla mandata e sul ritorno di ogni pompa di calore, sul
+tratto esterno, dopo il giunto. Nello schema sta vicino alla macchina; in cantiere va nel
+punto più basso del tratto esterno, con lo scarico libero (lo dice la nota di posa).
+
+**Quante volte.** Due per pompa di calore, nelle centrali fino a 35 kW, se il progettista non
+dichiara il glicole.
+
+**Come sappiamo che c'è già.** Se il progettista l'ha già scritta su quell'attacco, o se
+dichiara il glicole.
+
+**Da dove viene.** Dal manuale Shenling (protezione antigelo senza corrente) e dalla
+specifica Nove C (glicole oppure altra soluzione approvata dalla Direzione Lavori).
+
+## 22 · Valvola antigelo nelle centrali grandi
+
+**Cos'è.** La stessa valvola della scheda 21, sopra i 35 kW.
+
+**Perché esiste.** Nelle centrali grandi si usa a volte il glicole e a volte le valvole: qui
+le valvole si mettono **solo se il progettista le ha scelte**.
+
+**Dove va, e perché proprio lì.** Come nella scheda 21.
+
+**Quante volte.** Due per pompa di calore, quando il progettista ha dichiarato le valvole.
+
+**Come sappiamo che c'è già.** Come nella scheda 21.
+
+**Da dove viene.** Dalla tua indicazione del 4 novembre 2026.
+
+## 23 · Protezione antigelo
+
+**Cos'è.** Una domanda, non un pezzo.
+
+**Perché esiste.** Sopra i 35 kW la scelta fra glicole e valvole antigelo è del progettista:
+la skill la chiede invece di indovinarla.
+
+**Dove va, e perché proprio lì.** Fra le domande di prima del disegno: con le valvole se ne
+mettono due per macchina; con il glicole il vaso si dimensiona col coefficiente della
+miscela.
+
+**Quante volte.** Una domanda per circuito di pompe di calore, finché il progettista non
+risponde.
+
+**Come sappiamo che c'è già.** Se il progettista ha dichiarato come si protegge dal gelo.
+
+**Da dove viene.** Dalla tua indicazione del 4 novembre 2026.
+
 ---
 
 ## Cosa ti stiamo chiedendo
 
-Di leggere le sedici schede e dirci, per ciascuna: **è vera, è al posto giusto, e ne
+Di leggere le ventitré schede e dirci, per ciascuna: **è vera, è al posto giusto, e ne
 manca una?** Se una regola è sbagliata, si corregge da sola senza toccare le altre. Se ne
 manca una, ce la dici e la scriviamo con lo stesso stampo: perché esiste, dove va, quante
 volte, come si riconosce che c'è già.

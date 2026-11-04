@@ -464,7 +464,9 @@ def test_dove_il_tratto_comune_non_esiste_davvero_esce_un_punto_aperto() -> None
     quattro regole restano per rete, e il punto aperto che aprono e' quello
     deciso in P2."""
     done, applied, gaps = saturate(_two_separate_rings(), CAT, REG)
-    open_points = {g.rule_id: g for g in gaps}
+    # Le domande al progettista (REL-011: il volano che manca, D-219) non sono il
+    # corredo comune che la prova misura.
+    open_points = {g.rule_id: g for g in gaps if g.reason is not GapReason.DESIGNER_QUESTION}
     assert set(open_points) == KIT_COMUNE
     for rule_id, gap in open_points.items():
         assert gap.reason is GapReason.NO_COMMON_RUN, rule_id
@@ -681,7 +683,9 @@ def test_sfogo_sul_serbatoio_e_sicurezza_sulla_mandata_di_ogni_macchina() -> Non
     for machine in ("pdc-master", "pdc-slave"):
         neighbours = fila(done, machine, "water_supply", "collettore-mandata")
         assert neighbours, f"nessun pezzo fra {machine} e la confluenza?"
-        first = neighbours[0]
+        # Il giunto antivibrante sta attaccato alla macchina (D-222) e non chiude
+        # niente: la sicurezza e' il primo pezzo dopo di lui.
+        first = next(item for item in neighbours if "vibration_isolation" not in functions_of(done, item))
         assert "safety" in hanging_functions(done, first), (
             f"fra la sicurezza e {machine} c'e' {first}"
         )
@@ -764,8 +768,9 @@ def test_le_sedici_regole_si_caricano_e_nessuna_nomina_un_componente() -> None:
     Nessun valore in when, then, ordering o satisfied_by puo' essere
     l'identificativo di una voce di catalogo."""
     # Sedici dal 24 settembre 2026: con D-182 escono la sicurezza di circuito
-    # e quella del generatore separabile.
-    assert len(REG.all()) == 16
+    # e quella del generatore separabile. Ventitre' dal 4 novembre 2026 (REL-011):
+    # ritegno in cascata, giunti, volano, vaso sul circuito, antigelo (tre).
+    assert len(REG.all()) == 23
     REG.cross_check(CAT)
     catalog_ids = {d.id for d in CAT.all()}
 
@@ -870,11 +875,13 @@ def test_il_confronto_per_il_pm_dice_il_vero_sui_documenti() -> None:
             senza_domande += 1
             continue
         assert len(found) == 1, (name, [(g.rule_id, g.reason.value) for g in found])
-        assert found[0].reason is GapReason.ON_BOARD_UNKNOWN, name
+        # Il 5 e' sopra i 35 kW: chiede come si protegge dal gelo (D-230).
+        assert found[0].reason in (GapReason.ON_BOARD_UNKNOWN, GapReason.DESIGNER_QUESTION), name
     # Tre senza domande dal 24 settembre 2026: il 5 ha l'acqua calda
     # centralizzata, e li' il vaso sanitario si mette senza chiederlo (D-178);
     # il 4 non chiede piu' della sicurezza della caldaia, che ha la sua (D-182).
-    assert senza_domande == 3
+    # Dal 4 novembre 2026 (REL-011) il 5 chiede dell'antigelo: due senza domande.
+    assert senza_domande == 2
     # Il regime che il confronto dichiara per ciascun impianto dev'essere
     # quello scritto nel modello: la tabella del documento e i cinque file
     # non possono divergere.

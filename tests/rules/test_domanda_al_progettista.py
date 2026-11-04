@@ -120,7 +120,7 @@ def test_la_domanda_arriva_al_progettista_con_le_sue_parole() -> None:
     rapporto = build_report(
         risultato.applied, risultato.gaps, Naming.from_directory(ROOT / "naming")
     )
-    punto = next(item for item in rapporto.open_points if "Volume minimo" in item.name)
+    punto = next(item for item in rapporto.open_points if "Volano termico" in item.name)
     assert punto.what_is_missing.startswith("una domanda al progettista: ")
     assert "costruttore" in punto.what_is_missing
 

@@ -77,10 +77,13 @@ def _run_from(
     model: ProjectModel, machine: str, port: str, rmap: dict[str, RuleDefinition] = RMAP
 ) -> list[Piece]:
     """La fila di una tratta letta a partire dalla macchina indicata."""
+    # Dal 4 novembre 2026 (D-222) sull'attacco di una pompa di calore c'e' il giunto
+    # antivibrante che una regola posa: la tratta parte da lui, e la macchina e' dietro.
+    giunto = f"flexible-joint-{machine}-{port.replace('_', '-')}"
     for run in runs_of(model, CAT, rmap):
-        if (run.head.component_id, run.head.port_id) == (machine, port):
+        if (run.head.component_id, run.head.port_id) == (machine, port) or run.head.component_id == giunto:
             return list(run.pieces)
-        if (run.tail.component_id, run.tail.port_id) == (machine, port):
+        if (run.tail.component_id, run.tail.port_id) == (machine, port) or run.tail.component_id == giunto:
             return list(reversed(run.pieces))
     raise AssertionError(f"nessuna tratta tocca {machine}.{port}")
 

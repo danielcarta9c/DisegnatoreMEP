@@ -1,7 +1,7 @@
 {
   "id": "drain-the-outdoor-run-before-it-freezes-when-declared",
   "version": "1.0.0",
-  "name": "Valvola antigelo",
+  "name": "Valvola antigelo nelle centrali grandi",
   "category": "necessary",
   "cardinality": "per_port",
   "then": {
@@ -40,6 +40,6 @@
     ],
     "plant_regime": "over_35_kw"
   },
-  "rationale": "Una pompa di calore sta fuori, e d'inverno l'acqua nei tubi esterni e nella macchina puo' gelare. La macchina ha una sua protezione antigelo, ma senza corrente non funziona: una notte di gelo e un'interruzione di corrente rompono lo scambiatore. Le valvole antigelo si aprono da sole, senza corrente, quando l'acqua sta per gelare, e scaricano il tratto esterno; poi l'impianto si rabbocca dal gruppo di riempimento. Ne va una sulla mandata e una sul ritorno di ogni pompa di calore, sul tratto esterno, dopo il giunto. Sulla tavola stanno vicino alla macchina; in cantiere vanno nel punto piu' basso del tratto esterno, con lo scarico libero (la nota di posa lo dice). Con il glicole dichiarato non servono. Sopra i 35 kW le valvole si mettono solo se il progettista le ha scelte («antigelo: valvole»).",
+  "rationale": "Una pompa di calore sta fuori, e d'inverno l'acqua nei tubi esterni e nella macchina puo' gelare. La macchina ha una sua protezione antigelo, ma senza corrente non funziona: una notte di gelo e un'interruzione di corrente rompono lo scambiatore. Le valvole antigelo si aprono da sole, senza corrente, quando l'acqua sta per gelare, e scaricano il tratto esterno; poi l'impianto si rabbocca dal gruppo di riempimento. Ne va una sulla mandata e una sul ritorno di ogni pompa di calore, sul tratto esterno, dopo il giunto. Nello schema stanno vicino alla macchina; in cantiere vanno nel punto piu' basso del tratto esterno, con lo scarico libero (la nota di posa lo dice). Con il glicole dichiarato non servono. Sopra i 35 kW le valvole si mettono solo se il progettista le ha scelte («antigelo: valvole»).",
   "source": "Manuale Shenling ThermaX R290 6-15 kW, par. 6.4: la protezione antigelo della macchina non si attiva senza corrente (letto il 3 novembre 2026, non nel repository); specifica tecnica di installazione Nove C Rev. 01, par. 1.6: glicole oppure altra soluzione approvata dalla DL; D-230, approvata dal PO il 4 novembre 2026 (I-260, I-263)"
 }

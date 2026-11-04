@@ -237,7 +237,9 @@ def ordine_dal_capo(model: ProjectModel, run: Run, anchor_id: str) -> list[froze
         frozenset(definition_of(model, _speaks_for(model, item.component_id)).functions)
         for item in run.pieces
     ]
-    return row if run.head.component_id == anchor_id else list(reversed(row))
+    # Il capo puo' essere il giunto antivibrante attaccato alla macchina (D-222): conta
+    # la macchina dietro di lui.
+    return row if anchor_id in (run.head.component_id, run.head_anchor) else list(reversed(row))
 
 
 def _posizione(row: list[frozenset[str]], function: str) -> int:
@@ -398,7 +400,7 @@ def test_il_manometro_segue_il_riempimento_come_la_sua_regola_dichiara() -> None
     )
     provata = False
     for run in runs_of(model, catalog(), rule_table()):
-        if generatore not in (run.head.component_id, run.tail.component_id):
+        if generatore not in (run.head.component_id, run.tail.component_id, run.head_anchor, run.tail_anchor):
             continue
         row = ordine_dal_capo(model, run, generatore)
         gauge, filling = _posizione(row, PRESSURE_MEASUREMENT), _posizione(row, FILLING)
