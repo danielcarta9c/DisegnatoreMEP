@@ -3,7 +3,8 @@
   "note": [
     "Il piano dell'impianto di prova 1 composto dal pianificatore in camera pulita (docs/collaudi/DRAW-018/prova-camera-pulita-2026-09-24/piano-completo-1.json), tradotto sui nomi dei pezzi di questa configurazione di prova: e' lo stesso impianto con altri nomi.",
     "Serve alle prove del motore che fino al 2 ottobre 2026 componevano senza piano (I-180): da D-167 la via senza piano non instrada piu' un terminale con i due attacchi sullo stesso lato, e la composizione e' del piano (D-151).",
-    "Lo sfiato sta 5 mm piu' in basso che nel piano approvato: e' alto 5 invece di 10 (I-176), e il suo attacco resta dov'era, a 10 mm dall'accumulo come vuole A4 (D-145, D-062)."
+    "Lo sfiato sta 5 mm piu' in basso che nel piano approvato: e' alto 5 invece di 10 (I-176), e il suo attacco resta dov'era, a 10 mm dall'accumulo come vuole A4 (D-145, D-062).",
+    "REL-011, 4 novembre 2026: come piano-completo-1 di DRAW-018 — le due valvole di sicurezza 12,5 mm a destra per il giunto antivibrante (D-222), tutto il resto a destra delle macchine 40 mm a destra per valvola antigelo (D-230), ritegno (D-217) e rubinetto sulla mandata, giunto, antigelo, filtro e rubinetto sul ritorno; i tre raccordi del ritorno (vaso, riempimento, manometro) solo 22,5 mm, stretti alla ripartizione come vuole I-046 ora che il defangatore sta dopo di loro (D-218)."
   ],
   "pezzi": {
     "nord": {
@@ -15,90 +16,90 @@
       "y": 50
     },
     "tee-valve-safety-nord-water-supply": {
-      "x": 47.5,
+      "x": 60,
       "y": 2.5
     },
     "valve-safety-nord-water-supply": {
-      "x": 47.5,
+      "x": 60,
       "y": -17.5
     },
     "tee-valve-safety-sud-water-supply": {
-      "x": 47.5,
+      "x": 60,
       "y": 52.5
     },
     "valve-safety-sud-water-supply": {
-      "x": 47.5,
+      "x": 60,
       "y": 32.5
     },
     "unione": {
-      "x": 72.5,
+      "x": 112.5,
       "y": 2.5
     },
     "ripartizione": {
-      "x": 82.5,
+      "x": 122.5,
       "y": 17.5
     },
     "tee-expansion-connection-ripartizione-a": {
-      "x": 115,
+      "x": 137.5,
       "y": 17.5
     },
     "expansion-connection-ripartizione-a": {
-      "x": 115,
+      "x": 137.5,
       "y": 40
     },
     "tee-filling-unit-ripartizione-a-b": {
-      "x": 130,
+      "x": 152.5,
       "y": 17.5
     },
     "filling-unit-ripartizione-a": {
-      "x": 130,
+      "x": 152.5,
       "y": 32.5,
       "rotazione": 180
     },
     "inlet-filling-unit-ripartizione-a": {
-      "x": 130,
+      "x": 152.5,
       "y": 52.5
     },
     "tee-pressure-gauge-ripartizione-a": {
-      "x": 145,
+      "x": 167.5,
       "y": 17.5
     },
     "pressure-gauge-ripartizione-a": {
-      "x": 145,
+      "x": 167.5,
       "y": 40
     },
     "serbatoio": {
-      "x": 185,
+      "x": 225,
       "y": 0
     },
     "rete-idrica": {
-      "x": 162.5,
+      "x": 202.5,
       "y": 35
     },
     "air-vent-serbatoio-primary-out": {
-      "x": 200,
+      "x": 240,
       "y": -7.5
     },
     "drain-connection-serbatoio-primary-in": {
-      "x": 195,
+      "x": 235,
       "y": 55
     },
     "mixing-valve-thermostatic-serbatoio-dhw-out": {
-      "x": 187.5,
+      "x": 227.5,
       "y": -35,
       "rotazione": 90,
       "specchio": true
     },
     "inlet-mixing-valve-thermostatic-serbatoio-dhw-out": {
-      "x": 165,
+      "x": 205,
       "y": -35
     },
     "rubinetti": {
-      "x": 190,
+      "x": 230,
       "y": -57.5
     },
     "corpo": {
-      "x": 250,
+      "x": 290,
       "y": 2.5
     }
   }
