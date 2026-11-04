@@ -199,6 +199,11 @@
       "name": "Giunto antivibrante"
     },
     {
+      "function": "pipe_reduction",
+      "prefix": "RID",
+      "name": "Riduzione"
+    },
+    {
       "function": "frost_protection",
       "prefix": "VAG",
       "name": "Valvola antigelo"

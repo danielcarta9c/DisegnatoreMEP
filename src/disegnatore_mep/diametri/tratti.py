@@ -404,7 +404,10 @@ def pollici_dei_pezzi(
     """Il pollice degli accessori in linea — valvole, filtri, circolatori, i T di
     servizio, la via dritta di una tre vie —: quello del tubo su cui stanno (MS 32×3 →
     1", I-279). I capi di un tratto — le macchine, i raccordi dove la portata cambia —
-    no: stanno fra tubi diversi."""
+    no: stanno fra tubi diversi. Il giunto antivibrante fra la macchina e la sua
+    riduzione prende il pollice dell'attacco, non quello del tubo (D-233)."""
+    from .riduzioni import pollici_dietro_le_riduzioni
+
     if tratti is None:
         tratti = tratti_del_diametro(project, catalog)
     tubi = tubi_delle_tubazioni(project, catalog, tratti)
@@ -422,6 +425,7 @@ def pollici_dei_pezzi(
                 gia = pollici.get(pezzo)
                 if gia is None or ordine_del_pollice(tubo.pollici) > ordine_del_pollice(gia):
                     pollici[pezzo] = tubo.pollici
+    pollici.update(pollici_dietro_le_riduzioni(project, catalog))
     return pollici
 
 

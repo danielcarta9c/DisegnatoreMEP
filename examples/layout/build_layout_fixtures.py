@@ -1264,6 +1264,23 @@ DEFINITIONS: list[dict[str, Any]] = [
         [MAINTAINABLE, FOULS_CIRCUIT, SHUTOFF_ORDINARY, INLINE],
         [hydronic_port("in", "in"), hydronic_port("out", "out")],
     ),
+    # La riduzione all'attacco della macchina (REL-017, I-281, D-233): un raccordo in
+    # linea, senza verso, che non si manutiene e non chiude. Non la mette una regola e
+    # non la scrive il progettista: la posa `completa` dove il tubo scelto dalla
+    # velocita' ha il pollice piu' piccolo dell'attacco, subito dopo il giunto
+    # antivibrante (`diametri.riduzioni`). L'attacco `a` e' il lato largo, verso la
+    # macchina.
+    definition(
+        "pipe-reducer",
+        "Riduzione",
+        ["pipe_reduction"],
+        [SHUTOFF_ORDINARY, INLINE],
+        [
+            hydronic_port("a", "bidirectional"),
+            hydronic_port("b", "bidirectional"),
+        ],
+        sources=["D-233: il PO, 4 novembre 2026 (I-281)"],
+    ),
     definition(
         "strainer",
         "Filtro a Y",

@@ -188,7 +188,8 @@ JSON, e solo queste chiavi:
   quelli. ⚠ Il grafo nomina altre decine di identificativi in `subsystems` e
   `rule_applications` che **non sono pezzi**: ignorali.
   **Gli organi in linea non li posi tu**: valvole d'intercettazione, filtri, defangatori,
-  separatori d'aria, circolatori, ritegni, riduttori, gruppi di sicurezza sanitari. Li
+  separatori d'aria, circolatori, ritegni, riduttori, gruppi di sicurezza sanitari, il giunto
+  antivibrante e la riduzione all'attacco della macchina (`pipe-reducer`, D-233). Li
   riconosci dal manifesto del simbolo, che dichiara `inline_gap_mm`: il motore li posa **da
   solo, sulla loro tratta** (§4bis). Se ne scrivi uno nel piano, il comando te lo dice e si
   ferma. ⚠ Il **rubinetto portamanometro** si chiama «a tre vie» (`valve-gauge-cock-3way`) ma
@@ -256,7 +257,10 @@ di due specie, e le due si trattano in modo diverso:
   **Quanto rettilineo chiede una fila**, misurato sul motore il 23 settembre 2026 fra la porta
   di una pompa e un raccordo: con una valvola **17,5 mm**, con due organi **20–25 mm**. Non è
   una costante: è il punto da cui partire, e se non basta il comando ti dice la tratta —
-  allontana i due pezzi **un passo alla volta**;
+  allontana i due pezzi **un passo alla volta**. Con i diametri chiesti, sulla pompa di
+  calore il giunto ha dopo di sé la **riduzione** quando il tubo è più piccolo dell'attacco
+  (D-233): sulla villetta di riferimento la mandata, dalla porta al raccordo della
+  sicurezza, ne ha voluti **32,5 mm**, 10 più di prima;
 - **gli appesi li posi tu**: un manometro, un termometro, uno sfiato, uno scarico, un vaso,
   una sicurezza, un gruppo di riempimento stanno all'altro capo di uno **stacco** che parte da
   un raccordo sulla linea (`tee-branch`). Stanno **addosso** (A4), con lo stacco più corto che

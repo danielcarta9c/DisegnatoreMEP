@@ -6,8 +6,7 @@
 
 ```
 Riduzioni agli attacchi delle macchine (informazione)
-  - GT-01, ritorno: attacco 1¼", tubo MS 32×3 (1"): riduzione all'attacco
-  - GT-01, mandata: attacco 1¼", tubo MS 32×3 (1"): riduzione all'attacco
+  - riduzione 1¼"×1" aggiunta su mandata e ritorno di GT-01, subito dopo il giunto antivibrante: attacco 1¼", tubo MS 32×3
 ```
 
 `disegna`:
@@ -24,8 +23,7 @@ Formato A2 · tratte 37 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 9 ·
 Avvisi della prevalenza della pompa a bordo
   - GT-01: il giro primario piu' costoso (32,0 m di tubo, attraverso BOL-01) perde 21,0 kPa — 16,2 distribuite piu' il 30% di concentrate, serpentini e scambiatori esclusi — e la pompa a bordo ne da' 10,0 utili. La pompa da sola non basta: il giro va rivisto col progettista (i tubi della tavola non cambiano).
 Riduzioni agli attacchi delle macchine (informazione)
-  - GT-01, ritorno: attacco 1¼", tubo MS 32×3 (1"): riduzione all'attacco
-  - GT-01, mandata: attacco 1¼", tubo MS 32×3 (1"): riduzione all'attacco
+  - riduzione 1¼"×1" aggiunta su mandata e ritorno di GT-01, subito dopo il giunto antivibrante: attacco 1¼", tubo MS 32×3
 ```
 
 `disegna`:
@@ -42,8 +40,7 @@ Formato A2 · tratte 37 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 9 ·
 
 ```
 Riduzioni agli attacchi delle macchine (informazione)
-  - GT-01, ritorno: attacco 1¼", tubo MS 32×3 (1"): riduzione all'attacco
-  - GT-01, mandata: attacco 1¼", tubo MS 32×3 (1"): riduzione all'attacco
+  - riduzione 1¼"×1" aggiunta su mandata e ritorno di GT-01, subito dopo il giunto antivibrante: attacco 1¼", tubo MS 32×3
 ```
 
 `disegna`:
@@ -53,6 +50,16 @@ Formato A2 · tratte 37 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 9 ·
 ```
 
 ## villetta-15kw-ms32-del-progettista
+
+`completa`:
+
+```
+Avvisi dei tubi
+  - GT-01 -> VOL-01: MS 32×3 del progettista (Øi 26 mm), 2,58 m³/h a 1,35 m/s, oltre la massima di 1,3 m/s del suo pollice (1", Quaderno Caleffi n. 5, D-193): il calcolo sceglierebbe MS 40×3,5. Sulla tavola resta il tubo del progettista (I-279).
+  - GT-01 -> RC-01: MS 32×3 del progettista (Øi 26 mm), 2,58 m³/h a 1,35 m/s, oltre la massima di 1,3 m/s del suo pollice (1", Quaderno Caleffi n. 5, D-193): il calcolo sceglierebbe MS 40×3,5. Sulla tavola resta il tubo del progettista (I-279).
+Riduzioni agli attacchi delle macchine (informazione)
+  - riduzione 1¼"×1" aggiunta su mandata e ritorno di GT-01, subito dopo il giunto antivibrante: attacco 1¼", tubo MS 32×3
+```
 
 `disegna`:
 
@@ -76,8 +83,7 @@ Formato A2 · tratte 37 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 9 ·
 
 ```
 Riduzioni agli attacchi delle macchine (informazione)
-  - GT-01, ritorno: attacco 1¼", tubo DN 25 (1"): riduzione all'attacco
-  - GT-01, mandata: attacco 1¼", tubo DN 25 (1"): riduzione all'attacco
+  - riduzione 1¼"×1" aggiunta su mandata e ritorno di GT-01, subito dopo il giunto antivibrante: attacco 1¼", tubo DN 25 (1")
 ```
 
 `disegna`:
@@ -92,8 +98,7 @@ Formato A2 · tratte 37 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 9 ·
 
 ```
 Riduzioni agli attacchi delle macchine (informazione)
-  - GT-01, ritorno: attacco 1¼", tubo Cu 28×1 (1"): riduzione all'attacco
-  - GT-01, mandata: attacco 1¼", tubo Cu 28×1 (1"): riduzione all'attacco
+  - riduzione 1¼"×1" aggiunta su mandata e ritorno di GT-01, subito dopo il giunto antivibrante: attacco 1¼", tubo Cu 28×1
 ```
 
 `disegna`:
@@ -108,8 +113,7 @@ Formato A2 · tratte 37 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 9 ·
 
 ```
 Riduzioni agli attacchi delle macchine (informazione)
-  - GT-01, ritorno: attacco 1¼", tubo MS 32×3 (1"): riduzione all'attacco
-  - GT-01, mandata: attacco 1¼", tubo MS 32×3 (1"): riduzione all'attacco
+  - riduzione 1¼"×1" aggiunta su mandata e ritorno di GT-01, subito dopo il giunto antivibrante: attacco 1¼", tubo MS 32×3
 ```
 
 `disegna`:

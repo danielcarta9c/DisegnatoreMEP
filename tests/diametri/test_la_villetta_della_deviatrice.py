@@ -287,10 +287,12 @@ def test_completa_e_disegna_dicono_l_avviso_e_il_grafo_completo_tiene_le_lunghez
     uscita = capsys.readouterr().out
     assert "Avvisi della prevalenza della pompa a bordo" in uscita
     assert "GT-01: il giro primario piu' costoso (32,0 m di tubo, attraverso BOL-01) perde 21,0 kPa" in uscita
-    # L'attacco 1¼" della ThermaX 12 kW sul tubo MS 32×3: una riduzione, detta come
-    # informazione (I-281).
+    # L'attacco 1¼" della ThermaX 12 kW sul tubo MS 32×3: una riduzione, che `completa`
+    # posa dopo il giunto e dice come informazione (I-281, D-233). Dal 4 novembre 2026 la
+    # riga e' una per macchina, con il pezzo aggiunto (prima: «GT-01, mandata: attacco
+    # 1¼", tubo MS 32×3 (1"): riduzione all'attacco», un'informazione e basta).
     assert "Riduzioni agli attacchi delle macchine (informazione)" in uscita
-    assert 'GT-01, mandata: attacco 1¼", tubo MS 32×3 (1"): riduzione all\'attacco' in uscita
+    assert 'riduzione 1¼"×1" aggiunta su mandata e ritorno di GT-01' in uscita
     tubi = json.loads(completo.read_text(encoding="utf-8"))["connections"]
     date = {
         tubo["id"]: tubo["lunghezza_m"]

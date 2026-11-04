@@ -18,13 +18,10 @@ from collections.abc import Iterable
 from dataclasses import dataclass
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
-from disegnatore_mep.catalog.schema import SERVICE_ORGAN_FUNCTIONS
+from disegnatore_mep.catalog.schema import AGAINST_THE_MACHINE_FUNCTIONS, SERVICE_ORGAN_FUNCTIONS
 from disegnatore_mep.model.project import ConnectionModel, PortRef, ProjectModel
 from disegnatore_mep.model.types import PortFlow
 from disegnatore_mep.rules.schema import RuleCardinality, RuleDefinition
-
-VIBRATION_ISOLATION = "vibration_isolation"
-"""Il mestiere del giunto antivibrante (REL-009, I-197)."""
 
 
 class AssemblyError(ValueError):
@@ -159,8 +156,9 @@ class _Assembler:
             _rule_of(self._project, component_id) is not None
             and len(self.run_ports(component_id)) == 2
             # Il giunto antivibrante sta attaccato alla macchina che vibra, anche quando
-            # lo mette una regola (D-222): non si sposta, e la fila parte da lui.
-            and VIBRATION_ISOLATION not in self._definitions[component_id].functions
+            # lo mette una regola (D-222): non si sposta, e la fila parte da lui. Cosi'
+            # la riduzione che `completa` gli posa subito dopo (D-233).
+            and not AGAINST_THE_MACHINE_FUNCTIONS & set(self._definitions[component_id].functions)
         )
 
     def anchor_of(self, component_id: str) -> str | None:
@@ -217,18 +215,23 @@ class _Assembler:
 
     def _behind_the_joint(self, end: PortRef) -> str:
         """Il pezzo del capo, o la macchina dietro di lui se il capo e' un giunto
-        antivibrante (REL-009, I-197)."""
-        if VIBRATION_ISOLATION not in self._definitions[end.component_id].functions:
-            return end.component_id
-        oltre = [
-            ref.component_id
-            for port_id in self.run_ports(end.component_id)
-            if port_id != end.port_id
-            for connection in self._pipes_at[(end.component_id, port_id)]
-            for ref in (connection.endpoint_a, connection.endpoint_b)
-            if ref.component_id != end.component_id
-        ]
-        return oltre[0] if len(oltre) == 1 else end.component_id
+        antivibrante (REL-009, I-197) — o la riduzione che gli sta dopo (D-233): si
+        attraversano i pezzi addosso all'attacco finche' si arriva alla macchina."""
+        cursor, seen = end, {end.component_id}
+        while AGAINST_THE_MACHINE_FUNCTIONS & set(self._definitions[cursor.component_id].functions):
+            oltre = [
+                ref
+                for port_id in self.run_ports(cursor.component_id)
+                if port_id != cursor.port_id
+                for connection in self._pipes_at[(cursor.component_id, port_id)]
+                for ref in (connection.endpoint_a, connection.endpoint_b)
+                if ref.component_id != cursor.component_id
+            ]
+            if len(oltre) != 1 or oltre[0].component_id in seen:
+                return end.component_id
+            cursor = oltre[0]
+            seen.add(cursor.component_id)
+        return cursor.component_id
 
     def _walk(
         self, seed: ConnectionModel, towards: PortRef

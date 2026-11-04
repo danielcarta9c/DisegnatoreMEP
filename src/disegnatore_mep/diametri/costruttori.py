@@ -204,8 +204,8 @@ class RiduzioneAllAttacco:
 
 def riduzioni_all_attacco(project: ProjectModel, catalog: ComponentRegistry) -> list[RiduzioneAllAttacco]:
     """Gli attacchi d'acqua delle macchine dove il tubo che ci arriva ha il pollice piu'
-    piccolo dell'attacco: li' va una riduzione (I-281). **Una funzione sola**, che il
-    passo successivo legge per posare il pezzo della riduzione sulla tavola.
+    piccolo dell'attacco: li' va una riduzione (I-281). **Una funzione sola**, che
+    `riduzioni.posa_le_riduzioni` legge per posare il pezzo della riduzione (D-233).
 
     Il tubo e' quello che la tavola scrive (`tratti.tubi_delle_tubazioni`): del
     progettista, o del calcolo. Senza un tubo noto sull'attacco, niente."""
