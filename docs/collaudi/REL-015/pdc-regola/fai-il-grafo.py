@@ -21,12 +21,13 @@ esterno. Quindi:
 - **i comandi dalla macchina**: deviatrice <- `out_acs` (SV1), miscelatrice <- `out_miscelatrice`
   (SV2), circolatore dei radiatori <- `out_pompa_zona_1` (P_C1), circolatore dei pannelli <-
   `out_pompa_zona_2` (P_C2), circolatore del ricircolo <- `out_pompa_ricircolo` (P_C4);
-- **l'alimentazione dal quadro** della sola macchina (col sezionatore, 3G6, 15 m, come nel
-  collaudo). **I tre circolatori prendono alimentazione e comando dalla morsettiera della
-  macchina**, un cavo solo sul loro `power` (I-236, D-215, dall'elettricista del PO: «Lo standard
-  è alimentazione di potenza e comando, direttamente dalla morsettiera della pompa di calore»).
-  Il circolatore alimentato dal quadro e acceso da un cronotermostato è una scelta del
-  progettista, non lo standard;
+- **l'alimentazione dal quadro** della macchina (col sezionatore, 3G6, 15 m, come nel
+  collaudo). **I tre circolatori passano da un relè d'appoggio da 10 A** (D-228, I-259, il PO:
+  «non alimentiamo mai il circolatore diretto da pdc ma attraverso contattore con Relè di
+  appoggio da 10 A»): l'uscita della macchina eccita la bobina del relè, e il circolatore prende
+  l'alimentazione attraverso il contatto, da un'uscita protetta del quadro. Un relè per
+  circolatore; il `comando` del circolatore resta libero. Supera D-215 (un cavo solo dalla
+  morsettiera al `power` del circolatore), che vale ancora per le valvole;
 - **il comando a filo** della macchina (CN35), come voce `wired-remote`.
 
 Niente morsetti sulla tavola: il progettista non li ha dati. Le sigle della scheda stanno qui e
@@ -127,30 +128,58 @@ for ident, nome in (
     for item in grafo["networks"]:
         if item["id"] == ident:
             item["name"] = nome
-# I circolatori: alimentazione e comando dalla morsettiera della macchina, un cavo solo (I-236,
-# D-215). Le loro linee dal quadro, che nel collaudo c'erano, si tolgono.
-CAVI_DAL_QUADRO = {"t27", "t28", "t29"}
-RETI_DAL_QUADRO = {"el-circ-pannelli", "el-circ-radiatori", "el-circ-ricircolo"}
-grafo["connections"] = [t for t in grafo["connections"] if t["id"] not in CAVI_DAL_QUADRO]
-grafo["networks"] = [n for n in grafo["networks"] if n["id"] not in RETI_DAL_QUADRO]
-rete("cmd-circ-radiatori", "Alimentazione e comando circolatore radiatori dalla pompa di calore", "power_supply")
-rete("cmd-circ-pannelli", "Alimentazione e comando circolatore pannelli dalla pompa di calore", "power_supply")
-rete("cmd-circ-ricircolo", "Alimentazione e comando circolatore ricircolo dalla pompa di calore", "power_supply")
+# Le valvole: comandate direttamente dall'uscita della macchina, un cavo solo (D-215).
 tratto("t44", "cmd-deviatrice", ("pdc", "out_acs"), ("deviatrice", "comando"))
 tratto("t45", "cmd-miscelatrice", ("pdc", "out_miscelatrice"), ("miscelatrice", "comando"))
-tratto("t46", "cmd-circ-radiatori", ("pdc", "out_pompa_zona_1"), ("circ-radiatori", "power"))
-tratto("t47", "cmd-circ-pannelli", ("pdc", "out_pompa_zona_2"), ("circ-pannelli", "power"))
-tratto("t48", "cmd-circ-ricircolo", ("pdc", "out_pompa_ricircolo"), ("circ-ricircolo", "power"))
+
+# **I circolatori: attraverso un relè d'appoggio da 10 A** (D-228, I-259). L'uscita della
+# macchina va alla bobina del relè; la linea del circolatore parte da un'uscita del quadro,
+# attraversa il contatto del relè (`a` -> `b`) e arriva al `power` del circolatore. Le linee
+# dal quadro del collaudo si riscrivono: dal quadro al relè, e dal relè al circolatore.
+#
+# **Quale uscita del quadro, scelta sulla geometria della tavola dell'elettrico** (capire.md
+# §4.8): il relè del ricircolo, il piu' basso, dalla prima uscita sopra; quello dei pannelli
+# dalla seconda; quello dei radiatori, il piu' alto, dall'uscita a destra. La pompa di calore
+# da un'uscita sotto: il quadro sta accanto ai relè, e il cavo della macchina scende e le
+# arriva da sotto.
+CAVI_DAL_QUADRO = {"t27", "t28", "t29"}
+grafo["connections"] = [t for t in grafo["connections"] if t["id"] not in CAVI_DAL_QUADRO]
+for ident, nome in (
+    ("el-circ-radiatori", "Alimentazione circolatore radiatori dal quadro, attraverso il relè"),
+    ("el-circ-pannelli", "Alimentazione circolatore pannelli dal quadro, attraverso il relè"),
+    ("el-circ-ricircolo", "Alimentazione circolatore ricircolo dal quadro, attraverso il relè"),
+):
+    for item in grafo["networks"]:
+        if item["id"] == ident:
+            item["name"] = nome
+rete("cmd-circ-radiatori", "Comando del relè del circolatore radiatori dalla pompa di calore", "power_supply")
+rete("cmd-circ-pannelli", "Comando del relè del circolatore pannelli dalla pompa di calore", "power_supply")
+rete("cmd-circ-ricircolo", "Comando del relè del circolatore ricircolo dalla pompa di calore", "power_supply")
+RELE = (
+    # (circolatore, relè, uscita della macchina, uscita del quadro, tratti)
+    ("circ-radiatori", "rele-radiatori", "out_pompa_zona_1", "out_3", ("t46", "t50", "t51")),
+    ("circ-pannelli", "rele-pannelli", "out_pompa_zona_2", "out_2", ("t47", "t52", "t53")),
+    ("circ-ricircolo", "rele-ricircolo", "out_pompa_ricircolo", "out_1", ("t48", "t54", "t55")),
+)
+for circolatore, rele, uscita_della_macchina, uscita_del_quadro, (bobina, dal_quadro, al_circolatore) in RELE:
+    zona = circolatore.removeprefix("circ-")
+    grafo["components"].append(
+        {"id": rele, "definition_id": "interface-relay", "tag": None, "properties": {}}
+    )
+    tratto(bobina, f"cmd-circ-{zona}", ("pdc", uscita_della_macchina), (rele, "bobina"))
+    tratto(dal_quadro, f"el-circ-{zona}", ("quadro", uscita_del_quadro), (rele, "a"))
+    tratto(al_circolatore, f"el-circ-{zona}", (rele, "b"), (circolatore, "power"))
 
 rete("bus-comando-a-filo", "Comando a filo della pompa di calore", "control_bus")
 tratto("t49", "bus-comando-a-filo", ("comando-a-filo", "a"), ("pdc", "comando_a_filo"))
 
 # **L'uscita del quadro, scelta sulla geometria della tavola dell'elettrico** (capire.md §4.8:
-# un'uscita del quadro e' un morsetto come un altro): resta la sola pompa di calore.
+# un'uscita del quadro e' un morsetto come un altro): la pompa di calore da un'uscita sotto,
+# le tre sopra e a destra ai relè.
 for item in grafo["connections"]:
     if item["id"] == "t25":
         assert item["endpoint_a"]["component_id"] == "quadro", item["id"]
-        item["endpoint_a"]["port_id"] = "out_1"
+        item["endpoint_a"]["port_id"] = "out_5"
 
 # --- le assunzioni ------------------------------------------------------------------------
 ASSUNZIONI = {
@@ -165,8 +194,9 @@ ASSUNZIONI = {
     "a14": (
         "Sezioni e lunghezze delle linee: il testo da' solo la linea della pompa di calore "
         "(3G6, 15 m, scritta sul tratto quadro-sezionatore per la linea intera). Mancano sezione "
-        "e lunghezza di: due comandi dalla pompa di calore (deviatrice, miscelatrice), tre linee "
-        "di alimentazione e comando dei circolatori, cavi delle tre sonde, comando a filo. "
+        "e lunghezza di: due comandi dalla pompa di calore (deviatrice, miscelatrice), tre "
+        "comandi dei relè dei circolatori, tre linee dal quadro ai circolatori attraverso i "
+        "relè, cavi delle tre sonde, comando a filo. "
         "Senza, quei tratti restano senza scritta."
     ),
     "a15": (
@@ -176,9 +206,12 @@ ASSUNZIONI = {
         "e non si disegna."
     ),
     "a20": (
-        "Circolatori: alimentazione e comando dalla morsettiera della pompa di calore, un cavo "
-        "solo per circolatore (lo standard). Se invece un circolatore e' alimentato dal quadro e "
-        "acceso da un cronotermostato, dimmelo e lo ridisegno cosi'."
+        "Circolatori: mai alimentati dalla morsettiera della pompa di calore (D-228). Ogni "
+        "circolatore ha il suo relè d'appoggio da 10 A: l'uscita della macchina ne comanda la "
+        "bobina, e il circolatore e' alimentato attraverso il contatto da un'uscita del quadro. "
+        "Il relè sta nel quadro, con la protezione dedicata della linea del circolatore "
+        "(sulla tavola dell'elettrico e' disegnato fra la macchina e il circolatore); se sta in "
+        "una scatola a parte, dimmelo."
     ),
     "a21": (
         "Sonda del volano: il testo non la nomina; e' disegnata sull'attacco della sonda del "
@@ -195,7 +228,7 @@ ASSUNZIONI = {
     ),
     "a24": (
         "Morsetti della pompa di calore: il testo non li da', e sulla tavola non sono scritti; "
-        "ogni cavo dice a quale sonda, valvola o circolatore va."
+        "ogni cavo dice a quale sonda, valvola o relè va."
     ),
 }
 nuove = []

@@ -572,8 +572,8 @@ Il campo **`vista`** del piano dice quale parte del grafo la tavola disegna:
 | `vista` | che cosa disegna |
 |---|---|
 | `"tutto"` (se il campo manca) | il grafo intero: la tavola unica |
-| `"idraulica"` | tutto **tranne** i cavi e i bus, e tranne i pezzi che stanno solo sul comando (quadro, sezionatore, regolatore, sonda esterna). La sonda a immersione resta sul suo tubo, senza il cavo |
-| `"elettrico"` | i **soli** cavi e bus, e i pezzi che toccano: quadro, sezionatore, regolatore, sonde, e le macchine, i circolatori e le valvole che hanno un cavo. Niente acqua |
+| `"idraulica"` | tutto **tranne** i cavi e i bus, e tranne i pezzi che stanno solo sul comando (quadro, sezionatore, relè d'appoggio, regolatore, sonda esterna). La sonda a immersione resta sul suo tubo, senza il cavo |
+| `"elettrico"` | i **soli** cavi e bus, e i pezzi che toccano: quadro, sezionatore, relè d'appoggio, regolatore, sonde, e le macchine, i circolatori e le valvole che hanno un cavo. Niente acqua |
 
 Per due tavole scrivi **due piani** sullo stesso grafo completo, `piano-idraulica.json` con
 `"vista": "idraulica"` e `piano-elettrico.json` con `"vista": "elettrico"`, e disegna due volte. Il
@@ -588,7 +588,8 @@ motore fa il resto:
 I pezzi da posare non sono gli stessi nelle due viste: chiedili per ciascuna, con
 `mep.py pezzi <grafo> --vista idraulica` e `--vista elettrico`. Sulla tavola dell'elettrico **il
 circolatore va nel piano**: non ha il suo tubo, e non sta più in linea. Il sezionatore resta in
-linea sul suo cavo, e lo posa il motore.
+linea sul suo cavo, e lo posa il motore. **Il relè d'appoggio va nel piano** anche lui: ha tre
+attacchi, e non sta in linea.
 
 #### Come si compone la tavola dell'elettrico
 
@@ -623,19 +624,27 @@ comando a filo. Così (la villetta di `docs/collaudi/REL-015/pdc-regola/`):
 
 - **la pompa di calore al centro**, non specchiata;
 - **le uscite a ventaglio**: quelle di sinistra (le valvole) girano a sinistra, quelle di destra
-  (i circolatori) a destra; l'uscita più esterna gira più in basso, la successiva più in alto, e
-  i cavi non si incrociano. Valvole e circolatori in colonna, girati verso la macchina con la
-  porta a cui arriva il loro cavo: la valvola col comando (`"rotazione": 90`), il circolatore
-  con l'alimentazione (`"rotazione": 270`), perché la macchina lo alimenta e lo comanda con un
-  cavo solo (I-236);
+  (i relè dei circolatori) a destra; l'uscita più esterna gira più in basso, la successiva più
+  in alto, e i cavi non si incrociano. Le valvole in colonna, girate col comando verso la
+  macchina (`"rotazione": 90`): la macchina le comanda con un cavo solo (D-215);
+- **i relè d'appoggio in colonna a destra della macchina** (D-228), diritti (`"rotazione": 0`):
+  il relè ha la `bobina` a sinistra, verso la macchina, l'ingresso `a` a destra, verso il quadro,
+  alla stessa quota della bobina, e l'uscita `b` sopra, un passo a destra del centro. **Il
+  circolatore sta sopra il suo relè**, sull'asse di `b`, girato con l'alimentazione in giù
+  (`"rotazione": 180`): il cavo è una verticale corta. Fra un relè e il successivo trenta
+  millimetri, il posto del circolatore e del cavo del quadro che passa sopra di lui (la
+  villetta: relè a x 50, y −25, −55, −85; circolatori a x 52,5, y −40, −70, −100);
 - **le sonde in fila sotto, a sinistra della macchina**, diritte (`"rotazione": 0`): la sonda
   dell'ingresso più basso è la più vicina. Lascia fra l'una e l'altra il posto della sigla e
   della scritta (`etichetta`: «bollitore», «volano», «mandata pannelli»): tre sonde uguali senza
   scritta non dicono quale cavo va dove;
-- **il quadro in basso a destra, più in basso della macchina.** L'alimentazione della macchina
-  entra da sotto: con il quadro più in alto il cavo scende oltre la porta e risale, ed è un
-  bloccante (B12). Il quadro alimenta la sola macchina, dalla prima uscita (`out_1`, sopra): il
-  cavo arriva da sinistra e scende sulla porta;
+- **il quadro in basso a destra, sotto la colonna dei relè.** L'alimentazione della macchina
+  entra da sotto, attraverso il sezionatore: l'uscita del quadro che la alimenta deve stare più
+  in basso del sezionatore, altrimenti il cavo scende oltre la porta e risale, ed è un
+  bloccante (B12). La macchina da un'uscita sotto (`out_5`); i relè dalle uscite sopra e a
+  destra — il relè più basso dalla prima (`out_1`), quello sopra dalla seconda (`out_2`), il più
+  alto dall'uscita a destra (`out_3`): le linee salgono affiancate a destra della colonna, e la
+  più esterna va al relè più alto, così non si incrociano (la villetta: quadro a x 75, y 35);
 - **il comando a filo sotto la macchina**, a destra dell'alimentazione, più in alto del cavo che
   va al quadro.
 
