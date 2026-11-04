@@ -1,6 +1,6 @@
 {
   "id": "corredo",
-  "versione": "1.1.0",
+  "versione": "1.2.0",
   "nota": "Il corredo di posa di ogni voce del catalogo, per id di voce (`definition_id` del pezzo). Il catalogo non si tocca: il corredo sta qui. `apparecchiatura`: il pezzo è una macchina fornita da Nove C e va nella sezione A, una riga per marca e modello (un pezzo con la proprietà `compreso_in` è nella fornitura di un altro e non ha riga sua). `fornitura`: chi la fornisce, una scelta dell'offerta di `distinta.json` («opere_edili», «bocchette_e_griglie») o «committente»; senza, l'installatore. `per_locale` conta una volta per locale servito (il dato `locale` del pezzo, o la sua etichetta), e niente per un locale con `varco`. `passante`: il pezzo sta in mezzo a una linea (sezionatore, sifone), e il tratto lo attraversa. `voci`: il materiale e le opere che il pezzo porta con sé; `calcolo` è `per_pezzo` (n per pezzo) o `per_linea` (n per ogni tratto di quel fluido che arriva al pezzo). Nei testi, `{proprieta}` è un dato del progettista sul pezzo (o la `sezione` del tratto che gli arriva): se manca, il testo dice DA DEFINIRE e la distinta fa la domanda. **Copre l'aria-aria e l'elettrico del kit AA-01; le voci idroniche non hanno corredo**: escono nella sezione X, DA DEFINIRE, finché il PO non decide il corredo (le regole contro il manuale Shenling sono REL-011).",
   "voci": {
     "split-outdoor-unit": {
@@ -13,27 +13,27 @@
         {
           "id": "carotaggio-parete-esterna",
           "sezione": "F",
-          "testo": "Carotaggio parete esterna Ø80 con guaina passante e sigillatura",
+          "testo": "Carotaggio parete esterna Ø125 con guaina passante e sigillatura (linee frigo, cavo di collegamento, alimentazione dell'unità esterna)",
           "um": "n",
           "calcolo": {
             "tipo": "per_pezzo",
             "n": 1
           },
-          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce F.1",
-          "fonte_in_parole": "regola Nove C per le assistenze murarie",
+          "fonte": "revisione su una commessa aria-aria del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+          "fonte_in_parole": "regola Nove C rivista su una commessa aria-aria",
           "perche": "Le linee frigorifere e il cavo di collegamento escono dall'involucro una volta."
         },
         {
           "id": "canalina-esterna",
           "sezione": "C",
-          "testo": "Canalina coprilinee esterna 80×60",
+          "testo": "Canalina coprilinee esterna 110×75 (linee frigo isolate, cavo di collegamento, alimentazione dell'unità esterna)",
           "um": "m",
           "calcolo": {
             "tipo": "per_pezzo",
             "n": 4
           },
-          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce C.5; REVISIONE-INDIPENDENTE.md rilievo 18",
-          "fonte_in_parole": "regola Nove C per la posa dell'unità esterna",
+          "fonte": "revisione su una commessa aria-aria del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+          "fonte_in_parole": "regola Nove C rivista su una commessa aria-aria",
           "perche": "Il tratto a vista sulla facciata, dal foro all'unità esterna."
         },
         {
@@ -51,29 +51,43 @@
         },
         {
           "id": "staffe-unita-esterna",
-          "sezione": "C",
-          "testo": "Staffe a parete per unità esterna, portata almeno doppia del peso della macchina, con antivibranti",
+          "sezione": "S",
+          "testo": "Staffe a parete per unità esterna, portata almeno doppia del peso della macchina, con tasselli chimici e antivibranti; scostamento dalla parete min. 150 mm",
           "um": "kit",
           "calcolo": {
             "tipo": "per_pezzo",
             "n": 1
           },
-          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce C.8 (portata ≥ 100 kg per 49 kg)",
-          "fonte_in_parole": "regola Nove C per la posa dell'unità esterna",
+          "fonte": "revisione su una commessa aria-aria del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+          "fonte_in_parole": "regola Nove C rivista su una commessa aria-aria",
           "perche": "Nota: o piedini a terra, secondo la posizione."
         },
         {
           "id": "scarico-condensa-unita-esterna",
-          "sezione": "C",
-          "testo": "Scarico condensa dell'unità esterna (funziona anche in caldo): raccordo e tubo Ø16 fino a pluviale o pozzetto",
+          "sezione": "D",
+          "testo": "Scarico dell'unità esterna (sbrinamento): raccordo sul foro di scarico, tappi sui fori non usati, tubo in pendenza fino a pluviale o pozzetto",
           "um": "m",
           "calcolo": {
             "tipo": "per_pezzo",
             "n": 4
           },
-          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce C.9; REVISIONE-INDIPENDENTE.md rilievo 18",
-          "fonte_in_parole": "regola Nove C per la posa dell'unità esterna",
+          "fonte": "revisione su una commessa aria-aria del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+          "fonte_in_parole": "regola Nove C rivista su una commessa aria-aria",
           "perche": "In riscaldamento l'unità esterna sbrina e scarica acqua: senza scarico gela sul marciapiede."
+        },
+        {
+          "id": "potenza-contrattuale",
+          "sezione": "Z",
+          "fornitura": "opere_edili",
+          "testo": "Potenza contrattuale adeguata all'unità esterna (corrente MCA di targa) e alle altre utenze, prima della messa in servizio",
+          "um": "a corpo",
+          "calcolo": {
+            "tipo": "per_pezzo",
+            "n": 1
+          },
+          "fonte": "revisione su una commessa aria-aria del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+          "fonte_in_parole": "regola Nove C rivista su una commessa aria-aria",
+          "perche": "L'unità esterna assorbe fino alla sua corrente MCA di targa: con le altre utenze la potenza del contatore va verificata."
         }
       ]
     },
@@ -85,16 +99,16 @@
       "perche": "L'unità interna sta appesa in controsoffitto: sospensioni, giunto sulla ripresa, raccordo della condensa, e il controsoffitto con la botola che sono del committente.",
       "voci": [
         {
-          "id": "kit-sospensione",
-          "sezione": "B",
-          "testo": "Kit sospensione: barra filettata M10, tassello per solaio in laterocemento, antivibrante",
-          "um": "n",
+          "id": "sospensione-unita-interna",
+          "sezione": "S",
+          "testo": "Sospensione dell'unità interna: 4 barre filettate M10, ancoranti per carichi sospesi su laterocemento, dadi, rondelle e antivibranti",
+          "um": "kit",
           "calcolo": {
             "tipo": "per_pezzo",
-            "n": 4
+            "n": 1
           },
-          "fonte": "kit AA-01: RAPPORTO.md §7 («kit sospensione: UI 4, plenum 4, ripresa 2»)",
-          "fonte_in_parole": "regola Nove C per la posa dell'unità interna canalizzata",
+          "fonte": "revisione su una commessa aria-aria del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+          "fonte_in_parole": "regola Nove C rivista su una commessa aria-aria",
           "perche": "Quattro punti di sospensione per la macchina, con antivibrante."
         },
         {
@@ -161,30 +175,30 @@
       "perche": "Il plenum di zona è appeso accanto alla macchina e si ispeziona per i motori delle serrande.",
       "voci": [
         {
-          "id": "kit-sospensione",
-          "sezione": "B",
-          "testo": "Kit sospensione: barra filettata M10, tassello per solaio in laterocemento, antivibrante",
-          "um": "n",
+          "id": "sospensione-plenum-di-zona",
+          "sezione": "S",
+          "testo": "Sospensione del plenum motorizzato (flangiato sulla mandata dell'unità interna): 4 barre filettate M10 con ancoranti, dadi e antivibranti",
+          "um": "kit",
           "calcolo": {
             "tipo": "per_pezzo",
-            "n": 4
+            "n": 1
           },
-          "fonte": "kit AA-01: RAPPORTO.md §7 («kit sospensione: UI 4, plenum 4, ripresa 2»)",
-          "fonte_in_parole": "regola Nove C per la posa del plenum di zona",
+          "fonte": "revisione su una commessa aria-aria del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+          "fonte_in_parole": "regola Nove C rivista su una commessa aria-aria",
           "perche": "Il plenum (1425 mm nel caso) non si regge sulla bocca della macchina."
         },
         {
           "id": "isolamento-raccordi-plenum",
           "sezione": "B",
-          "testo": "Isolamento elastomerico adesivo per raccordi e plenum",
+          "testo": "Isolamento elastomerico adesivo 13 mm per manicotti, raccordi, derivazione e plenum",
           "um": "rotolo",
           "calcolo": {
             "tipo": "per_pezzo",
-            "n": 1
+            "n": 2
           },
-          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce B.11",
-          "fonte_in_parole": "regola Nove C per la posa del plenum di zona",
-          "perche": "I raccordi rigidi fra macchina, plenum e curve fanno condensa se non si isolano."
+          "fonte": "revisione su una commessa aria-aria del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+          "fonte_in_parole": "regola Nove C rivista su una commessa aria-aria",
+          "perche": "I raccordi rigidi fra macchina, plenum e derivazione fanno condensa se non si isolano."
         },
         {
           "id": "botola-di-ispezione",
@@ -199,6 +213,20 @@
           "fonte": "kit AA-01: lavoro/dimensionamento.py, voce Z.2 («sotto UI … e sotto plenum e centrale», n 2)",
           "fonte_in_parole": "regola Nove C per la posa del plenum di zona",
           "perche": "I motori delle serrande e la centrale si raggiungono da sotto."
+        },
+        {
+          "id": "copertura-wifi",
+          "sezione": "Z",
+          "fornitura": "opere_edili",
+          "testo": "Copertura Wi-Fi in zona plenum e centrale di zona, per la configurazione e l'app",
+          "um": "a corpo",
+          "calcolo": {
+            "tipo": "per_pezzo",
+            "n": 1
+          },
+          "fonte": "revisione su una commessa aria-aria del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+          "fonte_in_parole": "regola Nove C rivista su una commessa aria-aria",
+          "perche": "La centrale di zona si configura e si comanda da app via Wi-Fi."
         }
       ]
     },
@@ -308,30 +336,30 @@
       "perche": "Il plenum di zona è appeso accanto alla macchina e si ispeziona per i motori delle serrande.",
       "voci": [
         {
-          "id": "kit-sospensione",
-          "sezione": "B",
-          "testo": "Kit sospensione: barra filettata M10, tassello per solaio in laterocemento, antivibrante",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_pezzo",
-            "n": 4
-          },
-          "fonte": "kit AA-01: RAPPORTO.md §7 («kit sospensione: UI 4, plenum 4, ripresa 2»)",
-          "fonte_in_parole": "regola Nove C per la posa del plenum di zona",
-          "perche": "Il plenum (1425 mm nel caso) non si regge sulla bocca della macchina."
-        },
-        {
-          "id": "isolamento-raccordi-plenum",
-          "sezione": "B",
-          "testo": "Isolamento elastomerico adesivo per raccordi e plenum",
-          "um": "rotolo",
+          "id": "sospensione-plenum-di-zona",
+          "sezione": "S",
+          "testo": "Sospensione del plenum motorizzato (flangiato sulla mandata dell'unità interna): 4 barre filettate M10 con ancoranti, dadi e antivibranti",
+          "um": "kit",
           "calcolo": {
             "tipo": "per_pezzo",
             "n": 1
           },
-          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce B.11",
-          "fonte_in_parole": "regola Nove C per la posa del plenum di zona",
-          "perche": "I raccordi rigidi fra macchina, plenum e curve fanno condensa se non si isolano."
+          "fonte": "revisione su una commessa aria-aria del 04/11/2026 (plenum a quattro serrande)",
+          "fonte_in_parole": "regola Nove C rivista su una commessa aria-aria",
+          "perche": "Il plenum (1140 mm nel caso) non si regge sulla bocca della macchina."
+        },
+        {
+          "id": "isolamento-raccordi-plenum",
+          "sezione": "B",
+          "testo": "Isolamento elastomerico adesivo 13 mm per manicotti, raccordi, derivazione e plenum",
+          "um": "rotolo",
+          "calcolo": {
+            "tipo": "per_pezzo",
+            "n": 2
+          },
+          "fonte": "revisione su una commessa aria-aria del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+          "fonte_in_parole": "regola Nove C rivista su una commessa aria-aria",
+          "perche": "I raccordi rigidi fra macchina, plenum e derivazione fanno condensa se non si isolano."
         },
         {
           "id": "botola-di-ispezione",
@@ -346,6 +374,20 @@
           "fonte": "kit AA-01: lavoro/dimensionamento.py, voce Z.2 («sotto UI … e sotto plenum e centrale», n 2)",
           "fonte_in_parole": "regola Nove C per la posa del plenum di zona",
           "perche": "I motori delle serrande e la centrale si raggiungono da sotto."
+        },
+        {
+          "id": "copertura-wifi",
+          "sezione": "Z",
+          "fornitura": "opere_edili",
+          "testo": "Copertura Wi-Fi in zona plenum e centrale di zona, per la configurazione e l'app",
+          "um": "a corpo",
+          "calcolo": {
+            "tipo": "per_pezzo",
+            "n": 1
+          },
+          "fonte": "revisione su una commessa aria-aria del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+          "fonte_in_parole": "regola Nove C rivista su una commessa aria-aria",
+          "perche": "La centrale di zona si configura e si comanda da app via Wi-Fi."
         }
       ]
     },
@@ -415,15 +457,15 @@
         {
           "id": "plenum-porta-bocchetta",
           "sezione": "B",
-          "testo": "Plenum porta-bocchetta coibentato per bocchetta {dimensione}, attacco {sezione} laterale o dall'alto",
+          "testo": "Plenum porta-bocchetta coibentato per bocchetta {dimensione}, attacco {sezione} laterale",
           "um": "n",
           "calcolo": {
             "tipo": "per_pezzo",
             "n": 1
           },
-          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce B.2; REVISIONE-INDIPENDENTE.md rilievo 5 («il plenum da ordinare sulle bocchette scelte non si può prezzare»)",
-          "fonte_in_parole": "regola Nove C per le bocchette di mandata",
-          "perche": "Il plenum si ordina sulla misura della bocchetta: è un dato del progettista sul pezzo (`dimensione`)."
+          "fonte": "revisione su una commessa aria-aria del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+          "fonte_in_parole": "regola Nove C rivista su una commessa aria-aria",
+          "perche": "Con velette da 30 cm l'attacco dall'alto non entra: plenum, isolamento e curva del flessibile superano 45 cm."
         },
         {
           "id": "bocchetta-di-mandata",
@@ -464,27 +506,27 @@
         {
           "id": "plenum-di-ripresa",
           "sezione": "B",
-          "testo": "Plenum di ripresa coibentato con filtro ispezionabile, bocca {sezione}, sulla bocca di aspirazione dell'unità interna",
+          "testo": "Plenum di ripresa in lamiera zincata, non coibentato, con filtro ispezionabile, bocca {sezione}, sulla bocca di aspirazione dell'unità interna; filtro unico: l'eventuale filtro di serie dell'unità interna si toglie",
           "um": "n",
           "calcolo": {
             "tipo": "per_pezzo",
             "n": 1
           },
-          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce B.3; REVISIONE-INDIPENDENTE.md rilievo 4 (un solo filtro, nel plenum)",
-          "fonte_in_parole": "regola Nove C per la ripresa dell'aria",
+          "fonte": "revisione su una commessa aria-aria del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+          "fonte_in_parole": "regola Nove C rivista su una commessa aria-aria",
           "perche": "Un filtro solo, ispezionabile: due filtri in serie (plenum e griglia) raddoppiano la perdita."
         },
         {
-          "id": "kit-sospensione",
-          "sezione": "B",
-          "testo": "Kit sospensione: barra filettata M10, tassello per solaio in laterocemento, antivibrante",
-          "um": "n",
+          "id": "sospensione-plenum-di-ripresa",
+          "sezione": "S",
+          "testo": "Sospensione del plenum di ripresa: 2 barre filettate M8 con ancoranti e dadi",
+          "um": "kit",
           "calcolo": {
             "tipo": "per_pezzo",
-            "n": 2
+            "n": 1
           },
-          "fonte": "kit AA-01: RAPPORTO.md §7 («kit sospensione: UI 4, plenum 4, ripresa 2»)",
-          "fonte_in_parole": "regola Nove C per la ripresa dell'aria",
+          "fonte": "revisione su una commessa aria-aria del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+          "fonte_in_parole": "regola Nove C rivista su una commessa aria-aria",
           "perche": "Il plenum di ripresa si appende per conto suo, sul lato libero."
         },
         {
@@ -534,14 +576,14 @@
         {
           "id": "innesto-sullo-scarico",
           "sezione": "D",
-          "testo": "Innesto sullo scarico esistente (braga 45° o presa sul sifone di un apparecchio)",
+          "testo": "Innesto sullo scarico esistente con braga 45° Ø40, a valle del sifone dell'apparecchio",
           "um": "n",
           "calcolo": {
             "tipo": "per_pezzo",
             "n": 1
           },
-          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce D.6",
-          "fonte_in_parole": "regola Nove C per lo scarico della condensa",
+          "fonte": "revisione su una commessa aria-aria del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+          "fonte_in_parole": "regola Nove C rivista su una commessa aria-aria",
           "perche": "L'allaccio della condensa a uno scarico esistente."
         },
         {
@@ -604,14 +646,14 @@
         {
           "id": "sezionatore",
           "sezione": "E",
-          "testo": "Sezionatore onnipolare di prossimità IP55, apertura contatti ≥ 3 mm",
+          "testo": "Sezionatore onnipolare di prossimità IP55, 25 A, apertura contatti ≥ 3 mm",
           "um": "n",
           "calcolo": {
             "tipo": "per_pezzo",
             "n": 1
           },
-          "fonte": "kit AA-01: RAPPORTO.md §7 (apertura dei contatti ≥ 3 mm dal manuale di installazione Daikin FTXM60-71A, citato in RAPPORTO.md §10)",
-          "fonte_in_parole": "manuale di installazione del costruttore della macchina (apertura dei contatti)",
+          "fonte": "revisione su una commessa aria-aria del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+          "fonte_in_parole": "regola Nove C rivista su una commessa aria-aria",
           "perche": "Chi fa manutenzione all'unità esterna la stacca lì accanto."
         }
       ]
@@ -639,14 +681,14 @@
         {
           "id": "traccia-per-apparecchio-a-parete",
           "sezione": "F",
-          "testo": "Traccia per termostati e comandi a parete",
-          "um": "n",
+          "testo": "Traccia per termostati e comandi a parete, dal controsoffitto alla scatola",
+          "um": "m",
           "calcolo": {
             "tipo": "per_pezzo",
-            "n": 1
+            "n": 1.4
           },
-          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce F.7",
-          "fonte_in_parole": "regola Nove C per gli apparecchi a parete",
+          "fonte": "revisione su una commessa aria-aria del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+          "fonte_in_parole": "regola Nove C rivista su una commessa aria-aria",
           "perche": "Il cavo scende dal controsoffitto alla scatola in traccia."
         }
       ]
@@ -674,15 +716,37 @@
         {
           "id": "traccia-per-apparecchio-a-parete",
           "sezione": "F",
-          "testo": "Traccia per termostati e comandi a parete",
+          "testo": "Traccia per termostati e comandi a parete, dal controsoffitto alla scatola",
+          "um": "m",
+          "calcolo": {
+            "tipo": "per_pezzo",
+            "n": 1.4
+          },
+          "fonte": "revisione su una commessa aria-aria del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+          "fonte_in_parole": "regola Nove C rivista su una commessa aria-aria",
+          "perche": "Il cavo scende dal controsoffitto alla scatola in traccia."
+        }
+      ]
+    },
+    "air-split": {
+      "nome": "Derivazione aeraulica 1×Ø200 > 2×Ø200",
+      "apparecchiatura": false,
+      "fonte": "revisione su una commessa aria-aria del 04/11/2026 (plenum a quattro serrande)",
+      "fonte_in_parole": "regola Nove C rivista su una commessa aria-aria",
+      "perche": "Con quattro serrande il soggiorno-cucina ha una sola uscita: 550 m³/h in un Ø200 sono 4,9 m/s, quindi si divide subito in due rami Ø200 da 275 m³/h.",
+      "voci": [
+        {
+          "id": "derivazione-soggiorno",
+          "sezione": "B",
+          "testo": "Derivazione coibentata 1×Ø200 > 2×Ø200 (cassetta di derivazione o braga), sull'uscita della serranda del soggiorno-cucina, con fascette e nastro alluminio",
           "um": "n",
           "calcolo": {
             "tipo": "per_pezzo",
             "n": 1
           },
-          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce F.7",
-          "fonte_in_parole": "regola Nove C per gli apparecchi a parete",
-          "perche": "Il cavo scende dal controsoffitto alla scatola in traccia."
+          "fonte": "revisione su una commessa aria-aria del 04/11/2026 (plenum a quattro serrande)",
+          "fonte_in_parole": "regola Nove C rivista su una commessa aria-aria",
+          "perche": "Il tratto a 4,9 m/s resta corto, sull'uscita del plenum; i due rami vanno a 2,4 m/s."
         }
       ]
     }

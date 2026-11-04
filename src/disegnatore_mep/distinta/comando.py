@@ -33,7 +33,7 @@ import sys
 from pathlib import Path
 
 from .calcolo import Distinta, componi_la_distinta
-from .documento import documento_della_distinta
+from .documento import documento_della_distinta, documento_della_lista
 from .domande import domande_in_parole
 from .grafo import sigle_dello_schema
 from .impaginazione import scrivi_il_documento
@@ -120,11 +120,14 @@ def esegui(
     sul_foglio: str | None = None,
     fornitura: str | None = None,
     report: Path | None = None,
+    lista: bool = False,
 ) -> int:
     tabelle = tabelle_scelte(sul_foglio)
     distinta = _componi(grafo, regole, cartella_delle_regole, cartella_del_catalogo, cartella_dei_nomi, fornitura)
     scritti = scrivi_le_uscite(distinta, uscita, tabelle)
-    documento, esito, perche = scrivi_il_documento(documento_della_distinta(distinta), uscita, report)
+    documento, esito, perche = scrivi_il_documento(
+        (documento_della_lista if lista else documento_della_distinta)(distinta), uscita, report
+    )
     print(
         f"Distinta: {len(distinta.voci)} voci in {len({v.sezione for v in distinta.voci})} sezioni, "
         f"{len(distinta.tratte_in_tabella)} tratte; regole {distinta.regole.impronta}."

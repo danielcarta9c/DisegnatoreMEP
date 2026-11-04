@@ -372,6 +372,112 @@ def _capitolo_7(distinta: Distinta) -> Capitolo:
     return Capitolo(7, "Le note e le regole usate", tuple(blocchi))
 
 
+SEZIONI_FUORI_DALLA_LISTA = ("F", "Z")
+"""Le sezioni che non si comprano: le assistenze murarie e le opere del Committente (I-262)."""
+
+
+def documento_della_lista(distinta: Distinta) -> Documento:
+    """La distinta in forma di lista della spesa per l'installatore (I-262, I-264).
+
+    Stesso calcolo, stesse regole e stessi numeri del documento a corpo; cambia il
+    documento: niente linguaggio dell'offerta a corpo, le tratte senza la verifica (che e'
+    un controllo del progettista), i soli materiali da comprare — fuori le assistenze
+    murarie (F), le opere del Committente (Z) e le voci «a corpo», che non si comprano —, e
+    niente attivita', varianti, domande e regole. Le apparecchiature (A) restano, con chi
+    le fornisce."""
+    progetto = distinta.progetto
+    regole = distinta.regole
+    commessa = dato_o_da_definire(progetto, "commission_code")
+    impianto = dato_o_da_definire(progetto, "project_name")
+    data = data_del_cartiglio(progetto)
+    tavola = progetto.get("sheet_number")
+    revisione = dato_o_da_definire(progetto, "revision")
+    schema = "Schema funzionale" + ("" if _vuoto(tavola) else f" {tavola}, rev. {revisione}")
+
+    chiavi = Chiavi(
+        righe=(
+            ("Commessa", commessa),
+            ("Impianto", impianto),
+            ("Committente", dato_o_da_definire(progetto, "client")),
+            ("Indirizzo", dato_o_da_definire(progetto, "address")),
+            ("Schema funzionale", f"tavola {dato_o_da_definire(progetto, 'sheet_number')}, rev. {revisione} del {data}"),
+        )
+    )
+    avvertenze = (
+        "Le quantità sono indicative e già maggiorate: verificarle in sopralluogo prima di comprare.",
+        "Le voci con «Nove C» o «Committente» nella colonna Fornitura non si comprano: le apparecchiature fornite "
+        "da Nove C l'installatore le posa.",
+        "Le assistenze murarie e le opere del Committente non sono in questa lista.",
+        "Le sigle sono quelle dello schema funzionale.",
+    )
+    capitolo_1 = Capitolo(
+        1,
+        "L'impianto",
+        (
+            chiavi,
+            Paragrafo("La lista dei materiali da comprare per realizzare l'impianto dello schema funzionale."),
+            Elenco(avvertenze, titolo="Da sapere"),
+        ),
+    )
+
+    foglio = tabelle_del_foglio(distinta, ("tratte",))["tabelle"][0]
+    righe = tuple(tuple(riga) for riga in foglio["sezioni"][0]["righe"])
+    capitolo_2 = Capitolo(
+        2,
+        "Le tratte: sezioni e lunghezze",
+        (
+            Paragrafo(
+                "Ogni tratto con la sua sezione, il materiale e la lunghezza: la «L stimata» è quella del progetto, "
+                "la «L da comprare» è già maggiorata. Un raccordo diretto (la ripresa sulla macchina, un cablaggio "
+                "di fabbrica) non ha lunghezza."
+            ),
+            Tabella(
+                intestazioni=("Tratto", "Da - a", "Ø / sezione", "Materiale", "Q m³/h", "v m/s", "L stimata m",
+                              "L da comprare m"),
+                righe=righe,
+                pesi=(0.6, 2.0, 1.25, 2.0, 0.65, 0.6, 0.75, 0.8),
+                a_destra=frozenset({4, 5, 6, 7}),
+            ),
+        ),
+    )
+
+    blocchi: list[Blocco] = [
+        Paragrafo("Colonna «Fornitura»: «installatore» = da comprare; «Nove C» o «Committente» = non si compra.")
+    ]
+    for lettera in (str(x) for x in regole.distinta.get("sezioni_sul_foglio", [])):
+        if lettera in SEZIONI_FUORI_DALLA_LISTA:
+            continue
+        voci = [
+            v for v in distinta.voci_della_sezione(lettera)
+            if lettera == "A" or v.um.strip().lower() != "a corpo"
+        ]
+        if voci:
+            blocchi.append(_computo(voci, f"{lettera}. {regole.titolo(lettera)}"))
+    if len(blocchi) == 1:
+        blocchi.append(Paragrafo("Nessuna voce."))
+    capitolo_3 = Capitolo(3, "La lista dei materiali", tuple(blocchi))
+
+    copertina = Copertina(
+        titolo=("Lista materiali", "per l'installatore", impianto),
+        sottotitolo=f"{schema}  ·  {data}",
+        riquadro=(
+            "LISTA MATERIALI PER L'INSTALLATORE",
+            "Quantità indicative, già maggiorate",
+            "Da verificare in sopralluogo prima dell'acquisto",
+        ),
+        piede=f"Commessa {commessa} — {data}",
+        riserva=(f"Commessa {commessa}", impianto),
+    )
+    return Documento(
+        nome=nome_del_file(dict(progetto)).replace("Distinta_materiali", "Lista_materiali"),
+        titolo=f"Lista materiali per l'installatore — {impianto}",
+        intestazione=(f"noveC — Lista materiali, commessa {commessa}", data),
+        copertina=copertina,
+        capitoli=(capitolo_1, capitolo_2, capitolo_3),
+        vietate=VIETATE,
+    )
+
+
 def documento_della_distinta(distinta: Distinta) -> Documento:
     """Il documento della distinta: la copertina e i sette capitoli, gia' scritti."""
     progetto = distinta.progetto

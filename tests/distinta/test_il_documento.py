@@ -132,11 +132,11 @@ def test_le_tratte_sono_quelle_della_distinta(aa01: Distinta) -> None:
 def test_il_computo_una_tabella_per_sezione(aa01: Distinta) -> None:
     terzo = documento_della_distinta(aa01).capitoli[2]
     tabelle = _blocchi(terzo, Tabella)
-    assert [t.titolo[0] for t in tabelle] == list("ABCDEFZ")
+    assert [t.titolo[0] for t in tabelle] == list("ASBCDEFZ")
     assert all(t.intestazioni == ("Rif.", "Voce", "UM", "Q.tà", "Fornitura", "Note") for t in tabelle)
     righe = [r for t in tabelle for r in t.righe]
-    assert [r[0] for r in righe] == [v.rif for v in aa01.voci if v.sezione in "ABCDEFXZ"]
-    assert (righe[5][0], righe[5][3]) == ("B.1", "4")
+    assert [r[0] for r in righe] == [v.rif for v in aa01.voci if v.sezione in "ASBCDEFXZ"]
+    assert (righe[9][0], righe[9][3]) == ("B.1", "4")
 
 
 def test_attivita_varianti_e_righe_vuote(aa01: Distinta) -> None:
@@ -144,7 +144,7 @@ def test_attivita_varianti_e_righe_vuote(aa01: Distinta) -> None:
     attivita = _blocchi(documento.capitoli[3], Tabella)[0]
     assert attivita.titolo.startswith("G. ") and len(attivita.righe) == 12
     varianti, acca = _blocchi(documento.capitoli[4], Tabella)
-    assert varianti.titolo.startswith("V. ") and [r[0] for r in varianti.righe] == [f"V.{i}" for i in range(1, 6)]
+    assert varianti.titolo.startswith("V. ") and [r[0] for r in varianti.righe] == [f"V.{i}" for i in range(1, 8)]
     assert acca.titolo.startswith("H. ") and acca.righe == tuple((f"H.{i}", "", "", "", "") for i in range(1, 7))
     assert "referente tecnico dell'installatore" in _blocchi(documento.capitoli[4], Paragrafo)[-1].testo
 

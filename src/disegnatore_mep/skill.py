@@ -1376,6 +1376,12 @@ def costruisci_il_parser() -> argparse.ArgumentParser:
         "della skill non le posa sulla tavola",
     )
     distinta.add_argument(
+        "--lista",
+        action="store_true",
+        help="la lista della spesa per l'installatore: stessi calcoli, solo i materiali da comprare, senza "
+        "l'offerta a corpo (I-262)",
+    )
+    distinta.add_argument(
         "--fornitura",
         help="chi fornisce che cosa in questa offerta, es. apparecchiature=installatore; «confermata» per le "
         "predefinite; senza, le predefinite da confermare",
@@ -1403,6 +1409,7 @@ def _distinta(args: argparse.Namespace, cartelle: Cartelle) -> int:
         sul_foglio=args.sul_foglio,
         fornitura=args.fornitura,
         report=args.report,
+        lista=args.lista,
     )
 
 
