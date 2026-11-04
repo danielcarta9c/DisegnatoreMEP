@@ -30,7 +30,12 @@ import pytest
 ROOT = Path(__file__).resolve().parents[2]
 IMPIANTO_6 = ROOT / "docs" / "collaudi" / "REL-003" / "impianto-6"
 IMPIANTO_7 = ROOT / "docs" / "collaudi" / "REL-001" / "impianto-7"
-TAVOLA_7 = ROOT / "docs" / "collaudi" / "REL-001" / "tavole" / "impianto-7-finale-opus-A2.pdf"
+TAVOLA_7 = ROOT / "docs" / "collaudi" / "REL-011" / "piani" / "impianto-7-finale-opus-A2-D-229.pdf"
+"""La tavola dell'impianto 7 consegnata in REL-001 (`docs/collaudi/REL-001/tavole/
+impianto-7-finale-opus-A2.pdf`, approvata dal PO), rifatta il 4 novembre 2026 dallo stesso
+grafo e dallo stesso piano: la geometria e' la stessa, e l'unica differenza e' in legenda, il
+gruppo di riempimento che si chiama «con disconnettore» (D-229). La tavola approvata resta
+agli atti com'era."""
 BOZZA_6 = ROOT / "docs" / "collaudi" / "REL-003" / "capire-giro-2" / "grafo.json"
 
 

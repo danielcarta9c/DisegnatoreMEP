@@ -167,11 +167,16 @@ def test_la_riga_della_tabella_segue_il_corpo(tavola: Callable[[str], Tavola]) -
 def test_un_dn_che_a_nove_punti_non_entra_scende_a_otto(
     tavola: Callable[[str], Tavola], simboli: SymbolRegistry, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
-    """Con lo spazio ai capi di prima, 1,5 mm, un DN della tavola 1 entra solo a 8
-    punti: si posa a 8, lo dice, e SVG e DXF lo scrivono a 8."""
+    """Con lo spazio ai capi di prima, 1,5 mm, due DN della tavola 3 entrano solo a 8
+    punti: si posano a 8, lo dicono, e SVG e DXF li scrivono a 8.
+
+    Fino al 4 novembre 2026 la prova stava sulla tavola 1. Il grafo dell'impianto 1 e'
+    stato rigenerato con giunto, antigelo e ritegno (D-217, D-222, D-230) e il suo piano
+    ricomposto con piu' tratto dritto: sulla tavola 1 a 1,5 mm non scende piu' nessun DN, e
+    la prova non direbbe nulla. Sulla tavola 3, che non cambia, ne scendono due."""
     monkeypatch.setattr(diametri, "RIENTRO_DAI_CAPI_MM", 1.5)
-    t = tavola("1")
-    _, piano = DIAMETRI.grafo_e_piano("1")
+    t = tavola("3")
+    _, piano = DIAMETRI.grafo_e_piano("3")
     esito = esegui_piano(t.modello, carica_piano(piano), _catalogo(simboli), simboli, DIAMETRI.NAMING)
     assert esito.disegno is not None
     foglio = esito.disegno.sheets[0]
