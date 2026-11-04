@@ -66,6 +66,7 @@ FUNZIONI_DELLA_TABELLA: tuple[str, ...] = (
     "air_zoning",
     "zone_control",
     "unit_control",
+    "room_contact_control",
 )
 """I mestieri delle apparecchiature principali, e il vaso di espansione (I-141).
 
@@ -76,6 +77,10 @@ calore. Fuori le bocchette e le riprese, che sono terminali, e i termostati, che
 sono tanti uguali e portano la loro scritta di zona accanto — se non hanno marca o
 modello dichiarati (`FUNZIONI_CON_MARCA_O_MODELLO`). *Proposta della sessione*, da
 giudicare sulla tavola.
+
+**Il termostato ambiente a contatto** (I-269) entra sempre: sta solo sulla tavola
+dell'elettrico, sulla linea del circolatore che accende, e va in tabella e in
+legenda con la sua sigla.
 
 Generatori, accumuli e bollitori, separatori idraulici, scambiatori,
 circolatori — e i vasi. **Fuori** le valvole, come il PO ha detto, e con loro
@@ -112,6 +117,38 @@ piu' mestieri — il boiler in pompa di calore genera e accumula — le porta
 tutte, nell'ordine delle chiavi di `CHIAVI_DEI_DATI_NUMERICI`. Il separatore
 idraulico non ha una sua caratteristica: quando e' anche un accumulo, porta il
 volume da accumulo."""
+
+CONTATTO = "contatto"
+"""La portata del contatto di un termostato a contatto o di un relè, come il progettista
+l'ha data: «5(2) A 250 V» (I-269). Un testo."""
+
+CARATTERISTICHE_DI_TESTO: dict[str, tuple[str, ...]] = {
+    "room_contact_control": (CONTATTO,),
+}
+"""Le caratteristiche che il progettista da' **come testo**, scritte come le ha date
+dopo quelle numeriche: la portata del contatto del termostato ambiente (I-269), per
+esempio «5(2) A 250 V». Una chiave che manca non scrive niente, come un dato numerico
+che manca. *Proposta della sessione*, da giudicare sulla tavola."""
+
+CARATTERISTICHE_ELETTRICHE: tuple[str, ...] = (
+    "alimentazione",
+    "potenza_elettrica_kw",
+    "corrente_max_a",
+    "cavo_minimo",
+)
+"""Le caratteristiche di ogni riga **sulla tavola dell'elettrico** (I-277), in
+quest'ordine: l'alimentazione («230 V 1~», un testo), la potenza elettrica assorbita
+(kW) e la corrente massima (A), numeri come quelli della tabella idraulica, e il cavo
+minimo richiesto («3G6», un testo). Poi, sul relè e sul termostato a contatto, la
+portata del contatto (`CONTATTO`). Il PO, il 4 novembre 2026: «che senso ha mettere le
+caratteristiche idroniche della pdc e del circolatore in una tabella nella tavola
+elettrica ci dovrebbero andare le info elettriche. pdc Assorbimento ampere max? cavo
+minimo richiesto di sezione? alimentazione 230 o 400 ecc.». I dati idronici — potenza
+termica, volume, portata, prevalenza — su quella tavola non si scrivono. Sono dati del
+progettista, dalla targa o dal manuale: se mancano, la cella ha il trattino."""
+
+FUNZIONI_COL_CONTATTO: tuple[str, ...] = ("room_contact_control", "power_switching")
+"""Chi ha un contatto la cui portata la tabella dell'elettrico scrive (I-277)."""
 
 INTESTAZIONE: tuple[str, ...] = (
     "CODICE",
@@ -185,6 +222,50 @@ def dati_del_vaso(proprieta: Mapping[str, JsonPrimitive]) -> list[str]:
     return dati
 
 
+def dati_idronici(mestieri: Iterable[str], proprieta: Mapping[str, JsonPrimitive]) -> list[str]:
+    """Le caratteristiche di una riga sulla tavola idraulica e sulla tavola unica: i dati
+    numerici del mestiere (`CARATTERISTICHE_PER_MESTIERE`), quelli del vaso, e i testi
+    del mestiere (`CARATTERISTICHE_DI_TESTO`)."""
+    fa = tuple(mestieri)
+    chiavi = [
+        chiave
+        for chiave in CHIAVI_DEI_DATI_NUMERICI
+        if any(chiave in CARATTERISTICHE_PER_MESTIERE.get(item, ()) for item in fa)
+    ]
+    dati = [
+        scritto
+        for chiave in chiavi
+        if (scritto := formatta_il_dato(chiave, proprieta.get(chiave))) is not None
+    ]
+    if "expansion" in fa:
+        dati.extend(dati_del_vaso(proprieta))
+    dati.extend(
+        scritto
+        for item in fa
+        for chiave in CARATTERISTICHE_DI_TESTO.get(item, ())
+        if (scritto := _testo(proprieta.get(chiave))) is not None
+    )
+    return dati
+
+
+def dati_elettrici(mestieri: Iterable[str], proprieta: Mapping[str, JsonPrimitive]) -> list[str]:
+    """Le caratteristiche di una riga sulla tavola dell'elettrico (I-277): alimentazione,
+    potenza elettrica, corrente massima, cavo minimo (`CARATTERISTICHE_ELETTRICHE`), e la
+    portata del contatto di chi ne ha uno. I numeri si scrivono come nella tabella
+    idraulica, con la virgola e l'unita'; i testi come il progettista li ha dati."""
+    dati: list[str] = []
+    for chiave in CARATTERISTICHE_ELETTRICHE:
+        valore = proprieta.get(chiave)
+        scritto = (
+            formatta_il_dato(chiave, valore) if chiave in CHIAVI_DEI_DATI_NUMERICI else _testo(valore)
+        )
+        if scritto is not None:
+            dati.append(scritto)
+    if set(mestieri) & set(FUNZIONI_COL_CONTATTO) and (contatto := _testo(proprieta.get(CONTATTO))):
+        dati.append(contatto)
+    return dati
+
+
 def _testo(valore: JsonPrimitive) -> str | None:
     """Un dato di testo — marca, modello —, o `None` se non c'e'.
 
@@ -205,12 +286,40 @@ def _in_ordine_di_sigla(codice: str | None) -> tuple[str, int, str]:
     return (forma.group(1), int(forma.group(2)), codice)
 
 
+FUORI_DALLA_TABELLA_DELL_ELETTRICO: tuple[str, ...] = ("power_isolation",)
+"""I mestieri che restano fuori dalla tabella **anche sulla tavola dell'elettrico**
+(I-276): il sezionatore, un organo in linea sul cavo della macchina come la valvola
+sul tubo — e la tabella dell'idraulica le valvole non le elenca (I-141). La sua sigla
+sta sul disegno e cede il posto alla scritta del cavo che lo attraversa («3G6 · L 15
+m»): in tabella diventerebbe una sigla che non cede, e la scritta del progettista non
+troverebbe piu' posto (RUN_LABEL_OMITTED, sul collaudo T2 di REL-012). *Proposta della
+sessione*, da giudicare sulla tavola."""
+
+
+def entra_in_tabella(
+    mestieri: Iterable[str], proprieta: Mapping[str, JsonPrimitive], ogni_pezzo: bool = False
+) -> bool:
+    """Se un pezzo disegnato ha una riga nella tabella: per mestiere, per marca o modello
+    dichiarati, o — sulla tavola dell'elettrico, `ogni_pezzo` — perche' ha un cavo e non
+    e' un organo di linea."""
+    fa = set(mestieri)
+    if fa & set(FUNZIONI_DELLA_TABELLA):
+        return True
+    if ogni_pezzo:
+        return not fa & set(FUORI_DALLA_TABELLA_DELL_ELETTRICO)
+    return bool(
+        fa & set(FUNZIONI_CON_MARCA_O_MODELLO)
+        and (_testo(proprieta.get(MARCA)) or _testo(proprieta.get(MODELLO)))
+    )
+
+
 def righe_della_tabella(
     modello: ProjectModel,
     catalogo: ComponentRegistry,
     naming: Naming,
     sigle: dict[str, str],
     sul_foglio: Iterable[str],
+    ogni_pezzo: bool = False,
 ) -> list[RigaDellaTabella]:
     """Le apparecchiature della tavola, una riga per pezzo, in ordine.
 
@@ -219,6 +328,13 @@ def righe_della_tabella(
     stessa che il disegno scrive accanto al pezzo (D-097, «la sigla è una sola
     per tutto il prodotto»). `sul_foglio` sono i pezzi disegnati su questa
     tavola.
+
+    `ogni_pezzo` e' la tabella **della tavola dell'elettrico** (I-276): ogni pezzo
+    disegnato, perche' su quella tavola ogni pezzo ha un cavo ed e' un'apparecchiatura
+    dell'elettrico o del comando — tranne gli organi di linea
+    (`FUORI_DALLA_TABELLA_DELL_ELETTRICO`); `tabella_della_tavola`. Le sue
+    caratteristiche sono quelle elettriche (`dati_elettrici`, I-277), non quelle
+    idroniche.
 
     L'ordine e' quello delle famiglie in `naming/families.json` — prima chi il
     calore lo produce, poi accumuli, separatori, circolatori, scambiatori, vasi
@@ -230,27 +346,17 @@ def righe_della_tabella(
             continue
         voce = catalogo.get(pezzo.definition_id)
         mestieri = tuple(voce.functions)
-        if not set(mestieri) & set(FUNZIONI_DELLA_TABELLA) and not (
-            set(mestieri) & set(FUNZIONI_CON_MARCA_O_MODELLO)
-            and (_testo(pezzo.properties.get(MARCA)) or _testo(pezzo.properties.get(MODELLO)))
-        ):
+        if not entra_in_tabella(mestieri, pezzo.properties, ogni_pezzo):
             continue
         try:
             famiglia = naming.families.index(naming.family_of(mestieri, pezzo.id))
         except NamingError:
             famiglia = len(naming.families)
-        chiavi = [
-            chiave
-            for chiave in CHIAVI_DEI_DATI_NUMERICI
-            if any(chiave in CARATTERISTICHE_PER_MESTIERE.get(item, ()) for item in mestieri)
-        ]
-        dati = [
-            scritto
-            for chiave in chiavi
-            if (scritto := formatta_il_dato(chiave, pezzo.properties.get(chiave))) is not None
-        ]
-        if "expansion" in mestieri:
-            dati.extend(dati_del_vaso(pezzo.properties))
+        dati = (
+            dati_elettrici(mestieri, pezzo.properties)
+            if ogni_pezzo
+            else dati_idronici(mestieri, pezzo.properties)
+        )
         codice = sigle.get(pezzo.id, pezzo.tag)
         riga = RigaDellaTabella(
             component_id=pezzo.id,
@@ -327,20 +433,37 @@ def tabella_della_tavola(
     cartella_dei_nomi: Path,
     sheet: SheetGeometry,
     frame: SheetFrame,
+    vista: str = "tutto",
 ) -> TabellaDelleApparecchiature | None:
     """La tabella di una tavola: le righe dei pezzi disegnati, impaginate.
 
     Le sigle vengono dalla lettura dell'impianto (D-097, D-098). Se l'impianto
     non si legge — un pezzo che nessuna sorgente raggiunge — la tabella scrive
     le sigle che l'ingegnere ha dato, e il trattino dove non ce ne sono: la
-    tavola esce lo stesso, e la lettura lo dice dove serve."""
+    tavola esce lo stesso, e la lettura lo dice dove serve.
+
+    **Sulla tavola dell'elettrico** (`vista` «elettrico», I-276) la tabella elenca ogni
+    pezzo disegnato: la tavola porta soltanto i pezzi a cui arriva un cavo, e sono le
+    apparecchiature dell'elettrico e del comando — la deviatrice e la miscelatrice
+    motorizzate, le sonde, il quadro, i relè, i termostati, il comando a filo — oltre
+    alle macchine di sempre. Il sezionatore no: e' un organo di linea
+    (`FUORI_DALLA_TABELLA_DELL_ELETTRICO`). Il PO, su una commessa reale: nella tabella della tavola
+    elettrica «mancano la deviatrice, le sonde e il quadro». Le sigle sono quelle del
+    grafo intero, che la vista scrive sui pezzi (`piano.vista`). La tabella della
+    tavola idraulica e della tavola unica resta quella di sempre. *Proposta della
+    sessione*, da giudicare sulla tavola."""
     naming = Naming.from_directory(cartella_dei_nomi)
     try:
         sigle = read_plant(modello, catalogo, naming).sigle
     except (GraphError, NamingError):
         sigle = {}
     righe = righe_della_tabella(
-        modello, catalogo, naming, sigle, (item.component_id for item in sheet.symbols)
+        modello,
+        catalogo,
+        naming,
+        sigle,
+        (item.component_id for item in sheet.symbols),
+        ogni_pezzo=vista == "elettrico",
     )
     return impagina_la_tabella(righe, frame)
 
@@ -504,14 +627,20 @@ def svg_dei_tratti(tratti: TrattiDellaTabella, classe: str) -> str:
 
 
 __all__ = [
+    "CARATTERISTICHE_DI_TESTO",
+    "CARATTERISTICHE_ELETTRICHE",
     "CARATTERISTICHE_PER_MESTIERE",
     "CELLA_VUOTA",
     "FUNZIONI_CON_MARCA_O_MODELLO",
     "FUNZIONI_DELLA_TABELLA",
+    "FUORI_DALLA_TABELLA_DELL_ELETTRICO",
     "INTESTAZIONE",
     "TestoDellaTabella",
     "TrattiDellaTabella",
     "celle",
+    "dati_elettrici",
+    "dati_idronici",
+    "entra_in_tabella",
     "formatta_il_dato",
     "impagina_la_tabella",
     "righe_della_tabella",

@@ -1029,7 +1029,7 @@ def esegui_piano(
     # dei due. Nel definitivo non ci sono, e il conto e' quello di prima.
     ostacoli: tuple[tuple[float, float, float, float], ...] = ()
     in_tabella: frozenset[str] = frozenset()
-    tabella = tabella_della_tavola(modello, catalogo, naming, foglio, frame)
+    tabella = tabella_della_tavola(modello, catalogo, naming, foglio, frame, piano.vista)
     delle_note = impagina_le_note(
         note_di_posa(
             modello,

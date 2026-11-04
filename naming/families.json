@@ -240,6 +240,11 @@
       "name": "Relè d'appoggio"
     },
     {
+      "function": "room_contact_control",
+      "prefix": "TAC",
+      "name": "Termostato ambiente a contatto"
+    },
+    {
       "function": "room_control",
       "prefix": "TZ",
       "name": "Termostato di zona"

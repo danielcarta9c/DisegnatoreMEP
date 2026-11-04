@@ -76,7 +76,7 @@ Rieseguire questo script deve produrre file bit per bit identici.
 
 import json
 import math
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Any
 
@@ -1734,6 +1734,11 @@ SOURCE_D228_RELAY = (
     "nello stile CEI dei segni del kit; forma da approvare dal PO sulla tavola"
 )
 """La fonte del segno del relè d'appoggio: nessuna fonte esterna acquisita."""
+SOURCE_I269_CONTACT_THERMOSTAT = (
+    "proposta della sessione del 04/11/2026 (I-269): il contatto di chiusura del "
+    "sezionatore con la «T» del termostato di zona; forma da approvare dal PO sulla tavola"
+)
+"""La fonte del segno del termostato ambiente a contatto: nessuna fonte esterna acquisita."""
 
 SOURCE_REL012_PLENUM = (
     "proposta della sessione del 29/10/2026 (collaudo T1 di REL-012, plenum a quattro uscite): "
@@ -2157,6 +2162,11 @@ def interface_relay_body(w: float, h: float) -> str:
 ROOM_DEVICE_GLYPH_ID = "sigla"
 """Il glifo leggibile di un apparecchio d'ambiente: resta dritto se il simbolo gira."""
 
+CONTACT_THERMOSTAT_GLYPH_ID = "t"
+"""La «T» del termostato a contatto: un nome corto, perche' il blocco DXF delle lettere
+diritte si chiama `NoveC_RoomThermostatContact_<glifo>`, e AutoCAD ne accetta al piu'
+31 caratteri."""
+
 
 def _room_device(w: float, h: float) -> tuple[str, float, float, float, float]:
     """L'apparecchio d'ambiente del kit: un riquadro 7 x 8 attaccato al moncone."""
@@ -2176,6 +2186,26 @@ def room_thermostat_body(w: float, h: float) -> str:
     cx = x + bw / 2
     t = f'<path d="M{n(cx - 1.8)} {n(y + 2)} L{n(cx + 1.8)} {n(y + 2)} M{n(cx)} {n(y + 2)} L{n(cx)} {n(y + 6.2)}"/>'
     return corpo + f'<g data-glyph="{ROOM_DEVICE_GLYPH_ID}">{t}</g>'
+
+
+def room_thermostat_contact_body(w: float, h: float) -> str:
+    """Termostato ambiente a contatto (I-269): il contatto di chiusura del
+    sezionatore, aperto sulla linea, e sotto la lama la «T» del termostato, a
+    tratti come quella del termostato di zona. La «T» resta dritta quando il
+    segno gira (`upright_glyphs`)."""
+    cy = h / 2
+    cx = w / 2
+    t = (
+        f'<path d="M{n(cx - 1.2)} {n(h * 0.7)} L{n(cx + 1.2)} {n(h * 0.7)} '
+        f'M{n(cx)} {n(h * 0.7)} L{n(cx)} {n(h * 0.96)}"/>'
+    )
+    return (
+        _segment(0, cy, w * 0.3, cy)
+        + _segment(w * 0.3, cy, w * 0.68, h * 0.14)
+        + _segment(w * 0.7, cy, w, cy)
+        + _segment(w * 0.7, h * 0.32, w * 0.7, h * 0.68)
+        + f'<g data-glyph="{CONTACT_THERMOSTAT_GLYPH_ID}">{t}</g>'
+    )
 
 
 def wired_remote_body(w: float, h: float) -> str:
@@ -3410,6 +3440,22 @@ SYMBOLS: list[SymbolSpec] = [
         "room-thermostat", "Termostato di zona", DEVICE, "left",
         room_thermostat_body, SOURCE_REL012_KIT,
         upright_glyphs=[{"id": ROOM_DEVICE_GLYPH_ID, "x_mm": 5.5, "y_mm": DEVICE[1] / 2}],
+    ),
+    # Il termostato ambiente a contatto (I-269): in linea come il sezionatore, due
+    # attacchi opposti sulla linea del circolatore. Largo il doppio, perche' sotto
+    # la lama c'e' la «T» che lo distingue dal sezionatore; la «T» resta dritta.
+    replace(
+        inline_symbol(
+            "room-thermostat-contact", "Termostato ambiente a contatto", WIDE_INLINE_ACCESSORY,
+            room_thermostat_contact_body, SOURCE_I269_CONTACT_THERMOSTAT,
+        ),
+        upright_glyphs=[
+            {
+                "id": CONTACT_THERMOSTAT_GLYPH_ID,
+                "x_mm": WIDE_INLINE_ACCESSORY[0] / 2,
+                "y_mm": round(WIDE_INLINE_ACCESSORY[1] * 0.83, 2),
+            }
+        ],
     ),
     single_port_symbol(
         "wired-remote", "Comando a filo", DEVICE, "left", wired_remote_body, SOURCE_REL012_KIT,

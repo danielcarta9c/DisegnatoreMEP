@@ -246,9 +246,18 @@ def test_le_sigle_sono_le_stesse_sulle_due_tavole() -> None:
     elettrico, _ = vista_del_grafo(senza, "elettrico", catalogo(), NAMING)
     sigle_i = {item.id: item.tag for item in idraulica.components if item.tag}
     sigle_e = {item.id: item.tag for item in elettrico.components if item.tag}
-    assert {"pdc", "circolatore"} <= set(sigle_e)
+    assert {"pdc", "circolatore"} <= set(sigle_e) & set(sigle_i)
+    # Dal 4 novembre 2026 (I-276) la vista elettrica scrive la sigla su ogni pezzo della
+    # sua tabella — deviatrice, quadro, regolatore, sonde —, che sull'idraulica la sigla
+    # sul modello non la portano (o non ci sono): si confronta dove ci sono tutte e due, e
+    # ogni sigla e' quella della lettura del grafo intero.
+    assert {"deviatrice", "quadro", "regolatore"} <= set(sigle_e)
     for pezzo, sigla in sigle_e.items():
-        assert sigle_i[pezzo] == sigla == attese[pezzo], pezzo
+        assert sigla == attese[pezzo], pezzo
+        if pezzo in sigle_i:
+            assert sigle_i[pezzo] == sigla, pezzo
+    for pezzo, sigla in sigle_i.items():
+        assert sigla == attese[pezzo], pezzo
 
 
 def test_una_vista_sconosciuta_non_si_legge(tmp_path: Path) -> None:

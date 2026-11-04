@@ -572,8 +572,8 @@ Il campo **`vista`** del piano dice quale parte del grafo la tavola disegna:
 | `vista` | che cosa disegna |
 |---|---|
 | `"tutto"` (se il campo manca) | il grafo intero: la tavola unica |
-| `"idraulica"` | tutto **tranne** i cavi e i bus, e tranne i pezzi che stanno solo sul comando (quadro, sezionatore, relè d'appoggio, regolatore, sonda esterna). La sonda a immersione resta sul suo tubo, senza il cavo |
-| `"elettrico"` | i **soli** cavi e bus, e i pezzi che toccano: quadro, sezionatore, relè d'appoggio, regolatore, sonde, e le macchine, i circolatori e le valvole che hanno un cavo. Niente acqua |
+| `"idraulica"` | tutto **tranne** i cavi e i bus, e tranne i pezzi che stanno solo sul comando (quadro, sezionatore, relè d'appoggio, termostato ambiente a contatto, regolatore, sonda esterna). La sonda a immersione resta sul suo tubo, senza il cavo |
+| `"elettrico"` | i **soli** cavi e bus, e i pezzi che toccano: quadro, sezionatore, relè d'appoggio, termostato ambiente a contatto, regolatore, sonde, e le macchine, i circolatori e le valvole che hanno un cavo. Niente acqua. La tabella in alto a sinistra elenca **ogni pezzo** della tavola con la sua sigla, tranne il sezionatore (I-276) |
 
 Per due tavole scrivi **due piani** sullo stesso grafo completo, `piano-idraulica.json` con
 `"vista": "idraulica"` e `piano-elettrico.json` con `"vista": "elettrico"`, e disegna due volte. Il
@@ -590,6 +590,16 @@ I pezzi da posare non sono gli stessi nelle due viste: chiedili per ciascuna, co
 circolatore va nel piano**: non ha il suo tubo, e non sta più in linea. Il sezionatore resta in
 linea sul suo cavo, e lo posa il motore. **Il relè d'appoggio va nel piano** anche lui: ha tre
 attacchi, e non sta in linea.
+
+**Il termostato ambiente a contatto** (`room-thermostat-contact`, I-269) sta in linea sul cavo
+fra il quadro e il circolatore che accende, come il sezionatore: **non va nel piano**, lo posa il
+motore sulla linea, con la sigla (TAC-01) e il nome del locale (`etichetta`) accanto, e sta solo
+sulla tavola dell'elettrico. Tu dai al motore una linea su cui stia: il quadro e il circolatore
+posati in modo che il cavo fra i due abbia un tratto dritto di almeno **due centimetri** — il
+segno è largo un centimetro, e sigla e locale gli stanno sopra e sotto (o ai lati, se il tratto è
+verticale). Una linea che dal quadro gira subito sul circolatore lo schiaccia contro la piega:
+allontana il circolatore. Se il circolatore ha anche un relè (il caso del §4.8 di Capire in cui
+il contatto non basta), il termostato sta sul cavo della bobina, fra il quadro e il relè.
 
 #### Come si compone la tavola dell'elettrico
 

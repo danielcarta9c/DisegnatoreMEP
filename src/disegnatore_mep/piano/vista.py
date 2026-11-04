@@ -11,8 +11,9 @@ e' una decisione su come si compone la tavola, non sull'impianto:
 - **`tutto`**, la tavola unica: il grafo intero. E' la vista di sempre, e senza
   elettrico nel grafo e' l'unica che esiste;
 - **`idraulica`**: il grafo **senza il dominio del comando** — niente cavi e bus, e
-  niente pezzi che stanno solo sul comando (il quadro, il sezionatore, il
-  regolatore, la sonda esterna). La sonda a immersione **resta**, sul suo tubo: il
+  niente pezzi che stanno solo sul comando (il quadro, il sezionatore, il relè, il
+  termostato ambiente a contatto, il regolatore, la sonda esterna). La sonda a
+  immersione **resta**, sul suo tubo: il
   pozzetto e' un fatto idraulico, e chi monta deve sapere dove va (*proposta*);
   perde il suo cavo;
 - **`elettrico`**: **il solo dominio del comando** — i cavi, i bus, e i pezzi che
@@ -159,7 +160,7 @@ def vista_del_grafo(
     # portano, e scrivergliela la aggiungerebbe. Quelle dei pezzi fuori dall'acqua le
     # scrive l'esecutore, dal grafo intero anche loro, e cedono il posto alle scritte
     # dei tratti (collaudo T1 di REL-012): scritte qui sul modello, non cederebbero.
-    from disegnatore_mep.graphics.tabella import FUNZIONI_DELLA_TABELLA
+    from disegnatore_mep.graphics.tabella import FUNZIONI_DELLA_TABELLA, entra_in_tabella
 
     sigle = sigle_del_grafo_intero(modello, catalogo.per_il_progetto(modello), naming)
 
@@ -167,7 +168,14 @@ def vista_del_grafo(
         if pezzo.tag is not None or pezzo.id not in sigle:
             return pezzo
         mestieri = set(catalogo.get(pezzo.definition_id).functions)
-        if not mestieri & set(FUNZIONI_DELLA_TABELLA):
+        # Sulla tavola dell'elettrico la tabella elenca ogni pezzo col cavo, tranne gli
+        # organi di linea (I-276, `graphics.tabella.entra_in_tabella`): ognuno porta la
+        # sigla del grafo intero, perche' la lettura della sola vista li numererebbe in
+        # un altro modo.
+        if elettrica:
+            if not entra_in_tabella(mestieri, pezzo.properties, ogni_pezzo=True):
+                return pezzo
+        elif not mestieri & set(FUNZIONI_DELLA_TABELLA):
             return pezzo
         return pezzo.model_copy(update={"tag": sigle[pezzo.id]})
 

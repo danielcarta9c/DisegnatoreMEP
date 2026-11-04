@@ -1,0 +1,168 @@
+{
+ "schema_version": "1.1.0",
+ "metadata": {
+  "project_id": "termostato-a-contatto",
+  "client": "ND",
+  "project_name": "Circolatore acceso dal termostato ambiente a contatto",
+  "commission_code": "ND",
+  "revision": "00",
+  "issue_date": "2026-11-04"
+ },
+ "plant_regime": "up_to_35_kw",
+ "networks": [
+  {
+   "id": "primario",
+   "name": "Circuito dei radiatori",
+   "domain": "hydronic",
+   "medium": "heating_water"
+  },
+  {
+   "id": "el-pdc",
+   "name": "Alimentazione pompa di calore",
+   "domain": "control",
+   "medium": "power_supply"
+  },
+  {
+   "id": "el-circ",
+   "name": "Alimentazione circolatore dal quadro, attraverso il termostato",
+   "domain": "control",
+   "medium": "power_supply"
+  }
+ ],
+ "components": [
+  {
+   "id": "pdc",
+   "definition_id": "heat-pump-air-water",
+   "tag": null,
+   "properties": {
+    "power_kw": 12,
+    "marca": "Shenling",
+    "modello": "ThermaX R290"
+   }
+  },
+  {
+   "id": "circ",
+   "definition_id": "pump-circulator",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "radiatori",
+   "definition_id": "radiator",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "quadro",
+   "definition_id": "electrical-panel",
+   "tag": null,
+   "properties": {
+    "etichetta": "quadro di centrale"
+   }
+  },
+  {
+   "id": "termostato",
+   "definition_id": "room-thermostat-contact",
+   "tag": null,
+   "properties": {
+    "etichetta": "soggiorno",
+    "contatto": "5(2) A 250 V"
+   }
+  }
+ ],
+ "connections": [
+  {
+   "id": "t1",
+   "network_id": "primario",
+   "endpoint_a": {
+    "component_id": "pdc",
+    "port_id": "water_supply"
+   },
+   "endpoint_b": {
+    "component_id": "circ",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t2",
+   "network_id": "primario",
+   "endpoint_a": {
+    "component_id": "circ",
+    "port_id": "b"
+   },
+   "endpoint_b": {
+    "component_id": "radiatori",
+    "port_id": "in"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t3",
+   "network_id": "primario",
+   "endpoint_a": {
+    "component_id": "radiatori",
+    "port_id": "out"
+   },
+   "endpoint_b": {
+    "component_id": "pdc",
+    "port_id": "water_return"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t4",
+   "network_id": "el-pdc",
+   "endpoint_a": {
+    "component_id": "quadro",
+    "port_id": "out_1"
+   },
+   "endpoint_b": {
+    "component_id": "pdc",
+    "port_id": "power"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t5",
+   "network_id": "el-circ",
+   "endpoint_a": {
+    "component_id": "quadro",
+    "port_id": "out_3"
+   },
+   "endpoint_b": {
+    "component_id": "termostato",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t6",
+   "network_id": "el-circ",
+   "endpoint_a": {
+    "component_id": "termostato",
+    "port_id": "b"
+   },
+   "endpoint_b": {
+    "component_id": "circ",
+    "port_id": "power"
+   },
+   "properties": {}
+  }
+ ],
+ "assumptions": [
+  {
+   "id": "a1",
+   "text": "Il circolatore è alimentato dal quadro attraverso il contatto del termostato ambiente, senza relè: la pompa di calore regola da sé e non comanda il circolatore. Se la portata del contatto non basta per il circolatore, dimmelo e metto un relè d'appoggio comandato dal termostato.",
+   "status": "proposed"
+  },
+  {
+   "id": "a2",
+   "text": "Sezione e lunghezza dei cavi non date: la linea del circolatore va dal quadro al termostato e torna al circolatore, e senza i due tratti la distinta la lascia DA DEFINIRE.",
+   "status": "proposed"
+  }
+ ],
+ "rule_applications": [],
+ "subsystems": [],
+ "sheets": []
+}
