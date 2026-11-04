@@ -17,6 +17,12 @@ from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.layout.autostrade import tratte_del_progetto
 from disegnatore_mep.model.project import ProjectModel
 
+from .perdite import (
+    MAGGIORAZIONE_CONCENTRATE,
+    RUGOSITA_DI_CALCOLO_M,
+    VISCOSITA_CINEMATICA_M2_S,
+    VerificaDellaPrevalenza,
+)
 from .portate import Portate, portate_delle_tratte
 from .tratti import TrattoDelDiametro, tratti_del_diametro
 
@@ -126,4 +132,42 @@ def foglio_in_markdown(righe: Sequence[RigaDelCalcolo]) -> str:
     return testa + "\n".join(corpo) + "\n"
 
 
-__all__ = ["RigaDelCalcolo", "foglio_in_markdown", "righe_del_calcolo"]
+def prevalenza_in_markdown(
+    verifiche: Sequence[VerificaDellaPrevalenza], sigle: dict[str, str]
+) -> str:
+    """La verifica della prevalenza della pompa a bordo (I-270), sotto il foglio.
+
+    Per ogni macchina che ha i dati il giro piu' costoso, tratto per tratto, e il
+    confronto con la prevalenza utile. Vuota se nessuna macchina li ha: senza dati
+    la verifica non si fa, e non si scrive."""
+    if not verifiche:
+        return ""
+    parti = [
+        "### Verifica della prevalenza della pompa a bordo\n\n"
+        f"Darcy-Weisbach con Swamee-Jain, acqua a 40 °C (ν {_numero(VISCOSITA_CINEMATICA_M2_S * 1e6, 3)}·10⁻⁶ "
+        f"m²/s), scabrezza dell'acciaio {_numero(RUGOSITA_DI_CALCOLO_M * 1000, 3)} mm; concentrate il "
+        f"{MAGGIORAZIONE_CONCENTRATE:.0%} delle distribuite. Non entrano le perdite proprie di serpentini, "
+        "scambiatori e volano.\n"
+    ]
+    for verifica in verifiche:
+        nome = sigle.get(verifica.macchina, verifica.macchina)
+        righe = "\n".join(
+            f"| {sigle.get(item.da, item.da)} | {sigle.get(item.a, item.a)} | Øi {item.dn} | "
+            f"{_numero(item.portata_m3h, 3)} | {_numero(item.velocita_m_s, 2)} | {_numero(item.lunghezza_m, 1)} | "
+            f"{_numero(item.perdita_pa_m, 0)} | {_numero(item.perdita_kpa, 2)} |"
+            for item in verifica.giro
+        )
+        esito = "**NON BASTA**" if verifica.supera else "basta"
+        parti.append(
+            f"\n**{nome}** — il giro piu' costoso di {verifica.giri}:\n\n"
+            "| da | a | DN | portata m³/h | velocità m/s | L m | Pa/m | kPa |\n"
+            "|---|---|---|---:|---:|---:|---:|---:|\n"
+            f"{righe}\n\n"
+            f"Distribuite {_numero(verifica.distribuite_kpa, 2)} kPa + concentrate "
+            f"{_numero(verifica.concentrate_kpa, 2)} kPa = **{_numero(verifica.totale_kpa, 2)} kPa**; "
+            f"prevalenza utile {_numero(verifica.prevalenza_utile_kpa, 1)} kPa: {esito}.\n"
+        )
+    return "".join(parti)
+
+
+__all__ = ["RigaDelCalcolo", "foglio_in_markdown", "prevalenza_in_markdown", "righe_del_calcolo"]

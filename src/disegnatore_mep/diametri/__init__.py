@@ -9,7 +9,9 @@ Tre pezzi, e ciascuno fa una cosa:
 - `tratti` — il tratto che porta un'etichetta sola: attraversa valvole, valvole
   a tre vie e raccordi di servizio, e si ferma dove la portata cambia.
 
-Chi posa l'etichetta sulla tavola e' `layout.diametri`.
+Chi posa l'etichetta sulla tavola e' `layout.diametri`. Accanto, `perdite` verifica
+le perdite del giro primario contro la prevalenza utile della pompa a bordo, quando il
+progettista la da' con le lunghezze (I-270): un avviso, non un DN diverso.
 """
 
 from .calcolatore import (

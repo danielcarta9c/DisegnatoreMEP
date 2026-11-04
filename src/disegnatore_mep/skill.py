@@ -75,7 +75,7 @@ from disegnatore_mep.layout.geometry import (
     TabellaNelleZone,
 )
 from disegnatore_mep.model.project import ConnectionModel, ProjectModel
-from disegnatore_mep.model.types import ApprovalStatus, IssueSeverity
+from disegnatore_mep.model.types import ApprovalStatus, Domain, IssueSeverity
 from disegnatore_mep.piano.esecutore import EsitoDelPiano, esegui_piano
 from disegnatore_mep.piano.formato import FORMATI_ORDINARI, PianoDiComposizione, carica_piano
 from disegnatore_mep.piano.revisore import misura
@@ -318,6 +318,7 @@ def _completa(args: argparse.Namespace, cartelle: Cartelle) -> int:
         print("\nAvvisi del manuale del costruttore e della specifica Nove C")
         for avviso in avvisi_del_manuale:
             print(f"  - {avviso}")
+    _stampa_la_prevalenza(completo, dati.catalogo, cartelle)
 
     _stampa_le_scelte_del_progettista(modello, risultato.withheld, proposte, dati)
     _stampa_il_corredo_sull_esistente(completo, proposte)
@@ -338,6 +339,25 @@ def _completa(args: argparse.Namespace, cartelle: Cartelle) -> int:
         for domanda in domande:
             print(f"  - {domanda}")
     return 0
+
+
+def _stampa_la_prevalenza(modello: ProjectModel, catalogo: ComponentRegistry, cartelle: Cartelle) -> None:
+    """La prevalenza della pompa a bordo contro le perdite del giro primario (I-270).
+
+    Un avviso, come quelli del manuale: il DN non cambia, e la scelta resta del
+    progettista. Se mancano la prevalenza, le lunghezze o i diametri non si dice niente."""
+    from disegnatore_mep.diametri.perdite import avvisi_della_prevalenza
+    from disegnatore_mep.piano.vista import sigle_del_grafo_intero
+
+    if modello.diametri is None:
+        return
+    avvisi = avvisi_della_prevalenza(
+        modello, catalogo, sigle=sigle_del_grafo_intero(modello, catalogo, cartelle.naming)
+    )
+    if avvisi:
+        print("\nAvvisi della prevalenza della pompa a bordo")
+        for avviso in avvisi:
+            print(f"  - {avviso}")
 
 
 def _stampa_le_scelte_del_progettista(
@@ -815,6 +835,7 @@ def _disegna(args: argparse.Namespace, cartelle: Cartelle) -> int:
         modello, piano, dati.catalogo, dati.simboli, cartelle.naming, verifica=args.verifica, tabelle=tabelle
     )
     # La tavola disegna la vista del piano (REL-012, I-227): da qui si legge il suo grafo.
+    intero, catalogo_intero = modello, dati.catalogo.per_il_progetto(modello)
     modello, dati.catalogo = esito.modello, esito.catalogo
     if dove_vanno:
         print("Tabelle del foglio:")
@@ -883,6 +904,10 @@ def _disegna(args: argparse.Namespace, cartelle: Cartelle) -> int:
             print(f"    codice: {item.code} · {', '.join(item.entity_ids)}")
     else:
         print("\nLe regole del piano: nessuna violazione.")
+    # La prevalenza si verifica sul grafo intero, e si dice sulla tavola che porta i DN (I-270).
+    idrauliche = {item.id for item in modello.networks if item.domain is Domain.HYDRONIC}
+    if any(item.network_id in idrauliche for item in modello.connections):
+        _stampa_la_prevalenza(intero, catalogo_intero, cartelle)
 
     args.out.mkdir(parents=True, exist_ok=True)
     dxf = not args.senza_dxf and _ha_ezdxf()
