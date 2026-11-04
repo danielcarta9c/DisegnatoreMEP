@@ -1,32 +1,30 @@
-# L'ultima release: 1.10.0
+# L'ultima release: 1.11.0
 
-`DisegnatoreMEP-v1.10.0.zip` — sha256 `11c6a81f5e60b47f…`, 141 file — è `REL-017`: **i rilievi di una commessa reale** (una
-villetta con PdC Shenling 12 kW, volano a 4 attacchi, ACS su deviatrice, pavimento radiante; I-269 … I-277). Si carica
-come ogni skill personale, dallo ZIP così com'è.
+`DisegnatoreMEP-v1.11.0.zip` — sha256 `2fd795f3dcca463a…`, 144 file — è ancora `REL-017`, con **il tubo da comprare
+sulla tavola** al posto del diametro interno (I-279, I-281, D-233). Si carica come ogni skill personale, dallo ZIP così
+com'è.
 
-Rispetto alla 1.9.0:
-- **il termostato ambiente a contatto** (`room-thermostat-contact`, sigla TAC-nn): in serie sulla linea quadro →
-  circolatore, solo sulla tavola elettrica, in tabella e in legenda; niente relè d'appoggio, che resta per il
-  circolatore comandato da un'uscita della pompa di calore (D-228); in distinta scatola 503 e traccia;
-- **la tabella della tavola elettrica**: tutti i pezzi del foglio (deviatrice, miscelatrice, quadro, relè, sonde,
-  comando) e solo dati elettrici — `alimentazione`, `potenza_elettrica_kw`, `corrente_max_a`, `cavo_minimo`, il
-  `contatto` di relè e termostato; la tabella della tavola idraulica non cambia;
-- **il vaso sanitario** fra il gruppo di sicurezza e il bollitore anche senza «produzione centralizzata»: la risposta
-  del progettista si scrive `non_a_bordo: ["expansion"]` sul bollitore e il vaso lo mette la regola; un vaso scritto
-  a mano a monte del non ritorno è un errore di validazione;
-- **le note di posa del progettista** (`note_di_posa`, `note_tolte`): vengono prima, e sostituiscono la nota generata
-  che comincia con la stessa parola; sempre al più cinque, solo nell'esecutivo;
-- **la prevalenza della pompa a bordo**: con `prevalenza_utile_kpa` e le lunghezze del primario, un avviso se il giro
-  più costoso perde più di quanto la pompa dà (Darcy-Weisbach, più il 30% di perdite concentrate);
-- `completa` non perde più lunghezze, sezioni e scritte del progettista sulle tubazioni che riordina;
-- **la grafica**: lo scarico senza freccia (e dal fondo di una macchina col colore del ritorno), la sigla di un pezzo
-  alto accanto al suo simbolo, i simboli della legenda che non si toccano.
-
-Con la deviatrice la portata del ritorno comune è già quella della macchina, non la somma (verificato, I-270): il
-Øi 32 vicino alla PdC Shenling 12 kW è il DN dell'attacco (D-223).
+Rispetto alla 1.10.0:
+- **il materiale delle tubazioni** (`materiale_tubazioni`: multistrato, acciaio, rame; sul progetto o sulla rete),
+  multistrato se il testo non lo dice, dichiarato come assunzione;
+- **il tubo commerciale scelto per velocità** (tab. 9 del Quaderno Caleffi 5, sul pollice del tubo): «MS 32×3»,
+  «DN 25 (1")», «Cu 28×1» sulla tavola, con la riga della legenda del materiale; l'Øi resta solo nel foglio dei calcoli
+  (Øi minimo, tubo, Øi reale, velocità); le tabelle dei tubi con le fonti in `diametri/tubi.json`;
+- **il tubo del progettista vince** (`sezione`), con un avviso se la velocità supera il limite;
+- **una scritta per tratta**, niente sui tratti cortissimi fra due raccordi e sugli stacchi;
+- **la distinta** con la stessa dicitura («multistrato MS 32×3») e il pollice degli accessori in linea;
+- **la nota dell'isolamento** con lo spessore sul tubo vero («MS 32×3: 30 mm»);
+- **l'attacco della Shenling non è più un minimo** (D-233, emenda D-223): di regola MS 32×3 sul 12 kW, MS 40×3,5 sul
+  15 kW; dove il tubo è sotto l'attacco c'è **la riduzione all'attacco**, un pezzo con il suo simbolo (trapezio, proposta)
+  subito dopo il giunto antivibrante, in legenda e in distinta;
+- **la prevalenza della pompa a bordo**: senza il dato del progettista, 8 m c.a. sulle Shenling (indicativo del PO).
 
 Il banco di regressione di `REL-011` (24 tavole idroniche): 24 su 24 con 0 tratte cedute e 0 rilievi bloccanti.
-Le prove sono in `docs/collaudi/REL-017/`.
+Le prove sono in `docs/collaudi/REL-017/tubi/` e `docs/collaudi/REL-017/riduzione/`.
+
+Prima, la **1.10.0**: i rilievi di una commessa reale (I-269 … I-277) — il termostato ambiente a contatto, la tabella
+elettrica con i dati elettrici, il vaso sanitario messo dalla regola, le note di posa del progettista, l'avviso della
+prevalenza, scarico, sigla e legenda.
 
 Prima, la **1.9.0** (`REL-011`): il corredo contro il manuale Shenling e la specifica Nove C (D-217 … D-232).
 
