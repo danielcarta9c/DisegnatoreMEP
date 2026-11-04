@@ -45,6 +45,19 @@ MARGINE_A_DESTRA_MM = 1.0
 INTERLINEA_EM = 1.15
 """Il passo fra due righe dello stesso nome, in corpi (REL-008)."""
 
+STACCO_FRA_I_SIMBOLI_MM = 1.5
+"""Il bianco fra il simbolo di una voce e quello della voce sotto (REL-017, I-275)."""
+
+ALTEZZA_DEL_SIMBOLO_MM = ROW_HEIGHT_MM - STACCO_FRA_I_SIMBOLI_MM
+"""Quanto puo' essere alto il simbolo di una voce, in legenda: il passo meno lo stacco.
+
+Il campione e' un quadrato di otto millimetri (`graphics.sheet.LEGEND_SWATCH_MM`) e il
+passo e' di sette e mezzo: un simbolo alto quanto il campione — lo sfiato col suo
+rubinetto, i volani, il bollitore, ridotti fino a otto millimetri d'altezza — sporgeva
+mezzo millimetro nella voce sotto, e tre di fila si toccavano. Il PO l'ha visto sulla
+legenda di una villetta (I-275). Il simbolo si riduce finche' non sta nel passo, con lo
+stacco: la legenda non si allunga e non cambia formato."""
+
 RIGHE_NEL_PASSO = 2
 """Quante righe di un nome stanno nel passo di una voce: a 9 punti due righe
 occupano 6,6 mm dei 7,5. Una voce con piu' righe prende piu' spazio, non un
@@ -110,6 +123,13 @@ def basi_delle_righe(base_mm: float, righe: int, corpo_mm: float) -> tuple[float
     passo = INTERLINEA_EM * corpo_mm
     prima = base_mm - (righe - 1) * passo / 2
     return tuple(round(prima + indice * passo, 4) for indice in range(righe))
+
+
+def scala_del_simbolo(larghezza_mm: float, altezza_mm: float, campione_mm: float) -> float:
+    """La riduzione di un simbolo in legenda: mai ingrandito, largo al piu' quanto il
+    campione e alto al piu' `ALTEZZA_DEL_SIMBOLO_MM` (I-275). SVG e DXF chiamano questa
+    stessa funzione, e disegnano lo stesso simbolo."""
+    return min(1.0, campione_mm / larghezza_mm, ALTEZZA_DEL_SIMBOLO_MM / altezza_mm)
 
 
 def passo_della_voce_mm(righe: int, corpo_mm: float) -> float:

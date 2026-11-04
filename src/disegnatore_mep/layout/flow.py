@@ -51,7 +51,14 @@ elenco di **funzioni** di catalogo, mai di pezzi (D-069)."""
 
 OUTBOUND_FUNCTIONS = frozenset({"drain"})
 """I mestieri di chi, da uno stacco, **fa uscire** acqua dal circuito: lo
-scarico esplicitamente modellato porta il verso uscente."""
+scarico esplicitamente modellato porta il verso uscente, e nessuna freccia
+(`FlowKind.OUTBOUND`, I-273).
+
+Appeso all'attacco di una macchina — lo scarico in fondo al volano — prende il
+colore del **ritorno**: lo scarico sta nel punto piu' basso, e in fondo a un
+accumulo c'e' l'acqua fredda, quella che torna alla macchina. Fino a REL-017
+prendeva il colore base del fluido, cioe' quello dell'andata, e il PO l'ha visto
+rosso sotto il volano di una villetta (I-273)."""
 
 GENERATOR_FUNCTIONS = frozenset(
     {
@@ -560,9 +567,12 @@ def classify_trunks(
       Quando pende direttamente da un attacco di servizio di una macchina — lo
       sfiato in cima al serbatoio — non c'e' una tratta da cui ereditare: il
       volume della macchina non e' ne' andata ne' ritorno, e lo stacco prende
-      il colore base del fluido;
+      il colore base del fluido; **lo scarico, che sta in fondo, quello del
+      ritorno** (I-273, `OUTBOUND_FUNCTIONS`);
     - il **verso**: l'ingresso guarda verso il tratto che lo regge, lo scarico
-      se ne allontana, il ramo statico non ne ha.
+      se ne allontana, il ramo statico non ne ha. **La freccia** la porta solo
+      l'ingresso: lo scarico e' un rubinetto chiuso e si disegna senza (I-273,
+      `FlowKind.porta_la_freccia`).
 
     Nessuna geometria entra qui, ed e' il contratto: la firma lo dice.
     """
@@ -591,7 +601,10 @@ def classify_trunks(
         root_at_start = root == trunk.start
         # Verso il capo radice per chi entra, via da esso per chi esce.
         flow_from_start = root_at_start if kind is FlowKind.OUTBOUND else not root_at_start
-        supply: bool | None = True
+        # Il colore base del fluido per chi pende da una macchina; per lo scarico,
+        # che sta nel punto piu' basso dove l'acqua torna fredda, quello del
+        # ritorno (I-273). Da un raccordo, quello della tratta che lo regge.
+        supply: bool | None = kind is not FlowKind.OUTBOUND
         if definitions[root.component_id].is_a_fitting:
             hosts = {
                 oriented.get(other.connection_ids)
