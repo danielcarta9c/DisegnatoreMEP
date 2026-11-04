@@ -1,24 +1,34 @@
-# L'ultima release: 1.9.0
+# L'ultima release: 1.10.0
 
-`DisegnatoreMEP-v1.9.0.zip` — sha256 `248730560b224e43…`, 140 file — è `REL-011`: **le regole del corredo contro il
-manuale Shenling ThermaX R290 e la specifica tecnica di installazione Nove C**, decise col PO un punto alla volta
-(I-243 … I-264, D-217 … D-232). Si carica come ogni skill personale, dallo ZIP così com'è.
+`DisegnatoreMEP-v1.10.0.zip` — sha256 `11c6a81f5e60b47f…`, 141 file — è `REL-017`: **i rilievi di una commessa reale** (una
+villetta con PdC Shenling 12 kW, volano a 4 attacchi, ACS su deviatrice, pavimento radiante; I-269 … I-277). Si carica
+come ogni skill personale, dallo ZIP così com'è.
 
-Rispetto alla 1.8.1:
-- **il corredo della pompa di calore**: giunti antivibranti attaccati alla macchina; valvole antigelo nelle case (sopra i
-  35 kW si chiede glicole o valvole); il ritegno su ogni generatore in parallelo, fra sicurezza e rubinetto; vaso,
-  riempimento e manometro fra le macchine e il defangatore; il gruppo di riempimento con disconnettore;
-- **le domande**: il volano a 4 attacchi quando manca, il vaso separato dalle macchine; gli avvisi del manuale
-  (portata fuori campo, volano sotto il minimo, schema in serie);
-- **il vaso dimensionato** (`mep.py vaso`) e **il livello del progetto**: nell'esecutivo precarica, tarature, pressione
-  di carica e il riquadro delle note di posa;
-- **il DN mai sotto l'attacco** delle Shenling;
-- **il relè d'appoggio da 10 A** fra la pompa di calore e ogni circolatore;
-- **la distinta** rivista su una commessa aria-aria, e la **lista della spesa** per l'installatore (`distinta --lista`).
+Rispetto alla 1.9.0:
+- **il termostato ambiente a contatto** (`room-thermostat-contact`, sigla TAC-nn): in serie sulla linea quadro →
+  circolatore, solo sulla tavola elettrica, in tabella e in legenda; niente relè d'appoggio, che resta per il
+  circolatore comandato da un'uscita della pompa di calore (D-228); in distinta scatola 503 e traccia;
+- **la tabella della tavola elettrica**: tutti i pezzi del foglio (deviatrice, miscelatrice, quadro, relè, sonde,
+  comando) e solo dati elettrici — `alimentazione`, `potenza_elettrica_kw`, `corrente_max_a`, `cavo_minimo`, il
+  `contatto` di relè e termostato; la tabella della tavola idraulica non cambia;
+- **il vaso sanitario** fra il gruppo di sicurezza e il bollitore anche senza «produzione centralizzata»: la risposta
+  del progettista si scrive `non_a_bordo: ["expansion"]` sul bollitore e il vaso lo mette la regola; un vaso scritto
+  a mano a monte del non ritorno è un errore di validazione;
+- **le note di posa del progettista** (`note_di_posa`, `note_tolte`): vengono prima, e sostituiscono la nota generata
+  che comincia con la stessa parola; sempre al più cinque, solo nell'esecutivo;
+- **la prevalenza della pompa a bordo**: con `prevalenza_utile_kpa` e le lunghezze del primario, un avviso se il giro
+  più costoso perde più di quanto la pompa dà (Darcy-Weisbach, più il 30% di perdite concentrate);
+- `completa` non perde più lunghezze, sezioni e scritte del progettista sulle tubazioni che riordina;
+- **la grafica**: lo scarico senza freccia (e dal fondo di una macchina col colore del ritorno), la sigla di un pezzo
+  alto accanto al suo simbolo, i simboli della legenda che non si toccano.
 
-Il banco di regressione di `REL-011` (24 tavole idroniche): tutte cambiano — la legenda del gruppo di riempimento e il
-corredo nuovo —, 22 con gli stessi numeri, due tavole di confronto della prova del PO con più pieghe. Le prove sono in
-`docs/collaudi/REL-011/`.
+Con la deviatrice la portata del ritorno comune è già quella della macchina, non la somma (verificato, I-270): il
+Øi 32 vicino alla PdC Shenling 12 kW è il DN dell'attacco (D-223).
+
+Il banco di regressione di `REL-011` (24 tavole idroniche): 24 su 24 con 0 tratte cedute e 0 rilievi bloccanti.
+Le prove sono in `docs/collaudi/REL-017/`.
+
+Prima, la **1.9.0** (`REL-011`): il corredo contro il manuale Shenling e la specifica Nove C (D-217 … D-232).
 
 Prima, la **1.8.1**: la terza via della deviatrice verso la serpentina del bollitore corre accanto al ritorno (I-240).
 

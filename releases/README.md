@@ -67,3 +67,11 @@ Il comando della skill li riapre da sé.
   sotto l'attacco Shenling; il vaso dimensionato (`mep.py vaso`) e il livello del progetto (definitivo / esecutivo),
   con tarature e note di posa solo nell'esecutivo; il relè d'appoggio da 10 A fra la pompa di calore e i circolatori;
   la distinta rivista e la lista della spesa (`distinta --lista`). 140 file.
+- **1.10.0** — 4 novembre 2026 (`REL-017`): i rilievi di una commessa reale (I-269 … I-277) — il **termostato ambiente
+  a contatto** in serie sulla linea quadro → circolatore (TAC-nn, niente relè); la **tabella della tavola elettrica**
+  con tutti i pezzi del foglio e le sole caratteristiche elettriche (alimentazione, potenza elettrica, corrente
+  massima, cavo minimo); il **vaso sanitario** messo dalla regola fra gruppo di sicurezza e bollitore anche quando il
+  bollitore non lo ha (`non_a_bordo`), e quello scritto a mano a monte del non ritorno fermato; le **note di posa del
+  progettista** (`note_di_posa`, `note_tolte`); l'**avviso della prevalenza** della pompa a bordo sul giro primario;
+  le lunghezze del progettista non più perse da `completa`; lo **scarico** senza freccia, la sigla del volano accanto
+  al suo simbolo, i simboli della legenda che non si toccano. 141 file.
