@@ -30,8 +30,10 @@ DEL_CARTIGLIO: tuple[str, ...] = (
     "checked_by",
     "approved_by",
     "header_note",
+    "livello",
 )
-"""I dati del cartiglio che i metadati possono non avere (REL-002)."""
+"""I dati del cartiglio che i metadati possono non avere (REL-002), e il livello del
+progetto (REL-011, D-224)."""
 
 
 def _senza_i_vuoti(dati: dict[str, Any], nomi: tuple[str, ...]) -> dict[str, Any]:
@@ -77,6 +79,11 @@ class ProjectMetadata(StrictModel):
     header_note: str | None = Field(default=None, min_length=1)
     """La dicitura che il cartiglio Nove C porta in testata, a destra: nel file
     del PO e' «Conto Termico con sconto in fattura». Senza, resta vuota."""
+    livello: Literal["definitivo", "esecutivo"] | None = None
+    """Il livello del progetto (REL-011, D-224, I-254): nel **definitivo** la tavola non
+    porta tarature, precarica, pressione di caricamento ne' le note di posa; nell'
+    **esecutivo** (esecutivo-costruttivo) si'. Lo chiede l'agente al progettista
+    all'inizio. Assente vale definitivo: i grafi agli atti non cambiano."""
 
     @model_serializer(mode="wrap")
     def _senza_i_dati_non_dati(self, handler: SerializerFunctionWrapHandler) -> dict[str, Any]:
