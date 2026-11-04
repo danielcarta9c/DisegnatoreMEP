@@ -66,7 +66,7 @@ ACQUA_DI_RISCALDAMENTO = "heating_water"
 TITOLO = "NOTE"
 
 NOTA_ISOLAMENTO = (
-    "Isolamento delle tubazioni a celle chiuse, λ ≤ 0,040 W/mK, con gli spessori minimi "
+    "Isolamento delle tubazioni a celle chiuse, conduttività massima 0,040 W/mK, con gli spessori minimi "
     "dell'Allegato B del DPR 412/93: 30 mm per diametri esterni da 20 a 39 mm, 40 mm da "
     "40 a 59 mm; all'esterno spessore pieno e protezione anti-UV."
 )

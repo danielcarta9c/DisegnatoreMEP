@@ -394,7 +394,7 @@ def test_nell_svg_ci_sono_le_note_numerate(
     assert [item for item in testi if re.fullmatch(r"\d\.", item)] == ["1.", "2.", "3.", "4."]
     # Il testo e' quello che il PDF puo' scrivere: le sostituzioni dichiarate, prima.
     assert all(per_winansi(item) == item for item in testi)
-    assert any("lambda <= 0,040 W/mK" in item for item in testi)
+    assert "conduttività massima 0,040 W/mK" in " ".join(testi)
 
 
 def test_nel_dxf_le_note_ci_sono_sul_layer_della_tabella_uguali_all_svg(
