@@ -269,6 +269,9 @@ def _completa(args: argparse.Namespace, cartelle: Cartelle) -> int:
     risultato = saturation(modello, dati.catalogo, regole)
     completo, proposte, lacune = risultato.model, risultato.applied, risultato.gaps
     rapporto = build_report(proposte, lacune, dati.naming)
+    from disegnatore_mep.diametri.costruttori import avvisi_del_costruttore
+
+    avvisi_del_manuale = avvisi_del_costruttore(completo, dati.catalogo)
 
     in_piu = len(completo.components) - len(modello.components)
     print(
@@ -309,6 +312,12 @@ def _completa(args: argparse.Namespace, cartelle: Cartelle) -> int:
             print(f"    {punto.what_is_missing}")
             print(f"    perche' servirebbe: {punto.rationale}")
             print(f"    fonte: {punto.source} · regola: {punto.rule}")
+
+    if avvisi_del_manuale:
+        # Il manuale del costruttore comanda (I-243): si segnala, non si corregge (D-223, D-226).
+        print("\nAvvisi del manuale del costruttore")
+        for avviso in avvisi_del_manuale:
+            print(f"  - {avviso}")
 
     _stampa_le_scelte_del_progettista(modello, risultato.withheld, proposte, dati)
     _stampa_il_corredo_sull_esistente(completo, proposte)

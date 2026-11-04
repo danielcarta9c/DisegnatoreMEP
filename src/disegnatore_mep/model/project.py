@@ -431,6 +431,11 @@ class ProjectModel(StrictModel):
     accessori_tolti: list[AccessorioTolto] = Field(default_factory=list)
     """Gli accessori delle regole che il progettista toglie (REL-009, I-192).
     Facoltativo e additivo come `diametri`: vuoto non si scrive."""
+    antigelo: Literal["glicole", "valvole"] | None = None
+    """Come si protegge dal gelo il tratto esterno delle pompe di calore (REL-011,
+    D-230): con il **glicole** nell'acqua, o con le **valvole antigelo** che scaricano il
+    tratto esterno. Lo dichiara il progettista. Assente: nelle case (fino a 35 kW) le
+    regole mettono le valvole, nelle centrali grandi chiedono. Assente non si scrive."""
 
     @model_validator(mode="after")
     def schema_version_is_the_current_one(self) -> "ProjectModel":
@@ -520,4 +525,6 @@ class ProjectModel(StrictModel):
             dati.pop("diametri", None)
         if not dati.get("accessori_tolti"):
             dati.pop("accessori_tolti", None)
+        if dati.get("antigelo") is None:
+            dati.pop("antigelo", None)
         return dati

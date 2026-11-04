@@ -33,6 +33,7 @@ FOULS_CIRCUIT = "fouls_circuit"
 NEEDS_DEBRIS_PROTECTION = "needs_debris_protection"
 PRODUCES_AIR = "produces_air"
 NEEDS_OVERPRESSURE_PROTECTION = "needs_overpressure_protection"
+VIBRATES = "vibrates"
 HOLDS_ITS_OWN_VOLUME = "holds_its_own_volume"
 SHUTOFF_ORDINARY = "shutoff_ordinary"
 INLINE = "attachment_inline"
@@ -342,7 +343,7 @@ REL_003: list[dict[str, Any]] = [
         "heat-pump-air-water-large",
         "Pompa di calore aria-acqua di alta potenza",
         ["heat_generation"],
-        GENERATOR_TRAITS,
+        [*GENERATOR_TRAITS, VIBRATES],
         [
             hydronic_port("water_supply", "out"),
             hydronic_port("water_return", "in"),
@@ -799,6 +800,7 @@ DEFINITIONS: list[dict[str, Any]] = [
             NEEDS_DEBRIS_PROTECTION,
             PRODUCES_AIR,
             NEEDS_OVERPRESSURE_PROTECTION,
+            VIBRATES,
             SHUTOFF_ORDINARY,
             INLINE,
         ],

@@ -1,0 +1,33 @@
+{
+  "id": "valve-antifreeze",
+  "version": "1.0.0",
+  "name": "Valvola antigelo",
+  "functions": [
+    "frost_protection"
+  ],
+  "traits": [
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
+  "symbol_id": "valve-antifreeze",
+  "composite": false,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "bidirectional",
+      "required": true
+    },
+    {
+      "id": "b",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "bidirectional",
+      "required": true
+    }
+  ],
+  "sources": [
+    "Manuale Shenling ThermaX R290 6-15 kW, par. 6.4: senza corrente la protezione antigelo della macchina non funziona; specifica Nove C Rev. 01, par. 1.6: glicole oppure altra soluzione approvata dalla DL; D-230 (I-260, I-263)"
+  ]
+}

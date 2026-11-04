@@ -10,6 +10,7 @@
     "needs_debris_protection",
     "produces_air",
     "needs_overpressure_protection",
+    "vibrates",
     "shutoff_ordinary",
     "attachment_inline"
   ],

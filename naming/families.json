@@ -199,6 +199,11 @@
       "name": "Giunto antivibrante"
     },
     {
+      "function": "frost_protection",
+      "prefix": "VAG",
+      "name": "Valvola antigelo"
+    },
+    {
       "function": "water_treatment",
       "prefix": "DP",
       "name": "Dosatore di polifosfati"

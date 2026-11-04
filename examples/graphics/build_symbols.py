@@ -1677,6 +1677,19 @@ def flexible_joint_body(w: float, h: float) -> str:
     )
 
 
+def valve_antifreeze_body(w: float, h: float) -> str:
+    """Valvola antigelo (REL-011, D-230): il segno del valvolame, e sopra il fiocco
+    che dice perche' si apre — quando l'acqua sta per gelare scarica il tratto
+    esterno. Si apre da sola, senza corrente: niente attuatore."""
+    cx = w / 2
+    fiocco_y, braccio = -h * 0.35, h * 0.22
+    raggi = "".join(
+        f'<line x1="{n(cx - dx)}" y1="{n(fiocco_y - dy)}" x2="{n(cx + dx)}" y2="{n(fiocco_y + dy)}"/>'
+        for dx, dy in ((braccio, 0.0), (braccio * 0.5, braccio * 0.866), (braccio * 0.5, -braccio * 0.866))
+    )
+    return valve_isolation_body(w, h) + f'<line x1="{n(cx)}" y1="{n(h / 2)}" x2="{n(cx)}" y2="{n(fiocco_y)}"/>' + raggi
+
+
 def polyphosphate_doser_body(w: float, h: float) -> str:
     """Dosatore di polifosfati: la testa in linea, dove l'acqua passa, e sotto la
     cartuccia dei sali che si consuma e si cambia."""
@@ -2730,7 +2743,7 @@ SYMBOLS: list[SymbolSpec] = [
     inline_symbol("air-separator", "Separatore d'aria", BRANCHED_ACCESSORY, air_separator_body, SOURCE_PRACTICE_HYDRONIC),
     inline_symbol("dirt-separator", "Defangatore", BRANCHED_ACCESSORY, dirt_separator_body, SOURCE_PRACTICE_HYDRONIC),
     two_port_bridge(
-        "filling-unit", "Gruppo di riempimento", BRANCHED_ACCESSORY,
+        "filling-unit", "Gruppo di riempimento con disconnettore", BRANCHED_ACCESSORY,
         filling_unit_body, SOURCE_PRACTICE_HYDRONIC, version="2.0.0",
     ),
     inline_symbol(
@@ -3183,6 +3196,11 @@ SYMBOLS: list[SymbolSpec] = [
     inline_symbol(
         "flexible-joint", "Giunto antivibrante", INLINE_ACCESSORY, flexible_joint_body,
         SOURCE_REL009_PROPOSAL,
+    ),
+    # REL-011, D-230: le valvole antigelo sul tratto esterno della pompa di calore.
+    inline_symbol(
+        "valve-antifreeze", "Valvola antigelo", INLINE_ACCESSORY, valve_antifreeze_body,
+        "proposta della sessione, REL-011 (D-230): la forma la approva il PO sulla tavola",
     ),
     inline_symbol(
         "polyphosphate-doser", "Dosatore di polifosfati", DEVICE, polyphosphate_doser_body,

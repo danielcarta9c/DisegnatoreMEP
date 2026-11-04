@@ -1,7 +1,7 @@
 {
   "id": "filling-unit",
   "version": "3.0.0",
-  "name": "Gruppo di riempimento",
+  "name": "Gruppo di riempimento con disconnettore",
   "functions": [
     "filling"
   ],

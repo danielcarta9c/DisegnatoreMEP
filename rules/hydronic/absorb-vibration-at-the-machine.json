@@ -1,0 +1,23 @@
+{
+  "id": "absorb-vibration-at-the-machine",
+  "version": "1.0.0",
+  "name": "Giunto antivibrante",
+  "category": "necessary",
+  "cardinality": "per_port",
+  "when": {
+    "network_domain": "hydronic",
+    "network_medium": "heating_water",
+    "anchor_has_trait": "vibrates"
+  },
+  "then": {
+    "provides_function": "vibration_isolation",
+    "placement": "on_any_port",
+    "inlet_port": "a",
+    "outlet_port": "b"
+  },
+  "satisfied_by": {
+    "scope": "on_the_attachment"
+  },
+  "rationale": "Una macchina con un compressore e un ventilatore vibra, e con i tubi rigidi la vibrazione arriva nelle tubazioni e da li' nell'edificio: ronzio nelle stanze, raccordi che col tempo si allentano o perdono. Un tratto flessibile sulla mandata e uno sul ritorno, attaccati alla macchina, la fermano li'. E' il primo pezzo dopo la macchina: tutto il resto — la valvola di sicurezza, il ritegno, i rubinetti, il filtro — viene dopo, e il giunto non chiude niente, quindi la sicurezza resta collegata alla macchina. Gomma o flessibile inox si sceglie in distinta: sullo schema il segno e' lo stesso.",
+  "source": "Specifica tecnica di installazione Nove C, Rev. 01 del 27 ottobre 2026, par. 2.4: «Giunti antivibranti flessibili (acciaio inox) su mandata e ritorno della PdC» e par. 4.2: «giunti antivibranti sempre presenti» (documento Nove C, non nel repository); D-222, approvata dal PO il 4 novembre 2026 (I-251)"
+}

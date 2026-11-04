@@ -1,0 +1,30 @@
+{
+  "id": "minimum-volume-where-the-generator-has-no-storage",
+  "version": "2.0.0",
+  "name": "Volano termico",
+  "category": "necessary",
+  "cardinality": "per_network",
+  "when": {
+    "network_domain": "hydronic",
+    "network_medium": "heating_water",
+    "anchor_has_function": "heat_generation",
+    "network_lacks_function": "thermal_storage"
+  },
+  "then": {
+    "provides_function": "thermal_storage",
+    "placement": "on_outlet",
+    "inlet_port": "a",
+    "outlet_port": "b",
+    "question": {
+      "text": "su questo circuito il generatore non ha ne' un volano ne' un accumulo. Il costruttore vuole un tampone (Shenling ThermaX: almeno 25 l per 6-9 kW, 40 l per 12-15 kW, 40 l per unita' in cascata) e almeno 40 l d'acqua esclusa la macchina anche con le valvole di zona chiuse. La soluzione standard e' un volano a 4 attacchi fra le macchine e l'impianto, che fa da separatore, con il circolatore dell'impianto dopo il volano: lo schema in serie sul solo ritorno non e' ammesso dalla specifica Nove C. Aggiungi il volano al testo; se invece il volume e' garantito in altro modo, scrivilo sul generatore («volume minimo: verificato») e la domanda non torna.",
+      "answered_by": {
+        "volume_minimo": "verificato"
+      }
+    }
+  },
+  "satisfied_by": {
+    "scope": "on_the_network"
+  },
+  "rationale": "Una pompa di calore aria-acqua in sbrinamento prende calore dall'acqua dell'impianto: con poca acqua si raffredda troppo, la macchina va in blocco o fa cicli brevi. Il costruttore vuole percio' un tampone e un volume minimo che resti anche quando le valvole di zona chiudono, e la specifica Nove C ammette solo lo schema a 4 tubi con il volano che separa. La regola non aggiunge il volano da sola: divide l'impianto in due circuiti e porta un circolatore, ed e' una scelta di progetto. Riconosce il caso — un generatore senza serbatoio sul proprio circuito — e chiede, proponendo lo standard (D-219, D-226).",
+  "source": "Manuale Shenling ThermaX R290 6-15 kW, par. 4.4 (tampone 25 / 40 / 40 x n l) e 6.2 (almeno 40 l esclusa la macchina, anche a valvole chiuse), letto il 3 e 4 novembre 2026, non nel repository; specifica tecnica di installazione Nove C Rev. 01, par. 1.7: sempre a 4 tubi con volano separatore; D-219 e D-226, approvate dal PO (I-246, I-257)"
+}

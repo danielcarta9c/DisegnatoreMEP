@@ -1,6 +1,6 @@
 {
   "id": "dirt-separation-before-what-it-would-ruin",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "name": "Defangatore",
   "category": "recommended",
   "cardinality": "per_network",
@@ -18,12 +18,15 @@
   "satisfied_by": {
     "scope": "on_the_network"
   },
-  "rationale": "L'acqua di un circuito chiuso continua a produrre fanghi e ossidi anche dopo il lavaggio, e sono cosi' fini che un filtro a rete non li trattiene: si separano rallentando l'acqua. Il defangatore e' uno solo per circuito e sta sul ritorno generale, a monte della prima ripartizione verso le macchine: li' passa tutta l'acqua che torna, quindi un pezzo solo protegge ogni generatore — uno per macchina e' un doppione, e uno su un circolatore non protegge niente che il ritorno generale non protegga gia'.",
-  "source": "Caleffi, Idraulica 61, cap. Eliminazione delle impurita': un filtro defangatore sulla linea di ritorno verso il generatore (SRC-019, p. 45); un solo defangatore sul ritorno generale in Fig. 41 e nei cinque schemi applicativi (SRC-008); D-106",
+  "rationale": "L'acqua di un circuito chiuso continua a produrre fanghi e ossidi anche dopo il lavaggio, e sono cosi' fini che un filtro a rete non li trattiene: si separano rallentando l'acqua. Il defangatore e' uno solo per circuito e sta sul ritorno generale, a monte della prima ripartizione verso le macchine: li' passa tutta l'acqua che torna, quindi un pezzo solo protegge ogni generatore — uno per macchina e' un doppione, e uno su un circolatore non protegge niente che il ritorno generale non protegga gia'. Sul ritorno sta oltre il vaso, il gruppo di riempimento e il manometro, dalla parte dell'impianto (D-218): chiuse le sue valvole per pulirlo o cambiarlo, le macchine restano collegate al vaso, e chi carica legge la pressione nello stesso punto.",
+  "source": "Caleffi, Idraulica 61, cap. Eliminazione delle impurita': un filtro defangatore sulla linea di ritorno verso il generatore (SRC-019, p. 45); un solo defangatore sul ritorno generale in Fig. 41 e nei cinque schemi applicativi (SRC-008); D-106; D-218, approvata dal PO il 3 novembre 2026 (I-245): il vaso non si separa mai dalle macchine per una valvola che non sia loro",
   "ordering": {
     "after": [
       "isolation",
-      "isolation_locked_open"
+      "isolation_locked_open",
+      "expansion",
+      "filling",
+      "pressure_measurement"
     ]
   }
 }

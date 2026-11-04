@@ -604,9 +604,15 @@ def _senza_la_domanda_sull_acqua_di_riempimento(gaps: list[RuleGap]) -> list[Rul
     misurano — e da DRAW-006-R1 il gruppo di riempimento e' un **ponte fra due
     reti**: senza una sorgente fredda gia' approvata la regola chiede al
     progettista invece di appendere un pezzo al nulla. E' un punto aperto vero,
-    e non riguarda la proprieta' provata qui.
+    e non riguarda la proprieta' provata qui. Lo stesso per le domande che una regola
+    fa al progettista (REL-011): una macchina senza volano sul suo circuito fa chiedere
+    il volano (D-219), e anche questa e' un punto aperto vero, misurato altrove
+    (`test_domanda_al_progettista.py`).
     """
-    return [item for item in gaps if item.reason is not GapReason.NO_SOURCE_NETWORK]
+    return [
+        item for item in gaps
+        if item.reason not in (GapReason.NO_SOURCE_NETWORK, GapReason.DESIGNER_QUESTION)
+    ]
 
 
 def _saturated(model: ProjectModel) -> tuple[Walk, list[RuleGap]]:

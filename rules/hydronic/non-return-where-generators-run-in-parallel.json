@@ -1,0 +1,30 @@
+{
+  "id": "non-return-where-generators-run-in-parallel",
+  "version": "2.0.0",
+  "name": "Valvola di ritegno del generatore",
+  "category": "necessary",
+  "cardinality": "per_component",
+  "when": {
+    "network_domain": "hydronic",
+    "network_medium": "heating_water",
+    "anchor_has_function": "heat_generation",
+    "anchor_runs_in_parallel": true
+  },
+  "then": {
+    "provides_function": "non_return",
+    "placement": "on_outlet",
+    "inlet_port": "a",
+    "outlet_port": "b"
+  },
+  "satisfied_by": {
+    "scope": "on_the_attachment"
+  },
+  "rationale": "Quando due o piu' generatori mandano nello stesso collettore, quello fermo e' una via aperta all'indietro: l'acqua spinta da chi lavora rientra dal collettore attraverso la macchina spenta e torna al ritorno senza passare dall'impianto, e la macchina ferma si raffredda e si riscalda a ogni ciclo dell'altra. Il ritegno sta sulla mandata di ciascun generatore, prima che le mandate diventino una: e' l'ultimo punto che appartiene a quella macchina sola. Sta fra lo stacco della valvola di sicurezza e il rubinetto della macchina (D-217): chiusi i due rubinetti di quella macchina si cambia senza svuotare il collettore e senza fermare le altre. Un generatore da solo non lo vuole: nessuno gli spinge contro.",
+  "source": "Manuale Shenling ThermaX R290 6-15 kW, sez. 4.3 (cascata): «Il tubo di uscita di ogni unita' deve essere installato con una valvola di non ritorno» (letto il 3 novembre 2026; il manuale non e' nel repository); D-217, la posizione A, approvata dal PO (I-244); D-137, un ritegno per generatore nell'ibrido; I-193, il caso reale: il ritegno sull'uscita di ogni pompa di calore, dopo i suoi rubinetti",
+  "ordering": {
+    "before": [
+      "isolation",
+      "isolation_locked_open"
+    ]
+  }
+}

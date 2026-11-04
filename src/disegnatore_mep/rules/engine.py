@@ -155,6 +155,13 @@ def _anchors(context: RuleContext, rule: RuleDefinition, network: NetworkModel) 
     return found
 
 
+def _antifreeze_allows(rule: RuleDefinition, declared: str | None) -> bool:
+    """La regola vale per come il progetto si protegge dal gelo (REL-011, D-230)."""
+    if rule.when.plant_antifreeze is None:
+        return True
+    return (declared or "non_dichiarato") in rule.when.plant_antifreeze
+
+
 def _regime_allows(rule: RuleDefinition, declared: PlantRegime | None) -> bool:
     """La regola vale nel regime che il progetto dichiara (D-106).
 
@@ -511,6 +518,8 @@ def evaluate(
     for rule in rules.all():
         # Il regime della centrale si legge come ogni altra proprieta'
         # dichiarata (D-106): una regola dell'altro regime non parla affatto.
+        if not _antifreeze_allows(rule, project.antigelo):
+            continue
         if not _regime_allows(rule, project.plant_regime):
             continue
         served: set[str] = set()
