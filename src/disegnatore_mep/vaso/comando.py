@@ -33,7 +33,7 @@ SHENLING_RIEMPIMENTO_BAR = 2.0
 
 
 def _bar(valore: float) -> str:
-    return f"{valore:g}".replace(".", ",")
+    return f"{valore:.1f}".replace(".", ",").replace(",0", "") if float(valore).is_integer() else f"{valore:.1f}".replace(".", ",")
 
 
 def _funzioni(catalogo: ComponentRegistry, pezzo: ComponentInstance) -> set[str]:
