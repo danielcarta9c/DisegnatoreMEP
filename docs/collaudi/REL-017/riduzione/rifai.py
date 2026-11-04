@@ -30,7 +30,7 @@ from PIL import Image  # noqa: E402
 from disegnatore_mep.skill import cartelle_del_repository, main  # noqa: E402
 
 VILLETTA = ROOT / "docs" / "collaudi" / "REL-017" / "diametri" / "grafo.json"
-PIANO = ROOT / "docs" / "collaudi" / "REL-015" / "pdc-regola" / "piano-idraulica.json"
+PIANO = ROOT / "docs" / "collaudi" / "REL-017" / "riduzione" / "piano-idraulica.json"
 DPI = 200
 MARGINE_MM = (25.0, 30.0, 95.0, 45.0)
 """Quanto si prende attorno alla pompa di calore: a sinistra, sopra, a destra, sotto. A

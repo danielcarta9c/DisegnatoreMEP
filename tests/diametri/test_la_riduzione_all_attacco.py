@@ -22,7 +22,7 @@ from disegnatore_mep.skill import cartelle_del_repository, main
 
 ROOT = Path(__file__).resolve().parents[2]
 VILLETTA = ROOT / "docs" / "collaudi" / "REL-017" / "diametri" / "grafo.json"
-PIANO = ROOT / "docs" / "collaudi" / "REL-015" / "pdc-regola" / "piano-idraulica.json"
+PIANO = ROOT / "docs" / "collaudi" / "REL-017" / "riduzione" / "piano-idraulica.json"
 
 MANDATA = "pipe-reducer-pdc-water-supply"
 RITORNO = "pipe-reducer-pdc-water-return"

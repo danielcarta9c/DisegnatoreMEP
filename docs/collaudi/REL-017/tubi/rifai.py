@@ -38,7 +38,8 @@ from disegnatore_mep.piano.vista import sigle_del_grafo_intero  # noqa: E402
 from disegnatore_mep.skill import cartelle_del_repository, main  # noqa: E402
 
 VILLETTA = ROOT / "docs" / "collaudi" / "REL-017" / "diametri"
-PIANO_VILLETTA = ROOT / "docs" / "collaudi" / "REL-015" / "pdc-regola" / "piano-idraulica.json"
+PIANO_VILLETTA = ROOT / "docs" / "collaudi" / "REL-017" / "riduzione" / "piano-idraulica.json"
+"""Il piano della villetta di `REL-015/pdc-regola` con la pompa di calore 10 mm a sinistra: il posto della riduzione (D-233)."""
 IMPIANTO_7 = ROOT / "docs" / "collaudi" / "REL-001" / "impianto-7"
 
 Ritocco = Callable[[dict[str, Any]], None]

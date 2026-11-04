@@ -314,7 +314,8 @@ def test_completa_e_disegna_dicono_l_avviso_e_il_grafo_completo_tiene_le_lunghez
     assert len(ritorno) > 2 and all(t.get("esistente") for t in ritorno), ritorno
 
     tavola = tmp_path / "tavola"
-    piano = VILLETTA / "piano-idraulica.json"
+    # Il piano della villetta con il posto della riduzione (D-233): la PdC 10 mm a sinistra.
+    piano = ROOT / "docs" / "collaudi" / "REL-017" / "riduzione" / "piano-idraulica.json"
     argomenti = ["disegna", str(completo), "--piano", str(piano), "--out", str(tavola), "--senza-dxf"]
     assert main(argomenti, cartelle) == 0
     assert "Avvisi della prevalenza della pompa a bordo" in capsys.readouterr().out
