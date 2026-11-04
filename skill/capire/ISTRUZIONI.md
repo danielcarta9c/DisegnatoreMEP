@@ -562,7 +562,8 @@ manometro).
 
 **L'attacco della macchina non è un minimo** (I-281): sulla ThermaX da 12 kW, con 5 K, il
 tubo è MS 32×3 anche se l'attacco è 1¼"; sulla 15 kW la velocità porta al MS 40×3,5.
-`completa` dice dove c'è una **riduzione all'attacco**, come informazione.
+Dove il tubo è più piccolo dell'attacco, la **riduzione** (`pipe-reducer`) la posa `completa`,
+subito dopo il giunto antivibrante, e lo dice (D-233): **non la scrivi mai nel grafo**.
 
 **Se il testo non ne parla, lo chiedi** (I-185): ometti il campo e scrivi una voce di
 `assumptions` che glielo domanda, con la tua prima interpretazione — la tavola esce senza

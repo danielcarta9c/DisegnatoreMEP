@@ -20,7 +20,7 @@ from math import ceil
 from typing import NamedTuple
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
-from disegnatore_mep.catalog.schema import SERVICE_ORGAN_FUNCTIONS, ComponentTrait
+from disegnatore_mep.catalog.schema import PIPE_REDUCTION, SERVICE_ORGAN_FUNCTIONS, ComponentTrait
 from disegnatore_mep.graphics.symbol import PortFace, SymbolManifest
 from disegnatore_mep.model.project import PortRef, ProjectModel
 from disegnatore_mep.model.types import Domain, PortFlow
@@ -94,6 +94,14 @@ sull'elettrico non c'e'. Fino al 29 ottobre 2026 l'organo si posava dal capo da 
 la tratta comincia, cioe' dalla prima tubazione del modello: sul caso del kit il
 sezionatore finiva accanto al quadro finche' la tubazione lato macchina non si e'
 chiamata `e-1a`."""
+
+
+FUNZIONI_CON_UN_LATO = frozenset({PIPE_REDUCTION})
+"""Chi non ha un verso del fluido ma ha **un lato**, e si disegna girato verso di lui:
+la riduzione all'attacco (D-233), che l'acqua attraversa nei due versi — sulla mandata
+esce dalla macchina, sul ritorno ci entra — e che ha il lato largo, l'attacco `a`, verso
+la macchina. Si gira come un pezzo con il verso: l'attacco che il grafo collega verso il
+capo da cui la tratta comincia guarda da dove la spezzata arriva."""
 
 
 @dataclass(frozen=True)
@@ -257,6 +265,7 @@ def place_inline_accessories(
     ]
     directional = [
         {port.flow for port in item.definition.ports} == {PortFlow.IN, PortFlow.OUT}
+        or bool(FUNZIONI_CON_UN_LATO & set(item.definition.functions))
         for item in resolved
     ]
     needed = sum(

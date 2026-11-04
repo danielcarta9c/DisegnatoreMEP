@@ -80,9 +80,12 @@ VARIANTI: list[tuple[str, Path, Path, list[Ritocco], list[Ritocco]]] = [
     # nome, grafo di prima stesura, piano, ritocchi prima di completare, ritocchi dopo
     ("villetta-calcolo", VILLETTA / "grafo.json", PIANO_VILLETTA, [], []),
     ("villetta-con-lunghezze", VILLETTA / "grafo-con-lunghezze.json", PIANO_VILLETTA, [], []),
-    ("villetta-sezione-ms32-su-tutto", VILLETTA / "grafo.json", PIANO_VILLETTA, [], [_sezione_su_tutto("MS 32×3")]),
-    ("villetta-15kw-ms32-del-progettista", VILLETTA / "grafo.json", PIANO_VILLETTA, [_pdc(power_kw=15)],
+    # La sezione del progettista sta gia' nel grafo che `completa` legge — e' lei che decide
+    # la riduzione all'attacco (D-233) —, e poi su ogni pezzo corto del grafo completo.
+    ("villetta-sezione-ms32-su-tutto", VILLETTA / "grafo.json", PIANO_VILLETTA, [_sezione_su_tutto("MS 32×3")],
      [_sezione_su_tutto("MS 32×3")]),
+    ("villetta-15kw-ms32-del-progettista", VILLETTA / "grafo.json", PIANO_VILLETTA,
+     [_pdc(power_kw=15), _sezione_su_tutto("MS 32×3")], [_sezione_su_tutto("MS 32×3")]),
     ("villetta-15kw-calcolo", VILLETTA / "grafo.json", PIANO_VILLETTA, [_pdc(power_kw=15)], []),
     ("villetta-acciaio", VILLETTA / "grafo.json", PIANO_VILLETTA, [_materiale("acciaio")], []),
     ("villetta-rame-esecutivo", VILLETTA / "grafo.json", PIANO_VILLETTA, [_materiale("rame"), _esecutivo], []),
@@ -136,7 +139,7 @@ def main_() -> None:
                     if not riga.lstrip().startswith(("perche'", "fonte:"))
                     and (
                         riga.startswith(("Avvisi", "Riduzioni", "  - GT-", "  - PDC", "Formato"))
-                        or any(chiave in riga for chiave in ("riduzione all'attacco", "DIAMETER", "RUN_LABEL"))
+                        or any(chiave in riga for chiave in ("riduzione ", "DIAMETER", "RUN_LABEL"))
                     )
                 ]
                 if righe:

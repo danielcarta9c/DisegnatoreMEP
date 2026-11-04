@@ -8,11 +8,12 @@
   "Secondario del volano dritto fino al collettore (I-204); zona pannelli a sinistra sotto il collettore con il ritorno che scavalca la mandata una volta per arrivare a ret_1; zona radiatori dritta sotto out_2/ret_2.",
   "Giro 2: posa stretta per stare nell'A3 (D3): 20 mm tolti al ritorno della PdC, 20 mm fra ACS e distribuzione; stacchi riportati al minimo (A4).",
   "REL-015: la sonda del volano sull'attacco della sonda, a sinistra del volano, fra la terza via della deviatrice e il volano.",
-  "REL-011 (4 novembre 2026): il corredo nuovo della pompa di calore (D-222 giunto antivibrante, D-230 valvola antigelo, D-218 vaso, riempimento e manometro fra le macchine e il defangatore). Mandata: la sicurezza da 40 a 62.5, dopo il giunto; l'antigelo si posa dopo di lei. Ritorno: vaso, riempimento e manometro a 80 / 95 / 110 (erano 90 / 105 / 120), con giunto, antigelo e filtro fra la macchina e il vaso e il defangatore fra il manometro e il raccordo; per fargli posto tutto cio' che stava da x 130 in poi (raccordo del ritorno, deviatrice, volano, bollitore, distribuzione) e l'acquedotto si spostano di 15 mm a destra."
+  "REL-011 (4 novembre 2026): il corredo nuovo della pompa di calore (D-222 giunto antivibrante, D-230 valvola antigelo, D-218 vaso, riempimento e manometro fra le macchine e il defangatore). Mandata: la sicurezza da 40 a 62.5, dopo il giunto; l'antigelo si posa dopo di lei. Ritorno: vaso, riempimento e manometro a 80 / 95 / 110 (erano 90 / 105 / 120), con giunto, antigelo e filtro fra la macchina e il vaso e il defangatore fra il manometro e il raccordo; per fargli posto tutto cio' che stava da x 130 in poi (raccordo del ritorno, deviatrice, volano, bollitore, distribuzione) e l'acquedotto si spostano di 15 mm a destra.",
+  "REL-017 (4 novembre 2026, D-233, I-281): con i diametri chiesti la Shenling da 12 kW ha la riduzione da 1¼\" a 1\" subito dopo il giunto antivibrante, sulla mandata e sul ritorno. La pompa di calore passa da x 0 a x -10: 10 mm in piu' a tutte e due le tratte della macchina, quanto la riduzione chiede, senza spostare nient'altro. Senza diametri la tavola resta quella di prima, con 10 mm in piu' fra la macchina e il giunto."
  ],
  "pezzi": {
   "pdc": {
-   "x": 0,
+   "x": -10,
    "y": 0,
    "regola": "D-159 quota della porta"
   },

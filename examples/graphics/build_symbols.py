@@ -1677,6 +1677,23 @@ def flexible_joint_body(w: float, h: float) -> str:
     )
 
 
+def pipe_reducer_body(w: float, h: float) -> str:
+    """Riduzione concentrica (REL-017, I-281, D-233): il trapezio isoscele in linea sul
+    tubo, il lato largo verso la macchina — l'attacco `a`, a sinistra — e quello stretto
+    verso il tubo piu' piccolo, l'attacco `b`. E' il segno della riduzione degli schemi
+    idraulici: il tubo che cambia diametro, senza niente che chiuda o che ceda. Alto 3 mm
+    sul lato largo e 1,5 su quello stretto, lungo 3 mm: piu' piccolo delle valvole, perche'
+    e' un raccordo e non un organo. *Proposta della sessione*, da giudicare sulla tavola."""
+    cy = h / 2
+    inset = w / 5
+    left, right = inset, w - inset
+    largo, stretto = 1.5, 0.75
+    return stubs_horizontal(w, h, inset) + (
+        f'<path d="M{n(left)} {n(cy - largo)} L{n(right)} {n(cy - stretto)} '
+        f'L{n(right)} {n(cy + stretto)} L{n(left)} {n(cy + largo)} Z"/>'
+    )
+
+
 def valve_antifreeze_body(w: float, h: float) -> str:
     """Valvola antigelo (REL-011, D-230): il segno del valvolame alto 4 mm al centro, e
     sopra, sullo stelo, il fiocco che dice perche' si apre — quando l'acqua sta per
@@ -3276,6 +3293,11 @@ SYMBOLS: list[SymbolSpec] = [
     inline_symbol(
         "flexible-joint", "Giunto antivibrante", INLINE_ACCESSORY, flexible_joint_body,
         SOURCE_REL009_PROPOSAL,
+    ),
+    # REL-017, I-281, D-233: la riduzione all'attacco della macchina, dopo il giunto.
+    inline_symbol(
+        "pipe-reducer", "Riduzione", INLINE_ACCESSORY, pipe_reducer_body,
+        "proposta della sessione, REL-017 (I-281, D-233): la forma la approva il PO sulla tavola",
     ),
     # REL-011, D-230: le valvole antigelo sul tratto esterno della pompa di calore.
     inline_symbol(

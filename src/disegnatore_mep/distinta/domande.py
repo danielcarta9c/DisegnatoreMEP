@@ -45,6 +45,16 @@ DATI: dict[str, DatoInParole] = {
     "attacco_condensa": DatoInParole(
         "L'attacco dello scarico della condensa sull'unità (es. «VP20 (Øe 26)»)", "«attacco_condensa»"
     ),
+    "attacco": DatoInParole(
+        "Il pollice dell'attacco della macchina su cui sta la riduzione (es. «1¼\"»): lo scrive `completa`",
+        "«attacco»",
+        "se manca, la riduzione e' stata scritta a mano: si rilancia `completa`",
+    ),
+    "tubo": DatoInParole(
+        "Il pollice del tubo che arriva alla riduzione (es. «1\"»): lo scrive `completa`",
+        "«tubo»",
+        "se manca, la riduzione e' stata scritta a mano: si rilancia `completa`",
+    ),
     "dimensione": DatoInParole("La dimensione della bocchetta (es. «400×200»)", "«dimensione»"),
     "locale": DatoInParole(
         "Il locale che la bocchetta serve (es. «Soggiorno»): le griglie di transito si contano per locale",

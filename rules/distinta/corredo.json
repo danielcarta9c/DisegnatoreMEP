@@ -1,7 +1,7 @@
 {
   "id": "corredo",
-  "versione": "1.4.0",
-  "nota": "Il corredo di posa di ogni voce del catalogo, per id di voce (`definition_id` del pezzo). Il catalogo non si tocca: il corredo sta qui. `apparecchiatura`: il pezzo è una macchina fornita da Nove C e va nella sezione A, una riga per marca e modello (un pezzo con la proprietà `compreso_in` è nella fornitura di un altro e non ha riga sua). `fornitura`: chi la fornisce, una scelta dell'offerta di `distinta.json` («opere_edili», «bocchette_e_griglie») o «committente»; senza, l'installatore. `per_locale` conta una volta per locale servito (il dato `locale` del pezzo, o la sua etichetta), e niente per un locale con `varco`. `passante`: il pezzo sta in mezzo a una linea (sezionatore, relè, termostato a contatto, sifone), e il tratto lo attraversa. `voci`: il materiale e le opere che il pezzo porta con sé; `calcolo` è `per_pezzo` (n per pezzo) o `per_linea` (n per ogni tratto di quel fluido che arriva al pezzo). Nei testi, `{proprieta}` è un dato del progettista sul pezzo (o la `sezione` del tratto che gli arriva): se manca, il testo dice DA DEFINIRE e la distinta fa la domanda. **Copre l'aria-aria e l'elettrico del kit AA-01; le voci idroniche non hanno corredo**: escono nella sezione X, DA DEFINIRE, finché il PO non decide il corredo (le regole contro il manuale Shenling sono REL-011).",
+  "versione": "1.5.0",
+  "nota": "Il corredo di posa di ogni voce del catalogo, per id di voce (`definition_id` del pezzo). Il catalogo non si tocca: il corredo sta qui. `apparecchiatura`: il pezzo è una macchina fornita da Nove C e va nella sezione A, una riga per marca e modello (un pezzo con la proprietà `compreso_in` è nella fornitura di un altro e non ha riga sua). `fornitura`: chi la fornisce, una scelta dell'offerta di `distinta.json` («opere_edili», «bocchette_e_griglie») o «committente»; senza, l'installatore. `per_locale` conta una volta per locale servito (il dato `locale` del pezzo, o la sua etichetta), e niente per un locale con `varco`. `passante`: il pezzo sta in mezzo a una linea (sezionatore, relè, termostato a contatto, sifone), e il tratto lo attraversa. `voci`: il materiale e le opere che il pezzo porta con sé; `calcolo` è `per_pezzo` (n per pezzo) o `per_linea` (n per ogni tratto di quel fluido che arriva al pezzo). Nei testi, `{proprieta}` è un dato del progettista sul pezzo (o la `sezione` del tratto che gli arriva): se manca, il testo dice DA DEFINIRE e la distinta fa la domanda. **Copre l'aria-aria e l'elettrico del kit AA-01; le voci idroniche non hanno corredo**: escono nella sezione X, DA DEFINIRE, finché il PO non decide il corredo (le regole contro il manuale Shenling sono REL-011). L'unica eccezione è la riduzione all'attacco della macchina (D-233, REL-017): sta nella sezione X con il suo testo, perché i due pollici li sa il pezzo.",
   "voci": {
     "split-outdoor-unit": {
       "nome": "Unità esterna split a pompa di calore",
@@ -805,6 +805,27 @@
           "fonte": "revisione su una commessa aria-aria del 04/11/2026 (plenum a quattro serrande)",
           "fonte_in_parole": "regola Nove C rivista su una commessa aria-aria",
           "perche": "Il tratto a 4,9 m/s resta corto, sull'uscita del plenum; i due rami vanno a 2,4 m/s."
+        }
+      ]
+    },
+    "pipe-reducer": {
+      "nome": "Riduzione all'attacco della macchina",
+      "fonte": "D-233 (I-281): disposizione del PO del 04/11/2026; attacchi del Manuale d'installazione Shenling ThermaX R290 6-15 kW",
+      "fonte_in_parole": "decisione Nove C sul tubo scelto dalla velocità",
+      "perche": "Dove il tubo scelto dalla velocità è più piccolo dell'attacco della macchina, fra il giunto antivibrante (grande quanto l'attacco) e il tubo c'è una riduzione: `completa` la posa e le scrive i due pollici.",
+      "voci": [
+        {
+          "id": "riduzione",
+          "sezione": "X",
+          "testo": "Riduzione {attacco} M × {tubo} F",
+          "um": "n",
+          "calcolo": {
+            "tipo": "per_pezzo",
+            "n": 1
+          },
+          "fonte": "D-233 (I-281): disposizione del PO del 04/11/2026",
+          "fonte_in_parole": "decisione Nove C sul tubo scelto dalla velocità",
+          "perche": "Una per attacco, sulla mandata e sul ritorno della macchina: maschio dal lato dell'attacco (il giunto), femmina dal lato del tubo."
         }
       ]
     }
