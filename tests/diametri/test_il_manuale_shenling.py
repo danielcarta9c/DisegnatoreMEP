@@ -60,3 +60,15 @@ def test_la_portata_fuori_campo_si_segnala(tmp_path: Path) -> None:
     (tmp_path / "g.json").write_text(json.dumps(dati), encoding="utf-8")
     avvisi = avvisi_del_costruttore(load_project(tmp_path / "g.json"), _catalogo())
     assert any("fuori dal campo" in a and "4,31 m³/h" in a for a in avvisi), avvisi
+
+
+def test_il_volano_in_serie_si_segnala() -> None:
+    """L'impianto di prova 3 ha una sola pompa di calore con il volano a due attacchi in
+    serie sul ritorno: la specifica Nove C non lo ammette (D-226)."""
+    from disegnatore_mep.rules.apply import saturate
+    from disegnatore_mep.rules.registry import RuleRegistry
+
+    catalogo = _catalogo()
+    grafo = load_project(ROOT / "examples" / "prova" / "prova-3-pdc-diretta-pavimento.json")
+    completo, _, _ = saturate(grafo, catalogo, RuleRegistry.from_directory(ROOT / "rules" / "hydronic"))
+    assert any("due attacchi, in serie" in avviso for avviso in avvisi_del_costruttore(completo, catalogo))

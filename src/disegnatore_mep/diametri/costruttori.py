@@ -82,6 +82,34 @@ def avvisi_del_costruttore(project: ProjectModel, catalog: ComponentRegistry) ->
                     f"({_n(dati.portata_minima_m3h)}–{_n(dati.portata_massima_m3h)} m³/h): la macchina va in errore "
                     "di flusso (E1/E0). Il salto termico va rivisto."
                 )
+    # Lo schema in serie, per ogni pompa di calore aria-acqua (specifica Nove C, par. 1.7).
+    reti_acqua = {n.id for n in project.networks if n.medium == "heating_water"}
+    pompe = [p for p in project.components if p.definition_id.startswith("heat-pump-air-water")]
+    giro: dict[str, set[str]] = {}
+    for c in project.connections:
+        if c.network_id in reti_acqua:
+            a, b = c.endpoint_a.component_id, c.endpoint_b.component_id
+            giro.setdefault(a, set()).add(b)
+            giro.setdefault(b, set()).add(a)
+    gia: set[str] = set()
+    for pompa in pompe:
+        if pompa.id in gia:
+            continue
+        circuito, da_fare = {pompa.id}, [pompa.id]
+        while da_fare:
+            for vicino in giro.get(da_fare.pop(), ()):
+                if vicino not in circuito:
+                    circuito.add(vicino)
+                    da_fare.append(vicino)
+        gia |= circuito
+        serbatoi = [pezzi[i] for i in circuito if i in pezzi and "thermal_storage" in funzioni(pezzi[i])]
+        if serbatoi and all(_in_serie(s) for s in serbatoi):
+            nomi = ", ".join(p.tag or p.id for p in pompe if p.id in circuito)
+            avvisi.append(
+                f"il circuito di {nomi} ha solo un volano a due attacchi, in serie: la specifica Nove C (par. "
+                "1.7) ammette solo lo schema a 4 tubi, con il volano a 4 attacchi che separa le macchine "
+                "dall'impianto. Va chiesto al progettista (D-226)."
+            )
     if not macchine:
         return avvisi
     # Il tampone: i volani e gli accumuli d'acqua di riscaldamento raggiunti dalle macchine
@@ -115,6 +143,11 @@ def avvisi_del_costruttore(project: ProjectModel, catalog: ComponentRegistry) ->
                 "conferma; altrimenti va un volano piu' grande."
             )
     return avvisi
+
+
+def _in_serie(serbatoio: ComponentInstance) -> bool:
+    """Un volano a due attacchi: sta in serie sul circuito, non separa (D-226)."""
+    return serbatoio.definition_id.startswith("buffer-two-port")
 
 
 def _n(valore: float) -> str:

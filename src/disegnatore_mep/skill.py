@@ -315,7 +315,7 @@ def _completa(args: argparse.Namespace, cartelle: Cartelle) -> int:
 
     if avvisi_del_manuale:
         # Il manuale del costruttore comanda (I-243): si segnala, non si corregge (D-223, D-226).
-        print("\nAvvisi del manuale del costruttore")
+        print("\nAvvisi del manuale del costruttore e della specifica Nove C")
         for avviso in avvisi_del_manuale:
             print(f"  - {avviso}")
 
