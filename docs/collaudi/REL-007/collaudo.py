@@ -120,6 +120,8 @@ def con_i_dati(
             if rete["id"] in esistenti:
                 rete["esistente"] = True
         chieste = reti if diametri["reti"] == "tutte" else diametri["reti"]
+        if "materiale_tubazioni" in diametri:
+            documento["materiale_tubazioni"] = diametri["materiale_tubazioni"]
         if con_la_richiesta:
             documento["diametri"] = {"reti": [rete for rete in chieste if rete not in esistenti]}
     return ProjectModel.model_validate(documento)

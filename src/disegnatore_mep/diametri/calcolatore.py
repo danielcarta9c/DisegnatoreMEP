@@ -19,6 +19,11 @@
 Il calcolatore **non inventa**: riceve la potenza e il salto termico, o la
 portata, che ha dato il progettista (D-087, D-191). Chi li cerca nel grafo e'
 `portate.py`; chi decide quali tratti portano il DN e' `tratti.py`.
+
+**Sulla tavola non c'e' piu' il DN di questo modulo** (I-279): c'e' il tubo da comprare,
+che `tubi.py` sceglie con la stessa tabella delle velocita', sul diametro interno reale
+del tubo commerciale. Qui restano le costanti, la portata dalla potenza e il DN della
+serie EN ISO 6708, che il foglio dei calcoli non usa piu' ma che fissa le basi di D-193.
 """
 
 from dataclasses import dataclass
@@ -69,16 +74,12 @@ Un miliardesimo non sposta nessun caso vero."""
 
 @dataclass(frozen=True)
 class Diametro:
-    """Il DN scelto per una portata, con la velocita' che l'acqua ci ha."""
+    """Il DN scelto per una portata, con la velocita' che l'acqua ci ha. La tavola non
+    lo scrive piu' (I-279): scrive il tubo di `tubi.py`."""
 
     dn: int
     velocita_m_s: float
     velocita_massima_m_s: float
-
-    @property
-    def scritta(self) -> str:
-        """Come si scrive sulla tavola (**D-193**, punto 5; I-155)."""
-        return f"Øi {self.dn}"
 
 
 def portata_da_potenza(potenza_kw: float, salto_termico_k: float) -> float:

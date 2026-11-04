@@ -98,7 +98,9 @@ def test_una_pompa_di_calore_da_15_kw_con_5_k_esce_oi_32() -> None:
     scelto = diametro_per(portata_da_potenza(15, 5))
     assert scelto is not None
     assert scelto.dn == 32
-    assert scelto.scritta == "Øi 32"
+    # «Øi 32» non e' piu' la scritta della tavola (I-279): la tavola scrive il tubo da
+    # comprare (`diametri.tubi`, provato in test_i_tubi.py). Il DN della serie resta.
+    assert not hasattr(scelto, "scritta")
     assert scelto.velocita_m_s == pytest.approx(0.8924, abs=1e-4)
     assert velocita_m_s(portata_da_potenza(15, 5), 25) == pytest.approx(1.462, abs=1e-3)
 

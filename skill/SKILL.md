@@ -412,10 +412,11 @@ Poi, in poche righe:
 - **chi ha guardato la tavola**: tu, oppure il revisore esterno, con il suo verdetto e i giri
   fatti; o nessuno, se l'ambiente non ti lascia vedere le immagini.
 
-Se chiede come sono calcolati i diametri: il diametro interno netto minimo, dalla portata — che
-viene dalla potenza e dal salto termico che ha dato lui, o dalla portata di progetto — e da una
-velocità massima che cresce col diametro (Caleffi, Quaderno n. 5, tab. 9), prendendo il diametro
-standard subito più grande.
+Se chiede come sono calcolati i diametri: dalla portata — che viene dalla potenza e dal salto
+termico che ha dato lui, o dalla portata di progetto — il tubo commerciale più piccolo del suo
+materiale (multistrato, se non dice altro) in cui la velocità sul diametro interno reale non
+supera la massima del suo pollice (Caleffi, Quaderno n. 5, tab. 9). In tavola il tubo da
+comprare, «MS 32×3», «DN 25 (1")», «Cu 28×1»; il diametro interno nel foglio dei calcoli.
 
 ## Come si parla al progettista
 

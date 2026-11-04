@@ -537,10 +537,32 @@ hai sommato e che cosa no.
 
 ### 4.7 I diametri, se il progettista li chiede
 
-La tavola può portare il **diametro di ogni tratto**, calcolato — «Øi 32» lungo la linea,
-il diametro interno netto minimo in millimetri (D-191, D-193). **Il calcolo è
-facoltativo**: si fa **solo se il progettista lo chiede** («calcola i diametri», «metti i
-DN», «dimensiona le tubazioni della centrale»), e **solo sulla parte che dice lui**.
+La tavola può portare il **tubo di ogni tratto**, calcolato: **il tubo da comprare**, nella
+notazione del suo materiale — «MS 32×3» per il multistrato (diametro esterno × spessore),
+«DN 25 (1")» per l'acciaio, «Cu 28×1» per il rame (D-191, D-193, I-279). Il calcolo prende
+il tubo più piccolo del materiale in cui la velocità, sul **diametro interno reale**, non
+supera la massima del suo pollice; il diametro interno sta solo nel foglio dei calcoli.
+**Il calcolo è facoltativo**: si fa **solo se il progettista lo chiede** («calcola i
+diametri», «metti i DN», «dimensiona le tubazioni della centrale»), e **solo sulla parte che
+dice lui**.
+
+**Il materiale.** Scrivi `"materiale_tubazioni"` — `"multistrato"`, `"acciaio"` o `"rame"` —
+in testa al grafo se il testo lo dice; se una rete è di un materiale diverso, lo stesso campo
+sulla rete. **Se il testo non lo dice, ometti il campo**: vale il multistrato, lo standard di
+Nove C, e lo dichiari in una voce di `assumptions` (*«Tubazioni in multistrato: il testo non
+dice il materiale.»*). Il multistrato arriva fino al 63×4,5: una centrale più grande, che
+il calcolo porterebbe oltre, va in acciaio, e se il testo non lo dice è una domanda.
+
+**Il tubo del progettista vince.** Se il testo dà il tubo di un tratto — «MS 32×3», «32x3»,
+«DN 25», «1"», «Cu 28×1» —, scrivilo in `sezione` sulla tubazione: la tavola scrive quello, il
+calcolo non lo tocca, e se la velocità ci supera la massima `completa` e `disegna` lo dicono
+con un avviso, con i numeri. Basta la sezione su una tubazione del tratto: la tavola scrive
+un tubo per tratto, e niente sugli stacchi di servizio (vaso, sicurezza, riempimento,
+manometro).
+
+**L'attacco della macchina non è un minimo** (I-281): sulla ThermaX da 12 kW, con 5 K, il
+tubo è MS 32×3 anche se l'attacco è 1¼"; sulla 15 kW la velocità porta al MS 40×3,5.
+`completa` dice dove c'è una **riduzione all'attacco**, come informazione.
 
 **Se il testo non ne parla, lo chiedi** (I-185): ometti il campo e scrivi una voce di
 `assumptions` che glielo domanda, con la tua prima interpretazione — la tavola esce senza
@@ -581,17 +603,19 @@ dei circolatori: `"prevalenza_utile_kpa": 45`, oppure `"prevalenza_utile_m": 4.5
 in metri di colonna d'acqua. Con le **lunghezze** dei tratti del primario, `lunghezza_m` su ogni
 tubazione (§4.8), `completa` e `disegna` verificano il giro più costoso — dalla macchina
 al volano o al serpentino e ritorno — e **avvisano** se perde più di quella prevalenza:
-il DN non cambia, e che cosa fare lo decide il progettista. Senza la prevalenza o senza
-una lunghezza la verifica non si fa, e non si dice niente: **non scriverne una tipica**,
-e non chiederla se il progettista non parla di perdite di carico. Diglielo: oggi un tratto
-con `lunghezza_m` porta in tavola «L 12 m» **al posto** del DN calcolato, perché il dato
-del progettista vince sul conto (§4.8).
+il tubo non cambia, e che cosa fare lo decide il progettista. Per una **Shenling
+ThermaX** senza la prevalenza la verifica si fa con **8 m**, il valore indicativo del PO
+(I-281), e l'avviso lo dice; è la verifica che dice se il tratto è troppo lungo per il
+tubo scelto. Per le altre macchine, senza la prevalenza o senza una lunghezza la verifica
+non si fa, e non si dice niente: **non scriverne una tipica**, e non chiederla se il
+progettista non parla di perdite di carico. Sull'acqua la lunghezza **non** va in tavola:
+la tavola scrive il tubo, e la lunghezza serve alla verifica e alla distinta.
 
 **Quelli che mancano li chiedi in una voce sola** di `assumptions`, pezzo per pezzo, e la
 ripeti nella risposta: *«Per i diametri mancano: il salto termico della pompa di calore;
 la portata di progetto dell'acqua calda sanitaria. Se non li dai, quei tratti restano
-senza DN.»* Senza risposta la tavola esce lo stesso, e quei tratti non portano il
-diametro.
+senza tubo.»* Senza risposta la tavola esce lo stesso, e quei tratti non portano il
+tubo.
 
 ### 4.8 L'aria-aria, e le linee elettriche e di comando
 

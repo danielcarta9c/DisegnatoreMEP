@@ -1,4 +1,8 @@
-"""Il DN sulla tavola: dove si scrive l'etichetta di un tratto (REL-007).
+"""Il tubo sulla tavola: dove si scrive l'etichetta di un tratto (REL-007, I-279).
+
+La scritta e' il tubo da comprare nella notazione del suo materiale — «MS 32×3»,
+«DN 25 (1")», «Cu 28×1» (`diametri.tubi`) — e non piu' «Øi 32» (I-279); la legenda
+spiega il materiale con una riga sua (`voci_dei_materiali`).
 
 **Il posto l'ha detto il PO** (I-152, I-156; D-193, punto 6): «il tag messo in
 linea con la tubazione subito immediatamente sopra o sotto (a destra o sinistra
@@ -25,11 +29,12 @@ modulo, in quest'ordine:
 dice (`DIAMETER_TAG_MISSING`).
 """
 
-from collections.abc import Sequence
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 
-from disegnatore_mep.diametri.scritte import ScrittaDelTratto
+from disegnatore_mep.diametri.scritte import ScrittaDelTratto, detto_da_un_vicino
 from disegnatore_mep.diametri.tratti import TrattoDelDiametro
+from disegnatore_mep.diametri.tubi import MATERIALI, Materiale, legenda_del_materiale
 from disegnatore_mep.graphics.cartiglio import PT_MM, larghezza_mm
 from disegnatore_mep.graphics.frame import Rect, SheetFrame
 from disegnatore_mep.graphics.standard import CORPO_MINIMO_PT, GraphicStandard
@@ -107,10 +112,21 @@ che dica di chi e': a un millimetro e mezzo da una sigla si legge insieme a lei
 un'altra linea si legge come il suo DN. **Taratura** della sessione, da giudicare
 sulla tavola."""
 
-CAMPIONE_DELLA_LEGENDA = "Øi"
-TESTO_DELLA_LEGENDA = "diametro interno netto minimo in mm, materiale a scelta"
-"""La riga della legenda che spiega la scritta (I-155): la frase e' quella che il
-PO ha scelto con la proposta."""
+LUNGHEZZA_DEL_RIPETUTO_MM = 30.0
+"""Il rettilineo piu' corto su cui si scrive la scritta di un tratto **ripetuto** — fra
+due raccordi, con lo stesso tubo del tratto accanto (I-279,
+`diametri.scritte.segna_i_tratti_ripetuti`): sotto, il tratto e' il pezzetto fra due T e
+la scritta si lascia al vicino. **Taratura** della sessione, da giudicare sulla tavola:
+circa due scritte «MS 32×3» in fila."""
+
+
+def voci_dei_materiali(materiali: Iterable[Materiale]) -> list[tuple[str, str]]:
+    """Le righe della legenda che spiegano le scritte dei tubi (I-279), una per
+    materiale presente, nell'ordine multistrato, acciaio, rame: «MS — multistrato,
+    diametro esterno × spessore», «DN — diametro nominale acciaio», «Cu — rame,
+    diametro esterno × spessore». Prendono il posto della riga «Øi» (I-155)."""
+    presenti = set(materiali)
+    return [legenda_del_materiale(item) for item in MATERIALI if item in presenti]
 
 
 def larghezza_del_testo_mm(testo: str, corpo_mm: float) -> float:
@@ -555,12 +571,18 @@ def posa_i_diametri(
 
     posati: list[DiametroSullaTavola] = []
     mancanti: list[TrattoDaScrivere] = []
+    # Prima tutte le scritte in linea; poi, per quelle rimaste, le etichette staccate:
+    # un tratto d'acqua il cui vicino porta gia' lo stesso tubo non ne ha bisogno
+    # (`diametri.scritte.detto_da_un_vicino`, I-279).
+    in_linea: list[DiametroSullaTavola | None] = []
     for tratto in tratti:
         testo = tratto.scritta
-        if testo is None:
-            continue
-        propri = _propri(tratto.connection_ids, tutti)
-        if not propri:
+        propri = [] if testo is None else _propri(tratto.connection_ids, tutti)
+        if tratto.ripetuto:
+            # Cede: solo su un rettilineo lungo, in linea, e senza dirlo se non c'e' (I-279).
+            propri = [item for item in propri if item.lunghezza >= LUNGHEZZA_DEL_RIPETUTO_MM]
+        if testo is None or not propri:
+            in_linea.append(None)
             continue
         propri.sort(key=lambda item: (not item.orizzontale, -item.lunghezza, item.fisso, item.da))
         trovato: DiametroSullaTavola | None = None
@@ -596,13 +618,41 @@ def posa_i_diametri(
                     break
             if trovato is not None:
                 break
-        if trovato is None and tratto.strada_principale:
+        in_linea.append(trovato)
+    scritti = [tratto for tratto, trovato in zip(tratti, in_linea, strict=True) if trovato is not None]
+
+    def lato(tratto: TrattoDaScrivere) -> bool | None:
+        return lato_del_tratto(tratto.connection_ids, foglio.routes)
+
+    for tratto, trovato in zip(tratti, in_linea, strict=True):
+        testo = tratto.scritta
+        if testo is None:
+            continue
+        propri = _propri(tratto.connection_ids, tutti)
+        if not propri:
+            continue
+        propri.sort(key=lambda item: (not item.orizzontale, -item.lunghezza, item.fisso, item.da))
+        if (
+            trovato is None
+            and tratto.strada_principale
+            and not tratto.ripetuto
+            and not detto_da_un_vicino(tratto, scritti, lato)
+        ):
             trovato = staccata(tratto, testo, propri)
+            if trovato is not None:
+                scritti.append(tratto)
         if trovato is None:
             mancanti.append(tratto)
         else:
             posati.append(trovato)
     return posati, mancanti
+
+
+def lato_del_tratto(connessioni: frozenset[str], routes: Sequence[RoutedTrunk]) -> bool | None:
+    """Vero se il tratto e' di mandata, falso se e' di ritorno, `None` se le sue tratte
+    disegnate non lo dicono tutte allo stesso modo: lo legge il motore (`RoutedTrunk.supply`)."""
+    lati = {route.supply for route in routes if set(route.connection_ids) & connessioni}
+    return lati.pop() if len(lati) == 1 else None
 
 
 def riquadro_del_diametro(etichetta: DiametroSullaTavola, corpo: float) -> Box:
@@ -627,17 +677,6 @@ def riquadro_del_diametro(etichetta: DiametroSullaTavola, corpo: float) -> Box:
     )
 
 
-def nota_della_legenda(foglio: SheetGeometry, frame: SheetFrame) -> NotaDellaLegenda | None:
-    """La riga della legenda che spiega «Øi» (I-155), sotto i fluidi.
-
-    La spiegazione va a capo sulla larghezza della fascia, misurata con le
-    larghezze di Arial: le altre righe della legenda sono piu' corte, questa no.
-    `None` se la fascia non ha piu' posto in altezza: il testo non si
-    rimpicciolisce mai, e la riga manca — il collaudo lo misura."""
-    note = note_della_legenda(foglio, frame, ((CAMPIONE_DELLA_LEGENDA, TESTO_DELLA_LEGENDA),))
-    return note[0] if note else None
-
-
 def note_della_legenda(
     foglio: SheetGeometry,
     frame: SheetFrame,
@@ -645,10 +684,12 @@ def note_della_legenda(
     frasi: Sequence[tuple[str, str]] = (),
 ) -> list[NotaDellaLegenda]:
     """Le righe della legenda che spiegano le scritte dei tratti, sotto i fluidi e
-    una sotto l'altra: «Øi» del DN calcolato (I-155) e «Ø · L» del dato del
-    progettista (REL-012), nell'ordine di `voci`. La prima sta dove «Øi» e' sempre
-    stata; la seconda un passo sotto l'ultima riga della prima. Una riga che non
-    entra nella fascia manca, e con lei quelle che seguono.
+    una sotto l'altra: i materiali dei tubi (I-279, `voci_dei_materiali`) e «Ø · L» del
+    dato del progettista (REL-012), nell'ordine di `voci`. La prima sta dove stava la
+    riga «Øi»; le altre un passo sotto l'ultima riga della precedente. La spiegazione va
+    a capo sulla larghezza della fascia, misurata con le larghezze di Arial. Una riga
+    che non entra nella fascia manca, e con lei quelle che seguono: il testo non si
+    rimpicciolisce mai.
 
     Dopo, le `frasi`: il rimando all'altra tavola (collaudo T2 di REL-012, §3.9), che
     non spiega un campione ma e' una frase, «Vedi la tavola …». Comincia dove
@@ -688,14 +729,14 @@ def note_della_legenda(
 
 
 __all__ = [
-    "CAMPIONE_DELLA_LEGENDA",
     "FRANCO_DELLA_STACCATA_EM",
     "FRANCO_MM",
+    "LUNGHEZZA_DEL_RIPETUTO_MM",
+    "lato_del_tratto",
     "STACCO_DALLA_LINEA_MM",
-    "TESTO_DELLA_LEGENDA",
-    "nota_della_legenda",
     "note_della_legenda",
     "posa_i_diametri",
     "riquadri_delle_frecce",
     "riquadro_del_diametro",
+    "voci_dei_materiali",
 ]

@@ -2,7 +2,7 @@
 
 Il PO, su una commessa reale (villetta, Shenling 12 kW): il calcolo dei diametri «non
 verifica le perdite di carico contro la prevalenza utile della pompa a bordo». Qui si
-**verifica**, e non si dimensiona: il DN resta quello di D-193 e D-223, e se il giro
+**verifica**, e non si dimensiona: il tubo resta quello della tavola, e se il giro
 costa piu' di quanto la pompa da' la skill lo dice — un avviso, come quelli del manuale
 del costruttore (`costruttori.py`). Le scelte restano del progettista.
 
@@ -10,10 +10,16 @@ del costruttore (`costruttori.py`). Le scelte restano del progettista.
 
 - la **prevalenza utile** della macchina, `prevalenza_utile_kpa` sul generatore: quella
   che la pompa a bordo lascia all'impianto, fuori dalla macchina, alla portata di
-  progetto;
+  progetto. **Per una Shenling ThermaX senza il dato** (I-281) la verifica si fa con
+  8 m di colonna d'acqua, il valore basso degli «8/9 metri» del PO, e l'avviso lo
+  dice: e' indicativo, e piu' vicino alla prevalenza massima della pompa che a quella
+  utile alla portata, che e' minore — il valore vero e' la curva del manuale alla
+  portata (`costruttori.DatiDelModello.prevalenza_indicativa_m`). E' questa verifica
+  che dice la «troppa distanza» del PO per la 12 kW in MS 32×3;
 - la **lunghezza** di ogni tratto del giro, `lunghezza_m` sulle tubazioni;
-- il **DN** e la **portata** che il calcolo dei diametri da' a ogni tratto, quindi i
-  diametri chiesti su quella rete e la potenza col salto termico (§4.7 di Capire).
+- il **tubo** e la **portata** di ogni tratto: il tubo del progettista o quello del
+  calcolo (I-279), quindi i diametri chiesti su quella rete e la potenza col salto
+  termico (§4.7 di Capire).
 
 Se manca anche uno solo di questi su un giro, la verifica non si fa e non si dice niente.
 
@@ -25,8 +31,8 @@ verifica il **giro piu' costoso**: e' quello che la pompa deve vincere.
 
 **Il conto.** Per ogni tratto la perdita distribuita di Darcy-Weisbach,
 Δp = f · L/D · ρ·v²/2, col fattore d'attrito di Swamee-Jain (moto turbolento) o 64/Re
-(laminare); il diametro e' il DN letto come diametro interno netto (I-150), come nel
-calcolatore. Alle distribuite si aggiunge una **maggiorazione dichiarata** per le
+(laminare); il diametro e' quello interno reale del tubo, con la scabrezza del suo
+materiale (I-279). Alle distribuite si aggiunge una **maggiorazione dichiarata** per le
 perdite concentrate di curve, valvole e raccordi. **Non entrano** le perdite proprie dei
 pezzi che il calcolo non conosce — il serpentino del bollitore, uno scambiatore, il
 defangatore —: il foglio lo dice.
@@ -42,9 +48,10 @@ from disegnatore_mep.layout.autostrade import tratte_del_progetto
 from disegnatore_mep.layout.flow import GENERATOR_FUNCTIONS
 from disegnatore_mep.layout.hierarchy import is_a_machine
 from disegnatore_mep.layout.trunks import Trunk
-from disegnatore_mep.model.project import ProjectModel
+from disegnatore_mep.model.project import ComponentInstance, ProjectModel
 
-from .calcolatore import DENSITA_KG_M3, velocita_m_s
+from .calcolatore import DENSITA_KG_M3, SECONDI_ALL_ORA
+from .costruttori import dati_del_modello
 from .portate import (
     FUNZIONI_DI_MISCELAZIONE,
     TOLLERANZA_M3H,
@@ -55,6 +62,7 @@ from .portate import (
     portate_delle_tratte,
 )
 from .tratti import TrattoDelDiametro, tratti_del_diametro
+from .tubi import Materiale, Tubo
 
 PREVALENZA_UTILE = "prevalenza_utile_kpa"
 """La prevalenza utile della pompa a bordo, in kPa: il dato del progettista (I-270)."""
@@ -65,6 +73,20 @@ nell'unita' del testo, e il conto la porta in kPa."""
 
 GRAVITA_M_S2 = 9.80665
 """L'accelerazione di gravita' normale: 1 m di colonna d'acqua sono ρ·g = 9,807 kPa."""
+
+
+KPA_AL_METRO = DENSITA_KG_M3 * GRAVITA_M_S2 / 1000.0
+"""Un metro di colonna d'acqua in kPa."""
+
+
+def prevalenza_della_macchina(proprieta: Mapping[str, object], pezzo: ComponentInstance | None = None) -> float | None:
+    """La prevalenza con cui si verifica il giro di una macchina, in kPa: quella del
+    progettista; senza, per una Shenling ThermaX, quella indicativa (I-281)."""
+    data = prevalenza_utile_kpa(proprieta)
+    if data is not None or pezzo is None:
+        return data
+    dati = dati_del_modello(pezzo)
+    return None if dati is None else dati.prevalenza_indicativa_m * KPA_AL_METRO
 
 
 def prevalenza_utile_kpa(proprieta: Mapping[str, object]) -> float | None:
@@ -89,10 +111,21 @@ RUGOSITA_ACCIAIO_M = 0.045e-3
 RUGOSITA_RAME_M = 0.0015e-3
 """La scabrezza assoluta del tubo di rame trafilato, in metri."""
 
+RUGOSITA_MULTISTRATO_M = 0.007e-3
+"""La scabrezza del multistrato PEX/Al/PEX, in metri: 0,007 mm, la «rugosità
+superficiale» della scheda tecnica Valsir Mixal."""
+
+RUGOSITA_DEL_MATERIALE: dict[Materiale, float] = {
+    "multistrato": RUGOSITA_MULTISTRATO_M,
+    "acciaio": RUGOSITA_ACCIAIO_M,
+    "rame": RUGOSITA_RAME_M,
+}
+"""Con il materiale noto (I-279) la verifica usa la scabrezza del tubo vero."""
+
 RUGOSITA_DI_CALCOLO_M = RUGOSITA_ACCIAIO_M
-"""Quella con cui si verifica. Il materiale lo sceglie l'installatore a parita' di
-diametro interno (I-150): si prende l'acciaio, che perde di piu', e la verifica sta
-dalla parte della pompa."""
+"""Quella con cui si verificava prima di I-279, quando il materiale era a scelta
+dell'installatore: l'acciaio, che perde di piu'. Resta il valore predefinito di
+`perdita_distribuita_pa_m`."""
 
 MAGGIORAZIONE_CONCENTRATE = 0.30
 """Le perdite concentrate — curve, valvole, raccordi, la deviatrice — come frazione
@@ -120,14 +153,15 @@ def fattore_d_attrito(reynolds: float, rugosita_m: float, diametro_m: float) -> 
 
 
 def perdita_distribuita_pa_m(
-    portata_m3h: float, dn: int, rugosita_m: float = RUGOSITA_DI_CALCOLO_M
+    portata_m3h: float, interno_mm: float, rugosita_m: float = RUGOSITA_DI_CALCOLO_M
 ) -> float:
-    """La perdita distribuita in Pa per metro di tubo: Darcy-Weisbach.
+    """La perdita distribuita in Pa per metro di tubo: Darcy-Weisbach, sul diametro
+    interno `interno_mm`.
 
-    Per 2,067 m³/h (12 kW, 5 K) in DN 32 d'acciaio: v = 0,714 m/s, Re = 34 700,
+    Per 2,067 m³/h (12 kW, 5 K) in 32 mm interni d'acciaio: v = 0,714 m/s, Re = 34 700,
     f = 0,0265, circa 211 Pa/m."""
-    diametro = dn / 1000.0
-    velocita = velocita_m_s(portata_m3h, dn)
+    diametro = interno_mm / 1000.0
+    velocita = portata_m3h / SECONDI_ALL_ORA / (3.141592653589793 * diametro**2 / 4.0)
     reynolds = velocita * diametro / VISCOSITA_CINEMATICA_M2_S
     attrito = fattore_d_attrito(reynolds, rugosita_m, diametro)
     return attrito / diametro * DENSITA_KG_M3 * velocita**2 / 2.0
@@ -140,7 +174,7 @@ class TrattoDelGiro:
     da: str
     a: str
     """Le estremita' della tratta: gli id dei pezzi."""
-    dn: int
+    tubo: Tubo
     portata_m3h: float
     velocita_m_s: float
     lunghezza_m: float
@@ -163,6 +197,9 @@ class VerificaDellaPrevalenza:
     attraverso: tuple[str, ...] = ()
     """Le macchine che il giro attraversa — il volano, il serpentino del bollitore —:
     dicono quale giro e', a chi legge."""
+    assunta: bool = False
+    """La prevalenza non e' del progettista: e' quella indicativa della macchina
+    (I-281), e l'avviso lo dice."""
 
     @property
     def distribuite_kpa(self) -> float:
@@ -219,7 +256,7 @@ def verifiche_della_prevalenza(
     con_la_prevalenza = [
         item
         for item in project.components
-        if prevalenza_utile_kpa(item.properties) is not None
+        if prevalenza_della_macchina(item.properties, item) is not None
         and frozenset(definizioni[item.id].functions) & GENERATOR_FUNCTIONS
     ]
     if not con_la_prevalenza:
@@ -233,10 +270,10 @@ def verifiche_della_prevalenza(
     for tratta in acqua:
         for ref in (tratta.start, tratta.end):
             alla_porta[(ref.component_id, ref.port_id)] = tratta
-    dn_di = {
-        chiave: tratto.diametro.dn
+    tubo_di = {
+        chiave: tratto.tubo
         for tratto in tratti
-        if tratto.porta_il_dn and tratto.diametro is not None
+        if tratto.tubo is not None
         for chiave in tratto.chiavi
     }
     lunghezze = {item.id: item.lunghezza_m for item in project.connections}
@@ -260,21 +297,23 @@ def verifiche_della_prevalenza(
         resta su un pezzo solo (`rules.apply`): si somma su tutte."""
         chiavi = [tratta.connection_ids for tratta, _, _ in pezzi]
         portate_date = {portate.tratte[chiave].portata_m3h for chiave in chiavi}
-        dn_dati = {dn_di.get(chiave) for chiave in chiavi}
+        tubi_dati = {tubo_di.get(chiave) for chiave in chiavi}
         date = [lunghezze[c] for chiave in chiavi for c in chiave if lunghezze.get(c) is not None]
-        if len(portate_date) != 1 or len(dn_dati) != 1 or not date:
+        if len(portate_date) != 1 or len(tubi_dati) != 1 or not date:
             return None
-        (portata,), (dn,) = portate_date, dn_dati
-        if portata is None or portata <= TOLLERANZA_M3H or dn is None:
+        (portata,), (tubo,) = portate_date, tubi_dati
+        if portata is None or portata <= TOLLERANZA_M3H or tubo is None:
             return None
         return TrattoDelGiro(
             da=pezzi[0][1],
             a=pezzi[-1][2],
-            dn=dn,
+            tubo=tubo,
             portata_m3h=portata,
-            velocita_m_s=velocita_m_s(portata, dn),
+            velocita_m_s=tubo.velocita_m_s(portata),
             lunghezza_m=float(sum(x for x in date if x is not None)),
-            perdita_pa_m=perdita_distribuita_pa_m(portata, dn),
+            perdita_pa_m=perdita_distribuita_pa_m(
+                portata, tubo.interno_mm, RUGOSITA_DEL_MATERIALE[tubo.materiale]
+            ),
         )
 
     def tratti_del_giro(macchina: str, giro: tuple[Trunk, ...]) -> list[TrattoDelGiro | None]:
@@ -314,7 +353,7 @@ def verifiche_della_prevalenza(
         for giro in giri:
             voci = tratti_del_giro(macchina.id, giro)
             if any(item is None for item in voci):
-                # Un tratto senza lunghezza, senza DN o senza portata: non si inventa.
+                # Un tratto senza lunghezza, senza tubo o senza portata: non si inventa.
                 valutati = []
                 break
             valutati.append(tuple(item for item in voci if item is not None))
@@ -332,10 +371,11 @@ def verifiche_della_prevalenza(
         verifiche.append(
             VerificaDellaPrevalenza(
                 macchina=macchina.id,
-                prevalenza_utile_kpa=prevalenza_utile_kpa(macchina.properties) or 0.0,
+                prevalenza_utile_kpa=prevalenza_della_macchina(macchina.properties, macchina) or 0.0,
                 giro=peggiore,
                 giri=len(valutati),
                 attraverso=attraverso,
+                assunta=prevalenza_utile_kpa(macchina.properties) is None,
             )
         )
     return tuple(verifiche)
@@ -416,8 +456,15 @@ def avvisi_della_prevalenza(
             f"({_n(lunghezza, 1)} m di tubo{', attraverso ' + dove if dove else ''}) "
             f"perde {_n(verifica.totale_kpa, 1)} kPa — {_n(verifica.distribuite_kpa, 1)} distribuite piu' il "
             f"{MAGGIORAZIONE_CONCENTRATE:.0%} di concentrate, serpentini e scambiatori esclusi — e la pompa "
-            f"a bordo ne da' {_n(verifica.prevalenza_utile_kpa, 1)} utili. La pompa da sola non basta: "
-            "il giro va rivisto col progettista (i DN della tavola non cambiano)."
+            f"a bordo ne da' {_n(verifica.prevalenza_utile_kpa, 1)} utili"
+            + (
+                f" ({_n(verifica.prevalenza_utile_kpa / KPA_AL_METRO, 0)} m, indicativo del PO; il valore vero è "
+                "la curva del manuale alla portata)"
+                if verifica.assunta
+                else ""
+            )
+            + ". La pompa da sola non basta: il giro va rivisto col progettista (i tubi della tavola non "
+            "cambiano)."
         )
     return avvisi
 
@@ -430,8 +477,11 @@ __all__ = [
     "MAGGIORAZIONE_CONCENTRATE",
     "PREVALENZA_UTILE",
     "PREVALENZA_UTILE_IN_METRI",
+    "KPA_AL_METRO",
     "RUGOSITA_ACCIAIO_M",
+    "RUGOSITA_DEL_MATERIALE",
     "RUGOSITA_DI_CALCOLO_M",
+    "RUGOSITA_MULTISTRATO_M",
     "RUGOSITA_RAME_M",
     "TrattoDelGiro",
     "VISCOSITA_CINEMATICA_M2_S",
@@ -440,6 +490,7 @@ __all__ = [
     "GRAVITA_M_S2",
     "fattore_d_attrito",
     "perdita_distribuita_pa_m",
+    "prevalenza_della_macchina",
     "prevalenza_utile_kpa",
     "verifiche_della_prevalenza",
 ]

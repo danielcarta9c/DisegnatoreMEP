@@ -35,6 +35,7 @@ from collections.abc import Iterable
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.catalog.schema import ComponentDefinition
+from disegnatore_mep.diametri.tubi import Tubo
 from disegnatore_mep.layout.geometry import (
     STACCO_DALLA_TABELLA_MM,
     RiquadroDelleNote,
@@ -72,7 +73,51 @@ NOTA_ISOLAMENTO = (
     "40 a 59 mm; all'esterno spessore pieno e protezione anti-UV."
 )
 """(1) Lo spessore dell'isolante, che la tavola non dice (specifica Nove C Rev. 01
-§5.3). Esce su ogni tavola con tubazioni d'acqua dell'impianto."""
+§5.3). Esce su ogni tavola con tubazioni d'acqua dell'impianto. Questo e' il testo
+generico, per le fasce: quando la tavola porta i tubi, la nota dice lo spessore di
+ciascuno (`nota_dell_isolamento`, I-279)."""
+
+SPESSORI_DPR_412: tuple[tuple[float, int], ...] = (
+    (20.0, 20),
+    (40.0, 30),
+    (60.0, 40),
+    (80.0, 50),
+    (100.0, 55),
+)
+"""Gli spessori minimi dell'isolante dell'Allegato B del DPR 412/93, tabella 1, per una
+conduttivita' di 0,040 W/mK, per **diametro esterno** del tubo: sotto 20 mm 20 mm; da 20
+a 39 mm 30; da 40 a 59 mm 40; da 60 a 79 mm 50; da 80 a 99 mm 55; da 100 mm in su 60.
+Ogni coppia e' (diametro esterno fino a cui vale, spessore); oltre l'ultima, 60 mm."""
+
+SPESSORE_OLTRE_MM = 60
+
+
+def spessore_dell_isolante_mm(esterno_mm: float) -> int:
+    """Lo spessore minimo dell'isolante per un tubo di questo diametro esterno (DPR
+    412/93, Allegato B, λ 0,040 W/mK)."""
+    for fino_a, spessore in SPESSORI_DPR_412:
+        if esterno_mm < fino_a:
+            return spessore
+    return SPESSORE_OLTRE_MM
+
+
+def nota_dell_isolamento(tubi: Iterable[Tubo], anche_altri: bool = False) -> str:
+    """La nota (1) sui tubi veri della tavola (I-279): «MS 32×3: 30 mm», lo spessore di
+    ciascuno dal suo diametro esterno. Senza tubi noti, il testo generico. Con
+    `anche_altri` — tubazioni d'acqua della tavola senza un tubo noto: una rete dove i
+    diametri non sono chiesti — anche le due fasce del testo generico, per quelle."""
+    visti = {tubo.scritta: tubo for tubo in tubi}
+    if not visti:
+        return NOTA_ISOLAMENTO
+    ordinati = sorted(visti.values(), key=lambda tubo: (tubo.materiale, tubo.esterno_mm))
+    elenco = "; ".join(f"{tubo.scritta}: {spessore_dell_isolante_mm(tubo.esterno_mm)} mm" for tubo in ordinati)
+    if anche_altri:
+        elenco += "; le altre: 30 mm da 20 a 39 mm, 40 mm da 40 a 59 mm"
+    return (
+        "Isolamento delle tubazioni a celle chiuse, conduttività massima 0,040 W/mK, con gli spessori minimi "
+        f"dell'Allegato B del DPR 412/93 sul diametro esterno ({elenco}); all'esterno spessore pieno e "
+        "protezione anti-UV."
+    )
 
 NOTA_ANTIGELO = (
     "Valvole antigelo nel punto più basso del tratto esterno, con lo scarico libero dove "
@@ -128,6 +173,8 @@ def note_di_posa(
     catalogo: ComponentRegistry,
     sul_foglio: Iterable[str],
     reti_sul_foglio: Iterable[str],
+    tubi: Iterable[Tubo] = (),
+    anche_altri: bool = False,
 ) -> list[str]:
     """Le note di posa di una tavola, nell'ordine in cui si numerano.
 
@@ -135,7 +182,10 @@ def note_di_posa(
     delle sue tubazioni. **Vuote nel definitivo**, o senza livello (D-232), e vuote
     su una tavola senza tubazioni d'acqua dell'impianto — la tavola dell'elettrico
     e del comando, una tavola dell'aria: le cinque note parlano tutte del circuito
-    dell'acqua. Ciascuna esce solo se il suo pezzo e' sulla tavola.
+    dell'acqua. Ciascuna esce solo se il suo pezzo e' sulla tavola. `tubi` sono i
+    tubi d'acqua della tavola, del calcolo o del progettista: la nota dell'isolamento
+    dice lo spessore di ciascuno (I-279), e con `anche_altri` le fasce per le tubazioni
+    d'acqua della tavola che un tubo noto non l'hanno.
 
     **Le note del progettista** (`metadata.note_di_posa`, REL-017, I-271) vengono prima,
     nel suo ordine, sulle stesse tavole e solo nell'esecutivo; una sua nota che comincia
@@ -159,7 +209,7 @@ def note_di_posa(
         ]
 
     generatori = sull_acqua("heat_generation")
-    generate: list[tuple[SoggettoDellaNota, str]] = [("isolamento", NOTA_ISOLAMENTO)]
+    generate: list[tuple[SoggettoDellaNota, str]] = [("isolamento", nota_dell_isolamento(tubi, anche_altri))]
     if any("frost_protection" in voce.functions for voce in voci):
         generate.append(("antigelo", NOTA_ANTIGELO))
     if generatori:
@@ -308,6 +358,8 @@ __all__ = [
     "MASSIMO_DELLE_NOTE",
     "NOTA_ANTIGELO",
     "NOTA_ISOLAMENTO",
+    "nota_dell_isolamento",
+    "spessore_dell_isolante_mm",
     "NOTA_SFIATI_E_SCARICHI",
     "NOTA_SONDA_DEL_VOLANO",
     "NOTA_VASO",

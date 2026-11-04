@@ -31,7 +31,7 @@ disegnatore-mep = "disegnatore_mep.cli:main"
 where = ["src"]
 
 [tool.setuptools.package-data]
-disegnatore_mep = ["py.typed"]
+disegnatore_mep = ["py.typed", "diametri/tubi.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -290,7 +290,10 @@ def test_il_dn_di_una_strada_principale_senza_posto_va_staccato_con_freccia(
     classi = [e.get("class") for e in radice.iter()]
     assert classi.count("diameter-leader") == len(staccate)
     assert classi.count("diameter-leader-arrow") == len(staccate)
-    assert not [r.code for r in t.esito.rilievi if r.code.startswith(("DIAMETER_", "LEADER", "ORTHOGONAL"))]
+    # I-279: sulla tavola 6 il tubo della mandata del ventilconvettore, «MS 40×3,5», non
+    # entra ne' in linea ne' staccato (`tests/diametri/test_sulla_tavola.SENZA_POSTO`).
+    attesi = ["DIAMETER_TAG_MISSING"] if impianto == "6" else []
+    assert [r.code for r in t.esito.rilievi if r.code.startswith(("DIAMETER_", "LEADER", "ORTHOGONAL"))] == attesi
 
 
 @pytest.mark.parametrize("impianto", ("1", "4", "6"))
@@ -397,17 +400,35 @@ def test_scritte_di_pezzi_diversi_un_corpo_lungo_la_riga_e_mezzo_fra_le_righe(
 
 
 def test_il_dn_di_una_strada_secondaria_si_sacrifica_senza_rilievo(tavola: Callable[[str], Tavola]) -> None:
-    """I-161: sulla tavola 5 tre DN di strade secondarie non trovano posto accanto
-    alla linea. Mancano, non hanno richiamo, e il preflight non lo segnala."""
-    t = tavola("5")
-    from disegnatore_mep.diametri.tratti import tratti_da_etichettare
+    """I-161: sulla tavola 5 i tubi di strade secondarie che non trovano posto accanto
+    alla linea mancano, non hanno richiamo, e il preflight non lo segnala.
 
-    tratti = tratti_da_etichettare(t.modello, _catalogo_della_tavola())
+    Dal 4 novembre 2026 (I-279) le scritte sono il tubo, «DN 40 (1½")», piu' lunghe di
+    «Øi 40»: sulla stessa tavola mancano anche tratti di strada principale che continuano
+    il tubo del vicino (`detto_da_un_vicino`), senza rilievo, e uno che non trova posto
+    nemmeno staccato, con l'avviso (`test_sulla_tavola.SENZA_POSTO`)."""
+    t = tavola("5")
+    from disegnatore_mep.diametri.scritte import detto_da_un_vicino, tratti_da_scrivere
+    from disegnatore_mep.layout.diametri import lato_del_tratto
+
+    _, tratti = tratti_da_scrivere(t.modello, _catalogo_della_tavola())
     posati = {frozenset(e.connection_ids) for e in t.foglio.diametri}
+    scritti = [item for item in tratti if item.connection_ids in posati]
     sacrificati = [item for item in tratti if item.connection_ids not in posati]
-    assert sacrificati and all(not item.strada_principale for item in sacrificati)
-    assert all(e.richiamo is None for e in t.foglio.diametri)
-    assert "DIAMETER_TAG_MISSING" not in {r.code for r in t.esito.rilievi}
+    secondari = [item for item in sacrificati if not item.strada_principale]
+    assert secondari
+    assert all(e.richiamo is None for e in t.foglio.diametri if frozenset(e.connection_ids) in {
+        item.connection_ids for item in tratti if not item.strada_principale
+    })
+    principali = [
+        (item.capi[0].component_id, item.capi[1].component_id)
+        for item in sacrificati
+        if item.strada_principale
+        and not item.ripetuto
+        and not detto_da_un_vicino(item, scritti, lambda x: lato_del_tratto(x.connection_ids, t.foglio.routes))
+    ]
+    assert principali == [("secondario-mandata-b", "ventilconvettori")]
+    assert [r.code for r in t.esito.rilievi if r.code.startswith("DIAMETER_")] == ["DIAMETER_TAG_MISSING"]
 
 
 def _catalogo_della_tavola():  # type: ignore[no-untyped-def]
