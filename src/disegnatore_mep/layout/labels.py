@@ -123,6 +123,11 @@ dei simboli; le scritte della tavola si misurano con le larghezze di Arial
 
 TOLERANCE_MM = 1e-6
 
+CORPI_DEL_FIANCO_LIBERO = 5
+"""Quanto deve essere lungo, in corpi, il tratto di un fianco libero dai tubi perche' la
+sigla ci vada al centro (`quota_di_fianco`, I-274): la scritta e due corpi di bianco
+sopra e sotto. **Taratura** della sessione (REL-017), da giudicare sulla tavola."""
+
 SIDES_BY_ROLE: dict[str, tuple[str, ...]] = {
     "tag": ("above", "below", "right", "left"),
     "data": ("below", "above", "right", "left"),
@@ -410,11 +415,13 @@ def anchor_beside(
     *,
     height_mm: float,
     step_mm: float,
+    quota_mm: float | None = None,
 ) -> Point:
     """La base di un testo scritto su un lato del pezzo.
 
     Sopra e sotto il testo si centra sul riquadro restando su un nodo della
-    griglia; di fianco sta in quota col centro del pezzo. Lo stacco dal
+    griglia; di fianco sta in quota col centro del pezzo, o con `quota_mm` se chi
+    chiama ne sceglie un'altra (`quota_di_fianco`). Lo stacco dal
     riquadro vale un millimetro e mezzo perche' e' quanto deve valere: portarlo
     sul passo lo raddoppierebbe allontanando ogni scritta dal proprio pezzo,
     che e' il difetto che D-075 corregge. `slot` impila i testi dello stesso
@@ -430,10 +437,61 @@ def anchor_beside(
         return Point(
             x_mm=centred, y_mm=item.bottom_mm + VALUE_GAP_MM + height_mm + stack
         )
-    middle = item.origin.y_mm + item.height_mm / 2 + height_mm / 2 + stack
+    centro = item.origin.y_mm + item.height_mm / 2 if quota_mm is None else quota_mm
+    middle = centro + height_mm / 2 + stack
     if side == "right":
         return Point(x_mm=item.right_mm + SIDE_GAP_MM, y_mm=middle)
     return Point(x_mm=item.origin.x_mm - SIDE_GAP_MM - width_mm, y_mm=middle)
+
+
+def quota_di_fianco(
+    item: PlacedSymbol, side: str, segmenti: Sequence[Segment], corpo_mm: float
+) -> float | None:
+    """La quota di un testo di fianco a un pezzo alto: a meta' del tratto piu' lungo
+    della faccia che nessun tubo tocca, non a meta' del pezzo (REL-017, I-274).
+
+    A meta' del pezzo, sul volano a quattro attacchi della villetta del PO, la sigla
+    cadeva subito sotto il ritorno del secondario che esce da quella faccia, sotto la
+    sua valvola: «VOL-01 sta lontana dal serbatoio» — si leggeva come la sigla del
+    tubo e della valvola, oltre la loro uscita, non come quella del serbatoio. Lungo
+    il fianco libero dai tubi la sigla sta accanto al corpo del pezzo, lontano dalle
+    uscite.
+
+    Vale solo per i **pezzi alti** — piu' alti che larghi: serbatoi, volani,
+    bollitori —, dove un tubo esce accanto al centro del fianco, e dove il tratto libero
+    ospita la scritta con **due corpi di bianco** sopra e sotto
+    (`CORPI_DEL_FIANCO_LIBERO`). Un circolatore col tubo a meta' non ha un fianco
+    cosi', e una macchina larga — la pompa di calore, l'unita' interna canalizzata —
+    tiene la sigla di sempre: l'unita' interna del collaudo T1 di REL-012, spostata,
+    toglieva il posto alla scritta del cavo del comando, che arriva dopo. Una faccia
+    senza tubi tiene il centro. `None` vuol dire: il centro del pezzo, come sempre."""
+    if item.height_mm < item.width_mm:
+        return None
+    faccia = item.right_mm if side == "right" else item.origin.x_mm
+    fuori = 1.0 if side == "right" else -1.0
+    attacchi: set[float] = set()
+    for primo, secondo in segmenti:
+        for capo, altro in ((primo, secondo), (secondo, primo)):
+            if (
+                abs(capo.x_mm - faccia) <= TOLERANCE_MM
+                and abs(altro.y_mm - capo.y_mm) <= TOLERANCE_MM
+                and (altro.x_mm - capo.x_mm) * fuori > TOLERANCE_MM
+                and item.origin.y_mm - TOLERANCE_MM <= capo.y_mm <= item.bottom_mm + TOLERANCE_MM
+            ):
+                attacchi.add(round(capo.y_mm, 6))
+    # A meta' del pezzo la scritta sta bene se nessun tubo le esce accanto: a due
+    # corpi di bianco, come lungo il tratto libero. Allora non si sposta niente.
+    centro = item.origin.y_mm + item.height_mm / 2
+    bianco = (CORPI_DEL_FIANCO_LIBERO - 1) / 2 * corpo_mm
+    if all(abs(quota - centro) - corpo_mm / 2 >= bianco - TOLERANCE_MM for quota in attacchi):
+        return None
+    quote = [item.origin.y_mm, *sorted(attacchi), item.bottom_mm]
+    tratti = [(sotto - sopra, sopra, sotto) for sopra, sotto in zip(quote, quote[1:], strict=False)]
+    # Il tratto piu' lungo; a pari lunghezza il piu' alto, che e' il primo.
+    lungo, sopra, sotto = max(tratti, key=lambda tratto: (tratto[0], -tratto[1]))
+    if lungo < CORPI_DEL_FIANCO_LIBERO * corpo_mm - TOLERANCE_MM:
+        return None
+    return (sopra + sotto) / 2
 
 
 def preferred_anchor(
@@ -664,7 +722,16 @@ def _settle(
         largo = text_width_mm(text, corpo)
         for row in range(ADJACENT_ROWS):
             for side in SIDES_BY_ROLE[role]:
-                spot = anchor_beside(item, side, slot + row, largo, height_mm=corpo, step_mm=step_mm)
+                # Di fianco a un pezzo alto, lungo il tratto della faccia libero dai
+                # tubi (I-274): le sigle e i dati, non gli indirizzi di verifica.
+                quota = (
+                    quota_di_fianco(item, side, canvas.line_segments, corpo)
+                    if role in LEADER_ROLES and side in ("right", "left")
+                    else None
+                )
+                spot = anchor_beside(
+                    item, side, slot + row, largo, height_mm=corpo, step_mm=step_mm, quota_mm=quota
+                )
                 box = _text_box(spot, largo, corpo)
                 if not canvas.free(box):
                     continue

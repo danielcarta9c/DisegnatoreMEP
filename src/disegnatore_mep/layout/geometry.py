@@ -25,8 +25,9 @@ class FlowKind(StrEnum):
     Uno stacco di servizio non lo ha: il manometro e il vaso insistono sul
     ritorno tecnico senza portare una circolazione; lo sfiato e la sicurezza
     su uno stacco nemmeno. Il riempimento e' acqua che **entra** nel circuito,
-    e uno scarico esplicitamente modellato e' acqua che ne **esce**. La specie
-    si decide sul modello e sul catalogo, mai sulla geometria.
+    e uno scarico esplicitamente modellato e' acqua che ne **esce** — ma solo
+    quando si apre: sulla tavola sta senza freccia come i rami statici (I-273).
+    La specie si decide sul modello e sul catalogo, mai sulla geometria.
     """
 
     ORDINARY = "ordinary"
@@ -40,7 +41,11 @@ class FlowKind(StrEnum):
     tratto che lo regge."""
 
     OUTBOUND = "outbound"
-    """Uno stacco da cui l'acqua esce dal circuito: la freccia se ne allontana."""
+    """Uno stacco da cui l'acqua esce dal circuito: lo scarico. Il verso resta in
+    `flow_from_start` — se ne allontana —, ma **la freccia no** (REL-017, I-273):
+    lo scarico e' un rubinetto chiuso, acqua ferma come quella del vaso e del
+    manometro, e un ramo statico non mostra frecce (I-042). Il PO l'ha visto sul
+    volano di una villetta, «disegnato rosso con la freccia»."""
 
     NO_ARROW = "no_arrow"
     """Una linea di un fluido che la tavola disegna senza freccia: il refrigerante
@@ -51,7 +56,7 @@ class FlowKind(StrEnum):
     def porta_la_freccia(self) -> bool:
         """Se la linea si disegna con la freccia di flusso: SVG, DXF e il preflight
         chiedono qui, e non elencano le specie per conto loro."""
-        return self not in (FlowKind.STATIC, FlowKind.NO_ARROW)
+        return self not in (FlowKind.STATIC, FlowKind.OUTBOUND, FlowKind.NO_ARROW)
 
 
 class Point(StrictModel):

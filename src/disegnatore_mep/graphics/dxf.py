@@ -54,6 +54,7 @@ from disegnatore_mep.layout.legend import (
     RETURN_NAMES,
     basi_delle_righe,
     righe_del_nome,
+    scala_del_simbolo,
     style_for,
 )
 from disegnatore_mep.model.types import PortFlow
@@ -1053,7 +1054,8 @@ class _Tavola:
         for entry in self.sheet.legend:
             simbolo = self.symbols.get(entry.symbol_id)
             manifest = simbolo.manifest
-            scala = min(1.0, LEGEND_SWATCH_MM / manifest.width_mm, LEGEND_SWATCH_MM / manifest.height_mm)
+            # Alto al piu' quanto il passo meno lo stacco, non quanto il campione (I-275).
+            scala = scala_del_simbolo(manifest.width_mm, manifest.height_mm, LEGEND_SWATCH_MM)
             top = entry.anchor.y_mm - LEGEND_SWATCH_MM
             left = entry.anchor.x_mm + (LEGEND_SWATCH_MM - manifest.width_mm * scala) / 2
             middle = top + (LEGEND_SWATCH_MM - manifest.height_mm * scala) / 2
