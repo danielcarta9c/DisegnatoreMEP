@@ -22,6 +22,7 @@ from disegnatore_mep.layout.legend import (
     INTERLINEA_EM,
     basi_delle_righe,
     righe_del_nome,
+    scala_del_simbolo,
     style_for,
 )
 
@@ -684,10 +685,9 @@ def render_sheet(
     # riquadro sopra il proprio nome.
     for entry in sheet.legend:
         symbol = symbols.get(entry.symbol_id)
-        scale = min(
-            1.0,
-            LEGEND_SWATCH_MM / symbol.manifest.width_mm,
-            LEGEND_SWATCH_MM / symbol.manifest.height_mm,
+        # Alto al piu' quanto il passo meno lo stacco, non quanto il campione (I-275).
+        scale = scala_del_simbolo(
+            symbol.manifest.width_mm, symbol.manifest.height_mm, LEGEND_SWATCH_MM
         )
         top = entry.anchor.y_mm - LEGEND_SWATCH_MM
         left = entry.anchor.x_mm + (LEGEND_SWATCH_MM - symbol.manifest.width_mm * scale) / 2

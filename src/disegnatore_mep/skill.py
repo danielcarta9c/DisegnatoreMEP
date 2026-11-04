@@ -41,6 +41,7 @@ from collections import Counter
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from pydantic import ValidationError
 
@@ -75,7 +76,7 @@ from disegnatore_mep.layout.geometry import (
     TabellaNelleZone,
 )
 from disegnatore_mep.model.project import ConnectionModel, ProjectModel
-from disegnatore_mep.model.types import ApprovalStatus, IssueSeverity
+from disegnatore_mep.model.types import ApprovalStatus, Domain, IssueSeverity
 from disegnatore_mep.piano.esecutore import EsitoDelPiano, esegui_piano
 from disegnatore_mep.piano.formato import FORMATI_ORDINARI, PianoDiComposizione, carica_piano
 from disegnatore_mep.piano.revisore import misura
@@ -88,6 +89,9 @@ from disegnatore_mep.rules.report import CATEGORY_LABELS, build_report
 from disegnatore_mep.validation.issues import ValidationIssue
 from disegnatore_mep.validation.regole import rilievi_delle_regole
 from disegnatore_mep.validation.topology import validate_project
+
+if TYPE_CHECKING:
+    from disegnatore_mep.diametri.riduzioni import RiduzionePosata
 
 GRAVITA: dict[IssueSeverity, str] = {
     IssueSeverity.BLOCKING: "Bloccanti — la tavola non si consegna",
@@ -268,6 +272,12 @@ def _completa(args: argparse.Namespace, cartelle: Cartelle) -> int:
     regole.cross_check(dati.catalogo)
     risultato = saturation(modello, dati.catalogo, regole)
     completo, proposte, lacune = risultato.model, risultato.applied, risultato.gaps
+    # La riduzione all'attacco della macchina, dove il tubo scelto dalla velocita' e'
+    # piu' piccolo (D-233, I-281): un pezzo vero, subito dopo il giunto antivibrante.
+    # Non e' una regola: la posa questo passo, una volta sola anche ai rilanci.
+    from disegnatore_mep.diametri.riduzioni import posa_le_riduzioni
+
+    completo, riduzioni = posa_le_riduzioni(completo, dati.catalogo)
     rapporto = build_report(proposte, lacune, dati.naming)
     from disegnatore_mep.diametri.costruttori import avvisi_del_costruttore
 
@@ -318,6 +328,8 @@ def _completa(args: argparse.Namespace, cartelle: Cartelle) -> int:
         print("\nAvvisi del manuale del costruttore e della specifica Nove C")
         for avviso in avvisi_del_manuale:
             print(f"  - {avviso}")
+    _stampa_la_prevalenza(completo, dati.catalogo, cartelle)
+    _stampa_i_tubi(completo, dati.catalogo, cartelle, riduzioni=riduzioni)
 
     _stampa_le_scelte_del_progettista(modello, risultato.withheld, proposte, dati)
     _stampa_il_corredo_sull_esistente(completo, proposte)
@@ -338,6 +350,67 @@ def _completa(args: argparse.Namespace, cartelle: Cartelle) -> int:
         for domanda in domande:
             print(f"  - {domanda}")
     return 0
+
+
+def _stampa_la_prevalenza(modello: ProjectModel, catalogo: ComponentRegistry, cartelle: Cartelle) -> None:
+    """La prevalenza della pompa a bordo contro le perdite del giro primario (I-270).
+
+    Un avviso, come quelli del manuale: il DN non cambia, e la scelta resta del
+    progettista. Se mancano la prevalenza, le lunghezze o i diametri non si dice niente."""
+    from disegnatore_mep.diametri.perdite import avvisi_della_prevalenza
+    from disegnatore_mep.piano.vista import sigle_del_grafo_intero
+
+    if modello.diametri is None:
+        return
+    avvisi = avvisi_della_prevalenza(
+        modello, catalogo, sigle=sigle_del_grafo_intero(modello, catalogo, cartelle.naming)
+    )
+    if avvisi:
+        print("\nAvvisi della prevalenza della pompa a bordo")
+        for avviso in avvisi:
+            print(f"  - {avviso}")
+
+
+def _stampa_i_tubi(
+    modello: ProjectModel,
+    catalogo: ComponentRegistry,
+    cartelle: Cartelle,
+    riduzioni: "Sequence[RiduzionePosata] | None" = None,
+) -> None:
+    """Il tubo del progettista piu' piccolo di quello del calcolo (I-279): un avviso, la
+    tavola scrive il suo. E, in `completa`, le riduzioni agli attacchi delle macchine
+    (I-281, D-233): un'informazione, non un avviso — il tubo lo sceglie la velocita', e
+    la riduzione e' un pezzo che `completa` posa dopo il giunto."""
+    from disegnatore_mep.diametri.tratti import avvisi_dei_tubi
+    from disegnatore_mep.piano.vista import sigle_del_grafo_intero
+
+    if modello.diametri is None and not any(item.sezione for item in modello.connections):
+        return
+    sigle = sigle_del_grafo_intero(modello, catalogo, cartelle.naming)
+    avvisi = avvisi_dei_tubi(modello, catalogo, sigle)
+    if avvisi:
+        print("\nAvvisi dei tubi")
+        for avviso in avvisi:
+            print(f"  - {avviso}")
+    if not riduzioni:
+        return
+    print("\nRiduzioni agli attacchi delle macchine (informazione)")
+    # Una riga per macchina e per coppia di pollici: «riduzione 1¼"×1" aggiunta su
+    # mandata e ritorno di GT-01».
+    gruppi: dict[tuple[str, str, str, str, bool], list[str]] = {}
+    for item in riduzioni:
+        porta = item.riduzione.porta
+        lato = "mandata" if "supply" in porta else "ritorno" if "return" in porta else porta
+        tubo = item.riduzione.tubo
+        chiave = (item.riduzione.macchina, item.riduzione.attacco, tubo.pollici, tubo.scritta, item.aggiunta)
+        gruppi.setdefault(chiave, []).append(lato)
+    for (macchina, attacco, pollici, scritta, aggiunta), lati in gruppi.items():
+        come = "aggiunta" if aggiunta else "gia' posata"
+        print(
+            f"  - riduzione {attacco}×{pollici} {come} su {' e '.join(sorted(lati))} di "
+            f"{sigle.get(macchina, macchina)}, subito dopo il giunto antivibrante: attacco {attacco}, "
+            f"tubo {scritta}"
+        )
 
 
 def _stampa_le_scelte_del_progettista(
@@ -815,6 +888,7 @@ def _disegna(args: argparse.Namespace, cartelle: Cartelle) -> int:
         modello, piano, dati.catalogo, dati.simboli, cartelle.naming, verifica=args.verifica, tabelle=tabelle
     )
     # La tavola disegna la vista del piano (REL-012, I-227): da qui si legge il suo grafo.
+    intero, catalogo_intero = modello, dati.catalogo.per_il_progetto(modello)
     modello, dati.catalogo = esito.modello, esito.catalogo
     if dove_vanno:
         print("Tabelle del foglio:")
@@ -883,6 +957,11 @@ def _disegna(args: argparse.Namespace, cartelle: Cartelle) -> int:
             print(f"    codice: {item.code} · {', '.join(item.entity_ids)}")
     else:
         print("\nLe regole del piano: nessuna violazione.")
+    # La prevalenza si verifica sul grafo intero, e si dice sulla tavola che porta i DN (I-270).
+    idrauliche = {item.id for item in modello.networks if item.domain is Domain.HYDRONIC}
+    if any(item.network_id in idrauliche for item in modello.connections):
+        _stampa_la_prevalenza(intero, catalogo_intero, cartelle)
+        _stampa_i_tubi(intero, catalogo_intero, cartelle)
 
     args.out.mkdir(parents=True, exist_ok=True)
     dxf = not args.senza_dxf and _ha_ezdxf()
@@ -1447,7 +1526,8 @@ def _distinta(args: argparse.Namespace, cartelle: Cartelle) -> int:
 
     if args.domande:
         return domande(
-            args.grafo, args.regole, cartelle.regole, cartelle.catalogo, cartelle.naming, fornitura=args.fornitura
+            args.grafo, args.regole, cartelle.regole, cartelle.catalogo, cartelle.naming, fornitura=args.fornitura,
+            cartella_dei_simboli=cartelle.simboli,
         )
     if args.out is None:
         raise ValueError("distinta: serve --out <cartella> (o --domande, che non scrive niente)")
@@ -1462,6 +1542,7 @@ def _distinta(args: argparse.Namespace, cartelle: Cartelle) -> int:
         fornitura=args.fornitura,
         report=args.report,
         lista=args.lista,
+        cartella_dei_simboli=cartelle.simboli,
     )
 
 

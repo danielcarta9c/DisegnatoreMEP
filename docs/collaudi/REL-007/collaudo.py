@@ -40,7 +40,12 @@ from pathlib import Path
 import ezdxf
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
-from disegnatore_mep.diametri.foglio import foglio_in_markdown, righe_del_calcolo
+from disegnatore_mep.diametri.foglio import (
+    foglio_in_markdown,
+    prevalenza_in_markdown,
+    righe_del_calcolo,
+)
+from disegnatore_mep.diametri.perdite import verifiche_della_prevalenza
 from disegnatore_mep.diametri.tratti import tratti_da_etichettare, tratti_del_diametro
 from disegnatore_mep.graph.naming import Naming
 from disegnatore_mep.graph.plant import read_plant
@@ -115,6 +120,8 @@ def con_i_dati(
             if rete["id"] in esistenti:
                 rete["esistente"] = True
         chieste = reti if diametri["reti"] == "tutte" else diametri["reti"]
+        if "materiale_tubazioni" in diametri:
+            documento["materiale_tubazioni"] = diametri["materiale_tubazioni"]
         if con_la_richiesta:
             documento["diametri"] = {"reti": [rete for rete in chieste if rete not in esistenti]}
     return ProjectModel.model_validate(documento)
@@ -299,7 +306,10 @@ def main() -> None:
         sigle = read_plant(modello, catalogo, naming).sigle
         righe = righe_del_calcolo(modello, catalogo, sigle)
         titolo = modello.metadata.project_name
-        fogli_dei_calcoli.append(f"## {nome} — {titolo}\n\n{foglio_in_markdown(righe)}")
+        verifiche = verifiche_della_prevalenza(modello, catalogo)
+        fogli_dei_calcoli.append(
+            f"## {nome} — {titolo}\n\n{foglio_in_markdown(righe)}{prevalenza_in_markdown(verifiche, sigle)}"
+        )
 
     (QUI / "foglio-dei-calcoli.md").write_text(
         "# Il foglio dei calcoli delle tavole di REL-007\n\n"

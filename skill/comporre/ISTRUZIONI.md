@@ -188,7 +188,8 @@ JSON, e solo queste chiavi:
   quelli. ⚠ Il grafo nomina altre decine di identificativi in `subsystems` e
   `rule_applications` che **non sono pezzi**: ignorali.
   **Gli organi in linea non li posi tu**: valvole d'intercettazione, filtri, defangatori,
-  separatori d'aria, circolatori, ritegni, riduttori, gruppi di sicurezza sanitari. Li
+  separatori d'aria, circolatori, ritegni, riduttori, gruppi di sicurezza sanitari, il giunto
+  antivibrante e la riduzione all'attacco della macchina (`pipe-reducer`, D-233). Li
   riconosci dal manifesto del simbolo, che dichiara `inline_gap_mm`: il motore li posa **da
   solo, sulla loro tratta** (§4bis). Se ne scrivi uno nel piano, il comando te lo dice e si
   ferma. ⚠ Il **rubinetto portamanometro** si chiama «a tre vie» (`valve-gauge-cock-3way`) ma
@@ -256,7 +257,10 @@ di due specie, e le due si trattano in modo diverso:
   **Quanto rettilineo chiede una fila**, misurato sul motore il 23 settembre 2026 fra la porta
   di una pompa e un raccordo: con una valvola **17,5 mm**, con due organi **20–25 mm**. Non è
   una costante: è il punto da cui partire, e se non basta il comando ti dice la tratta —
-  allontana i due pezzi **un passo alla volta**;
+  allontana i due pezzi **un passo alla volta**. Con i diametri chiesti, sulla pompa di
+  calore il giunto ha dopo di sé la **riduzione** quando il tubo è più piccolo dell'attacco
+  (D-233): sulla villetta di riferimento la mandata, dalla porta al raccordo della
+  sicurezza, ne ha voluti **32,5 mm**, 10 più di prima;
 - **gli appesi li posi tu**: un manometro, un termometro, uno sfiato, uno scarico, un vaso,
   una sicurezza, un gruppo di riempimento stanno all'altro capo di uno **stacco** che parte da
   un raccordo sulla linea (`tee-branch`). Stanno **addosso** (A4), con lo stacco più corto che
@@ -572,8 +576,8 @@ Il campo **`vista`** del piano dice quale parte del grafo la tavola disegna:
 | `vista` | che cosa disegna |
 |---|---|
 | `"tutto"` (se il campo manca) | il grafo intero: la tavola unica |
-| `"idraulica"` | tutto **tranne** i cavi e i bus, e tranne i pezzi che stanno solo sul comando (quadro, sezionatore, relè d'appoggio, regolatore, sonda esterna). La sonda a immersione resta sul suo tubo, senza il cavo |
-| `"elettrico"` | i **soli** cavi e bus, e i pezzi che toccano: quadro, sezionatore, relè d'appoggio, regolatore, sonde, e le macchine, i circolatori e le valvole che hanno un cavo. Niente acqua |
+| `"idraulica"` | tutto **tranne** i cavi e i bus, e tranne i pezzi che stanno solo sul comando (quadro, sezionatore, relè d'appoggio, termostato ambiente a contatto, regolatore, sonda esterna). La sonda a immersione resta sul suo tubo, senza il cavo |
+| `"elettrico"` | i **soli** cavi e bus, e i pezzi che toccano: quadro, sezionatore, relè d'appoggio, termostato ambiente a contatto, regolatore, sonde, e le macchine, i circolatori e le valvole che hanno un cavo. Niente acqua. La tabella in alto a sinistra elenca **ogni pezzo** della tavola con la sua sigla, tranne il sezionatore (I-276) |
 
 Per due tavole scrivi **due piani** sullo stesso grafo completo, `piano-idraulica.json` con
 `"vista": "idraulica"` e `piano-elettrico.json` con `"vista": "elettrico"`, e disegna due volte. Il
@@ -590,6 +594,16 @@ I pezzi da posare non sono gli stessi nelle due viste: chiedili per ciascuna, co
 circolatore va nel piano**: non ha il suo tubo, e non sta più in linea. Il sezionatore resta in
 linea sul suo cavo, e lo posa il motore. **Il relè d'appoggio va nel piano** anche lui: ha tre
 attacchi, e non sta in linea.
+
+**Il termostato ambiente a contatto** (`room-thermostat-contact`, I-269) sta in linea sul cavo
+fra il quadro e il circolatore che accende, come il sezionatore: **non va nel piano**, lo posa il
+motore sulla linea, con la sigla (TAC-01) e il nome del locale (`etichetta`) accanto, e sta solo
+sulla tavola dell'elettrico. Tu dai al motore una linea su cui stia: il quadro e il circolatore
+posati in modo che il cavo fra i due abbia un tratto dritto di almeno **due centimetri** — il
+segno è largo un centimetro, e sigla e locale gli stanno sopra e sotto (o ai lati, se il tratto è
+verticale). Una linea che dal quadro gira subito sul circolatore lo schiaccia contro la piega:
+allontana il circolatore. Se il circolatore ha anche un relè (il caso del §4.8 di Capire in cui
+il contatto non basta), il termostato sta sul cavo della bobina, fra il quadro e il relè.
 
 #### Come si compone la tavola dell'elettrico
 

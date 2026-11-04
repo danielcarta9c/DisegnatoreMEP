@@ -1,24 +1,32 @@
-# L'ultima release: 1.9.0
+# L'ultima release: 1.11.0
 
-`DisegnatoreMEP-v1.9.0.zip` — sha256 `248730560b224e43…`, 140 file — è `REL-011`: **le regole del corredo contro il
-manuale Shenling ThermaX R290 e la specifica tecnica di installazione Nove C**, decise col PO un punto alla volta
-(I-243 … I-264, D-217 … D-232). Si carica come ogni skill personale, dallo ZIP così com'è.
+`DisegnatoreMEP-v1.11.0.zip` — sha256 `2fd795f3dcca463a…`, 144 file — è ancora `REL-017`, con **il tubo da comprare
+sulla tavola** al posto del diametro interno (I-279, I-281, D-233). Si carica come ogni skill personale, dallo ZIP così
+com'è.
 
-Rispetto alla 1.8.1:
-- **il corredo della pompa di calore**: giunti antivibranti attaccati alla macchina; valvole antigelo nelle case (sopra i
-  35 kW si chiede glicole o valvole); il ritegno su ogni generatore in parallelo, fra sicurezza e rubinetto; vaso,
-  riempimento e manometro fra le macchine e il defangatore; il gruppo di riempimento con disconnettore;
-- **le domande**: il volano a 4 attacchi quando manca, il vaso separato dalle macchine; gli avvisi del manuale
-  (portata fuori campo, volano sotto il minimo, schema in serie);
-- **il vaso dimensionato** (`mep.py vaso`) e **il livello del progetto**: nell'esecutivo precarica, tarature, pressione
-  di carica e il riquadro delle note di posa;
-- **il DN mai sotto l'attacco** delle Shenling;
-- **il relè d'appoggio da 10 A** fra la pompa di calore e ogni circolatore;
-- **la distinta** rivista su una commessa aria-aria, e la **lista della spesa** per l'installatore (`distinta --lista`).
+Rispetto alla 1.10.0:
+- **il materiale delle tubazioni** (`materiale_tubazioni`: multistrato, acciaio, rame; sul progetto o sulla rete),
+  multistrato se il testo non lo dice, dichiarato come assunzione;
+- **il tubo commerciale scelto per velocità** (tab. 9 del Quaderno Caleffi 5, sul pollice del tubo): «MS 32×3»,
+  «DN 25 (1")», «Cu 28×1» sulla tavola, con la riga della legenda del materiale; l'Øi resta solo nel foglio dei calcoli
+  (Øi minimo, tubo, Øi reale, velocità); le tabelle dei tubi con le fonti in `diametri/tubi.json`;
+- **il tubo del progettista vince** (`sezione`), con un avviso se la velocità supera il limite;
+- **una scritta per tratta**, niente sui tratti cortissimi fra due raccordi e sugli stacchi;
+- **la distinta** con la stessa dicitura («multistrato MS 32×3») e il pollice degli accessori in linea;
+- **la nota dell'isolamento** con lo spessore sul tubo vero («MS 32×3: 30 mm»);
+- **l'attacco della Shenling non è più un minimo** (D-233, emenda D-223): di regola MS 32×3 sul 12 kW, MS 40×3,5 sul
+  15 kW; dove il tubo è sotto l'attacco c'è **la riduzione all'attacco**, un pezzo con il suo simbolo (trapezio, proposta)
+  subito dopo il giunto antivibrante, in legenda e in distinta;
+- **la prevalenza della pompa a bordo**: senza il dato del progettista, 8 m c.a. sulle Shenling (indicativo del PO).
 
-Il banco di regressione di `REL-011` (24 tavole idroniche): tutte cambiano — la legenda del gruppo di riempimento e il
-corredo nuovo —, 22 con gli stessi numeri, due tavole di confronto della prova del PO con più pieghe. Le prove sono in
-`docs/collaudi/REL-011/`.
+Il banco di regressione di `REL-011` (24 tavole idroniche): 24 su 24 con 0 tratte cedute e 0 rilievi bloccanti.
+Le prove sono in `docs/collaudi/REL-017/tubi/` e `docs/collaudi/REL-017/riduzione/`.
+
+Prima, la **1.10.0**: i rilievi di una commessa reale (I-269 … I-277) — il termostato ambiente a contatto, la tabella
+elettrica con i dati elettrici, il vaso sanitario messo dalla regola, le note di posa del progettista, l'avviso della
+prevalenza, scarico, sigla e legenda.
+
+Prima, la **1.9.0** (`REL-011`): il corredo contro il manuale Shenling e la specifica Nove C (D-217 … D-232).
 
 Prima, la **1.8.1**: la terza via della deviatrice verso la serpentina del bollitore corre accanto al ritorno (I-240).
 

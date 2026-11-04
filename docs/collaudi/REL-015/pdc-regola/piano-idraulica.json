@@ -7,7 +7,8 @@
   "Corredo del ritorno PdC (vaso, riempimento, manometro) appeso in giu' dal ritorno, a sinistra della deviatrice, fuori dalla colonna del serpentino (A4, par. 6).",
   "Secondario del volano dritto fino al collettore (I-204); zona pannelli a sinistra sotto il collettore con il ritorno che scavalca la mandata una volta per arrivare a ret_1; zona radiatori dritta sotto out_2/ret_2.",
   "Giro 2: posa stretta per stare nell'A3 (D3): 20 mm tolti al ritorno della PdC, 20 mm fra ACS e distribuzione; stacchi riportati al minimo (A4).",
-  "REL-015: la sonda del volano sull'attacco della sonda, a sinistra del volano, fra la terza via della deviatrice e il volano."
+  "REL-015: la sonda del volano sull'attacco della sonda, a sinistra del volano, fra la terza via della deviatrice e il volano.",
+  "REL-011 (4 novembre 2026): il corredo nuovo della pompa di calore (D-222 giunto antivibrante, D-230 valvola antigelo, D-218 vaso, riempimento e manometro fra le macchine e il defangatore). Mandata: la sicurezza da 40 a 62.5, dopo il giunto; l'antigelo si posa dopo di lei. Ritorno: vaso, riempimento e manometro a 80 / 95 / 110 (erano 90 / 105 / 120), con giunto, antigelo e filtro fra la macchina e il vaso e il defangatore fra il manometro e il raccordo; per fargli posto tutto cio' che stava da x 130 in poi (raccordo del ritorno, deviatrice, volano, bollitore, distribuzione) e l'acquedotto si spostano di 15 mm a destra."
  ],
  "pezzi": {
   "pdc": {
@@ -16,160 +17,160 @@
    "regola": "D-159 quota della porta"
   },
   "tee-valve-safety-pdc-water-supply": {
-   "x": 40,
+   "x": 62.5,
    "y": 2.5,
    "regola": "B8 sulla quota della mandata"
   },
   "valve-safety-pdc-water-supply": {
-   "x": 40,
+   "x": 62.5,
    "y": -17.5,
    "regola": "A4 stacco 10 mm"
   },
   "deviatrice": {
-   "x": 145,
+   "x": 160,
    "y": 0,
    "rotazione": 0,
    "regola": "terza via in basso verso il bollitore"
   },
   "conf-ritorno-pdc": {
-   "x": 135,
+   "x": 150,
    "y": 17.5,
    "regola": "B8 sulla quota del ritorno"
   },
   "tee-expansion-connection-pdc-water-return": {
-   "x": 90,
+   "x": 80,
    "y": 17.5
   },
   "expansion-connection-pdc-water-return": {
-   "x": 90,
+   "x": 80,
    "y": 42.5,
    "regola": "A4, stacco con la valvola bloccabile"
   },
   "tee-filling-unit-pdc-water-return-b": {
-   "x": 105,
+   "x": 95,
    "y": 17.5
   },
   "filling-unit-pdc-water-return": {
-   "x": 105,
+   "x": 95,
    "y": 32.5,
    "rotazione": 180,
    "regola": "uscita in alto verso il ritorno"
   },
   "inlet-filling-unit-pdc-water-return": {
-   "x": 105,
+   "x": 95,
    "y": 52.5,
    "regola": "A4"
   },
   "tee-pressure-gauge-pdc-water-return": {
-   "x": 120,
+   "x": 110,
    "y": 17.5
   },
   "pressure-gauge-pdc-water-return": {
-   "x": 120,
+   "x": 110,
    "y": 42.5,
    "regola": "A4, stacco con il rubinetto portamanometro"
   },
   "volano": {
-   "x": 185,
+   "x": 200,
    "y": 0,
    "regola": "D-159 stesso y della PdC"
   },
   "air-vent-volano-primary-out": {
-   "x": 195,
+   "x": 210,
    "y": -7.5,
    "regola": "sfiato addosso al vent"
   },
   "drain-connection-volano-primary-in": {
-   "x": 195,
+   "x": 210,
    "y": 55,
    "regola": "A4"
   },
   "bollitore": {
-   "x": 185,
+   "x": 200,
    "y": 90,
    "regola": "A1 fascia accumuli, sotto il volano"
   },
   "acquedotto": {
-   "x": 125,
+   "x": 140,
    "y": 125,
    "regola": "A4 addosso al bollitore"
   },
   "tee-drain-connection-cold-bollitore-cold-in": {
-   "x": 150,
+   "x": 165,
    "y": 125
   },
   "drain-connection-cold-bollitore-cold-in": {
-   "x": 150,
+   "x": 165,
    "y": 140,
    "regola": "A4"
   },
   "mixing-valve-thermostatic-bollitore-dhw-out": {
-   "x": 225,
+   "x": 240,
    "y": 72.5,
    "rotazione": 180,
    "specchio": true,
    "regola": "acqua fredda dall'alto"
   },
   "inlet-mixing-valve-thermostatic-bollitore-dhw-out": {
-   "x": 225,
+   "x": 240,
    "y": 50,
    "regola": "A4"
   },
   "utenze-acs": {
-   "x": 250,
+   "x": 265,
    "y": 75,
    "regola": "A4"
   },
   "ricircolo-acs": {
-   "x": 255,
+   "x": 270,
    "y": 100,
    "regola": "A4, ricircolo da destra"
   },
   "sonda-bollitore": {
-   "x": 220,
+   "x": 235,
    "y": 107.5,
    "regola": "sulla sede sonda del bollitore"
   },
   "collettore": {
-   "x": 300,
+   "x": 315,
    "y": 2.5,
    "regola": "I-204 secondario dritto"
   },
   "miscelatrice": {
-   "x": 302.5,
+   "x": 317.5,
    "y": 50,
    "rotazione": 90,
    "regola": "D-168 in alto, uscita in basso, terza via a sinistra verso il ritorno"
   },
   "rip-ritorno-pannelli": {
-   "x": 270,
+   "x": 285,
    "y": 52.5
   },
   "der-sonda-pannelli": {
-   "x": 305,
+   "x": 320,
    "y": 105
   },
   "sonda-pannelli": {
-   "x": 285,
+   "x": 300,
    "y": 105,
    "regola": "A4"
   },
   "pannelli": {
-   "x": 270,
+   "x": 285,
    "y": 125,
    "rotazione": 90,
    "regola": "attacchi in alto: ritorno a sinistra, mandata a destra"
   },
   "radiatori": {
-   "x": 325,
+   "x": 340,
    "y": 75,
    "rotazione": 270,
    "specchio": true,
    "regola": "par. centrale grande punto 5"
   },
   "sonda-volano": {
-   "x": 165.0,
-   "y": 30.0,
+   "x": 180,
+   "y": 30,
    "regola": "sull'attacco della sonda del volano"
   }
  }

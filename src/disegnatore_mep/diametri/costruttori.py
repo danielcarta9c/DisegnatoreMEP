@@ -5,9 +5,21 @@ domestiche dove di fatto installiamo sempre Shenling … serve per la garanzia)�
 stanno i **numeri** del manuale che la skill controlla — non le regole degli accessori, che
 stanno in `rules/hydronic/`:
 
-- **il DN minimo** sul tratto fra la macchina e il collettore: non sotto l'attacco (D-223);
+- **l'attacco** della macchina, in pollici: dove il tubo scelto dalla velocita' e' piu'
+  piccolo, all'attacco c'e' una riduzione (`riduzioni_all_attacco`, I-281);
 - **il campo della portata** d'acqua del modello (D-223);
-- **il tampone minimo** per unita' (D-226).
+- **il tampone minimo** per unita' (D-226);
+- **la prevalenza indicativa** della pompa a bordo, quando il progettista non la da'
+  (I-281).
+
+**L'attacco non e' piu' un minimo del tubo** (I-281, che supera D-223 punto 1). Fino a
+REL-017 il tratto fra la macchina e il collettore non scendeva sotto l'attacco: 1" per le
+ThermaX 6–9 kW, 1¼" per le 12–15 kW. Due commesse realizzate in multistrato 32×3, con
+gli accessori da 1", su macchine da 15 e da 12 kW funzionano, e il PO: «decidiamo con la
+velocità. Tendenzialmente pero' sulla 12 mettiamo il 32 (a meno che non ci sia troppa
+distanza) mentre sulla 15 mettiamo il 40». La velocita' da' proprio questo — 12 kW con
+5 K: MS 32×3 a 1,08 m/s; 15 kW: 1,35 m/s nel 32×3, oltre 1,3, quindi MS 40×3,5 —, e la
+«troppa distanza» la decide la verifica della prevalenza (`perdite`).
 
 La macchina si riconosce dalla marca («Shenling») e dalla potenza nominale che il
 progettista scrive (6, 9, 12, 15 kW, la serie ThermaX R290): il catalogo e' generico e non
@@ -23,24 +35,32 @@ from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.model.project import MARCA, ComponentInstance, ProjectModel
 
 from .calcolatore import portata_da_potenza
+from .tubi import Tubo, ordine_del_pollice
 
 
 @dataclass(frozen=True)
 class DatiDelModello:
     """I numeri del manuale per una taglia."""
 
-    dn_minimo: int
-    """L'attacco della macchina, come DN: 1" e' DN 25, 1¼" e' DN 32."""
+    attacco: str
+    """L'attacco d'acqua della macchina, in pollici: «1"», «1¼"»."""
     portata_minima_m3h: float
     portata_massima_m3h: float
     tampone_minimo_l: float
+    prevalenza_indicativa_m: float = 8.0
+    """La prevalenza della pompa a bordo con cui si verifica il giro quando il
+    progettista non da' la sua (`perdite`, I-281). Il PO: «dovrebbe stare sui 8/9 metri»;
+    si prende il valore basso. **E' indicativa**: probabilmente e' piu' vicina alla
+    prevalenza massima della pompa (a portata nulla) che a quella utile alla portata di
+    progetto, che e' minore; il valore vero e' la curva del manuale alla portata, che la
+    skill non ha letto (D-223)."""
 
 
 SHENLING_THERMAX_R290: dict[float, DatiDelModello] = {
-    6.0: DatiDelModello(25, 0.50, 1.25, 25.0),
-    9.0: DatiDelModello(25, 0.50, 2.10, 25.0),
-    12.0: DatiDelModello(32, 0.90, 2.50, 40.0),
-    15.0: DatiDelModello(32, 0.90, 3.00, 40.0),
+    6.0: DatiDelModello('1"', 0.50, 1.25, 25.0),
+    9.0: DatiDelModello('1"', 0.50, 2.10, 25.0),
+    12.0: DatiDelModello('1¼"', 0.90, 2.50, 40.0),
+    15.0: DatiDelModello('1¼"', 0.90, 3.00, 40.0),
 }
 """ThermaX R290 6-15 kW: attacchi R1" (6, 9 kW) e R1-1/4" (12, 15 kW); portata d'acqua
 6 kW 0,50-1,25, 9 kW 0,50-2,10, 12 kW 0,90-2,50, 15 kW 0,90-3,00 m³/h; tampone almeno 25 l
@@ -164,7 +184,46 @@ def _volumi(serbatoi: Iterable[ComponentInstance]) -> float | None:
     return totale
 
 
-def dn_della_macchina(capi: Iterable[str], pezzi: dict[str, ComponentInstance]) -> int | None:
-    """Il DN minimo che l'attacco di una macchina impone al tratto che ne esce (D-223)."""
-    minimi = [d.dn_minimo for capo in capi if capo in pezzi and (d := dati_del_modello(pezzi[capo]))]
-    return max(minimi) if minimi else None
+@dataclass(frozen=True)
+class RiduzioneAllAttacco:
+    """Un attacco della macchina piu' grande del tubo che ci arriva (I-281)."""
+
+    macchina: str
+    """L'id del pezzo."""
+    porta: str
+    attacco: str
+    """L'attacco della macchina in pollici: «1¼"»."""
+    tubo: Tubo
+    """Il tubo che ci arriva: il pollice dei suoi raccordi e' piu' piccolo."""
+
+    @property
+    def in_parole(self) -> str:
+        tubo = self.tubo.scritta if self.tubo.materiale == "acciaio" else f"{self.tubo.scritta} ({self.tubo.pollici})"
+        return f"attacco {self.attacco}, tubo {tubo}: riduzione all'attacco"
+
+
+def riduzioni_all_attacco(project: ProjectModel, catalog: ComponentRegistry) -> list[RiduzioneAllAttacco]:
+    """Gli attacchi d'acqua delle macchine dove il tubo che ci arriva ha il pollice piu'
+    piccolo dell'attacco: li' va una riduzione (I-281). **Una funzione sola**, che
+    `riduzioni.posa_le_riduzioni` legge per posare il pezzo della riduzione (D-233).
+
+    Il tubo e' quello che la tavola scrive (`tratti.tubi_delle_tubazioni`): del
+    progettista, o del calcolo. Senza un tubo noto sull'attacco, niente."""
+    from .tratti import tubi_delle_tubazioni
+
+    pezzi = {p.id: p for p in project.components}
+    macchine = {pid: dati for pid, p in pezzi.items() if (dati := dati_del_modello(p)) is not None}
+    if not macchine:
+        return []
+    tubi = tubi_delle_tubazioni(project, catalog)
+    riduzioni: list[RiduzioneAllAttacco] = []
+    for tubazione in project.connections:
+        tubo = tubi.get(tubazione.id)
+        if tubo is None:
+            continue
+        for capo in (tubazione.endpoint_a, tubazione.endpoint_b):
+            dati = macchine.get(capo.component_id)
+            if dati is None or ordine_del_pollice(tubo.pollici) >= ordine_del_pollice(dati.attacco):
+                continue
+            riduzioni.append(RiduzioneAllAttacco(capo.component_id, capo.port_id, dati.attacco, tubo))
+    return sorted(riduzioni, key=lambda item: (item.macchina, item.porta))

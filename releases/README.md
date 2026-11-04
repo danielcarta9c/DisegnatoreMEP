@@ -67,3 +67,17 @@ Il comando della skill li riapre da sé.
   sotto l'attacco Shenling; il vaso dimensionato (`mep.py vaso`) e il livello del progetto (definitivo / esecutivo),
   con tarature e note di posa solo nell'esecutivo; il relè d'appoggio da 10 A fra la pompa di calore e i circolatori;
   la distinta rivista e la lista della spesa (`distinta --lista`). 140 file.
+- **1.10.0** — 4 novembre 2026 (`REL-017`): i rilievi di una commessa reale (I-269 … I-277) — il **termostato ambiente
+  a contatto** in serie sulla linea quadro → circolatore (TAC-nn, niente relè); la **tabella della tavola elettrica**
+  con tutti i pezzi del foglio e le sole caratteristiche elettriche (alimentazione, potenza elettrica, corrente
+  massima, cavo minimo); il **vaso sanitario** messo dalla regola fra gruppo di sicurezza e bollitore anche quando il
+  bollitore non lo ha (`non_a_bordo`), e quello scritto a mano a monte del non ritorno fermato; le **note di posa del
+  progettista** (`note_di_posa`, `note_tolte`); l'**avviso della prevalenza** della pompa a bordo sul giro primario;
+  le lunghezze del progettista non più perse da `completa`; lo **scarico** senza freccia, la sigla del volano accanto
+  al suo simbolo, i simboli della legenda che non si toccano. 141 file.
+- **1.11.0** — 4 novembre 2026 (`REL-017`, I-279, I-281, D-233): **sulla tavola il tubo da comprare**, non l'Øi — il
+  materiale delle tubazioni (`materiale_tubazioni`, multistrato di base), il tubo commerciale scelto per velocità
+  («MS 32×3», «DN 25 (1")», «Cu 28×1») con la sua legenda, l'Øi solo nel foglio dei calcoli, il tubo del progettista
+  che vince con un avviso, una scritta per tratta; la distinta con la stessa dicitura e il pollice degli accessori; la
+  nota dell'isolamento sul tubo vero; l'attacco della Shenling non più un minimo ma la **riduzione all'attacco**, un
+  pezzo con il suo simbolo dopo il giunto antivibrante; la prevalenza della pompa a bordo assunta 8 m se non data. 144 file.

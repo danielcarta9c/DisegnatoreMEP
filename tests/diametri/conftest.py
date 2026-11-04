@@ -56,6 +56,9 @@ def documento(
     if con_i_dati:
         for identificativo, proprieta in dati["pezzi"].items():
             pezzi[identificativo]["properties"].update(proprieta)
+    if "materiale_tubazioni" in dati:
+        # Il materiale delle tubazioni (I-279): l'impianto 5, la cascata da 120 kW, e' in acciaio.
+        testo["materiale_tubazioni"] = dati["materiale_tubazioni"]
     esistenti = set(dati.get("esistenti", []))
     for rete in testo["networks"]:
         if rete["id"] in esistenti:

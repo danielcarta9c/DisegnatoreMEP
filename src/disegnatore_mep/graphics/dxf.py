@@ -54,6 +54,7 @@ from disegnatore_mep.layout.legend import (
     RETURN_NAMES,
     basi_delle_righe,
     righe_del_nome,
+    scala_del_simbolo,
     style_for,
 )
 from disegnatore_mep.model.types import PortFlow
@@ -120,7 +121,7 @@ che le linee guida AIA danno alle tabelle, accanto a `LEGN`, «Legends, symbol
 keys» (AIA CAD Layer Guidelines, §3, codici delle annotazioni:
 https://facilities.duke.edu/sites/default/files/AIA%20CAD%20Layer%20Guidelines.pdf)."""
 LAYER_DIAMETRI = "M-ANNO-DIAM"
-"""I diametri delle tubazioni (REL-007): «Øi 32» lungo le linee. `DIAM` e' un
+"""I diametri delle tubazioni (REL-007, I-279): «MS 32×3» lungo le linee. `DIAM` e' un
 codice del progetto, di quattro caratteri come le linee guida AIA ammettono per i
 codici dell'utente, e il layer lo spiega nella sua descrizione (SRC-044): le linee
 guida non hanno un gruppo per le dimensioni delle tubazioni scritte in testo, e
@@ -740,7 +741,7 @@ class _Tavola:
             )
             self.layer(
                 LAYER_DIAMETRI,
-                "Diametri delle tubazioni: Øi, diametro interno netto minimo in mm"
+                "Diametri delle tubazioni: il tubo da comprare (MS multistrato, DN acciaio, Cu rame)"
                 + ("; e le scritte dei tratti, Ø · L, dato del progettista" if scritte else ""),
                 None, "none", thin,
             )
@@ -1053,7 +1054,8 @@ class _Tavola:
         for entry in self.sheet.legend:
             simbolo = self.symbols.get(entry.symbol_id)
             manifest = simbolo.manifest
-            scala = min(1.0, LEGEND_SWATCH_MM / manifest.width_mm, LEGEND_SWATCH_MM / manifest.height_mm)
+            # Alto al piu' quanto il passo meno lo stacco, non quanto il campione (I-275).
+            scala = scala_del_simbolo(manifest.width_mm, manifest.height_mm, LEGEND_SWATCH_MM)
             top = entry.anchor.y_mm - LEGEND_SWATCH_MM
             left = entry.anchor.x_mm + (LEGEND_SWATCH_MM - manifest.width_mm * scala) / 2
             middle = top + (LEGEND_SWATCH_MM - manifest.height_mm * scala) / 2

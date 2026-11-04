@@ -19,7 +19,16 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from .confezioni import in_confezioni
-from .grafo import Impianto, Pezzo, Tratta, leggi_impianto, numero, tratte_dell_impianto
+from .grafo import (
+    Impianto,
+    Pezzo,
+    Tratta,
+    TubiDelloSchema,
+    con_i_tubi,
+    leggi_impianto,
+    numero,
+    tratte_dell_impianto,
+)
 from .lunghezze import Minimo, da_quotare, in_parole, per_eccesso, quante_volte
 from .regole import Fornitura, RegoleDellaDistinta, la_fornitura
 
@@ -223,6 +232,8 @@ class _Lavoro:
     nomi_del_catalogo: Mapping[str, str]
     nomi_dei_fluidi: Mapping[str, str]
     fornitura: Fornitura
+    pollici: Mapping[str, str] = field(default_factory=dict)
+    """Il pollice degli accessori in linea sull'acqua (I-279)."""
     voci: list[Voce] = field(default_factory=list)
     avvisi: list[str] = field(default_factory=list)
     domande_dei_tratti: list[str] = field(default_factory=list)
@@ -816,11 +827,12 @@ def _corredo(lavoro: _Lavoro) -> None:
     righe: dict[tuple[str, str, str, str], Voce] = {}
     per_locale: dict[int, tuple[list[_Locale], list[Pezzo]]] = {}
     """Le righe contate per locale, con i locali e le bocchette senza locale."""
-    senza_corredo: dict[str, list[Pezzo]] = {}
+    senza_corredo: dict[tuple[str, str | None], list[Pezzo]] = {}
     for pezzo in lavoro.impianto.pezzi.values():
         corredo = lavoro.regole.corredo.get(pezzo.voce)
         if corredo is None:
-            senza_corredo.setdefault(pezzo.voce, []).append(pezzo)
+            # Un accessorio in linea sull'acqua porta il pollice del suo tubo (I-279).
+            senza_corredo.setdefault((pezzo.voce, lavoro.pollici.get(pezzo.id)), []).append(pezzo)
             continue
         valori: dict[str, Any] = {k: v for k, v in pezzo.proprieta.items() if v not in (None, "")}
         valori["sigla"] = pezzo.sigla
@@ -917,8 +929,8 @@ def _corredo(lavoro: _Lavoro) -> None:
         else:
             riga.calcolo = _elenco(parti)
             riga.note = ", ".join(f"{s} {in_parole(q)}" for s, q in parti)
-    for voce, pezzi in senza_corredo.items():
-        nome = lavoro.nome_della_voce(voce)
+    for (voce, pollice), pezzi in senza_corredo.items():
+        nome = lavoro.nome_della_voce(voce) + (f" {pollice}" if pollice else "")
         sigle = ", ".join(p.sigla for p in pezzi)
         lavoro.voci.append(
             Voce(
@@ -1209,13 +1221,17 @@ def componi_la_distinta(
     nomi_dei_fluidi: Mapping[str, str] | None = None,
     sigle: Mapping[str, str] | None = None,
     fornitura: Fornitura | None = None,
+    tubi: TubiDelloSchema | None = None,
 ) -> Distinta:
     """La distinta del grafo completo. `nomi_del_catalogo` e `nomi_dei_fluidi` danno i
     nomi in parole; senza, valgono quelli del corredo e gli id dei fluidi. `sigle` sono
     quelle dello schema (`grafo.sigle_dello_schema`): senza, valgono quelle scritte
     dall'ingegnere e poi le etichette. `fornitura` e' la scelta dell'offerta: senza,
-    le predefinite delle regole, dichiarate da confermare."""
-    impianto = leggi_impianto(grafo, sigle, nomi_del_catalogo, nomi_dei_fluidi)
+    le predefinite delle regole, dichiarate da confermare. `tubi` sono i tubi d'acqua
+    della tavola (`grafo.tubi_dello_schema`, I-279): la linea li dice come la tavola,
+    «multistrato MS 32×3», e gli accessori in linea portano il pollice del tubo."""
+    tubi = tubi or TubiDelloSchema()
+    impianto = con_i_tubi(leggi_impianto(grafo, sigle, nomi_del_catalogo, nomi_dei_fluidi), tubi)
     passanti = [voce for voce, corredo in regole.corredo.items() if corredo.get("passante")]
     lavoro = _Lavoro(
         impianto=impianto,
@@ -1224,6 +1240,7 @@ def componi_la_distinta(
         nomi_del_catalogo=nomi_del_catalogo or {},
         nomi_dei_fluidi=nomi_dei_fluidi or {},
         fornitura=fornitura or la_fornitura(regole),
+        pollici=tubi.pollici,
     )
     if impianto.esclusi:
         lavoro.avvisi.append(f"Esistenti, fuori dalla distinta: {', '.join(impianto.esclusi)}.")

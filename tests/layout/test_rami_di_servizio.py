@@ -10,7 +10,10 @@ La traduzione PM (`docs/pm/2026-09-08-rilievi-po-draw005-r1.md`):
 - riempimento: flusso verso la rete tecnica, la freccia punta dal gruppo verso il
   circuito;
 - misura, espansione, sfiato e sicurezza su stacco: nessuna freccia di circolazione;
-- eventuale scarico esplicitamente modellato: freccia verso lo scarico;
+- eventuale scarico esplicitamente modellato: verso uscente, **ma senza freccia**
+  (REL-017, I-273: il PO ha visto lo scarico del volano «rosso con la freccia»; e'
+  un rubinetto chiuso, statico come il vaso), e appeso a una macchina il colore
+  del ritorno;
 - il componente `P` resta un manometro.
 
 La semantica e' **generale**: tre specie di tratto — flusso ordinario, ramo statico,
@@ -418,6 +421,27 @@ def test_riempimento_vaso_e_manometro_sono_ritorno_tecnico(index: int) -> None:
             assert kinds[trunk.connection_ids].supply is True, trunk
 
 
+@pytest.mark.parametrize("index", range(len(CASI)), ids=CASI_IDS)
+def test_lo_scarico_appeso_a_una_macchina_e_ritorno_e_non_porta_la_freccia(index: int) -> None:
+    """REL-017, I-273: lo scarico in fondo al volano era disegnato rosso — il colore
+    base del fluido, cioe' l'andata — e con la freccia. Sta nel punto piu' basso,
+    dove l'acqua torna fredda: e' ritorno; ed e' un rubinetto chiuso: nessuna
+    freccia, come il vaso e il manometro (I-042)."""
+    project = _done(index)
+    branches = Branches(project)
+    kinds = classify_trunks(project, catalog(), branches.trunks)
+    checked = 0
+    for trunk in branches.branches_with("drain"):
+        assert not kinds[trunk.connection_ids].kind.porta_la_freccia, trunk
+        root = branches.root_of(trunk)
+        assert root is not None
+        if branches.definitions[root.component_id].is_a_fitting:
+            continue
+        assert kinds[trunk.connection_ids].supply is False, trunk
+        checked += 1
+    assert checked >= 1
+
+
 def test_la_classificazione_non_legge_nessuna_coordinata() -> None:
     """La firma della classificazione: modello, catalogo, tratte. Niente di
     posato, niente di instradato puo' entrarci."""
@@ -559,17 +583,18 @@ def _arrow_at(arrows: list[tuple[Pt, Pt]], point: Pt, along: Pt) -> list[float]:
 
 @pytest.mark.parametrize("index", range(len(CASI)), ids=CASI_IDS)
 def test_nessuna_freccia_sui_rami_statici_e_la_freccia_giusta_sugli_altri(index: int) -> None:
-    """Sui rami statici nessuna freccia; su tutti gli altri una freccia per
-    pezzo di spezzata, nel verso che la specie prescrive."""
+    """Sui rami statici e sugli scarichi nessuna freccia (I-042, I-273); su tutti
+    gli altri una freccia per pezzo di spezzata, nel verso che la specie prescrive."""
     sheet = _drawing(index).sheets[0]
     root = ElementTree.fromstring(render_sheet(sheet, NOVE_C_A3, symbols()))
     arrows = _arrows(root)
     assert arrows
     static = [route for route in sheet.routes if route.flow_kind is FlowKind.STATIC]
     assert static
+    assert any(route.flow_kind is FlowKind.OUTBOUND for route in sheet.routes)
     for route in sheet.routes:
         stations = _arrow_stations(route)
-        if route.flow_kind is FlowKind.STATIC:
+        if not route.flow_kind.porta_la_freccia:
             for point, along in stations:
                 assert not _arrow_at(arrows, point, along), (route.connection_ids, point)
             continue
@@ -638,7 +663,8 @@ def test_il_colore_dello_stacco_e_quello_della_tratta_ospite(index: int) -> None
 
 def test_il_renderer_disegna_la_freccia_secondo_la_specie_e_non_secondo_la_geometria() -> None:
     """Quattro tratte identiche sulla carta, quattro specie: la freccia cambia
-    solo per la specie dichiarata."""
+    solo per la specie dichiarata. Lo scarico non la porta (REL-017, I-273): era
+    la terza freccia di questa prova, e il PO l'ha vista sotto il volano."""
     segment = [Point(x_mm=100.0, y_mm=100.0), Point(x_mm=140.0, y_mm=100.0)]
     routes = [
         RoutedTrunk(
@@ -662,10 +688,10 @@ def test_il_renderer_disegna_la_freccia_secondo_la_specie_e_non_secondo_la_geome
     sheet = SheetGeometry(sheet_id="t", title="prova", routes=routes)
     root = ElementTree.fromstring(render_sheet(sheet, NOVE_C_A3, symbols()))
     arrows = _arrows(root)
-    assert len(arrows) == 3
+    assert len(arrows) == 2
     for route in routes:
         mine = [(tip, base) for tip, base in arrows if _on_route(tip, route)]
-        if route.flow_kind is FlowKind.STATIC:
+        if route.flow_kind in (FlowKind.STATIC, FlowKind.OUTBOUND):
             assert not mine
             continue
         assert len(mine) == 1, route.connection_ids

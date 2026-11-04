@@ -1,5 +1,5 @@
 {
-  "_nota": "Dati di prova dei diametri (REL-007), inventati: il repository e' pubblico (D-038), e nessuno di questi numeri e' di un impianto vero. Si aggiungono ai grafi approvati insieme ai dati della tabella di REL-006 (docs/collaudi/REL-006/dati-di-prova.json), che portano gia' le potenze dei generatori e le portate dei circolatori. Qui ci sono i salti termici, le potenze delle zone dell'impianto 3 e le portate di progetto delle reti sanitarie. Il sanitario delle tavole 2 e 3 resta senza dati apposta: li' il DN non compare. Le portate di progetto delle utenze e le potenze delle zone, come ogni dato del progettista, la tavola le scrive accanto al pezzo (D-052). La tavola 1-retrofit e' l'impianto 1 con la distribuzione esistente (I-145): diametri chiesti sul solo primario.",
+  "_nota": "Dati di prova dei diametri (REL-007), inventati: il repository e' pubblico (D-038), e nessuno di questi numeri e' di un impianto vero. Si aggiungono ai grafi approvati insieme ai dati della tabella di REL-006 (docs/collaudi/REL-006/dati-di-prova.json), che portano gia' le potenze dei generatori e le portate dei circolatori. Qui ci sono i salti termici, le potenze delle zone dell'impianto 3 e le portate di progetto delle reti sanitarie. Il sanitario delle tavole 2 e 3 resta senza dati apposta: li' il DN non compare. Le portate di progetto delle utenze e le potenze delle zone, come ogni dato del progettista, la tavola le scrive accanto al pezzo (D-052). La tavola 1-retrofit e' l'impianto 1 con la distribuzione esistente (I-145): diametri chiesti sul solo primario. L'impianto 5, la cascata di tre pompe di calore da 40 kW, e' in acciaio (`materiale_tubazioni`, I-279): le tre macchine insieme portano 20,7 m³/h, oltre il multistrato piu' grande della tabella (MS 63×4,5).",
   "impianti": {
     "1": {
       "reti": "tutte",
@@ -35,6 +35,7 @@
     },
     "5": {
       "reti": "tutte",
+      "materiale_tubazioni": "acciaio",
       "pezzi": {
         "pdc-1": {"delta_t_k": 5},
         "pdc-2": {"delta_t_k": 5},

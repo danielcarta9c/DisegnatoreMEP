@@ -36,6 +36,16 @@ DEL_CARTIGLIO: tuple[str, ...] = (
 progetto (REL-011, D-224)."""
 
 
+MaterialeDelleTubazioni = Literal["multistrato", "acciaio", "rame"]
+"""I materiali delle tubazioni che il calcolo dei diametri conosce (I-279,
+`diametri.tubi`)."""
+
+SoggettoDellaNota = Literal["isolamento", "antigelo", "sfiati", "vaso", "sonda"]
+"""I soggetti delle cinque note di posa che la skill genera (D-232, `graphics.note`): la
+parola con cui una nota del progettista ne prende il posto, e il nome con cui la toglie
+(REL-017, I-271)."""
+
+
 def _senza_i_vuoti(dati: dict[str, Any], nomi: tuple[str, ...]) -> dict[str, Any]:
     for nome in nomi:
         if dati.get(nome) is None:
@@ -85,6 +95,29 @@ class ProjectMetadata(StrictModel):
     **esecutivo** (esecutivo-costruttivo) si'. Lo chiede l'agente al progettista
     all'inizio. Assente vale definitivo: i grafi agli atti non cambiano."""
 
+    note_di_posa: list[str] = Field(default_factory=list)
+    """Le note di posa **del progettista** (REL-017, I-271), com'e' le scrive: escono nel
+    riquadro «NOTE» **prima** di quelle che la skill genera, nel suo ordine. Una sua nota
+    che comincia con la parola del soggetto di una nota generata — «Isolamento»,
+    «Antigelo», «Sfiati», «Vaso», «Sonda» — **ne prende il posto** (`graphics.note`). Il
+    tetto di cinque resta (D-232), e solo nell'esecutivo. Vuoto non si scrive."""
+    note_tolte: list[SoggettoDellaNota] = Field(default_factory=list)
+    """Le note generate che il progettista **toglie senza sostituirle**, per soggetto
+    (REL-017, I-271). Vuoto non si scrive."""
+
+    @model_validator(mode="after")
+    def le_note_si_scrivono_intere(self) -> "ProjectMetadata":
+        vuote = [item for item in self.note_di_posa if not item.strip()]
+        if vuote:
+            raise ValueError(
+                f"note_di_posa holds {len(vuote)} empty note(s): a note is a sentence, "
+                f"or it is not written"
+            )
+        doppie = sorted({item for item in self.note_tolte if self.note_tolte.count(item) > 1})
+        if doppie:
+            raise ValueError(f"note_tolte names {', '.join(doppie)} more than once")
+        return self
+
     @model_serializer(mode="wrap")
     def _senza_i_dati_non_dati(self, handler: SerializerFunctionWrapHandler) -> dict[str, Any]:
         """Un dato del cartiglio che manca **non si scrive**, nemmeno come `null`.
@@ -92,8 +125,13 @@ class ProjectMetadata(StrictModel):
         E' cio' che tiene l'aggiunta davvero additiva: un documento scritto prima
         di REL-002 esce da `rules --apply-all` **identico byte per byte**, e la
         sua impronta (`io.canonical`) non cambia. I grafi agli atti restano
-        quelli su cui i loro piani sono nati."""
-        return _senza_i_vuoti(handler(self), DEL_CARTIGLIO)
+        quelli su cui i loro piani sono nati. Lo stesso per le note del progettista
+        (I-271): senza, i due campi non si scrivono."""
+        dati = _senza_i_vuoti(handler(self), DEL_CARTIGLIO)
+        for nome in ("note_di_posa", "note_tolte"):
+            if not dati.get(nome):
+                dati.pop(nome, None)
+        return dati
 
 
 class EvidenceRef(StrictModel):
@@ -115,16 +153,23 @@ class NetworkModel(IdentifiedModel):
     cambiano. Una rete esistente si disegna come le altre e **non porta il DN**
     (D-193, punto 8). Facoltativo e additivo: assente vuol dire nuova, e un
     documento scritto prima non cambia di un byte."""
+    materiale_tubazioni: MaterialeDelleTubazioni | None = None
+    """Il materiale delle tubazioni di questa rete, se e' diverso da quello del
+    progetto (I-279): il calcolo dei diametri sceglie il tubo commerciale di questo
+    materiale. Assente vale quello del progetto, e assente non si scrive."""
 
     @model_serializer(mode="wrap")
     def _senza_l_esistente_non_detto(
         self, handler: SerializerFunctionWrapHandler
     ) -> dict[str, Any]:
         """Una rete nuova non scrive `esistente`: i grafi agli atti restano
-        identici byte per byte, e cosi' la loro impronta (`io.canonical`)."""
+        identici byte per byte, e cosi' la loro impronta (`io.canonical`). Lo stesso
+        per il materiale, quando non c'e'."""
         dati: dict[str, Any] = handler(self)
         if not dati.get("esistente"):
             dati.pop("esistente", None)
+        if dati.get("materiale_tubazioni") is None:
+            dati.pop("materiale_tubazioni", None)
         return dati
 
 
@@ -135,8 +180,17 @@ CHIAVI_DEI_DATI_NUMERICI: dict[str, str] = {
     "head_kpa": "kPa",
     "head_m": "m c.a.",
     "delta_t_k": "K",
+    "potenza_elettrica_kw": "kW",
+    "corrente_max_a": "A",
+    "prevalenza_utile_kpa": "kPa",
+    "prevalenza_utile_m": "m c.a.",
 }
 """I dati tecnici con un nome fisso, e l'unita' in cui si scrivono (REL-006).
+
+`potenza_elettrica_kw` e `corrente_max_a` sono i dati **elettrici** di una macchina —
+la potenza assorbita e la corrente massima —, che la tabella della tavola
+dell'elettrico scrive al posto di quelli idronici (I-277); con loro, come testi,
+`alimentazione` e `cavo_minimo` (`graphics.tabella.CARATTERISTICHE_ELETTRICHE`).
 
 Potenza, volume, portata e prevalenza di un pezzo, **come il progettista li ha
 dati**: un numero, nell'unita' che il nome dichiara. Le prime quattro sono le
@@ -150,7 +204,13 @@ non cambiargli il numero. Le legge la tabella delle apparecchiature
 di un'utenza, in kelvin: con `power_kw` da' la portata da cui il calcolatore dei
 diametri sceglie il DN (REL-007, D-193). Lo da' il progettista, e se manca
 «Capire» lo chiede (I-145): la tavola non lo scrive, perche' il dato che si legge
-e' il DN."""
+e' il DN.
+
+`prevalenza_utile_kpa` e' la **prevalenza utile della pompa a bordo** di un
+generatore, in kPa, alla portata di progetto — `prevalenza_utile_m` la stessa in metri
+di colonna d'acqua, come `head_m` —: con le `lunghezza_m` dei tratti, la skill
+verifica che il giro primario non costi di piu' (I-270, `diametri.perdite`). Non si
+scrive in tavola, e la tabella non la porta."""
 
 MARCA = "marca"
 """La marca di un pezzo, come il progettista l'ha data (I-144): un testo."""
@@ -173,14 +233,29 @@ class ComponentInstance(IdentifiedModel):
     macchina. Facoltativo e additivo: vuoto non si scrive, e i grafi agli atti
     restano identici byte per byte."""
 
+    non_a_bordo: list[str] = Field(default_factory=list)
+    """Le funzioni che **questa** macchina **non** porta dentro il mantello, dette dal
+    progettista (REL-017, I-272): la risposta «no» alla domanda che `completa` fa dove il
+    catalogo tace — «il bollitore porta il vaso sanitario dentro?» —. Le regole le leggono
+    come leggono `lacks_on_board` del catalogo, e il pezzo lo posano loro, nel loro ordine:
+    scritto a mano sarebbe un punto fisso, e il corredo della macchina gli finirebbe fra lui
+    e lei. Facoltativo e additivo: vuoto non si scrive."""
+
     @model_validator(mode="after")
     def il_bordo_si_dice_una_volta(self) -> "ComponentInstance":
-        vuote = [item for item in self.a_bordo if not item.strip()]
-        doppie = sorted({item for item in self.a_bordo if self.a_bordo.count(item) > 1})
-        if vuote or doppie:
+        for campo, voci in (("a_bordo", self.a_bordo), ("non_a_bordo", self.non_a_bordo)):
+            vuote = [item for item in voci if not item.strip()]
+            doppie = sorted({item for item in voci if voci.count(item) > 1})
+            if vuote or doppie:
+                raise ValueError(
+                    f"component {self.id}: {campo} lists each function once, by name "
+                    f"(empty: {len(vuote)}, repeated: {doppie})"
+                )
+        tutte_e_due = sorted(set(self.a_bordo) & set(self.non_a_bordo))
+        if tutte_e_due:
             raise ValueError(
-                f"component {self.id}: a_bordo lists each function once, by name "
-                f"(empty: {len(vuote)}, repeated: {doppie})"
+                f"component {self.id}: {', '.join(tutte_e_due)} is both in a_bordo and in "
+                f"non_a_bordo; the machine carries it or not, one of the two"
             )
         return self
 
@@ -192,11 +267,13 @@ class ComponentInstance(IdentifiedModel):
 
     @model_serializer(mode="wrap")
     def _senza_il_bordo_non_detto(self, handler: SerializerFunctionWrapHandler) -> dict[str, Any]:
-        """Un pezzo senza bordo dichiarato non scrive `a_bordo`, e un pezzo nuovo
-        non scrive `esistente`."""
+        """Un pezzo senza bordo dichiarato non scrive `a_bordo` ne' `non_a_bordo`, e un
+        pezzo nuovo non scrive `esistente`."""
         dati: dict[str, Any] = handler(self)
         if not dati.get("a_bordo"):
             dati.pop("a_bordo", None)
+        if not dati.get("non_a_bordo"):
+            dati.pop("non_a_bordo", None)
         if not dati.get("esistente"):
             dati.pop("esistente", None)
         return dati
@@ -436,6 +513,12 @@ class ProjectModel(StrictModel):
     D-230): con il **glicole** nell'acqua, o con le **valvole antigelo** che scaricano il
     tratto esterno. Lo dichiara il progettista. Assente: nelle case (fino a 35 kW) le
     regole mettono le valvole, nelle centrali grandi chiedono. Assente non si scrive."""
+    materiale_tubazioni: MaterialeDelleTubazioni | None = None
+    """Il materiale delle tubazioni (I-279): **multistrato**, **acciaio** o **rame**. Il
+    calcolo dei diametri sceglie il tubo commerciale di questo materiale e la tavola lo
+    scrive nella sua notazione — «MS 32×3», «DN 25 (1")», «Cu 28×1». Una rete lo puo'
+    cambiare (`NetworkModel.materiale_tubazioni`). Assente vale **multistrato**, lo
+    standard di Nove C, e non si scrive."""
 
     @model_validator(mode="after")
     def schema_version_is_the_current_one(self) -> "ProjectModel":
@@ -527,4 +610,6 @@ class ProjectModel(StrictModel):
             dati.pop("accessori_tolti", None)
         if dati.get("antigelo") is None:
             dati.pop("antigelo", None)
+        if dati.get("materiale_tubazioni") is None:
+            dati.pop("materiale_tubazioni", None)
         return dati

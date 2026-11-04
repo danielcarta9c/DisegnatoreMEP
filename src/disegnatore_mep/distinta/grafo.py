@@ -233,6 +233,34 @@ def leggi_impianto(
     )
 
 
+def con_i_tubi(impianto: Impianto, tubi: "TubiDelloSchema") -> Impianto:
+    """L'impianto con il tubo della tavola come `sezione` delle tubazioni d'acqua che ne
+    hanno uno (I-279): «multistrato MS 32×3», la stessa dicitura dello schema, anche dove
+    il progettista ha scritto «MS 32×3» o «32x3». Le altre restano come sono."""
+    if not tubi.tubazioni:
+        return impianto
+    tubazioni = tuple(
+        Tubazione(
+            id=item.id,
+            rete=item.rete,
+            fluido=item.fluido,
+            capo_a=item.capo_a,
+            capo_b=item.capo_b,
+            dati={**item.dati, "sezione": tubi.tubazioni[item.id]},
+        )
+        if item.id in tubi.tubazioni
+        else item
+        for item in impianto.tubazioni
+    )
+    return Impianto(
+        metadati=impianto.metadati,
+        pezzi=impianto.pezzi,
+        tubazioni=tubazioni,
+        reti=impianto.reti,
+        esclusi=impianto.esclusi,
+    )
+
+
 def tratte_dell_impianto(impianto: Impianto, voci_passanti: Iterable[str]) -> list[Tratta]:
     """I tratti, nell'ordine in cui il grafo nomina la loro prima tubazione."""
     passanti = set(voci_passanti)
@@ -286,6 +314,55 @@ def tratte_dell_impianto(impianto: Impianto, voci_passanti: Iterable[str]) -> li
         tratta.sezioni = tuple(sezioni)
         tratte.append(tratta)
     return tratte
+
+
+@dataclass(frozen=True)
+class TubiDelloSchema:
+    """I tubi d'acqua che la tavola scrive, per la distinta (I-279)."""
+
+    tubazioni: Mapping[str, str] = field(default_factory=dict)
+    """Per tubazione, il tubo come la distinta lo dice: «multistrato MS 32×3»."""
+    pollici: Mapping[str, str] = field(default_factory=dict)
+    """Per pezzo in linea — valvole, filtri, circolatori —, il pollice del tubo su cui
+    sta: MS 32×3 → «1"»."""
+
+
+def tubi_dello_schema(
+    grafo: Mapping[str, Any], cartella_del_catalogo: Path, cartella_dei_simboli: Path | None
+) -> TubiDelloSchema:
+    """I tubi della tavola — del progettista, o del calcolo dove l'ha chiesto —, letti
+    dagli **stessi** conti che li scrivono sullo schema (`diametri.tratti`): la distinta
+    dice lo stesso tubo, e agli accessori in linea il pollice del tubo (I-279). Se il
+    grafo non si lascia leggere, nessuno: la distinta esce lo stesso, con le sezioni
+    scritte dal progettista. Le tratte si leggono sui simboli: senza la loro cartella,
+    nessun tubo."""
+    if cartella_dei_simboli is None:
+        return TubiDelloSchema()
+    from pydantic import ValidationError
+
+    from disegnatore_mep.catalog.errors import CatalogError
+    from disegnatore_mep.catalog.registry import ComponentRegistry
+    from disegnatore_mep.diametri.tratti import (
+        pollici_dei_pezzi,
+        tratti_del_diametro,
+        tubi_delle_tubazioni,
+    )
+    from disegnatore_mep.graph.plant import GraphError
+    from disegnatore_mep.graphics.registry import SymbolRegistry
+    from disegnatore_mep.model.project import ProjectModel
+
+    try:
+        modello = ProjectModel.model_validate(dict(grafo))
+        simboli = SymbolRegistry.from_directory(cartella_dei_simboli)
+        catalogo = ComponentRegistry.from_directory(cartella_del_catalogo, symbols=simboli).per_il_progetto(modello)
+        tratti = tratti_del_diametro(modello, catalogo)
+        tubi = tubi_delle_tubazioni(modello, catalogo, tratti)
+        return TubiDelloSchema(
+            tubazioni={chi: tubo.dicitura for chi, tubo in tubi.items()},
+            pollici=pollici_dei_pezzi(modello, catalogo, tratti),
+        )
+    except (ValidationError, CatalogError, GraphError, ValueError, KeyError, OSError):
+        return TubiDelloSchema()
 
 
 def sigle_dello_schema(grafo: Mapping[str, Any], cartella_del_catalogo: Path, cartella_dei_nomi: Path) -> dict[str, str]:

@@ -40,8 +40,10 @@ from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.diametri.scritte import CAMPIONE_DELLA_LEGENDA as CAMPIONE_DELLA_SCRITTA
 from disegnatore_mep.diametri.scritte import TESTO_DELLA_LEGENDA as TESTO_DELLA_SCRITTA
 from disegnatore_mep.diametri.scritte import tratti_da_scrivere
+from disegnatore_mep.diametri.tratti import tubi_delle_tubazioni
+from disegnatore_mep.diametri.tubi import Tubo
 from disegnatore_mep.graphics.frame import ORDINARY_FRAMES, SheetFrame
-from disegnatore_mep.graphics.note import impagina_le_note, note_di_posa
+from disegnatore_mep.graphics.note import ESECUTIVO, impagina_le_note, note_di_posa
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.graphics.symbol import PortFace, SymbolManifest
 from disegnatore_mep.graphics.tabella import (
@@ -57,12 +59,11 @@ from disegnatore_mep.layout.compose import (
     sgombra_la_tabella,
 )
 from disegnatore_mep.layout.diametri import (
-    CAMPIONE_DELLA_LEGENDA,
     FRANCO_DELLA_STACCATA_EM,
-    TESTO_DELLA_LEGENDA,
     note_della_legenda,
     posa_i_diametri,
     riquadro_del_diametro,
+    voci_dei_materiali,
 )
 from disegnatore_mep.layout.errors import LayoutError
 from disegnatore_mep.layout.geometry import (
@@ -743,6 +744,24 @@ def con_le_porte_scollegate(
     return foglio.model_copy(update={"symbols": posati})
 
 
+def _tubi_della_tavola(
+    modello: ProjectModel, catalogo: ComponentRegistry, foglio: SheetGeometry
+) -> tuple[list[Tubo], bool]:
+    """I tubi d'acqua disegnati su questa tavola, del calcolo o del progettista: la nota
+    dell'isolamento ne dice lo spessore (I-279); e se ci sono tubazioni dell'acqua
+    dell'impianto senza un tubo noto. Solo nell'esecutivo, dove le note escono: altrove
+    il conto non si fa."""
+    if modello.metadata.livello != ESECUTIVO:
+        return [], False
+    disegnate = {item for route in foglio.routes for item in route.connection_ids}
+    tubi = tubi_delle_tubazioni(modello, catalogo)
+    acqua = {rete.id for rete in modello.networks if rete.medium == "heating_water"}
+    altre = any(
+        item.id in disegnate and item.network_id in acqua and item.id not in tubi for item in modello.connections
+    )
+    return [tubo for tubazione, tubo in tubi.items() if tubazione in disegnate], altre
+
+
 def _detto_nel_piano(
     messaggio: str, partizione: SheetPartition, posa: tuple[PlacedSymbol, ...]
 ) -> str:
@@ -1029,13 +1048,14 @@ def esegui_piano(
     # dei due. Nel definitivo non ci sono, e il conto e' quello di prima.
     ostacoli: tuple[tuple[float, float, float, float], ...] = ()
     in_tabella: frozenset[str] = frozenset()
-    tabella = tabella_della_tavola(modello, catalogo, naming, foglio, frame)
+    tabella = tabella_della_tavola(modello, catalogo, naming, foglio, frame, piano.vista)
     delle_note = impagina_le_note(
         note_di_posa(
             modello,
             catalogo,
             (item.component_id for item in foglio.symbols),
             (item.network_id for item in foglio.routes),
+            *_tubi_della_tavola(modello, catalogo, foglio),
         ),
         tabella,
         frame,
@@ -1166,15 +1186,15 @@ def esegui_piano(
         update={"symbols": simboli_d_acqua, "routes": linee_d_acqua, "labels": etichette}
     )
 
-    # **Il DN dei tratti, in linea con la tubazione** (REL-007, D-193). Solo se
-    # il progettista l'ha chiesto, e sulle reti che ha detto; dopo le sigle,
-    # perche' e' l'ultimo testo che si scrive e non sposta niente. La legenda
-    # spiega la scritta con una riga sua (I-155), se almeno un tratto la porta.
+    # **Il tubo dei tratti, in linea con la tubazione** (REL-007, D-193, I-279):
+    # «MS 32×3», «DN 25 (1")», «Cu 28×1». Solo se il progettista l'ha chiesto, e
+    # sulle reti che ha detto; dopo le sigle, perche' e' l'ultimo testo che si scrive
+    # e non sposta niente. La legenda spiega il materiale con una riga sua.
     #
     # **E la scritta che il progettista ha dato al tratto** (REL-012): «Ø200 · L 6
-    # m», «3G2,5 · L 20 m». La posa e' la stessa; un DN calcolato sullo stesso
-    # tratto le cede il posto, e la legenda la spiega con una riga sua, «Ø · L»,
-    # sotto quella del DN, che resta «Øi».
+    # m», «3G2,5 · L 20 m», o il suo tubo, «MS 32×3». La posa e' la stessa; il tubo
+    # calcolato sullo stesso tratto le cede il posto. Un tubo del progettista lo
+    # spiega la riga del suo materiale; il resto la riga «Ø · L».
     diametri_d_acqua: list[DiametroSullaTavola] = []
     if scritte_d_acqua or calcolati_d_acqua:
         diametri_d_acqua, _ = posa_i_diametri(
@@ -1294,14 +1314,14 @@ def esegui_piano(
         diametri = [*diametri_d_acqua, *diametri_dei_cavi]
         foglio = foglio.model_copy(update={"diametri": diametri})
         nominate = {frozenset(item.connection_ids) for item in diametri}
-        spiegate = [
-            voce
-            for voce, quali in (
-                ((CAMPIONE_DELLA_LEGENDA, TESTO_DELLA_LEGENDA), calcolati),
-                ((CAMPIONE_DELLA_SCRITTA, TESTO_DELLA_SCRITTA), scritte),
-            )
-            if any(frozenset(item.connection_ids) in nominate for item in quali)
-        ]
+        materiali = [
+            item.diametro.tubo.materiale
+            for item in calcolati
+            if item.diametro is not None and frozenset(item.connection_ids) in nominate
+        ] + [item.tubo.materiale for item in scritte if item.tubo is not None and item.connection_ids in nominate]
+        spiegate = voci_dei_materiali(materiali)
+        if any(item.tubo is None and item.connection_ids in nominate for item in scritte):
+            spiegate.append((CAMPIONE_DELLA_SCRITTA, TESTO_DELLA_SCRITTA))
     # Il rimando e' una frase sola, «Vedi la tavola …», su tutta la fascia: con
     # «Vedi» nella colonna dei simboli si leggeva come una voce (collaudo T2).
     frasi = [(CAMPIONE_DEL_RIMANDO, altra_tavola)] if altra_tavola is not None else []

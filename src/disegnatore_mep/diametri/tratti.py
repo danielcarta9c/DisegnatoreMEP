@@ -17,10 +17,21 @@ raccordo che unisce o divide due linee d'acqua — con piu' generatori in
 parallelo, «uno per tratta fino al raccordo e uno dopo il raccordo» — e sulle
 macchine.
 
-**Quale tratto porta il DN** (D-193, punto 8): solo se il progettista ha chiesto
+**Quale tratto porta il tubo** (D-193, punto 8): solo se il progettista ha chiesto
 i diametri e sulla rete che ha detto, e solo se la portata viene dai suoi dati
-(`portate.py`). Ogni tratto che porta il DN porta **un'etichetta sola**, e chi la
-posa e' `layout.diametri`.
+(`portate.py`). Ogni tratto che lo porta porta **un'etichetta sola**, e chi la posa
+e' `layout.diametri`.
+
+**Il tubo e' quello da comprare** (I-279, `tubi.py`): il piu' piccolo del materiale
+della rete — multistrato se il grafo non dice altro — in cui la velocita' reale non
+supera la massima del suo pollice. **Solo la velocita'** (I-281): l'attacco della
+macchina non e' un minimo, e dove il tubo e' piu' piccolo dell'attacco la skill lo dice
+come riduzione (`costruttori.riduzioni_all_attacco`).
+
+**Il tubo del progettista vince** (I-279): se una tubazione del tratto porta una
+`sezione` che si legge come un tubo — «MS 32×3», «DN 25», «Cu 28×1» —, la tavola
+scrive la sua e il calcolo non la tocca; se la velocita' ci supera la massima, la skill
+lo dice (`avvisi_dei_tubi`), e non blocca.
 """
 
 from collections import defaultdict
@@ -34,20 +45,24 @@ from disegnatore_mep.layout.autostrade import tratte_del_progetto
 from disegnatore_mep.layout.hierarchy import Level, hierarchy_of
 from disegnatore_mep.layout.trunks import Trunk
 from disegnatore_mep.model.project import PortRef, ProjectModel
+from disegnatore_mep.model.types import Domain
 
-from .calcolatore import (
-    VELOCITA_MASSIMA_M_S,
-    Diametro,
-    diametro_per,
-    potenza_da_portata,
-    velocita_m_s,
-)
-from .costruttori import dn_della_macchina
+from .calcolatore import potenza_da_portata
 from .portate import (
     FUNZIONI_DI_MISCELAZIONE,
     TOLLERANZA_M3H,
     Portate,
     portate_delle_tratte,
+)
+from .tubi import (
+    MATERIALE_PREDEFINITO,
+    Materiale,
+    Tubo,
+    TuboScelto,
+    ordine_del_pollice,
+    tubo_dal_testo,
+    tubo_per,
+    ultimo_tubo,
 )
 
 TrunkKey = tuple[str, ...]
@@ -62,7 +77,7 @@ _OPPOSTA: dict[PortFace, PortFace] = {
 
 @dataclass(frozen=True)
 class TrattoDelDiametro:
-    """Un tratto a portata costante, con il suo DN se i dati lo danno."""
+    """Un tratto a portata costante, con il suo tubo se i dati lo danno."""
 
     chiavi: tuple[TrunkKey, ...]
     """Le tratte del motore che il tratto attraversa, nell'ordine in cui si
@@ -72,7 +87,8 @@ class TrattoDelDiametro:
     """Dove comincia e dove finisce: l'attacco di una macchina o di un raccordo."""
     portata_m3h: float | None
     fonti: tuple[str, ...]
-    diametro: Diametro | None
+    diametro: TuboScelto | None
+    """Il tubo che il calcolo sceglie, nel materiale della rete (I-279)."""
     richiesto: bool
     """Il progettista ha chiesto i diametri su questa rete (D-193, punto 8)."""
     potenza_kw: float | None = None
@@ -88,6 +104,15 @@ class TrattoDelDiametro:
     utenze. Il loro DN si sacrifica quando accanto alla linea non c'e' posto; quello
     di una strada principale, come ultima spiaggia, va su un'etichetta staccata
     con freccia (I-162)."""
+    materiale: Materiale = MATERIALE_PREDEFINITO
+    ripetuto: bool = False
+    """Il tratto fra due raccordi con lo stesso tubo del vicino: la scritta cede
+    (`scritte.segna_i_tratti_ripetuti`, I-279)."""
+    macchine_ai_capi: frozenset[str] = frozenset()
+    """I capi del tratto che non sono raccordi (`scritte.detto_da_un_vicino`, I-279)."""
+    tubo_del_progettista: Tubo | None = None
+    """Il tubo che il progettista ha scritto nella `sezione` di una tubazione del
+    tratto, se si legge (`tubi.tubo_dal_testo`): vince sul calcolo (I-279)."""
 
     @property
     def connection_ids(self) -> frozenset[str]:
@@ -100,6 +125,14 @@ class TrattoDelDiametro:
     @property
     def scritta(self) -> str | None:
         return None if self.diametro is None else self.diametro.scritta
+
+    @property
+    def tubo(self) -> Tubo | None:
+        """Il tubo che si posa su questo tratto: quello del progettista, se l'ha
+        scritto; altrimenti quello del calcolo, dove il tratto lo porta."""
+        if self.tubo_del_progettista is not None:
+            return self.tubo_del_progettista
+        return self.diametro.tubo if self.porta_il_dn and self.diametro is not None else None
 
 
 def _via_dritta(
@@ -225,7 +258,12 @@ def tratti_del_diametro(
     esistenti = frozenset(item.id for item in project.networks if item.esistente)
     tubi_esistenti = frozenset(item.id for item in project.connections if item.esistente)
     legami = _passaggi(project, catalog, tratte)
-    pezzi_del_progetto = {item.id: item for item in project.components}
+    # Il tubo del progettista si legge solo sull'acqua (I-279): «Ø12,7 (1/2")» di una
+    # linea del gas refrigerante non e' un tubo d'acciaio.
+    idrauliche = {item.id for item in project.networks if item.domain is Domain.HYDRONIC}
+    sezioni = {
+        item.id: item.sezione for item in project.connections if item.sezione and item.network_id in idrauliche
+    }
     livelli = hierarchy_of(project, catalog, tutte)
 
     tratti: list[TrattoDelDiametro] = []
@@ -240,17 +278,19 @@ def tratti_del_diametro(
             migliore = max(valori, key=lambda item: item.portata_m3h or 0.0)
             fonti = migliore.fonti
         richiesto = bool(richieste) and all(rete in richieste for rete in reti)
-        diametro = diametro_per(portata) if portata is not None and portata > TOLLERANZA_M3H else None
-        if diametro is not None and portata is not None:
-            # Mai sotto l'attacco della macchina (D-223): il manuale Shenling dice 1" o 1¼".
-            capi = _capi_della_catena(catena, tratte)
-            minimo = dn_della_macchina((capo.component_id for capo in capi), pezzi_del_progetto)
-            if minimo is not None and diametro.dn < minimo:
-                diametro = Diametro(
-                    dn=minimo,
-                    velocita_m_s=velocita_m_s(portata, minimo),
-                    velocita_massima_m_s=VELOCITA_MASSIMA_M_S[minimo],
-                )
+        materiale = materiale_della_rete(project, reti[0])
+        diametro = (
+            tubo_per(portata, materiale) if portata is not None and portata > TOLLERANZA_M3H else None
+        )
+        del_progettista = next(
+            (
+                tubo
+                for chiave in chiavi
+                for tubo_id in chiave
+                if (tubo := tubo_dal_testo(sezioni.get(tubo_id))) is not None
+            ),
+            None,
+        )
         perche: str | None = None
         if any(rete in esistenti for rete in reti):
             perche = "rete esistente"
@@ -263,7 +303,7 @@ def tratti_del_diametro(
         elif portata <= TOLLERANZA_M3H:
             perche = "portata nulla"
         elif diametro is None:
-            perche = "oltre DN 300"
+            perche = f"oltre {ultimo_tubo(materiale).scritta}, l'ultimo tubo della tabella del {materiale}"
 
         potenza: float | None = None
         salto: float | None = None
@@ -293,9 +333,20 @@ def tratti_del_diametro(
                 strada_principale=any(
                     livelli.get(tratte[indice].connection_ids) is Level.AUTOSTRADA for indice in catena
                 ),
+                materiale=materiale,
+                tubo_del_progettista=del_progettista,
             )
         )
     return tuple(tratti)
+
+
+def materiale_della_rete(project: ProjectModel, rete: str) -> Materiale:
+    """Il materiale delle tubazioni di una rete: il suo, o quello del progetto, o il
+    multistrato (I-279)."""
+    for item in project.networks:
+        if item.id == rete and item.materiale_tubazioni is not None:
+            return item.materiale_tubazioni
+    return project.materiale_tubazioni or MATERIALE_PREDEFINITO
 
 
 def tratti_da_etichettare(
@@ -314,8 +365,138 @@ def tratti_da_etichettare(
     )
 
 
+def _idraulici(project: ProjectModel, tratti: Sequence[TrattoDelDiametro]) -> list[TrattoDelDiametro]:
+    reti = {item.id for item in project.networks if item.domain is Domain.HYDRONIC}
+    return [item for item in tratti if all(rete in reti for rete in item.reti)]
+
+
+def tubi_delle_tubazioni(
+    project: ProjectModel,
+    catalog: ComponentRegistry,
+    tratti: Sequence[TrattoDelDiametro] | None = None,
+) -> dict[str, Tubo]:
+    """Il tubo di ogni tubazione d'acqua che ne ha uno: quello che il progettista ha
+    scritto sulla tubazione; altrimenti quello del suo tratto (del progettista, o del
+    calcolo dove il tratto lo porta). Lo leggono la distinta e la nota dell'isolamento,
+    che dicono lo stesso tubo della tavola (I-279)."""
+    if tratti is None:
+        tratti = tratti_del_diametro(project, catalog)
+    idrauliche = {item.id for item in project.networks if item.domain is Domain.HYDRONIC}
+    propri = {
+        item.id: tubo
+        for item in project.connections
+        if item.network_id in idrauliche and (tubo := tubo_dal_testo(item.sezione)) is not None
+    }
+    tubi: dict[str, Tubo] = {}
+    for tratto in _idraulici(project, tratti):
+        for tubo_id in sorted(tratto.connection_ids):
+            tubo = propri.get(tubo_id) or tratto.tubo
+            if tubo is not None:
+                tubi[tubo_id] = tubo
+    return tubi
+
+
+def pollici_dei_pezzi(
+    project: ProjectModel,
+    catalog: ComponentRegistry,
+    tratti: Sequence[TrattoDelDiametro] | None = None,
+) -> dict[str, str]:
+    """Il pollice degli accessori in linea — valvole, filtri, circolatori, i T di
+    servizio, la via dritta di una tre vie —: quello del tubo su cui stanno (MS 32×3 →
+    1", I-279). I capi di un tratto — le macchine, i raccordi dove la portata cambia —
+    no: stanno fra tubi diversi. Il giunto antivibrante fra la macchina e la sua
+    riduzione prende il pollice dell'attacco, non quello del tubo (D-233)."""
+    from .riduzioni import pollici_dietro_le_riduzioni
+
+    if tratti is None:
+        tratti = tratti_del_diametro(project, catalog)
+    tubi = tubi_delle_tubazioni(project, catalog, tratti)
+    capi_di = {item.id: (item.endpoint_a.component_id, item.endpoint_b.component_id) for item in project.connections}
+    pollici: dict[str, str] = {}
+    for tratto in _idraulici(project, tratti):
+        capi = {ref.component_id for ref in tratto.capi}
+        for tubo_id in tratto.connection_ids:
+            tubo = tubi.get(tubo_id)
+            if tubo is None:
+                continue
+            for pezzo in capi_di.get(tubo_id, ()):
+                if pezzo in capi:
+                    continue
+                gia = pollici.get(pezzo)
+                if gia is None or ordine_del_pollice(tubo.pollici) > ordine_del_pollice(gia):
+                    pollici[pezzo] = tubo.pollici
+    pollici.update(pollici_dietro_le_riduzioni(project, catalog))
+    return pollici
+
+
+def avvisi_dei_tubi(
+    project: ProjectModel,
+    catalog: ComponentRegistry,
+    sigle: dict[str, str] | None = None,
+    tratti: Sequence[TrattoDelDiametro] | None = None,
+) -> list[str]:
+    """Dove il tubo del progettista e' piu' piccolo di quello del calcolo: la
+    velocita' reale supera la massima del suo pollice (I-279). Un avviso, non un
+    blocco: la tavola scrive il suo tubo. E dove la portata va oltre l'ultimo tubo del
+    materiale, e il tratto resta senza. Solo sulle reti dove ha chiesto i diametri, e
+    solo dove la portata viene dai suoi dati; un testo che non si legge come un tubo non
+    si controlla."""
+    if project.diametri is None:
+        return []
+    if tratti is None:
+        tratti = tratti_del_diametro(project, catalog)
+    nomi = {item.id: item.tag or item.id for item in project.components}
+    nomi.update(sigle or {})
+    avvisi: list[str] = []
+    for tratto in _idraulici(project, tratti):
+        tubo, portata = tratto.tubo_del_progettista, tratto.portata_m3h
+        if portata is None or not tratto.richiesto or portata <= TOLLERANZA_M3H:
+            continue
+        capo, fine = tratto.capi
+        if tubo is None and tratto.diametro is None and tratto.perche_senza_dn is not None:
+            # Oltre l'ultimo tubo del materiale: il tratto resta senza, e lo si dice.
+            if tratto.perche_senza_dn.startswith("oltre "):
+                avvisi.append(
+                    f"{nomi.get(capo.component_id, capo.component_id)} -> "
+                    f"{nomi.get(fine.component_id, fine.component_id)}: {_n(portata, 2)} m³/h, "
+                    f"{tratto.perche_senza_dn}. Il tratto resta senza tubo: serve un altro materiale "
+                    "(`materiale_tubazioni`) o il tubo del progettista (I-279)."
+                )
+            continue
+        if tubo is None:
+            continue
+        velocita = tubo.velocita_m_s(portata)
+        if velocita <= tubo.velocita_massima_m_s * (1 + 1e-9):
+            continue
+        calcolo = tubo_per(portata, tubo.materiale)
+        sceglierebbe = (
+            f"il calcolo sceglierebbe {calcolo.scritta}"
+            if calcolo is not None
+            else "nemmeno l'ultimo tubo della tabella basta"
+        )
+        avvisi.append(
+            f"{nomi.get(capo.component_id, capo.component_id)} -> {nomi.get(fine.component_id, fine.component_id)}: "
+            f"{tubo.scritta} del progettista (Øi {_n(tubo.interno_mm)} mm), {_n(portata, 2)} m³/h a "
+            f"{_n(velocita, 2)} m/s, oltre la massima di {_n(tubo.velocita_massima_m_s)} m/s del suo pollice "
+            f"({tubo.pollici}, Quaderno Caleffi n. 5, D-193): {sceglierebbe}. Sulla tavola resta il tubo del "
+            "progettista (I-279)."
+        )
+    return avvisi
+
+
+def _n(valore: float, cifre: int = 1) -> str:
+    testo = f"{valore:.{cifre}f}"
+    if cifre == 1:
+        testo = testo.removesuffix(".0")
+    return testo.replace(".", ",")
+
+
 __all__ = [
     "TrattoDelDiametro",
+    "avvisi_dei_tubi",
+    "materiale_della_rete",
+    "pollici_dei_pezzi",
+    "tubi_delle_tubazioni",
     "tratti_da_etichettare",
     "tratti_del_diametro",
 ]

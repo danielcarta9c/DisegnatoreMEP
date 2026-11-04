@@ -199,6 +199,11 @@
       "name": "Giunto antivibrante"
     },
     {
+      "function": "pipe_reduction",
+      "prefix": "RID",
+      "name": "Riduzione"
+    },
+    {
       "function": "frost_protection",
       "prefix": "VAG",
       "name": "Valvola antigelo"
@@ -238,6 +243,11 @@
       "function": "power_switching",
       "prefix": "KA",
       "name": "Relè d'appoggio"
+    },
+    {
+      "function": "room_contact_control",
+      "prefix": "TAC",
+      "name": "Termostato ambiente a contatto"
     },
     {
       "function": "room_control",

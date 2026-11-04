@@ -7,7 +7,7 @@ compatibility: Richiede l'esecuzione del codice (claude.ai, Claude Cowork o Clau
 
 # Disegnatore MEP
 
-**Versione 1.9.0** — 4 novembre 2026.
+**Versione 1.11.0** — 4 novembre 2026.
 
 Il progettista ha già deciso e dimensionato l'impianto, e te lo descrive a parole. Tu ne fai la
 **tavola dello schema funzionale**: la leggi, chiedi quello che manca, la fai approvare, la componi e
@@ -215,7 +215,12 @@ al 3 e al 4. **Se toglie un accessorio** — «questo non c'è», «la pompa lo 
 scrivi nel grafo di prima stesura: in `accessori_tolti`, con il nome che `completa` gli dà e il
 motivo del progettista, o in `a_bordo` sulla macchina (`capire.md` §3). **Se lo vuole altrove**,
 la stessa voce dice dove (`altrove`). **Se ne aggiunge uno** che le regole non mettono, in un
-posto preciso, lo scrivi nel grafo dove lui dice (`capire.md` §5). Poi rilanci `completa` e gli
+posto preciso, lo scrivi nel grafo dove lui dice (`capire.md` §5). **Il vaso sanitario no**:
+alla domanda «il bollitore lo porta a bordo?» il «no» è `"non_a_bordo": ["expansion"]` sul
+bollitore, e il vaso lo posa la regola fra il non ritorno e il bollitore (D-178, I-272).
+**Le note di posa sue** vanno in `metadata.note_di_posa`: vengono prima di quelle generate, e
+una che comincia con il soggetto di una generata (Isolamento, Antigelo, Sfiati, Vaso, Sonda) la
+sostituisce; `metadata.note_tolte` ne toglie una (`capire.md` §3, I-271). Poi rilanci `completa` e gli
 riporti che cosa è cambiato. Le scelte restano nel grafo e valgono a ogni rilancio. Lo stesso
 vale prima del passo 4, se le dice già nel testo o nelle risposte del passo 2.
 
@@ -407,10 +412,11 @@ Poi, in poche righe:
 - **chi ha guardato la tavola**: tu, oppure il revisore esterno, con il suo verdetto e i giri
   fatti; o nessuno, se l'ambiente non ti lascia vedere le immagini.
 
-Se chiede come sono calcolati i diametri: il diametro interno netto minimo, dalla portata — che
-viene dalla potenza e dal salto termico che ha dato lui, o dalla portata di progetto — e da una
-velocità massima che cresce col diametro (Caleffi, Quaderno n. 5, tab. 9), prendendo il diametro
-standard subito più grande.
+Se chiede come sono calcolati i diametri: dalla portata — che viene dalla potenza e dal salto
+termico che ha dato lui, o dalla portata di progetto — il tubo commerciale più piccolo del suo
+materiale (multistrato, se non dice altro) in cui la velocità sul diametro interno reale non
+supera la massima del suo pollice (Caleffi, Quaderno n. 5, tab. 9). In tavola il tubo da
+comprare, «MS 32×3», «DN 25 (1")», «Cu 28×1»; il diametro interno nel foglio dei calcoli.
 
 ## Come si parla al progettista
 

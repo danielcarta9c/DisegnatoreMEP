@@ -152,8 +152,23 @@ Regole di forma:
   | portata | `flow_rate_m3h` | un numero, in m³/h: `"flow_rate_m3h": 2.5` |
   | prevalenza | `head_kpa` oppure `head_m` | un numero, in kPa o in metri di colonna d'acqua, **nell'unità del testo** |
   | salto termico di progetto | `delta_t_k` | un numero, in kelvin: `"delta_t_k": 5` (§4.7) |
+  | prevalenza utile della pompa a bordo | `prevalenza_utile_kpa` oppure `prevalenza_utile_m` | un numero, sul generatore, in kPa o in metri di colonna d'acqua, **nell'unità del testo** (§4.7) |
   | marca | `marca` | il testo com'è scritto |
   | modello | `modello` | il testo com'è scritto: `"modello": "ECOcombi"` |
+
+  **E quattro dati elettrici**, che la tabella della tavola dell'elettrico scrive al posto
+  di quelli idronici (I-277): solo se il progettista li dà — dalla targa o dal manuale
+  della macchina —, mai stimati.
+
+  | dato | chiave | come si scrive |
+  |---|---|---|
+  | alimentazione | `alimentazione` | il testo com'è scritto: `"alimentazione": "230 V 1~"`, `"400 V 3N~"` |
+  | potenza elettrica assorbita | `potenza_elettrica_kw` | un numero, in kW: `"potenza_elettrica_kw": 3.9` |
+  | corrente massima assorbita | `corrente_max_a` | un numero, in ampere: `"corrente_max_a": 18` |
+  | cavo minimo richiesto | `cavo_minimo` | il testo com'è scritto: `"cavo_minimo": "3G6"` |
+
+  Sul relè e sul termostato ambiente a contatto la portata del contatto, se il progettista
+  la dà, va in `contatto`, com'è scritta: `"contatto": "5(2) A 250 V"`.
 
   Il numero va col punto decimale (`2.5`) e senza unità: l'unità è nel nome, e il file
   non carica se in `power_kw` scrivi `"12 kW"`. Si cambia unità solo quando il cambio è
@@ -181,6 +196,11 @@ Regole di forma:
   comunque, come la valvola di sicurezza di ogni generatore: lo dice `completa`. Se il
   testo non lo dice, ometti il campo: quello che il modello porta dentro lo sa già il
   catalogo.
+- **`non_a_bordo`**, su un pezzo: le funzioni che **quella** macchina **non** porta dentro,
+  **solo se il progettista lo dice** — di solito è la risposta a un punto aperto di
+  `completa`, «il catalogo non dice se il bollitore porta a bordo il vaso»: «no, non ce
+  l'ha» si scrive `"non_a_bordo": ["expansion"]` sul bollitore, e il vaso lo posa la regola,
+  al posto giusto (I-272). Una funzione non sta insieme in `a_bordo` e in `non_a_bordo`.
 - **`esistente`**, su un pezzo o su una tubazione: c'era già, e l'intervento non lo tocca
   — «il bollitore esistente», «i collettori d'appartamento e i terminali sono esistenti»,
   «il circuito di carico si riattacca alle tubazioni esistenti che scendono al
@@ -215,6 +235,15 @@ Regole di forma:
   «Conto Termico con sconto in fattura»). Senza, restano vuoti, e non si chiedono.
   `livello`: `"definitivo"` o `"esecutivo"` (esecutivo-costruttivo), **solo se il testo
   lo dice**; senza, vale definitivo, e lo chiedi in `assumptions` (D-224).
+  `note_di_posa`: le note di posa **del progettista**, com'è le scrive, **solo se le dà**
+  — per esempio un isolamento differenziato: `["Isolamento: tratto interrato …; a muro
+  esterno …; in centrale …"]`. Escono nel riquadro «NOTE» dell'esecutivo **prima** di
+  quelle che la skill genera, nel suo ordine; una sua nota che **comincia con la parola
+  del soggetto** di una nota generata — `Isolamento`, `Antigelo`, `Sfiati`, `Vaso`,
+  `Sonda` — **ne prende il posto**. Per togliere una nota generata senza sostituirla,
+  `note_tolte` con il soggetto in minuscolo: `["antigelo"]`. Il tetto resta di cinque
+  note in tutto: oltre, escono le prime cinque e `valida` lo dice; nel definitivo non
+  escono, e `valida` lo dice (I-271).
 - **`antigelo`**: come si protegge dal gelo il tratto esterno delle pompe di calore,
   `"glicole"` o `"valvole"`, **solo se il testo lo dice**. Senza, nelle case le regole
   mettono le valvole antigelo e sopra i 35 kW `completa` lo chiede (D-230).
@@ -465,7 +494,13 @@ testo non l'ha detto. ⚠ **Non vale per il ricircolo sanitario**, che ha la sua
   `"produzione": "centralizzata"`. Non è un aggettivo da buttare: il pezzo che completa
   il grafo lo legge, e dove l'acqua calda è centralizzata mette il vaso di espansione
   sanitario senza chiederlo (**D-178**). Se il testo non lo dice, non lo scrivi e non lo
-  deduci — né dai litri, né dalle potenze: resterà una domanda.
+  deduci — né dai litri, né dalle potenze: resterà una domanda. **Il vaso sanitario non
+  lo scrivi mai a mano**, nemmeno se il progettista lo vuole e l'acqua calda non è
+  centralizzata: scritto a mano è un punto fisso, e le regole posano il gruppo di
+  sicurezza — con il non ritorno dentro — fra lui e il bollitore, dove la dilatazione non
+  lo trova. Il vaso sta fra il non ritorno e il bollitore (D-178): «il bollitore non ce
+  l'ha» si scrive `"non_a_bordo": ["expansion"]` sul bollitore (§3), e la regola lo posa
+  lì. Scritto a mano, `valida` lo ferma (`DHW_EXPANSION_UPSTREAM_OF_THE_CHECK`, I-272).
 - La **logica di regolazione** — priorità sanitaria, master e slave, «la caldaia
   interviene quando…» — non è topologia: non produce nodi né tubi. Non la perdere:
   scrivi una voce in `assumptions` che dice cosa il grafo mostra e cosa no («la
@@ -502,10 +537,33 @@ hai sommato e che cosa no.
 
 ### 4.7 I diametri, se il progettista li chiede
 
-La tavola può portare il **diametro di ogni tratto**, calcolato — «Øi 32» lungo la linea,
-il diametro interno netto minimo in millimetri (D-191, D-193). **Il calcolo è
-facoltativo**: si fa **solo se il progettista lo chiede** («calcola i diametri», «metti i
-DN», «dimensiona le tubazioni della centrale»), e **solo sulla parte che dice lui**.
+La tavola può portare il **tubo di ogni tratto**, calcolato: **il tubo da comprare**, nella
+notazione del suo materiale — «MS 32×3» per il multistrato (diametro esterno × spessore),
+«DN 25 (1")» per l'acciaio, «Cu 28×1» per il rame (D-191, D-193, I-279). Il calcolo prende
+il tubo più piccolo del materiale in cui la velocità, sul **diametro interno reale**, non
+supera la massima del suo pollice; il diametro interno sta solo nel foglio dei calcoli.
+**Il calcolo è facoltativo**: si fa **solo se il progettista lo chiede** («calcola i
+diametri», «metti i DN», «dimensiona le tubazioni della centrale»), e **solo sulla parte che
+dice lui**.
+
+**Il materiale.** Scrivi `"materiale_tubazioni"` — `"multistrato"`, `"acciaio"` o `"rame"` —
+in testa al grafo se il testo lo dice; se una rete è di un materiale diverso, lo stesso campo
+sulla rete. **Se il testo non lo dice, ometti il campo**: vale il multistrato, lo standard di
+Nove C, e lo dichiari in una voce di `assumptions` (*«Tubazioni in multistrato: il testo non
+dice il materiale.»*). Il multistrato arriva fino al 63×4,5: una centrale più grande, che
+il calcolo porterebbe oltre, va in acciaio, e se il testo non lo dice è una domanda.
+
+**Il tubo del progettista vince.** Se il testo dà il tubo di un tratto — «MS 32×3», «32x3»,
+«DN 25», «1"», «Cu 28×1» —, scrivilo in `sezione` sulla tubazione: la tavola scrive quello, il
+calcolo non lo tocca, e se la velocità ci supera la massima `completa` e `disegna` lo dicono
+con un avviso, con i numeri. Basta la sezione su una tubazione del tratto: la tavola scrive
+un tubo per tratto, e niente sugli stacchi di servizio (vaso, sicurezza, riempimento,
+manometro).
+
+**L'attacco della macchina non è un minimo** (I-281): sulla ThermaX da 12 kW, con 5 K, il
+tubo è MS 32×3 anche se l'attacco è 1¼"; sulla 15 kW la velocità porta al MS 40×3,5.
+Dove il tubo è più piccolo dell'attacco, la **riduzione** (`pipe-reducer`) la posa `completa`,
+subito dopo il giunto antivibrante, e lo dice (D-233): **non la scrivi mai nel grafo**.
 
 **Se il testo non ne parla, lo chiedi** (I-185): ometti il campo e scrivi una voce di
 `assumptions` che glielo domanda, con la tua prima interpretazione — la tavola esce senza
@@ -539,11 +597,26 @@ circuito, è la loro differenza: «45/40 °C» è `"delta_t_k": 5`. È aritmetic
 progettista, come il regime (§4.6). **Non scriverne uno «tipico»**: 5 K per una pompa di
 calore è un'abitudine, non un dato del testo.
 
+**La prevalenza della pompa a bordo.** Se il testo dà la **prevalenza utile** della pompa
+che la macchina porta dentro — quella che resta all'impianto, fuori dalla macchina, alla
+portata di progetto — scrivila sul generatore **nell'unità del testo**, come la prevalenza
+dei circolatori: `"prevalenza_utile_kpa": 45`, oppure `"prevalenza_utile_m": 4.5` se la dà
+in metri di colonna d'acqua. Con le **lunghezze** dei tratti del primario, `lunghezza_m` su ogni
+tubazione (§4.8), `completa` e `disegna` verificano il giro più costoso — dalla macchina
+al volano o al serpentino e ritorno — e **avvisano** se perde più di quella prevalenza:
+il tubo non cambia, e che cosa fare lo decide il progettista. Per una **Shenling
+ThermaX** senza la prevalenza la verifica si fa con **8 m**, il valore indicativo del PO
+(I-281), e l'avviso lo dice; è la verifica che dice se il tratto è troppo lungo per il
+tubo scelto. Per le altre macchine, senza la prevalenza o senza una lunghezza la verifica
+non si fa, e non si dice niente: **non scriverne una tipica**, e non chiederla se il
+progettista non parla di perdite di carico. Sull'acqua la lunghezza **non** va in tavola:
+la tavola scrive il tubo, e la lunghezza serve alla verifica e alla distinta.
+
 **Quelli che mancano li chiedi in una voce sola** di `assumptions`, pezzo per pezzo, e la
 ripeti nella risposta: *«Per i diametri mancano: il salto termico della pompa di calore;
 la portata di progetto dell'acqua calda sanitaria. Se non li dai, quei tratti restano
-senza DN.»* Senza risposta la tavola esce lo stesso, e quei tratti non portano il
-diametro.
+senza tubo.»* Senza risposta la tavola esce lo stesso, e quei tratti non portano il
+tubo.
 
 ### 4.8 L'aria-aria, e le linee elettriche e di comando
 
@@ -557,7 +630,8 @@ tubazione per tratto. Cambiano le voci, i fluidi e il dominio.
 `zone-controller`; bocchetta di mandata `air-supply-terminal`; ripresa
 `return-air-terminal`; sifone `condensate-trap` e allaccio allo scarico
 `condensate-outlet` (un confine, come l'acquedotto); quadro `electrical-panel`; sezionatore
-`isolator-switch`; termostato di zona `room-thermostat`; comando a filo `wired-remote`. Una
+`isolator-switch`; termostato di zona `room-thermostat` (sul bus); termostato ambiente a
+contatto `room-thermostat-contact` (in linea su un'alimentazione, sotto); comando a filo `wired-remote`. Una
 bocchetta per ogni bocchetta del testo: qui il terminale **non** è rappresentativo, perché
 ognuna ha il suo ramo, la sua portata e la sua lunghezza.
 
@@ -583,7 +657,7 @@ dell'impianto si ferma e le sigle che non hai scritto non si assegnano.
 
 **L'elettrico e il comando si trascrivono solo dove il catalogo ha gli attacchi**: le
 voci dell'aria-aria, il quadro (`out_1`…`out_6`), il sezionatore, il relè d'appoggio
-(`bobina`, `a`, `b`), il regolatore
+(`bobina`, `a`, `b`), il termostato ambiente a contatto (`a`, `b`), il regolatore
 (`power`, `bus`, `out_1`…`out_4` per i comandi, `probe_1`…`probe_3` per le sonde), le sonde
 (`signal`), e sulle macchine idroniche gli attacchi di comando facoltativi: caldaie `power` e
 `bus`; pompe di calore aria-acqua `power`, `bus` e quelli della regolazione a bordo (sotto);
@@ -638,8 +712,41 @@ loro uscita della macchina al `comando` della valvola, con un cavo solo (D-215).
 nel quadro, con la protezione dedicata della linea del circolatore: scrivilo in `assumptions`
 («Ogni circolatore ha il suo relè d'appoggio da 10 A nel quadro: l'uscita della macchina ne
 comanda la bobina, e il circolatore è alimentato attraverso il contatto da un'uscita del
-quadro.»). Il circolatore alimentato dal quadro e acceso da un cronotermostato, senza la
-pompa di calore, è una scelta del progettista: la disegni solo se il testo la dice.
+quadro.»). **Il relè è obbligatorio solo quando il circolatore è comandato da un'uscita della
+pompa di calore.**
+
+**Il circolatore acceso dal termostato ambiente** (I-269). Quando il testo dice che il
+termostato ambiente comanda il circolatore — «il termostato in chiamata accende il
+circolatore», «la pompa di calore regola da sé, il circolatore del secondario va col termostato
+della zona» —, il termostato è **un contatto sulla linea del circolatore**: un pezzo
+`room-thermostat-contact` («Termostato ambiente a contatto»), in serie fra il quadro e il
+circolatore, e **una rete sola** `power_supply` per la linea:
+
+- da un'uscita libera del quadro (`out_n`) all'attacco `a` del termostato, e dall'attacco `b`
+  al `power` del circolatore — «Alimentazione circolatore … dal quadro, attraverso il
+  termostato»; il termostato è un pezzo `passante`, come il sezionatore, e la linea dal quadro
+  al circolatore è un tratto;
+- **niente** sul `comando` del circolatore, e niente dalla pompa di calore al circolatore;
+- il nome del locale nella sua `etichetta` («soggiorno»), la portata del contatto, se il
+  progettista la dà, in `contatto` («5(2) A 250 V»), marca e modello come per ogni pezzo;
+- `sezione` e `lunghezza_m` sui **due** tratti, dal quadro al termostato e dal termostato al
+  circolatore: il cavo va nel locale e torna, e la distinta lo conta andata e ritorno. Se il
+  progettista non li dà restano senza, e la distinta li chiede (DA DEFINIRE).
+
+**Il termostato di zona `room-thermostat` non si usa così**: ha un attacco solo, sul bus
+(`control_bus`), e collegato a un'alimentazione la validazione lo ferma
+(`PORT_MEDIUM_MISMATCH`). Non ripiegare su una `scritta` sulla linea del quadro: la linea
+attraverserebbe un pezzo che sulla tavola non c'è.
+
+**Col termostato a contatto il relè non c'è**: il circolatore non è comandato dalla pompa di
+calore, e D-228 non si applica. Il relè torna solo se il contatto del termostato non regge la
+corrente del circolatore — è una **domanda al progettista**, in `assumptions`, senza
+aggiungere il relè: *«Il circolatore del secondario è alimentato dal quadro attraverso il
+contatto del termostato ambiente, senza relè. Se la portata del contatto non basta per il
+circolatore, dimmelo e metto un relè d'appoggio comandato dal termostato.»* Il circolatore
+alimentato dal quadro e acceso da un termostato, senza la pompa di calore, è una scelta del
+progettista: la disegni solo se il testo la dice.
+
 **Non scrivere i morsetti della scheda**
 (CN27, SV1…) se il progettista non li dà: il nome della porta dice già dove va il cavo.
 
@@ -768,6 +875,10 @@ scrivi dove lui dice, con la voce del catalogo che fa quel mestiere su quel flui
 - **sull'attacco di servizio** della macchina, se ce l'ha (`vent`, `drain`, `probe` di un
   volano): la tubazione corta parte da lì.
 
+**Il vaso sanitario no** (§4.5, I-272): sull'acqua fredda dell'accumulo lo posa sempre la
+regola, fra il non ritorno e il bollitore; «il bollitore non ce l'ha» è
+`"non_a_bordo": ["expansion"]` sul bollitore.
+
 Le regole **non lo duplicano**: dove una regola vuole quel mestiere su quel tratto, lo
 trova. Se ne mettono uno dove sul costruito non c'è, si toglie; se lo mettono in un posto
 diverso, si sposta (`accessori_tolti`, §3). Quello che il testo nomina senza un posto
@@ -776,7 +887,7 @@ resta alle regole.
 **Entrano anche, quando il testo li dice, l'aria-aria e l'elettrico e il comando** (§4.8),
 che non sono ferramenta di servizio: i mestieri `refrigerant_generation`,
 `direct_expansion_terminal`, `air_zoning`, `zone_control`, `air_terminal`, `air_return`,
-`condensate_trap`, `power_source`, `power_isolation`, `power_switching`, `room_control`, `unit_control`,
+`condensate_trap`, `power_source`, `power_isolation`, `power_switching`, `room_contact_control`, `room_control`, `unit_control`,
 `plant_control`, `temperature_sensing`, `outdoor_temperature_sensing`. La **sonda a
 immersione** su una tubazione si appende come un termometro: un `tee-branch` in linea e dal
 braccio una tubazione corta alla porta `a` della sonda; nel bollitore o nel volano va

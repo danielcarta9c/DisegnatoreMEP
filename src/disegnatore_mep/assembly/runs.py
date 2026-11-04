@@ -18,13 +18,10 @@ from collections.abc import Iterable
 from dataclasses import dataclass
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
-from disegnatore_mep.catalog.schema import SERVICE_ORGAN_FUNCTIONS
+from disegnatore_mep.catalog.schema import AGAINST_THE_MACHINE_FUNCTIONS, SERVICE_ORGAN_FUNCTIONS
 from disegnatore_mep.model.project import ConnectionModel, PortRef, ProjectModel
 from disegnatore_mep.model.types import PortFlow
 from disegnatore_mep.rules.schema import RuleCardinality, RuleDefinition
-
-VIBRATION_ISOLATION = "vibration_isolation"
-"""Il mestiere del giunto antivibrante (REL-009, I-197)."""
 
 
 class AssemblyError(ValueError):
@@ -159,8 +156,9 @@ class _Assembler:
             _rule_of(self._project, component_id) is not None
             and len(self.run_ports(component_id)) == 2
             # Il giunto antivibrante sta attaccato alla macchina che vibra, anche quando
-            # lo mette una regola (D-222): non si sposta, e la fila parte da lui.
-            and VIBRATION_ISOLATION not in self._definitions[component_id].functions
+            # lo mette una regola (D-222): non si sposta, e la fila parte da lui. Cosi'
+            # la riduzione che `completa` gli posa subito dopo (D-233).
+            and not AGAINST_THE_MACHINE_FUNCTIONS & set(self._definitions[component_id].functions)
         )
 
     def anchor_of(self, component_id: str) -> str | None:
@@ -217,18 +215,23 @@ class _Assembler:
 
     def _behind_the_joint(self, end: PortRef) -> str:
         """Il pezzo del capo, o la macchina dietro di lui se il capo e' un giunto
-        antivibrante (REL-009, I-197)."""
-        if VIBRATION_ISOLATION not in self._definitions[end.component_id].functions:
-            return end.component_id
-        oltre = [
-            ref.component_id
-            for port_id in self.run_ports(end.component_id)
-            if port_id != end.port_id
-            for connection in self._pipes_at[(end.component_id, port_id)]
-            for ref in (connection.endpoint_a, connection.endpoint_b)
-            if ref.component_id != end.component_id
-        ]
-        return oltre[0] if len(oltre) == 1 else end.component_id
+        antivibrante (REL-009, I-197) — o la riduzione che gli sta dopo (D-233): si
+        attraversano i pezzi addosso all'attacco finche' si arriva alla macchina."""
+        cursor, seen = end, {end.component_id}
+        while AGAINST_THE_MACHINE_FUNCTIONS & set(self._definitions[cursor.component_id].functions):
+            oltre = [
+                ref
+                for port_id in self.run_ports(cursor.component_id)
+                if port_id != cursor.port_id
+                for connection in self._pipes_at[(cursor.component_id, port_id)]
+                for ref in (connection.endpoint_a, connection.endpoint_b)
+                if ref.component_id != cursor.component_id
+            ]
+            if len(oltre) != 1 or oltre[0].component_id in seen:
+                return end.component_id
+            cursor = oltre[0]
+            seen.add(cursor.component_id)
+        return cursor.component_id
 
     def _walk(
         self, seed: ConnectionModel, towards: PortRef
@@ -526,8 +529,9 @@ def assemble(
         wanted = ordered(run)
         if [item.component_id for item in wanted] == list(run.component_ids):
             continue
-        for pipe in run.pipes:
-            connections.pop(pipe, None)
+        vecchie = [connections.pop(pipe) for pipe in run.pipes if pipe in connections]
+        dati_del_tratto = _dati_del_tratto(vecchie)
+        esistente = bool(vecchie) and all(item.esistente for item in vecchie)
         stops: list[PortRef] = [run.head]
         for item in wanted:
             stops.append(PortRef(component_id=item.component_id, port_id=item.entry))
@@ -539,9 +543,33 @@ def assemble(
                 network_id=run.network_id,
                 endpoint_a=stops[index],
                 endpoint_b=stops[index + 1],
+                esistente=esistente,
+                **(dati_del_tratto if index == 0 else {}),
             )
             connections[fresh.id] = fresh
     return project.model_copy(update={"connections": list(connections.values())})
+
+
+def _dati_del_tratto(tubazioni: Iterable[ConnectionModel]) -> dict[str, object]:
+    """Quello che il progettista ha scritto sulle tubazioni di una tratta, da tenere
+    quando la tratta si ricollega (I-270).
+
+    Riordinare i pezzi non cambia il tratto: la sua lunghezza resta la somma di
+    quelle date, e sezione e scritta restano le sue se sono una sola. Vanno sulla
+    prima tubazione nuova, come quando una regola spezza un tubo (`rules.apply`):
+    scritte due volte, la tavola le ripeterebbe e la distinta conterebbe due volte la
+    lunghezza. Prima si perdevano, e con loro le lunghezze per la verifica della
+    prevalenza."""
+    elenco = list(tubazioni)
+    dati: dict[str, object] = {}
+    lunghezze = [item.lunghezza_m for item in elenco if item.lunghezza_m is not None]
+    if lunghezze:
+        dati["lunghezza_m"] = float(sum(lunghezze))
+    for campo in ("sezione", "scritta"):
+        valori = {getattr(item, campo) for item in elenco if getattr(item, campo) is not None}
+        if len(valori) == 1:
+            (dati[campo],) = valori
+    return dati
 
 
 __all__ = ["AssemblyError", "Piece", "Run", "assemble", "ordered", "runs_of"]

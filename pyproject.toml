@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "disegnatore-mep"
-version = "1.9.0"
+version = "1.11.0"
 description = "Deterministic foundation for technical MEP schematics"
 requires-python = ">=3.11"
 dependencies = [
@@ -31,7 +31,7 @@ disegnatore-mep = "disegnatore_mep.cli:main"
 where = ["src"]
 
 [tool.setuptools.package-data]
-disegnatore_mep = ["py.typed"]
+disegnatore_mep = ["py.typed", "diametri/tubi.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

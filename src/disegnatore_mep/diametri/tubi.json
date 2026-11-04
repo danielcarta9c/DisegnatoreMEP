@@ -1,0 +1,68 @@
+{
+  "id": "tubi",
+  "versione": "1",
+  "nota": "I tubi commerciali che il calcolo dei diametri sceglie (I-279): per ogni materiale la serie, con il diametro esterno, lo spessore, il diametro interno reale e il pollice dei raccordi e degli accessori in linea. Il calcolo prende il piu' piccolo tubo del materiale in cui la velocita' reale (portata / sezione interna reale) non supera la massima della tab. 9 del Quaderno Caleffi n. 5 (D-193, SRC-048). La tab. 9 e' scritta in pollici: la massima di un tubo e' quella del suo pollice, cioe' del pollice dei raccordi e degli accessori che gli si montano in linea. Per l'acciaio il pollice e' quello del tubo (UNI EN 10255); per multistrato e rame e' quello della tabella di equivalenza del produttore (MS 32x3 = 1\", quindi 1,3 m/s). `dn_del_pollice` porta ogni pollice al DN della tabella delle velocita' di D-193 (1\" = DN 25). Oltre l'ultimo tubo di un materiale il calcolo non inventa un tubo: lo dice.",
+  "dn_del_pollice": {
+    "3/8\"": 10,
+    "½\"": 15,
+    "¾\"": 20,
+    "1\"": 25,
+    "1¼\"": 32,
+    "1½\"": 40,
+    "2\"": 50,
+    "2½\"": 65,
+    "3\"": 80,
+    "4\"": 100
+  },
+  "materiali": {
+    "multistrato": {
+      "sigla": "MS",
+      "nome": "multistrato",
+      "legenda": "multistrato, diametro esterno × spessore",
+      "fonte": "SRC-053. Giacomini, «R999, R999I — Tubazioni multistrato in PEX/Al/PEX», scheda tecnica 0168IT 06/2025, p. 2, tabella delle dimensioni (Dest, Dint, spessore), https://dam.giacomini.com/it.giacomini.com/product_documentations/datasheets/R999I.pdf (letta il 4 novembre 2026). Gli stessi 16x2, 20x2, 26x3 e 32x3 nella scheda tecnica Valsir Mixal (Dint 12, 16, 20, 26).",
+      "fonte_dei_pollici": "SRC-054. Bampi, Catalogo Generale 2022, p. 288, «Diametri equivalenti», tabella 5 «Comparazione diametri tra diversi materiali» (BALPEX, rame, acciaio in pollici): 16x2 3/8\", 20x2 1/2\", 26x3 3/4\", 32x3 1\", 40x3,5 1\"1/4, 50x4 1\"1/2, 63x4,5 2\", https://www.dalessandris.it/wp-content/uploads/2025/03/Manuale_Tecnico_Carico-Idrico-PEX.AL_.PEX_BAMPI_2022-2-5.pdf (letta il 4 novembre 2026). Il produttore la dice «comparazione approssimativa».",
+      "tubi": [
+        {"esterno_mm": 16, "spessore_mm": 2, "interno_mm": 12, "pollici": "3/8\""},
+        {"esterno_mm": 20, "spessore_mm": 2, "interno_mm": 16, "pollici": "½\""},
+        {"esterno_mm": 26, "spessore_mm": 3, "interno_mm": 20, "pollici": "¾\""},
+        {"esterno_mm": 32, "spessore_mm": 3, "interno_mm": 26, "pollici": "1\""},
+        {"esterno_mm": 40, "spessore_mm": 3.5, "interno_mm": 33, "pollici": "1¼\""},
+        {"esterno_mm": 50, "spessore_mm": 4, "interno_mm": 42, "pollici": "1½\""},
+        {"esterno_mm": 63, "spessore_mm": 4.5, "interno_mm": 54, "pollici": "2\""}
+      ]
+    },
+    "acciaio": {
+      "sigla": "DN",
+      "nome": "acciaio",
+      "legenda": "diametro nominale acciaio",
+      "fonte": "SRC-055. UNI EN 10255, serie media M, come la riporta Viega, «Tabelle di compatibilità Megapress», p. 1, tabella «Megapress – Tubi filettabili secondo UNI EN 10255 – Serie pesante H e serie media M» (pollici, DN, diametro esterno, spessore), https://www.viega.it/content/dam/viegadm/en/temp/download_assets/it/tabelle_compatibilit_megapress.pdf (letta il 4 novembre 2026). Il diametro interno e' il diametro esterno meno due spessori. La norma, a pagamento, non e' stata letta.",
+      "fonte_dei_pollici": "La stessa tabella: il pollice e' la filettatura del tubo.",
+      "tubi": [
+        {"dn": 15, "esterno_mm": 21.3, "spessore_mm": 2.6, "interno_mm": 16.1, "pollici": "½\""},
+        {"dn": 20, "esterno_mm": 26.9, "spessore_mm": 2.6, "interno_mm": 21.7, "pollici": "¾\""},
+        {"dn": 25, "esterno_mm": 33.7, "spessore_mm": 3.2, "interno_mm": 27.3, "pollici": "1\""},
+        {"dn": 32, "esterno_mm": 42.4, "spessore_mm": 3.2, "interno_mm": 36.0, "pollici": "1¼\""},
+        {"dn": 40, "esterno_mm": 48.3, "spessore_mm": 3.2, "interno_mm": 41.9, "pollici": "1½\""},
+        {"dn": 50, "esterno_mm": 60.3, "spessore_mm": 3.6, "interno_mm": 53.1, "pollici": "2\""},
+        {"dn": 65, "esterno_mm": 76.1, "spessore_mm": 3.6, "interno_mm": 68.9, "pollici": "2½\""},
+        {"dn": 80, "esterno_mm": 88.9, "spessore_mm": 4.0, "interno_mm": 80.9, "pollici": "3\""},
+        {"dn": 100, "esterno_mm": 114.3, "spessore_mm": 4.5, "interno_mm": 105.3, "pollici": "4\""}
+      ]
+    },
+    "rame": {
+      "sigla": "Cu",
+      "nome": "rame",
+      "legenda": "rame, diametro esterno × spessore",
+      "fonte": "SRC-056. UNI EN 1057, tubo in verghe, come lo riporta Oppo, «Tubo in rame per impiantistica» (rame nudo in verghe: 18x1, 22x1, 28x1, 35x1,2, 42x1,2, 54x1,5; dimensioni e tolleranze UNI EN 1057), https://www.oppo.it/materiali/tubi_raccordi/tubo_rame.htm (letta il 4 novembre 2026). Il diametro interno e' il diametro esterno meno due spessori. La norma, a pagamento, non e' stata letta; gli spessori dei diametri grandi cambiano fra i produttori (35x1,2 o 35x1,5).",
+      "fonte_dei_pollici": "SRC-054. Bampi, Catalogo Generale 2022, p. 288, tabella 5 (vedi il multistrato): rame 18x1 1/2\", 22x1 3/4\", 28 1\", 35 1\"1/4, 42 1\"1/2, 54 2\", per diametro esterno.",
+      "tubi": [
+        {"esterno_mm": 18, "spessore_mm": 1, "interno_mm": 16, "pollici": "½\""},
+        {"esterno_mm": 22, "spessore_mm": 1, "interno_mm": 20, "pollici": "¾\""},
+        {"esterno_mm": 28, "spessore_mm": 1, "interno_mm": 26, "pollici": "1\""},
+        {"esterno_mm": 35, "spessore_mm": 1.2, "interno_mm": 32.6, "pollici": "1¼\""},
+        {"esterno_mm": 42, "spessore_mm": 1.2, "interno_mm": 39.6, "pollici": "1½\""},
+        {"esterno_mm": 54, "spessore_mm": 1.5, "interno_mm": 51, "pollici": "2\""}
+      ]
+    }
+  }
+}

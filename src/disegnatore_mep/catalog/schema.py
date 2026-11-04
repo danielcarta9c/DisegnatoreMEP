@@ -175,6 +175,17 @@ Non e' un elenco di pezzi, e non lo diventera': sono **funzioni**, e quale voce
 di catalogo le porti su un dato fluido lo dice il catalogo (D-069). Un raccordo
 non e' un apparecchio, e chi cammina lungo un tubo ci passa attraverso."""
 
+PIPE_REDUCTION = "pipe_reduction"
+"""Il mestiere della riduzione all'attacco della macchina (REL-017, I-281, D-233)."""
+
+AGAINST_THE_MACHINE_FUNCTIONS: frozenset[str] = frozenset({"vibration_isolation", PIPE_REDUCTION})
+"""I pezzi che stanno **addosso all'attacco della macchina**, prima di tutto il resto: il
+giunto antivibrante (D-222), attaccato alla macchina che vibra e grande quanto il suo
+attacco (D-218), e subito dopo di lui la riduzione al tubo scelto dalla velocita' (D-233).
+Non chiudono niente e non si spostano: il corredo che le regole ancorano alla macchina si
+posa oltre di loro (`rules.apply`), e la fila dei pezzi della macchina si conta da lei come
+se non ci fossero (`assembly.runs`)."""
+
 ATTACHMENT_STYLES: frozenset[ComponentTrait] = frozenset(
     {ComponentTrait.ATTACHMENT_INLINE, ComponentTrait.ATTACHMENT_BRANCH}
 )
@@ -824,6 +835,7 @@ class ComponentDefinition(StrictModel):
 
 
 __all__ = [
+    "AGAINST_THE_MACHINE_FUNCTIONS",
     "ATTACHMENT_STYLES",
     "CLOSING_FUNCTIONS",
     "INSTRUMENT_ISOLATION",
@@ -832,6 +844,7 @@ __all__ = [
     "FITTING_FUNCTIONS",
     "HydraulicState",
     "OnBoard",
+    "PIPE_REDUCTION",
     "PortDefinition",
     "SERVICE_ORGAN_FUNCTIONS",
     "SHUTOFF_REGIMES",

@@ -21,6 +21,7 @@ from dataclasses import dataclass
 
 from disegnatore_mep.assembly import assemble
 from disegnatore_mep.catalog.registry import ComponentRegistry
+from disegnatore_mep.catalog.schema import AGAINST_THE_MACHINE_FUNCTIONS
 from disegnatore_mep.model.project import (
     ComponentInstance,
     ConnectionModel,
@@ -80,10 +81,6 @@ def _connection_touching(project: ProjectModel, anchor: PortRef) -> ConnectionMo
     )
 
 
-VIBRATION_ISOLATION = "vibration_isolation"
-"""Il mestiere del giunto antivibrante (REL-009, I-197)."""
-
-
 def _connection_to_split(
     project: ProjectModel, catalog: ComponentRegistry, anchor: PortRef
 ) -> ConnectionModel:
@@ -91,13 +88,14 @@ def _connection_to_split(
 
     E' quella che tocca l'attacco, **tranne quando sull'attacco c'e' un giunto
     antivibrante** (REL-009, I-197): il giunto sta attaccato alla macchina, che vibra,
-    e fra loro non ci va niente. Il pezzo della regola si posa oltre il giunto."""
+    e fra loro non ci va niente. Il pezzo della regola si posa oltre il giunto, e oltre
+    la riduzione che `completa` gli posa dopo (D-233)."""
     connection = _connection_touching(project, anchor)
     visti: set[str] = set()
     while True:
         lontano = connection.endpoint_b if connection.endpoint_a == anchor else connection.endpoint_a
         giunto = _component(project, lontano.component_id)
-        if giunto.id in visti or VIBRATION_ISOLATION not in catalog.get(giunto.definition_id).functions:
+        if giunto.id in visti or not AGAINST_THE_MACHINE_FUNCTIONS & set(catalog.get(giunto.definition_id).functions):
             return connection
         visti.add(giunto.id)
         oltre = [

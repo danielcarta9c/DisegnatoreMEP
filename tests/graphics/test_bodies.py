@@ -113,7 +113,9 @@ def test_the_libraries_are_not_empty() -> None:
     # 90 da REL-016 (D3 del collaudo della 1.7.0): il collettore con ritorno da tre a
     # dodici vie, accanto a quello a due.
     # 92 da REL-011: la valvola antigelo (D-230) e il rele' d'appoggio (D-228).
-    assert len(published()) == 92
+    # 93 da REL-017: il termostato ambiente a contatto sulla linea del circolatore (I-269).
+    # 94 da REL-017: la riduzione all'attacco della macchina (I-281, D-233).
+    assert len(published()) == 94
 
 
 @pytest.mark.parametrize("symbol", published(), ids=lambda item: item.manifest.id)
