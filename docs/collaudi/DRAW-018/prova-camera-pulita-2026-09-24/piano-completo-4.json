@@ -11,7 +11,8 @@
     "Confini ACS-01 e AF-01 addosso allo scambiatore, a 17,5 mm: e' lo stacco minimo con una valvola in linea (A4). Il corredo del ritorno (vaso, gruppo di riempimento con AF-02, manometro) e' appeso sotto la linea fra il collettore e il volano, a passo 15. Li' non passa nessun'altra linea (par. 6). Sfiato e scarico sono addosso al volano, stacco 10.",
     "Radiatore a x=285, y=2,5: la mandata col circolatore resta retta a +5, il ritorno scala da +15 a +20. E' il gradino imposto fra interasse 10 e 15 (D-167). La distanza dal volano (40 mm) e' quella per cui la valvola che il motore mette sulla tratta circolatore-radiatore sta addosso al circolatore. A 50 mm finiva accanto al radiatore, e il circolatore sembrava intercettato da un lato solo. Il rilievo SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER disgiuntore-radiatori resta: e' il caso noto, non lo inseguo (B11).",
     "Resta anche SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER caldaia-disgiuntore (15, 65). Nasce fra le due verticali dei collettori: li' la mandata caldaia e' gia' salita e il ritorno non e' ancora sceso. Lo impone B3 (due verticali diverse) e nessuno spostamento di macchina lo toglie: lo segnalo, non lo inseguo.",
-    "Formato A3: il disegno misura circa 305 x 125 mm e in A4 non entra; il comando non segnala SHEET_LARGER_THAN_NEEDED ne' DRAWING_TOUCHES_THE_BORDER (D3, D-170). Esito misurato: 0 tratte cedute, 0 bloccanti, 6 pieghe in tutto, tutte imposte (2 gomiti della caldaia, 2 L delle terze vie, gradino del radiatore), 2 sormonti, tutti e due imposti."
+    "Formato A3: il disegno misura circa 305 x 125 mm e in A4 non entra; il comando non segnala SHEET_LARGER_THAN_NEEDED ne' DRAWING_TOUCHES_THE_BORDER (D3, D-170). Esito misurato: 0 tratte cedute, 0 bloccanti, 6 pieghe in tutto, tutte imposte (2 gomiti della caldaia, 2 L delle terze vie, gradino del radiatore), 2 sormonti, tutti e due imposti.",
+    "REL-011, 4 novembre 2026: per il grafo che le regole nuove scrivono dall'impianto di prova 4 (examples/prova) — giunto antivibrante (D-222) e valvola antigelo (D-230) sui due attacchi della pompa di calore, defangatore e rubinetti fra i raccordi del ritorno e il disgiuntore (D-218) — la valvola di sicurezza della pompa di calore si sposta di 15 mm per il giunto, e disgiuntore, sfiato, scarico e radiatore di 12,5 mm, per il defangatore fra i suoi rubinetti. I raccordi del ritorno restano dove sono: col grafo agli atti (grafo-completo-4.json, del 24 settembre) il defangatore sta ancora fra il collettore e il vaso, e vuole quel tratto. Le misure, con l'uno e con l'altro grafo, sono quelle di prima: tratte 27, pieghe 6, sormonti 2."
   ],
   "pezzi": {
     "pdc": {
@@ -25,12 +26,12 @@
       "regola": "A2 — impilata sotto la PdC, stessa x; passo minimo per la sua valvola di sicurezza"
     },
     "tee-valve-safety-pdc-water-supply": {
-      "x": 45,
+      "x": 60,
       "y": 2.5,
       "regola": "B8 — sulla quota della mandata PdC, subito dopo la porta"
     },
     "valve-safety-pdc-water-supply": {
-      "x": 45,
+      "x": 60,
       "y": -17.5,
       "regola": "A4 — addosso, stacco minimo 10 mm, verso l'alto"
     },
@@ -83,17 +84,17 @@
       "regola": "A4 — addosso allo scambiatore: 17,5 mm, una valvola in linea"
     },
     "disgiuntore": {
-      "x": 220,
+      "x": 232.5,
       "y": 0,
       "regola": "D-159 — stessa y della PdC: autostrade rette"
     },
     "air-vent-disgiuntore-primary-out": {
-      "x": 230,
+      "x": 242.5,
       "y": -20,
       "regola": "A4 — sopra il volano, stacco 10"
     },
     "drain-connection-disgiuntore-primary-in": {
-      "x": 230,
+      "x": 242.5,
       "y": 55,
       "regola": "A4 — sotto il volano, stacco 10"
     },
@@ -134,7 +135,7 @@
       "regola": "A4 — stacco minimo con la valvola bloccabile in linea, sotto il ritorno"
     },
     "radiatori": {
-      "x": 285,
+      "x": 297.5,
       "y": 2.5,
       "regola": "B11/D-167 — mandata col circolatore retta a +5, il ritorno scala di 5 (gradino imposto); a 40 mm dal volano la valvola del circolatore gli sta addosso"
     }
