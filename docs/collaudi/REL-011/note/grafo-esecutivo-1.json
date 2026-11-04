@@ -67,8 +67,8 @@
       "evidence": [
         {
           "kind": "rule",
-          "note": "L'acqua di un circuito chiuso continua a produrre fanghi e ossidi anche dopo il lavaggio, e sono cosi' fini che un filtro a rete non li trattiene: si separano rallentando l'acqua. Il defangatore e' uno solo per circuito e sta sul ritorno generale, a monte della prima ripartizione verso le macchine: li' passa tutta l'acqua che torna, quindi un pezzo solo protegge ogni generatore — uno per macchina e' un doppione, e uno su un circolatore non protegge niente che il ritorno generale non protegga gia'.",
-          "reference": "dirt-separation-before-what-it-would-ruin@3.0.0"
+          "note": "L'acqua di un circuito chiuso continua a produrre fanghi e ossidi anche dopo il lavaggio, e sono cosi' fini che un filtro a rete non li trattiene: si separano rallentando l'acqua. Il defangatore e' uno solo per circuito e sta sul ritorno generale, a monte della prima ripartizione verso le macchine: li' passa tutta l'acqua che torna, quindi un pezzo solo protegge ogni generatore — uno per macchina e' un doppione, e uno su un circolatore non protegge niente che il ritorno generale non protegga gia'. Sul ritorno sta oltre il vaso, il gruppo di riempimento e il manometro, dalla parte dell'impianto (D-218): chiuse le sue valvole per pulirlo o cambiarlo, le macchine restano collegate al vaso, e chi carica legge la pressione nello stesso punto.",
+          "reference": "dirt-separation-before-what-it-would-ruin@4.0.0"
         }
       ],
       "id": "dirt-separator-collettore-ritorno-a",
@@ -93,8 +93,8 @@
       "evidence": [
         {
           "kind": "rule",
-          "note": "L'acqua scaldata aumenta di volume, e in un volume chiuso quell'aumento diventa pressione. Il vaso e' lo spazio che quel volume in piu' trova invece della rottura, e ne basta uno per circuito perche' la pressione e' la stessa dappertutto. Sta sul ritorno generale, a monte della prima ripartizione verso chi scalda: e' il punto piu' freddo — la membrana dura di piu' dove l'acqua e' meno calda — ed e' il tratto che serve tutti i generatori insieme, cosi' con due in parallelo il vaso non finisce sul ramo di uno solo. La riserva sanitaria ha il proprio vaso sulla propria alimentazione: e' un'altra regola.",
-          "reference": "expansion-on-closed-circuit@4.1.0"
+          "note": "L'acqua scaldata aumenta di volume, e in un volume chiuso quell'aumento diventa pressione. Il vaso e' lo spazio che quel volume in piu' trova invece della rottura, e ne basta uno per circuito perche' la pressione e' la stessa dappertutto. Sta sul ritorno generale, a monte della prima ripartizione verso chi scalda: e' il punto piu' freddo — la membrana dura di piu' dove l'acqua e' meno calda — ed e' il tratto che serve tutti i generatori insieme, cosi' con due in parallelo il vaso non finisce sul ramo di uno solo. La riserva sanitaria ha il proprio vaso sulla propria alimentazione: e' un'altra regola. Sul ritorno sta dalla parte delle macchine rispetto al defangatore, oltre il filtro di ciascuna (D-218): il vaso non si separa mai dalle macchine per una valvola che non sia loro, e vaso, gruppo di riempimento e manometro stanno insieme.",
+          "reference": "expansion-on-closed-circuit@5.0.0"
         }
       ],
       "id": "expansion-connection-collettore-ritorno-a",
@@ -106,11 +106,63 @@
       "evidence": [
         {
           "kind": "rule",
-          "note": "Un circuito chiuso non si alimenta da nessuna parte: va riempito e poi reintegrato quando cala, e a pressione controllata, altrimenti la rete idrica lo porterebbe alla propria. Il gruppo e' percio' un **ponte**: pesca dall'acqua fredda gia' dichiarata dal progettista e la immette nel circuito tecnico, con una derivazione da ciascuna parte. Si innesta sul ritorno generale, a monte della prima ripartizione: e' il punto piu' freddo del circuito, dove l'acqua di rete entra senza scaldarsi di colpo, ed e' il tratto comune, cosi' il reintegro serve tutte le macchine e non il ramo di una sola. Dove l'acqua fredda non e' stata dichiarata, il gruppo non si posa appeso a nulla: si chiede.",
-          "reference": "filling-unit-on-return@5.0.0"
+          "note": "Un circuito chiuso non si alimenta da nessuna parte: va riempito e poi reintegrato quando cala, e a pressione controllata, altrimenti la rete idrica lo porterebbe alla propria. Il gruppo e' percio' un **ponte**: pesca dall'acqua fredda gia' dichiarata dal progettista e la immette nel circuito tecnico, con una derivazione da ciascuna parte. Si innesta sul ritorno generale, a monte della prima ripartizione: e' il punto piu' freddo del circuito, dove l'acqua di rete entra senza scaldarsi di colpo, ed e' il tratto comune, cosi' il reintegro serve tutte le macchine e non il ramo di una sola. Dove l'acqua fredda non e' stata dichiarata, il gruppo non si posa appeso a nulla: si chiede. Sul ritorno sta dalla parte delle macchine rispetto al defangatore, oltre il filtro di ciascuna (D-218): il vaso non si separa mai dalle macchine per una valvola che non sia loro, e vaso, gruppo di riempimento e manometro stanno insieme.",
+          "reference": "filling-unit-on-return@6.0.0"
         }
       ],
       "id": "filling-unit-collettore-ritorno-a",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "flexible-joint",
+      "evidence": [
+        {
+          "kind": "rule",
+          "note": "Una macchina con un compressore e un ventilatore vibra, e con i tubi rigidi la vibrazione arriva nelle tubazioni e da li' nell'edificio: ronzio nelle stanze, raccordi che col tempo si allentano o perdono. Un tratto flessibile sulla mandata e uno sul ritorno, attaccati alla macchina, la fermano li'. E' il primo pezzo dopo la macchina: tutto il resto — la valvola di sicurezza, il ritegno, i rubinetti, il filtro — viene dopo, e il giunto non chiude niente, quindi la sicurezza resta collegata alla macchina. Gomma o flessibile inox si sceglie in distinta: sullo schema il segno e' lo stesso.",
+          "reference": "absorb-vibration-at-the-machine@1.0.0"
+        }
+      ],
+      "id": "flexible-joint-pdc-master-water-return",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "flexible-joint",
+      "evidence": [
+        {
+          "kind": "rule",
+          "note": "Una macchina con un compressore e un ventilatore vibra, e con i tubi rigidi la vibrazione arriva nelle tubazioni e da li' nell'edificio: ronzio nelle stanze, raccordi che col tempo si allentano o perdono. Un tratto flessibile sulla mandata e uno sul ritorno, attaccati alla macchina, la fermano li'. E' il primo pezzo dopo la macchina: tutto il resto — la valvola di sicurezza, il ritegno, i rubinetti, il filtro — viene dopo, e il giunto non chiude niente, quindi la sicurezza resta collegata alla macchina. Gomma o flessibile inox si sceglie in distinta: sullo schema il segno e' lo stesso.",
+          "reference": "absorb-vibration-at-the-machine@1.0.0"
+        }
+      ],
+      "id": "flexible-joint-pdc-master-water-supply",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "flexible-joint",
+      "evidence": [
+        {
+          "kind": "rule",
+          "note": "Una macchina con un compressore e un ventilatore vibra, e con i tubi rigidi la vibrazione arriva nelle tubazioni e da li' nell'edificio: ronzio nelle stanze, raccordi che col tempo si allentano o perdono. Un tratto flessibile sulla mandata e uno sul ritorno, attaccati alla macchina, la fermano li'. E' il primo pezzo dopo la macchina: tutto il resto — la valvola di sicurezza, il ritegno, i rubinetti, il filtro — viene dopo, e il giunto non chiude niente, quindi la sicurezza resta collegata alla macchina. Gomma o flessibile inox si sceglie in distinta: sullo schema il segno e' lo stesso.",
+          "reference": "absorb-vibration-at-the-machine@1.0.0"
+        }
+      ],
+      "id": "flexible-joint-pdc-slave-water-return",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "flexible-joint",
+      "evidence": [
+        {
+          "kind": "rule",
+          "note": "Una macchina con un compressore e un ventilatore vibra, e con i tubi rigidi la vibrazione arriva nelle tubazioni e da li' nell'edificio: ronzio nelle stanze, raccordi che col tempo si allentano o perdono. Un tratto flessibile sulla mandata e uno sul ritorno, attaccati alla macchina, la fermano li'. E' il primo pezzo dopo la macchina: tutto il resto — la valvola di sicurezza, il ritegno, i rubinetti, il filtro — viene dopo, e il giunto non chiude niente, quindi la sicurezza resta collegata alla macchina. Gomma o flessibile inox si sceglie in distinta: sullo schema il segno e' lo stesso.",
+          "reference": "absorb-vibration-at-the-machine@1.0.0"
+        }
+      ],
+      "id": "flexible-joint-pdc-slave-water-supply",
       "properties": {},
       "tag": null
     },
@@ -119,8 +171,8 @@
       "evidence": [
         {
           "kind": "rule",
-          "note": "Un circuito chiuso non si alimenta da nessuna parte: va riempito e poi reintegrato quando cala, e a pressione controllata, altrimenti la rete idrica lo porterebbe alla propria. Il gruppo e' percio' un **ponte**: pesca dall'acqua fredda gia' dichiarata dal progettista e la immette nel circuito tecnico, con una derivazione da ciascuna parte. Si innesta sul ritorno generale, a monte della prima ripartizione: e' il punto piu' freddo del circuito, dove l'acqua di rete entra senza scaldarsi di colpo, ed e' il tratto comune, cosi' il reintegro serve tutte le macchine e non il ramo di una sola. Dove l'acqua fredda non e' stata dichiarata, il gruppo non si posa appeso a nulla: si chiede.",
-          "reference": "filling-unit-on-return@5.0.0"
+          "note": "Un circuito chiuso non si alimenta da nessuna parte: va riempito e poi reintegrato quando cala, e a pressione controllata, altrimenti la rete idrica lo porterebbe alla propria. Il gruppo e' percio' un **ponte**: pesca dall'acqua fredda gia' dichiarata dal progettista e la immette nel circuito tecnico, con una derivazione da ciascuna parte. Si innesta sul ritorno generale, a monte della prima ripartizione: e' il punto piu' freddo del circuito, dove l'acqua di rete entra senza scaldarsi di colpo, ed e' il tratto comune, cosi' il reintegro serve tutte le macchine e non il ramo di una sola. Dove l'acqua fredda non e' stata dichiarata, il gruppo non si posa appeso a nulla: si chiede. Sul ritorno sta dalla parte delle macchine rispetto al defangatore, oltre il filtro di ciascuna (D-218): il vaso non si separa mai dalle macchine per una valvola che non sia loro, e vaso, gruppo di riempimento e manometro stanno insieme.",
+          "reference": "filling-unit-on-return@6.0.0"
         }
       ],
       "id": "inlet-filling-unit-collettore-ritorno-a",
@@ -172,8 +224,8 @@
       "evidence": [
         {
           "kind": "rule",
-          "note": "La pressione di un circuito chiuso e' la spia della sua salute: se cala, perde; se sale, il vaso non lavora. Va letta sul posto, e ne basta un punto per circuito perche' la pressione e' la stessa dappertutto. Sta sul ritorno generale, accanto al punto in cui il circuito si riempie, cosi' chi reintegra legge mentre carica — e sul tratto comune, non sul ramo di una macchina.",
-          "reference": "gauge-where-the-plant-is-charged@3.0.0"
+          "note": "La pressione di un circuito chiuso e' la spia della sua salute: se cala, perde; se sale, il vaso non lavora. Va letta sul posto, e ne basta un punto per circuito perche' la pressione e' la stessa dappertutto. Sta sul ritorno generale, accanto al punto in cui il circuito si riempie, cosi' chi reintegra legge mentre carica — e sul tratto comune, non sul ramo di una macchina. Sul ritorno sta dalla parte delle macchine rispetto al defangatore, oltre il filtro di ciascuna (D-218): il vaso non si separa mai dalle macchine per una valvola che non sia loro, e vaso, gruppo di riempimento e manometro stanno insieme.",
+          "reference": "gauge-where-the-plant-is-charged@4.0.0"
         }
       ],
       "id": "pressure-gauge-collettore-ritorno-a",
@@ -218,8 +270,8 @@
       "evidence": [
         {
           "kind": "rule",
-          "note": "L'acqua scaldata aumenta di volume, e in un volume chiuso quell'aumento diventa pressione. Il vaso e' lo spazio che quel volume in piu' trova invece della rottura, e ne basta uno per circuito perche' la pressione e' la stessa dappertutto. Sta sul ritorno generale, a monte della prima ripartizione verso chi scalda: e' il punto piu' freddo — la membrana dura di piu' dove l'acqua e' meno calda — ed e' il tratto che serve tutti i generatori insieme, cosi' con due in parallelo il vaso non finisce sul ramo di uno solo. La riserva sanitaria ha il proprio vaso sulla propria alimentazione: e' un'altra regola.",
-          "reference": "expansion-on-closed-circuit@4.1.0"
+          "note": "L'acqua scaldata aumenta di volume, e in un volume chiuso quell'aumento diventa pressione. Il vaso e' lo spazio che quel volume in piu' trova invece della rottura, e ne basta uno per circuito perche' la pressione e' la stessa dappertutto. Sta sul ritorno generale, a monte della prima ripartizione verso chi scalda: e' il punto piu' freddo — la membrana dura di piu' dove l'acqua e' meno calda — ed e' il tratto che serve tutti i generatori insieme, cosi' con due in parallelo il vaso non finisce sul ramo di uno solo. La riserva sanitaria ha il proprio vaso sulla propria alimentazione: e' un'altra regola. Sul ritorno sta dalla parte delle macchine rispetto al defangatore, oltre il filtro di ciascuna (D-218): il vaso non si separa mai dalle macchine per una valvola che non sia loro, e vaso, gruppo di riempimento e manometro stanno insieme.",
+          "reference": "expansion-on-closed-circuit@5.0.0"
         }
       ],
       "id": "tee-expansion-connection-collettore-ritorno-a",
@@ -231,8 +283,8 @@
       "evidence": [
         {
           "kind": "rule",
-          "note": "Un circuito chiuso non si alimenta da nessuna parte: va riempito e poi reintegrato quando cala, e a pressione controllata, altrimenti la rete idrica lo porterebbe alla propria. Il gruppo e' percio' un **ponte**: pesca dall'acqua fredda gia' dichiarata dal progettista e la immette nel circuito tecnico, con una derivazione da ciascuna parte. Si innesta sul ritorno generale, a monte della prima ripartizione: e' il punto piu' freddo del circuito, dove l'acqua di rete entra senza scaldarsi di colpo, ed e' il tratto comune, cosi' il reintegro serve tutte le macchine e non il ramo di una sola. Dove l'acqua fredda non e' stata dichiarata, il gruppo non si posa appeso a nulla: si chiede.",
-          "reference": "filling-unit-on-return@5.0.0"
+          "note": "Un circuito chiuso non si alimenta da nessuna parte: va riempito e poi reintegrato quando cala, e a pressione controllata, altrimenti la rete idrica lo porterebbe alla propria. Il gruppo e' percio' un **ponte**: pesca dall'acqua fredda gia' dichiarata dal progettista e la immette nel circuito tecnico, con una derivazione da ciascuna parte. Si innesta sul ritorno generale, a monte della prima ripartizione: e' il punto piu' freddo del circuito, dove l'acqua di rete entra senza scaldarsi di colpo, ed e' il tratto comune, cosi' il reintegro serve tutte le macchine e non il ramo di una sola. Dove l'acqua fredda non e' stata dichiarata, il gruppo non si posa appeso a nulla: si chiede. Sul ritorno sta dalla parte delle macchine rispetto al defangatore, oltre il filtro di ciascuna (D-218): il vaso non si separa mai dalle macchine per una valvola che non sia loro, e vaso, gruppo di riempimento e manometro stanno insieme.",
+          "reference": "filling-unit-on-return@6.0.0"
         }
       ],
       "id": "tee-filling-unit-collettore-ritorno-a-b",
@@ -244,8 +296,8 @@
       "evidence": [
         {
           "kind": "rule",
-          "note": "La pressione di un circuito chiuso e' la spia della sua salute: se cala, perde; se sale, il vaso non lavora. Va letta sul posto, e ne basta un punto per circuito perche' la pressione e' la stessa dappertutto. Sta sul ritorno generale, accanto al punto in cui il circuito si riempie, cosi' chi reintegra legge mentre carica — e sul tratto comune, non sul ramo di una macchina.",
-          "reference": "gauge-where-the-plant-is-charged@3.0.0"
+          "note": "La pressione di un circuito chiuso e' la spia della sua salute: se cala, perde; se sale, il vaso non lavora. Va letta sul posto, e ne basta un punto per circuito perche' la pressione e' la stessa dappertutto. Sta sul ritorno generale, accanto al punto in cui il circuito si riempie, cosi' chi reintegra legge mentre carica — e sul tratto comune, non sul ramo di una macchina. Sul ritorno sta dalla parte delle macchine rispetto al defangatore, oltre il filtro di ciascuna (D-218): il vaso non si separa mai dalle macchine per una valvola che non sia loro, e vaso, gruppo di riempimento e manometro stanno insieme.",
+          "reference": "gauge-where-the-plant-is-charged@4.0.0"
         }
       ],
       "id": "tee-pressure-gauge-collettore-ritorno-a",
@@ -284,6 +336,84 @@
       "id": "utenze",
       "properties": {},
       "tag": "ACS-01"
+    },
+    {
+      "definition_id": "valve-antifreeze",
+      "evidence": [
+        {
+          "kind": "rule",
+          "note": "Una pompa di calore sta fuori, e d'inverno l'acqua nei tubi esterni e nella macchina puo' gelare. La macchina ha una sua protezione antigelo, ma senza corrente non funziona: una notte di gelo e un'interruzione di corrente rompono lo scambiatore. Le valvole antigelo si aprono da sole, senza corrente, quando l'acqua sta per gelare, e scaricano il tratto esterno; poi l'impianto si rabbocca dal gruppo di riempimento. Ne va una sulla mandata e una sul ritorno di ogni pompa di calore, sul tratto esterno, dopo il giunto. Nello schema stanno vicino alla macchina; in cantiere vanno nel punto piu' basso del tratto esterno, con lo scarico libero (la nota di posa lo dice). Con il glicole dichiarato non servono.",
+          "reference": "drain-the-outdoor-run-before-it-freezes@1.0.0"
+        }
+      ],
+      "id": "valve-antifreeze-pdc-master-water-return",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "valve-antifreeze",
+      "evidence": [
+        {
+          "kind": "rule",
+          "note": "Una pompa di calore sta fuori, e d'inverno l'acqua nei tubi esterni e nella macchina puo' gelare. La macchina ha una sua protezione antigelo, ma senza corrente non funziona: una notte di gelo e un'interruzione di corrente rompono lo scambiatore. Le valvole antigelo si aprono da sole, senza corrente, quando l'acqua sta per gelare, e scaricano il tratto esterno; poi l'impianto si rabbocca dal gruppo di riempimento. Ne va una sulla mandata e una sul ritorno di ogni pompa di calore, sul tratto esterno, dopo il giunto. Nello schema stanno vicino alla macchina; in cantiere vanno nel punto piu' basso del tratto esterno, con lo scarico libero (la nota di posa lo dice). Con il glicole dichiarato non servono.",
+          "reference": "drain-the-outdoor-run-before-it-freezes@1.0.0"
+        }
+      ],
+      "id": "valve-antifreeze-pdc-master-water-supply",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "valve-antifreeze",
+      "evidence": [
+        {
+          "kind": "rule",
+          "note": "Una pompa di calore sta fuori, e d'inverno l'acqua nei tubi esterni e nella macchina puo' gelare. La macchina ha una sua protezione antigelo, ma senza corrente non funziona: una notte di gelo e un'interruzione di corrente rompono lo scambiatore. Le valvole antigelo si aprono da sole, senza corrente, quando l'acqua sta per gelare, e scaricano il tratto esterno; poi l'impianto si rabbocca dal gruppo di riempimento. Ne va una sulla mandata e una sul ritorno di ogni pompa di calore, sul tratto esterno, dopo il giunto. Nello schema stanno vicino alla macchina; in cantiere vanno nel punto piu' basso del tratto esterno, con lo scarico libero (la nota di posa lo dice). Con il glicole dichiarato non servono.",
+          "reference": "drain-the-outdoor-run-before-it-freezes@1.0.0"
+        }
+      ],
+      "id": "valve-antifreeze-pdc-slave-water-return",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "valve-antifreeze",
+      "evidence": [
+        {
+          "kind": "rule",
+          "note": "Una pompa di calore sta fuori, e d'inverno l'acqua nei tubi esterni e nella macchina puo' gelare. La macchina ha una sua protezione antigelo, ma senza corrente non funziona: una notte di gelo e un'interruzione di corrente rompono lo scambiatore. Le valvole antigelo si aprono da sole, senza corrente, quando l'acqua sta per gelare, e scaricano il tratto esterno; poi l'impianto si rabbocca dal gruppo di riempimento. Ne va una sulla mandata e una sul ritorno di ogni pompa di calore, sul tratto esterno, dopo il giunto. Nello schema stanno vicino alla macchina; in cantiere vanno nel punto piu' basso del tratto esterno, con lo scarico libero (la nota di posa lo dice). Con il glicole dichiarato non servono.",
+          "reference": "drain-the-outdoor-run-before-it-freezes@1.0.0"
+        }
+      ],
+      "id": "valve-antifreeze-pdc-slave-water-supply",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "valve-check",
+      "evidence": [
+        {
+          "kind": "rule",
+          "note": "Quando due o piu' generatori mandano nello stesso collettore, quello fermo e' una via aperta all'indietro: l'acqua spinta da chi lavora rientra dal collettore attraverso la macchina spenta e torna al ritorno senza passare dall'impianto, e la macchina ferma si raffredda e si riscalda a ogni ciclo dell'altra. Il ritegno sta sulla mandata di ciascun generatore, prima che le mandate diventino una: e' l'ultimo punto che appartiene a quella macchina sola. Sta fra lo stacco della valvola di sicurezza e il rubinetto della macchina (D-217): chiusi i due rubinetti di quella macchina si cambia senza svuotare il collettore e senza fermare le altre. Un generatore da solo non lo vuole: nessuno gli spinge contro.",
+          "reference": "non-return-where-generators-run-in-parallel@2.0.0"
+        }
+      ],
+      "id": "valve-check-pdc-master-water-supply",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "valve-check",
+      "evidence": [
+        {
+          "kind": "rule",
+          "note": "Quando due o piu' generatori mandano nello stesso collettore, quello fermo e' una via aperta all'indietro: l'acqua spinta da chi lavora rientra dal collettore attraverso la macchina spenta e torna al ritorno senza passare dall'impianto, e la macchina ferma si raffredda e si riscalda a ogni ciclo dell'altra. Il ritegno sta sulla mandata di ciascun generatore, prima che le mandate diventino una: e' l'ultimo punto che appartiene a quella macchina sola. Sta fra lo stacco della valvola di sicurezza e il rubinetto della macchina (D-217): chiusi i due rubinetti di quella macchina si cambia senza svuotare il collettore e senza fermare le altre. Un generatore da solo non lo vuole: nessuno gli spinge contro.",
+          "reference": "non-return-where-generators-run-in-parallel@2.0.0"
+        }
+      ],
+      "id": "valve-check-pdc-slave-water-supply",
+      "properties": {},
+      "tag": null
     },
     {
       "definition_id": "valve-gauge-cock-3way",
@@ -569,11 +699,25 @@
         "port_id": "water_supply"
       },
       "endpoint_b": {
+        "component_id": "flexible-joint-pdc-master-water-supply",
+        "port_id": "a"
+      },
+      "evidence": [],
+      "id": "p1-a",
+      "network_id": "primario",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "flexible-joint-pdc-master-water-supply",
+        "port_id": "b"
+      },
+      "endpoint_b": {
         "component_id": "tee-valve-safety-pdc-master-water-supply",
         "port_id": "a"
       },
       "evidence": [],
-      "id": "p1-a-a-1",
+      "id": "p1-b-a-a-a-1-a-1",
       "network_id": "primario",
       "properties": {}
     },
@@ -583,11 +727,39 @@
         "port_id": "b"
       },
       "endpoint_b": {
+        "component_id": "valve-antifreeze-pdc-master-water-supply",
+        "port_id": "a"
+      },
+      "evidence": [],
+      "id": "p1-b-a-a-a-1-a-2",
+      "network_id": "primario",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "valve-antifreeze-pdc-master-water-supply",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "valve-check-pdc-master-water-supply",
+        "port_id": "a"
+      },
+      "evidence": [],
+      "id": "p1-b-a-a-a-1-a-3",
+      "network_id": "primario",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "valve-check-pdc-master-water-supply",
+        "port_id": "b"
+      },
+      "endpoint_b": {
         "component_id": "valve-isolation-pdc-master-water-supply",
         "port_id": "a"
       },
       "evidence": [],
-      "id": "p1-a-a-2",
+      "id": "p1-b-a-a-a-1-a-4",
       "network_id": "primario",
       "properties": {}
     },
@@ -601,7 +773,7 @@
         "port_id": "a"
       },
       "evidence": [],
-      "id": "p1-a-a-3",
+      "id": "p1-b-a-a-a-1-a-5",
       "network_id": "primario",
       "properties": {}
     },
@@ -611,11 +783,25 @@
         "port_id": "water_supply"
       },
       "endpoint_b": {
+        "component_id": "flexible-joint-pdc-slave-water-supply",
+        "port_id": "a"
+      },
+      "evidence": [],
+      "id": "p2-a",
+      "network_id": "primario",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "flexible-joint-pdc-slave-water-supply",
+        "port_id": "b"
+      },
+      "endpoint_b": {
         "component_id": "tee-valve-safety-pdc-slave-water-supply",
         "port_id": "a"
       },
       "evidence": [],
-      "id": "p2-a-a-1",
+      "id": "p2-b-a-a-a-1-a-1",
       "network_id": "primario",
       "properties": {}
     },
@@ -625,11 +811,39 @@
         "port_id": "b"
       },
       "endpoint_b": {
+        "component_id": "valve-antifreeze-pdc-slave-water-supply",
+        "port_id": "a"
+      },
+      "evidence": [],
+      "id": "p2-b-a-a-a-1-a-2",
+      "network_id": "primario",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "valve-antifreeze-pdc-slave-water-supply",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "valve-check-pdc-slave-water-supply",
+        "port_id": "a"
+      },
+      "evidence": [],
+      "id": "p2-b-a-a-a-1-a-3",
+      "network_id": "primario",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "valve-check-pdc-slave-water-supply",
+        "port_id": "b"
+      },
+      "endpoint_b": {
         "component_id": "valve-isolation-pdc-slave-water-supply",
         "port_id": "a"
       },
       "evidence": [],
-      "id": "p2-a-a-2",
+      "id": "p2-b-a-a-a-1-a-4",
       "network_id": "primario",
       "properties": {}
     },
@@ -643,7 +857,7 @@
         "port_id": "c"
       },
       "evidence": [],
-      "id": "p2-a-a-3",
+      "id": "p2-b-a-a-a-1-a-5",
       "network_id": "primario",
       "properties": {}
     },
@@ -695,7 +909,7 @@
         "port_id": "b"
       },
       "endpoint_b": {
-        "component_id": "tee-pressure-gauge-collettore-ritorno-a",
+        "component_id": "dirt-separator-collettore-ritorno-a",
         "port_id": "a"
       },
       "evidence": [],
@@ -705,25 +919,39 @@
     },
     {
       "endpoint_a": {
-        "component_id": "tee-pressure-gauge-collettore-ritorno-a",
+        "component_id": "dirt-separator-collettore-ritorno-a",
         "port_id": "b"
       },
       "endpoint_b": {
-        "component_id": "tee-filling-unit-collettore-ritorno-a-b",
+        "component_id": "valve-isolation-dirt-separator-collettore-ritorno-a-b",
         "port_id": "a"
       },
       "evidence": [],
-      "id": "p4-a-2",
+      "id": "p4-a-2-a",
       "network_id": "primario",
       "properties": {}
     },
     {
       "endpoint_a": {
-        "component_id": "tee-filling-unit-collettore-ritorno-a-b",
+        "component_id": "valve-isolation-dirt-separator-collettore-ritorno-a-b",
         "port_id": "b"
       },
       "endpoint_b": {
-        "component_id": "tee-expansion-connection-collettore-ritorno-a",
+        "component_id": "tee-pressure-gauge-collettore-ritorno-a",
+        "port_id": "a"
+      },
+      "evidence": [],
+      "id": "p4-a-2-b",
+      "network_id": "primario",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "tee-pressure-gauge-collettore-ritorno-a",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "tee-filling-unit-collettore-ritorno-a-b",
         "port_id": "a"
       },
       "evidence": [],
@@ -733,11 +961,11 @@
     },
     {
       "endpoint_a": {
-        "component_id": "tee-expansion-connection-collettore-ritorno-a",
+        "component_id": "tee-filling-unit-collettore-ritorno-a-b",
         "port_id": "b"
       },
       "endpoint_b": {
-        "component_id": "dirt-separator-collettore-ritorno-a",
+        "component_id": "tee-expansion-connection-collettore-ritorno-a",
         "port_id": "a"
       },
       "evidence": [],
@@ -747,21 +975,7 @@
     },
     {
       "endpoint_a": {
-        "component_id": "dirt-separator-collettore-ritorno-a",
-        "port_id": "b"
-      },
-      "endpoint_b": {
-        "component_id": "valve-isolation-dirt-separator-collettore-ritorno-a-b",
-        "port_id": "a"
-      },
-      "evidence": [],
-      "id": "p4-a-5-a",
-      "network_id": "primario",
-      "properties": {}
-    },
-    {
-      "endpoint_a": {
-        "component_id": "valve-isolation-dirt-separator-collettore-ritorno-a-b",
+        "component_id": "tee-expansion-connection-collettore-ritorno-a",
         "port_id": "b"
       },
       "endpoint_b": {
@@ -769,7 +983,7 @@
         "port_id": "a"
       },
       "evidence": [],
-      "id": "p4-a-5-b",
+      "id": "p4-a-5",
       "network_id": "primario",
       "properties": {}
     },
@@ -783,7 +997,7 @@
         "port_id": "a"
       },
       "evidence": [],
-      "id": "p5-a-a",
+      "id": "p5-a-a-a",
       "network_id": "primario",
       "properties": {}
     },
@@ -797,13 +1011,41 @@
         "port_id": "a"
       },
       "evidence": [],
-      "id": "p5-a-b",
+      "id": "p5-a-a-b",
       "network_id": "primario",
       "properties": {}
     },
     {
       "endpoint_a": {
         "component_id": "strainer-pdc-master-water-return",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "valve-antifreeze-pdc-master-water-return",
+        "port_id": "a"
+      },
+      "evidence": [],
+      "id": "p5-a-b-a",
+      "network_id": "primario",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "valve-antifreeze-pdc-master-water-return",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "flexible-joint-pdc-master-water-return",
+        "port_id": "a"
+      },
+      "evidence": [],
+      "id": "p5-a-b-b",
+      "network_id": "primario",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "flexible-joint-pdc-master-water-return",
         "port_id": "b"
       },
       "endpoint_b": {
@@ -825,7 +1067,7 @@
         "port_id": "a"
       },
       "evidence": [],
-      "id": "p6-a-a",
+      "id": "p6-a-a-a",
       "network_id": "primario",
       "properties": {}
     },
@@ -839,13 +1081,41 @@
         "port_id": "a"
       },
       "evidence": [],
-      "id": "p6-a-b",
+      "id": "p6-a-a-b",
       "network_id": "primario",
       "properties": {}
     },
     {
       "endpoint_a": {
         "component_id": "strainer-pdc-slave-water-return",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "valve-antifreeze-pdc-slave-water-return",
+        "port_id": "a"
+      },
+      "evidence": [],
+      "id": "p6-a-b-a",
+      "network_id": "primario",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "valve-antifreeze-pdc-slave-water-return",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "flexible-joint-pdc-slave-water-return",
+        "port_id": "a"
+      },
+      "evidence": [],
+      "id": "p6-a-b-b",
+      "network_id": "primario",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "flexible-joint-pdc-slave-water-return",
         "port_id": "b"
       },
       "endpoint_b": {
@@ -1227,7 +1497,7 @@
       ],
       "id": "applied-dirt-separator-collettore-ritorno-a",
       "rule_id": "dirt-separation-before-what-it-would-ruin",
-      "rule_version": "3.0.0",
+      "rule_version": "4.0.0",
       "status": "approved"
     },
     {
@@ -1252,7 +1522,7 @@
       ],
       "id": "applied-expansion-connection-collettore-ritorno-a",
       "rule_id": "expansion-on-closed-circuit",
-      "rule_version": "4.1.0",
+      "rule_version": "5.0.0",
       "status": "approved"
     },
     {
@@ -1269,7 +1539,55 @@
       ],
       "id": "applied-filling-unit-collettore-ritorno-a",
       "rule_id": "filling-unit-on-return",
-      "rule_version": "5.0.0",
+      "rule_version": "6.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "flexible-joint-pdc-master-water-return",
+        "p5-a",
+        "p5-b"
+      ],
+      "id": "applied-flexible-joint-pdc-master-water-return",
+      "rule_id": "absorb-vibration-at-the-machine",
+      "rule_version": "1.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "flexible-joint-pdc-master-water-supply",
+        "p1-a",
+        "p1-b"
+      ],
+      "id": "applied-flexible-joint-pdc-master-water-supply",
+      "rule_id": "absorb-vibration-at-the-machine",
+      "rule_version": "1.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "flexible-joint-pdc-slave-water-return",
+        "p6-a",
+        "p6-b"
+      ],
+      "id": "applied-flexible-joint-pdc-slave-water-return",
+      "rule_id": "absorb-vibration-at-the-machine",
+      "rule_version": "1.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "flexible-joint-pdc-slave-water-supply",
+        "p2-a",
+        "p2-b"
+      ],
+      "id": "applied-flexible-joint-pdc-slave-water-supply",
+      "rule_id": "absorb-vibration-at-the-machine",
+      "rule_version": "1.0.0",
       "status": "approved"
     },
     {
@@ -1298,15 +1616,15 @@
       ],
       "id": "applied-pressure-gauge-collettore-ritorno-a",
       "rule_id": "gauge-where-the-plant-is-charged",
-      "rule_version": "3.0.0",
+      "rule_version": "4.0.0",
       "status": "approved"
     },
     {
       "category": "recommended",
       "entity_ids": [
         "strainer-pdc-master-water-return",
-        "p5-a",
-        "p5-b"
+        "p5-a-a",
+        "p5-a-b"
       ],
       "id": "applied-strainer-pdc-master-water-return",
       "rule_id": "debris-guard-before-what-it-would-ruin",
@@ -1317,12 +1635,84 @@
       "category": "recommended",
       "entity_ids": [
         "strainer-pdc-slave-water-return",
-        "p6-a",
-        "p6-b"
+        "p6-a-a",
+        "p6-a-b"
       ],
       "id": "applied-strainer-pdc-slave-water-return",
       "rule_id": "debris-guard-before-what-it-would-ruin",
       "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "valve-antifreeze-pdc-master-water-return",
+        "p5-a-b-a",
+        "p5-a-b-b"
+      ],
+      "id": "applied-valve-antifreeze-pdc-master-water-return",
+      "rule_id": "drain-the-outdoor-run-before-it-freezes",
+      "rule_version": "1.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "valve-antifreeze-pdc-master-water-supply",
+        "p1-b-a",
+        "p1-b-b"
+      ],
+      "id": "applied-valve-antifreeze-pdc-master-water-supply",
+      "rule_id": "drain-the-outdoor-run-before-it-freezes",
+      "rule_version": "1.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "valve-antifreeze-pdc-slave-water-return",
+        "p6-a-b-a",
+        "p6-a-b-b"
+      ],
+      "id": "applied-valve-antifreeze-pdc-slave-water-return",
+      "rule_id": "drain-the-outdoor-run-before-it-freezes",
+      "rule_version": "1.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "valve-antifreeze-pdc-slave-water-supply",
+        "p2-b-a",
+        "p2-b-b"
+      ],
+      "id": "applied-valve-antifreeze-pdc-slave-water-supply",
+      "rule_id": "drain-the-outdoor-run-before-it-freezes",
+      "rule_version": "1.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "valve-check-pdc-master-water-supply",
+        "p1-b-a-a",
+        "p1-b-a-b"
+      ],
+      "id": "applied-valve-check-pdc-master-water-supply",
+      "rule_id": "non-return-where-generators-run-in-parallel",
+      "rule_version": "2.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "valve-check-pdc-slave-water-supply",
+        "p2-b-a-a",
+        "p2-b-a-b"
+      ],
+      "id": "applied-valve-check-pdc-slave-water-supply",
+      "rule_id": "non-return-where-generators-run-in-parallel",
+      "rule_version": "2.0.0",
       "status": "approved"
     },
     {
@@ -1449,8 +1839,8 @@
       "category": "recommended",
       "entity_ids": [
         "valve-isolation-dirt-separator-collettore-ritorno-a-b",
-        "p4-a-5-a",
-        "p4-a-5-b"
+        "p4-a-2-a",
+        "p4-a-2-b"
       ],
       "id": "applied-valve-isolation-dirt-separator-collettore-ritorno-a-b",
       "rule_id": "isolate-what-is-serviced",
@@ -1473,8 +1863,8 @@
       "category": "recommended",
       "entity_ids": [
         "valve-isolation-pdc-master-water-supply",
-        "p1-a-a",
-        "p1-a-b"
+        "p1-b-a-a-a-1-a",
+        "p1-b-a-a-a-1-b"
       ],
       "id": "applied-valve-isolation-pdc-master-water-supply",
       "rule_id": "isolate-what-is-serviced",
@@ -1485,8 +1875,8 @@
       "category": "recommended",
       "entity_ids": [
         "valve-isolation-pdc-slave-water-supply",
-        "p2-a-a",
-        "p2-a-b"
+        "p2-b-a-a-a-1-a",
+        "p2-b-a-a-a-1-b"
       ],
       "id": "applied-valve-isolation-pdc-slave-water-supply",
       "rule_id": "isolate-what-is-serviced",
@@ -1497,8 +1887,8 @@
       "category": "recommended",
       "entity_ids": [
         "valve-isolation-strainer-pdc-master-water-return-a",
-        "p5-a-a",
-        "p5-a-b"
+        "p5-a-a-a",
+        "p5-a-a-b"
       ],
       "id": "applied-valve-isolation-strainer-pdc-master-water-return-a",
       "rule_id": "isolate-what-is-serviced",
@@ -1509,8 +1899,8 @@
       "category": "recommended",
       "entity_ids": [
         "valve-isolation-strainer-pdc-slave-water-return-a",
-        "p6-a-a",
-        "p6-a-b"
+        "p6-a-a-a",
+        "p6-a-a-b"
       ],
       "id": "applied-valve-isolation-strainer-pdc-slave-water-return-a",
       "rule_id": "isolate-what-is-serviced",
@@ -1522,8 +1912,8 @@
       "entity_ids": [
         "valve-safety-pdc-master-water-supply",
         "tee-valve-safety-pdc-master-water-supply",
-        "p1-a",
-        "p1-b",
+        "p1-b-a-a-a",
+        "p1-b-a-a-b",
         "stub-valve-safety-pdc-master-water-supply"
       ],
       "id": "applied-valve-safety-pdc-master-water-supply",
@@ -1536,8 +1926,8 @@
       "entity_ids": [
         "valve-safety-pdc-slave-water-supply",
         "tee-valve-safety-pdc-slave-water-supply",
-        "p2-a",
-        "p2-b",
+        "p2-b-a-a-a",
+        "p2-b-a-a-b",
         "stub-valve-safety-pdc-slave-water-supply"
       ],
       "id": "applied-valve-safety-pdc-slave-water-supply",
@@ -1593,9 +1983,17 @@
         "pdc-slave",
         "collettore-mandata",
         "collettore-ritorno",
+        "flexible-joint-pdc-master-water-supply",
+        "flexible-joint-pdc-master-water-return",
+        "flexible-joint-pdc-slave-water-supply",
+        "flexible-joint-pdc-slave-water-return",
         "strainer-pdc-master-water-return",
         "strainer-pdc-slave-water-return",
         "dirt-separator-collettore-ritorno-a",
+        "valve-antifreeze-pdc-master-water-supply",
+        "valve-antifreeze-pdc-master-water-return",
+        "valve-antifreeze-pdc-slave-water-supply",
+        "valve-antifreeze-pdc-slave-water-return",
         "expansion-connection-collettore-ritorno-a",
         "tee-expansion-connection-collettore-ritorno-a",
         "filling-unit-collettore-ritorno-a",
@@ -1603,6 +2001,8 @@
         "tee-filling-unit-collettore-ritorno-a-b",
         "pressure-gauge-collettore-ritorno-a",
         "tee-pressure-gauge-collettore-ritorno-a",
+        "valve-check-pdc-master-water-supply",
+        "valve-check-pdc-slave-water-supply",
         "valve-safety-pdc-master-water-supply",
         "tee-valve-safety-pdc-master-water-supply",
         "valve-safety-pdc-slave-water-supply",

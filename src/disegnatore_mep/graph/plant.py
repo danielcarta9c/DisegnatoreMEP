@@ -51,6 +51,9 @@ from disegnatore_mep.model.types import PortFlow
 
 from .naming import FamilyEntry, Naming
 
+POWER_SWITCHING = "power_switching"
+"""Il mestiere del rele' d'appoggio (D-228): la sua sigla viene dal pezzo che alimenta (I-267)."""
+
 WRITTEN_TAG = re.compile(r"^([A-Z]+)-(\d+)$")
 """Come e' fatta una sigla: famiglia, trattino, numero.
 
@@ -613,6 +616,22 @@ class _Reader:
             prefix = self._families[component_id].prefix
             used[prefix] = used.get(prefix, 0) + 1
             sigle[component_id] = f"{prefix}-{used[prefix]:02d}"
+        # Il rele' d'appoggio porta la sigla del pezzo che alimenta (I-267): «KA-CIR-02» e'
+        # il rele' del circolatore CIR-02. Il suo contatto esce dall'attacco `b`.
+        for component_id in self._met:
+            if component_id in written or POWER_SWITCHING not in self._definitions[component_id].functions:
+                continue
+            carichi = [
+                other.component_id
+                for connection in self._project.connections
+                for mine, other in (
+                    (connection.endpoint_a, connection.endpoint_b),
+                    (connection.endpoint_b, connection.endpoint_a),
+                )
+                if mine.component_id == component_id and mine.port_id == "b" and other.component_id in sigle
+            ]
+            if len(carichi) == 1:
+                sigle[component_id] = f"{self._families[component_id].prefix}-{sigle[carichi[0]]}"
         counted = Counter(sigle.values())
         repeated = sorted(item for item, times in counted.items() if times > 1)
         if repeated:

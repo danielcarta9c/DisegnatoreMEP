@@ -102,10 +102,6 @@ MASSIMO_DELLE_NOTE = 5
 """Al massimo cinque (D-232): «non esageriamo ovviamente altrimenti diventa una tavola
 di tutte note» (I-263)."""
 
-LARGHEZZA_DELLE_NOTE_MM = 110.0
-"""Quanto e' largo il riquadro, al massimo: una nota da due o tre righe al corpo dei
-testi. *Proposta della sessione*, da giudicare sulla tavola."""
-
 LARGHEZZA_MINIMA_MM = 60.0
 """Sotto questa larghezza, a destra della tabella, le note andrebbero a capo a ogni
 due parole: il riquadro passa **sotto** la tabella, contro la squadratura."""
@@ -205,8 +201,9 @@ def impagina_le_note(
     destra della tabella**, staccato da lei dello stacco del disegno
     (`STACCO_DALLA_TABELLA_MM`). `None` senza note.
 
-    E' largo `LARGHEZZA_DELLE_NOTE_MM`, o quanto resta fino alla fascia della
-    legenda, al passo di griglia. Se a destra della tabella resta meno di
+    E' largo **quanto resta fino alla fascia della legenda**, al passo di griglia
+    (I-265: «non teniamola a larghezza fissa … portiamola fino al limite del bordo
+    destro»). Se a destra della tabella resta meno di
     `LARGHEZZA_MINIMA_MM`, il riquadro va **sotto** la tabella; senza tabella sta
     nell'angolo in alto a sinistra, al suo posto."""
     if not note:
@@ -217,7 +214,9 @@ def impagina_le_note(
     destra = area.right_mm - STACCO_DALLA_LEGENDA_MM
 
     def larghezza_da(sinistra: float) -> float:
-        return min(LARGHEZZA_DELLE_NOTE_MM, ((destra - sinistra + 1e-6) // passo) * passo)
+        # Fino alla fascia della legenda, non a larghezza fissa (I-265): le note vanno a
+        # capo solo quando finisce lo spazio, e il riquadro resta basso.
+        return ((destra - sinistra + 1e-6) // passo) * passo
 
     sinistra, alto = area.x_mm, area.y_mm
     if tabella is not None:

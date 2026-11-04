@@ -237,6 +237,9 @@ def test_il_riquadro_sta_a_destra_della_tabella_e_a_sinistra_della_legenda(
     assert note[0] == pytest.approx(tabella[2] + STACCO_DALLA_TABELLA_MM)
     assert note[2] <= esito.frame.legend_rect_mm.x_mm - 1e-9
     assert note[2] <= area.right_mm and note[3] <= area.bottom_mm
+    # Fino alla legenda, non a larghezza fissa (I-265): lo spazio che resta e' meno di
+    # un passo di griglia piu' lo stacco.
+    assert area.right_mm - note[2] < 2.5 + esito.frame.standard.grid_mm + 1e-6
     # La riga del titolo e' alta quanto l'intestazione della tabella.
     assert foglio.note_di_posa.riga_mm == foglio.tabella.riga_mm
 

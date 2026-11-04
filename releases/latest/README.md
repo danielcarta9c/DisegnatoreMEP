@@ -1,6 +1,6 @@
 # L'ultima release: 1.9.0
 
-`DisegnatoreMEP-v1.9.0.zip` — sha256 `c7c780861d24b52f…`, 140 file — è `REL-011`: **le regole del corredo contro il
+`DisegnatoreMEP-v1.9.0.zip` — sha256 `248730560b224e43…`, 140 file — è `REL-011`: **le regole del corredo contro il
 manuale Shenling ThermaX R290 e la specifica tecnica di installazione Nove C**, decise col PO un punto alla volta
 (I-243 … I-264, D-217 … D-232). Si carica come ogni skill personale, dallo ZIP così com'è.
 
