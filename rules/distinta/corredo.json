@@ -1,7 +1,7 @@
 {
   "id": "corredo",
-  "versione": "1.3.0",
-  "nota": "Il corredo di posa di ogni voce del catalogo, per id di voce (`definition_id` del pezzo). Il catalogo non si tocca: il corredo sta qui. `apparecchiatura`: il pezzo è una macchina fornita da Nove C e va nella sezione A, una riga per marca e modello (un pezzo con la proprietà `compreso_in` è nella fornitura di un altro e non ha riga sua). `fornitura`: chi la fornisce, una scelta dell'offerta di `distinta.json` («opere_edili», «bocchette_e_griglie») o «committente»; senza, l'installatore. `per_locale` conta una volta per locale servito (il dato `locale` del pezzo, o la sua etichetta), e niente per un locale con `varco`. `passante`: il pezzo sta in mezzo a una linea (sezionatore, sifone), e il tratto lo attraversa. `voci`: il materiale e le opere che il pezzo porta con sé; `calcolo` è `per_pezzo` (n per pezzo) o `per_linea` (n per ogni tratto di quel fluido che arriva al pezzo). Nei testi, `{proprieta}` è un dato del progettista sul pezzo (o la `sezione` del tratto che gli arriva): se manca, il testo dice DA DEFINIRE e la distinta fa la domanda. **Copre l'aria-aria e l'elettrico del kit AA-01; le voci idroniche non hanno corredo**: escono nella sezione X, DA DEFINIRE, finché il PO non decide il corredo (le regole contro il manuale Shenling sono REL-011).",
+  "versione": "1.4.0",
+  "nota": "Il corredo di posa di ogni voce del catalogo, per id di voce (`definition_id` del pezzo). Il catalogo non si tocca: il corredo sta qui. `apparecchiatura`: il pezzo è una macchina fornita da Nove C e va nella sezione A, una riga per marca e modello (un pezzo con la proprietà `compreso_in` è nella fornitura di un altro e non ha riga sua). `fornitura`: chi la fornisce, una scelta dell'offerta di `distinta.json` («opere_edili», «bocchette_e_griglie») o «committente»; senza, l'installatore. `per_locale` conta una volta per locale servito (il dato `locale` del pezzo, o la sua etichetta), e niente per un locale con `varco`. `passante`: il pezzo sta in mezzo a una linea (sezionatore, relè, termostato a contatto, sifone), e il tratto lo attraversa. `voci`: il materiale e le opere che il pezzo porta con sé; `calcolo` è `per_pezzo` (n per pezzo) o `per_linea` (n per ogni tratto di quel fluido che arriva al pezzo). Nei testi, `{proprieta}` è un dato del progettista sul pezzo (o la `sezione` del tratto che gli arriva): se manca, il testo dice DA DEFINIRE e la distinta fa la domanda. **Copre l'aria-aria e l'elettrico del kit AA-01; le voci idroniche non hanno corredo**: escono nella sezione X, DA DEFINIRE, finché il PO non decide il corredo (le regole contro il manuale Shenling sono REL-011).",
   "voci": {
     "split-outdoor-unit": {
       "nome": "Unità esterna split a pompa di calore",
@@ -712,6 +712,42 @@
           "fonte": "revisione su una commessa aria-aria del 02/11/2026 (rilievi del PO e del revisore indipendente)",
           "fonte_in_parole": "regola Nove C rivista su una commessa aria-aria",
           "perche": "Il cavo scende dal controsoffitto alla scatola in traccia."
+        }
+      ]
+    },
+    "room-thermostat-contact": {
+      "nome": "Termostato ambiente a contatto",
+      "apparecchiatura": true,
+      "passante": true,
+      "fonte": "I-269: proposta della sessione del 04/11/2026, da una commessa reale; scatola e traccia come il termostato di zona (kit AA-01: lavoro/dimensionamento.py, voci E.13, F.7)",
+      "fonte_in_parole": "regola Nove C per gli apparecchi a parete",
+      "perche": "Un apparecchio a parete in mezzo alla linea del circolatore: scatola e traccia come il termostato di zona. Il cavo del contatto è quello della linea, che dal quadro va al termostato e torna al circolatore: il termostato è passante, e la linea si conta andata e ritorno — la somma delle due lunghezze date, con la sezione data sul tratto (`sezione`, `lunghezza_m`); se mancano, DA DEFINIRE e la domanda.",
+      "voci": [
+        {
+          "id": "scatola-503",
+          "sezione": "E",
+          "testo": "Scatola 503 per termostati e comandi a parete",
+          "um": "n",
+          "calcolo": {
+            "tipo": "per_pezzo",
+            "n": 1
+          },
+          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce E.13",
+          "fonte_in_parole": "regola Nove C per gli apparecchi a parete",
+          "perche": "Il termostato si monta su una scatola da incasso."
+        },
+        {
+          "id": "traccia-per-apparecchio-a-parete",
+          "sezione": "F",
+          "testo": "Traccia per termostati e comandi a parete, dal controsoffitto alla scatola",
+          "um": "m",
+          "calcolo": {
+            "tipo": "per_pezzo",
+            "n": 1.4
+          },
+          "fonte": "revisione su una commessa aria-aria del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+          "fonte_in_parole": "regola Nove C rivista su una commessa aria-aria",
+          "perche": "Il cavo del contatto, andata e ritorno, scende dal controsoffitto alla scatola in traccia."
         }
       ]
     },

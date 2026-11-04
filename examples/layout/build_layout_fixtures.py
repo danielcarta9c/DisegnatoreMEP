@@ -559,6 +559,11 @@ RELAY_D228 = (
     "ThermaX R290 (P_C1 e P_C4 su un contattore, bobina A1-A2). Forma del segno da approvare "
     "dal PO sulla tavola"
 )
+CONTACT_THERMOSTAT_I269 = (
+    "proposta della sessione del 04/11/2026 (I-269, da una commessa reale): il termostato "
+    "ambiente in chiamata chiude il contatto, e il circolatore prende l'alimentazione dal "
+    "quadro attraverso di lui. Forma del segno da approvare dal PO sulla tavola"
+)
 PLENUM_T1 = (
     "proposta della sessione del 29/10/2026 (collaudo T1 di REL-012, plenum a quattro uscite): "
     "la voce del plenum a cinque serrande del kit AA-01, con le serrande che il plenum ha; "
@@ -769,6 +774,21 @@ REL_012: list[dict[str, Any]] = [
         QUIET,
         [control_port("a", CONTROL_BUS)],
         sources=[KIT_AA01],
+    ),
+    # Il termostato ambiente a contatto (I-269): non parla su un bus, apre e chiude
+    # la linea che lo attraversa. Passante come il sezionatore — l'ingresso dal
+    # quadro, l'uscita verso il carico —, non una variante del termostato di zona,
+    # che ha un attacco solo e su un altro fluido. Il primo mestiere gli da' la sua
+    # famiglia (`naming/families.json`); `room_control` dice che comanda un ambiente.
+    # **Non** `power_switching`: quello e' il mestiere del relè, e la lettura
+    # dell'impianto chiama KA-<carico> chi lo fa (I-267).
+    definition(
+        "room-thermostat-contact",
+        "Termostato ambiente a contatto",
+        ["room_contact_control", "room_control"],
+        QUIET,
+        [control_port("a", POWER, "in"), control_port("b", POWER, "out")],
+        sources=[CONTACT_THERMOSTAT_I269],
     ),
     definition(
         "wired-remote",

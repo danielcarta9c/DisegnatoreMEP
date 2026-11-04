@@ -1,0 +1,23 @@
+{
+ "formato": "A3",
+ "vista": "elettrico",
+ "note": [
+  "La pompa di calore a sinistra, il quadro sotto a destra: la macchina dalla prima uscita sopra (out_1), il cavo entra da sotto.",
+  "Il circolatore a destra del quadro, alla quota dell'uscita a destra (out_3), girato con l'alimentazione verso il quadro (rotazione 270): la linea del circolatore e' una retta, e il termostato ambiente a contatto ci sta in mezzo, posato dal motore, con la sigla sopra e il locale sotto (I-269)."
+ ],
+ "pezzi": {
+  "pdc": {
+   "x": 0,
+   "y": 0
+  },
+  "quadro": {
+   "x": 60,
+   "y": 45
+  },
+  "circ": {
+   "x": 120,
+   "y": 47.5,
+   "rotazione": 270
+  }
+ }
+}

@@ -155,6 +155,20 @@ Regole di forma:
   | marca | `marca` | il testo com'è scritto |
   | modello | `modello` | il testo com'è scritto: `"modello": "ECOcombi"` |
 
+  **E quattro dati elettrici**, che la tabella della tavola dell'elettrico scrive al posto
+  di quelli idronici (I-277): solo se il progettista li dà — dalla targa o dal manuale
+  della macchina —, mai stimati.
+
+  | dato | chiave | come si scrive |
+  |---|---|---|
+  | alimentazione | `alimentazione` | il testo com'è scritto: `"alimentazione": "230 V 1~"`, `"400 V 3N~"` |
+  | potenza elettrica assorbita | `potenza_elettrica_kw` | un numero, in kW: `"potenza_elettrica_kw": 3.9` |
+  | corrente massima assorbita | `corrente_max_a` | un numero, in ampere: `"corrente_max_a": 18` |
+  | cavo minimo richiesto | `cavo_minimo` | il testo com'è scritto: `"cavo_minimo": "3G6"` |
+
+  Sul relè e sul termostato ambiente a contatto la portata del contatto, se il progettista
+  la dà, va in `contatto`, com'è scritta: `"contatto": "5(2) A 250 V"`.
+
   Il numero va col punto decimale (`2.5`) e senza unità: l'unità è nel nome, e il file
   non carica se in `power_kw` scrivi `"12 kW"`. Si cambia unità solo quando il cambio è
   **esatto** — «1,5 m³» di accumulo sono `"volume_l": 1500`, «800 l/h» sono
@@ -577,7 +591,8 @@ tubazione per tratto. Cambiano le voci, i fluidi e il dominio.
 `zone-controller`; bocchetta di mandata `air-supply-terminal`; ripresa
 `return-air-terminal`; sifone `condensate-trap` e allaccio allo scarico
 `condensate-outlet` (un confine, come l'acquedotto); quadro `electrical-panel`; sezionatore
-`isolator-switch`; termostato di zona `room-thermostat`; comando a filo `wired-remote`. Una
+`isolator-switch`; termostato di zona `room-thermostat` (sul bus); termostato ambiente a
+contatto `room-thermostat-contact` (in linea su un'alimentazione, sotto); comando a filo `wired-remote`. Una
 bocchetta per ogni bocchetta del testo: qui il terminale **non** è rappresentativo, perché
 ognuna ha il suo ramo, la sua portata e la sua lunghezza.
 
@@ -603,7 +618,7 @@ dell'impianto si ferma e le sigle che non hai scritto non si assegnano.
 
 **L'elettrico e il comando si trascrivono solo dove il catalogo ha gli attacchi**: le
 voci dell'aria-aria, il quadro (`out_1`…`out_6`), il sezionatore, il relè d'appoggio
-(`bobina`, `a`, `b`), il regolatore
+(`bobina`, `a`, `b`), il termostato ambiente a contatto (`a`, `b`), il regolatore
 (`power`, `bus`, `out_1`…`out_4` per i comandi, `probe_1`…`probe_3` per le sonde), le sonde
 (`signal`), e sulle macchine idroniche gli attacchi di comando facoltativi: caldaie `power` e
 `bus`; pompe di calore aria-acqua `power`, `bus` e quelli della regolazione a bordo (sotto);
@@ -658,8 +673,41 @@ loro uscita della macchina al `comando` della valvola, con un cavo solo (D-215).
 nel quadro, con la protezione dedicata della linea del circolatore: scrivilo in `assumptions`
 («Ogni circolatore ha il suo relè d'appoggio da 10 A nel quadro: l'uscita della macchina ne
 comanda la bobina, e il circolatore è alimentato attraverso il contatto da un'uscita del
-quadro.»). Il circolatore alimentato dal quadro e acceso da un cronotermostato, senza la
-pompa di calore, è una scelta del progettista: la disegni solo se il testo la dice.
+quadro.»). **Il relè è obbligatorio solo quando il circolatore è comandato da un'uscita della
+pompa di calore.**
+
+**Il circolatore acceso dal termostato ambiente** (I-269). Quando il testo dice che il
+termostato ambiente comanda il circolatore — «il termostato in chiamata accende il
+circolatore», «la pompa di calore regola da sé, il circolatore del secondario va col termostato
+della zona» —, il termostato è **un contatto sulla linea del circolatore**: un pezzo
+`room-thermostat-contact` («Termostato ambiente a contatto»), in serie fra il quadro e il
+circolatore, e **una rete sola** `power_supply` per la linea:
+
+- da un'uscita libera del quadro (`out_n`) all'attacco `a` del termostato, e dall'attacco `b`
+  al `power` del circolatore — «Alimentazione circolatore … dal quadro, attraverso il
+  termostato»; il termostato è un pezzo `passante`, come il sezionatore, e la linea dal quadro
+  al circolatore è un tratto;
+- **niente** sul `comando` del circolatore, e niente dalla pompa di calore al circolatore;
+- il nome del locale nella sua `etichetta` («soggiorno»), la portata del contatto, se il
+  progettista la dà, in `contatto` («5(2) A 250 V»), marca e modello come per ogni pezzo;
+- `sezione` e `lunghezza_m` sui **due** tratti, dal quadro al termostato e dal termostato al
+  circolatore: il cavo va nel locale e torna, e la distinta lo conta andata e ritorno. Se il
+  progettista non li dà restano senza, e la distinta li chiede (DA DEFINIRE).
+
+**Il termostato di zona `room-thermostat` non si usa così**: ha un attacco solo, sul bus
+(`control_bus`), e collegato a un'alimentazione la validazione lo ferma
+(`PORT_MEDIUM_MISMATCH`). Non ripiegare su una `scritta` sulla linea del quadro: la linea
+attraverserebbe un pezzo che sulla tavola non c'è.
+
+**Col termostato a contatto il relè non c'è**: il circolatore non è comandato dalla pompa di
+calore, e D-228 non si applica. Il relè torna solo se il contatto del termostato non regge la
+corrente del circolatore — è una **domanda al progettista**, in `assumptions`, senza
+aggiungere il relè: *«Il circolatore del secondario è alimentato dal quadro attraverso il
+contatto del termostato ambiente, senza relè. Se la portata del contatto non basta per il
+circolatore, dimmelo e metto un relè d'appoggio comandato dal termostato.»* Il circolatore
+alimentato dal quadro e acceso da un termostato, senza la pompa di calore, è una scelta del
+progettista: la disegni solo se il testo la dice.
+
 **Non scrivere i morsetti della scheda**
 (CN27, SV1…) se il progettista non li dà: il nome della porta dice già dove va il cavo.
 
@@ -800,7 +848,7 @@ resta alle regole.
 **Entrano anche, quando il testo li dice, l'aria-aria e l'elettrico e il comando** (§4.8),
 che non sono ferramenta di servizio: i mestieri `refrigerant_generation`,
 `direct_expansion_terminal`, `air_zoning`, `zone_control`, `air_terminal`, `air_return`,
-`condensate_trap`, `power_source`, `power_isolation`, `power_switching`, `room_control`, `unit_control`,
+`condensate_trap`, `power_source`, `power_isolation`, `power_switching`, `room_contact_control`, `room_control`, `unit_control`,
 `plant_control`, `temperature_sensing`, `outdoor_temperature_sensing`. La **sonda a
 immersione** su una tubazione si appende come un termometro: un `tee-branch` in linea e dal
 braccio una tubazione corta alla porta `a` della sonda; nel bollitore o nel volano va

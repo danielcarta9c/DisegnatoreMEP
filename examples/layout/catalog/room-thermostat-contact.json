@@ -1,0 +1,35 @@
+{
+  "id": "room-thermostat-contact",
+  "version": "1.0.0",
+  "name": "Termostato ambiente a contatto",
+  "functions": [
+    "room_contact_control",
+    "room_control"
+  ],
+  "traits": [
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
+  "symbol_id": "room-thermostat-contact",
+  "composite": false,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "control",
+      "medium": "power_supply",
+      "flow": "in",
+      "required": true
+    },
+    {
+      "id": "b",
+      "domain": "control",
+      "medium": "power_supply",
+      "flow": "out",
+      "required": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION",
+    "proposta della sessione del 04/11/2026 (I-269, da una commessa reale): il termostato ambiente in chiamata chiude il contatto, e il circolatore prende l'alimentazione dal quadro attraverso di lui. Forma del segno da approvare dal PO sulla tavola"
+  ]
+}

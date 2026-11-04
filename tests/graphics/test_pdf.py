@@ -151,8 +151,9 @@ def test_ogni_simbolo_della_libreria_si_traduce(simboli: SymbolRegistry) -> None
     # aria-aria (I-224) e i tre del comando nell'idronico (I-226), `REL-012`; 72
     # con i plenum di zona da due a sei serrande (collaudo T1 di REL-012); 82 col
     # collettore con ritorno da tre a dodici vie (REL-016, D3); 84 con la valvola
-    # antigelo (D-230) e il rele' d'appoggio (D-228).
-    assert len(simboli.all()) == 84
+    # antigelo (D-230) e il rele' d'appoggio (D-228); 85 col termostato ambiente a
+    # contatto (I-269, REL-017).
+    assert len(simboli.all()) == 85
 
 
 def test_il_foglio_di_riscontro_si_traduce(simboli: SymbolRegistry) -> None:

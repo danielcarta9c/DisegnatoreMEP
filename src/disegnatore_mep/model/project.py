@@ -169,8 +169,15 @@ CHIAVI_DEI_DATI_NUMERICI: dict[str, str] = {
     "head_kpa": "kPa",
     "head_m": "m c.a.",
     "delta_t_k": "K",
+    "potenza_elettrica_kw": "kW",
+    "corrente_max_a": "A",
 }
 """I dati tecnici con un nome fisso, e l'unita' in cui si scrivono (REL-006).
+
+`potenza_elettrica_kw` e `corrente_max_a` sono i dati **elettrici** di una macchina —
+la potenza assorbita e la corrente massima —, che la tabella della tavola
+dell'elettrico scrive al posto di quelli idronici (I-277); con loro, come testi,
+`alimentazione` e `cavo_minimo` (`graphics.tabella.CARATTERISTICHE_ELETTRICHE`).
 
 Potenza, volume, portata e prevalenza di un pezzo, **come il progettista li ha
 dati**: un numero, nell'unita' che il nome dichiara. Le prime quattro sono le
