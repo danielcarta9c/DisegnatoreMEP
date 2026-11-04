@@ -87,7 +87,9 @@ SPESSORI_DPR_412: tuple[tuple[float, int], ...] = (
 """Gli spessori minimi dell'isolante dell'Allegato B del DPR 412/93, tabella 1, per una
 conduttivita' di 0,040 W/mK, per **diametro esterno** del tubo: sotto 20 mm 20 mm; da 20
 a 39 mm 30; da 40 a 59 mm 40; da 60 a 79 mm 50; da 80 a 99 mm 55; da 100 mm in su 60.
-Ogni coppia e' (diametro esterno fino a cui vale, spessore); oltre l'ultima, 60 mm."""
+Ogni coppia e' (diametro esterno fino a cui vale, spessore); oltre l'ultima, 60 mm.
+Riscontrata sulla riga 0,040 della tabella riportata da una fonte secondaria (SRC-057),
+non sul testo della Gazzetta Ufficiale."""
 
 SPESSORE_OLTRE_MM = 60
 
