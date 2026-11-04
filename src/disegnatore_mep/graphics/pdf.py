@@ -65,6 +65,7 @@ SOSTITUZIONI_DICHIARATE: dict[str, str] = {
     "≠": "!=",
     "∅": "Ø",
     "⌀": "Ø",
+    "λ": "lambda",
     "\u2009": " ",
     "\u202f": " ",
 }
@@ -72,7 +73,8 @@ SOSTITUZIONI_DICHIARATE: dict[str, str] = {
 
 Le scritte del PDF sono in Helvetica con la codifica WinAnsi, che non ha «≥», «≤»
 e «→»: sulle tabelle del kit aria-aria uscivano «?», e la sessione aveva riscritto
-a mano «min.», «max.», «-». Qui la sostituzione e' **dichiarata**, una volta per
+a mano «min.», «max.», «-». La «λ» della conduttivita' dell'isolante, nelle note di
+posa (REL-011, D-232), si scrive per esteso. Qui la sostituzione e' **dichiarata**, una volta per
 tutte: il PDF scrive «>=» dove l'SVG ha «≥», e lo dice (`PdfDellaTavola.sostituzioni`,
 con quello che ha scritto al posto). Le tabelle nelle zone (`graphics.tabelle`) la
 fanno **prima** di misurare e di scrivere, cosi' SVG, PDF e DXF portano lo stesso

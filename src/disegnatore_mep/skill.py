@@ -834,6 +834,13 @@ def _disegna(args: argparse.Namespace, cartelle: Cartelle) -> int:
     tabella = (
         f" ({tabelle[0].larghezza_mm:g} x {tabelle[0].altezza_mm:g} mm)" if len(tabelle) == 1 else ""
     )
+    # Nell'esecutivo anche le note di posa, a destra della tabella (REL-011, D-231).
+    note = [f.note_di_posa for f in esito.disegno.sheets if f.note_di_posa] if esito.disegno else []
+    if len(note) == 1:
+        tabella += (
+            f" e le note di posa alla sua destra ({note[0].larghezza_mm:g} x "
+            f"{note[0].altezza_mm:g} mm)"
+        )
     print(
         f"Area del disegno dell'{piano.formato}: {area.width_mm:g} x {area.height_mm:g} mm, "
         f"con la tabella delle apparecchiature in alto a sinistra{tabella}; la posa ne occupa "

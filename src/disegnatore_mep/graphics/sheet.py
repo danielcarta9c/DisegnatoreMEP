@@ -28,6 +28,7 @@ from disegnatore_mep.layout.legend import (
 from .cartiglio import CartiglioDellaTavola, disegna_cartiglio
 from .frame import Rect, SheetFrame
 from .glyphs import flow_glyph_path
+from .note import svg_delle_note
 from .registry import SymbolRegistry
 from .standard import FAMIGLIA_DELLE_SCRITTE, GraphicStandard
 from .tabella import svg_della_tabella
@@ -536,6 +537,10 @@ def render_sheet(
     # compone e la impagina l'esecutore del piano, qui si disegna e basta.
     if sheet.tabella is not None:
         parts.append(svg_della_tabella(sheet.tabella, standard))
+    # **Le note di posa**, a destra della tabella (REL-011, D-231): solo
+    # nell'esecutivo, e le ha impaginate l'esecutore.
+    if sheet.note_di_posa is not None:
+        parts.append(svg_delle_note(sheet.note_di_posa, standard))
     # **Le tabelle nelle zone** che il piano ha lasciato (REL-012): le ha posate
     # `graphics.tabelle`, qui si disegnano e basta.
     if sheet.tabelle:

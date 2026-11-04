@@ -48,7 +48,6 @@ from disegnatore_mep.layout.geometry import (
     Point,
     RoutedTrunk,
     SheetGeometry,
-    TabellaDelleApparecchiature,
     attaches_to,
     border_margin_mm,
     box_of,
@@ -59,6 +58,7 @@ from disegnatore_mep.layout.geometry import (
     moves_of,
     overshoot_mm,
     quadrants_of,
+    riquadri_in_alto,
 )
 from disegnatore_mep.layout.labels import (
     ETICHETTA,
@@ -799,60 +799,82 @@ def equipment_table(drawing: DrawingGeometry, frame: SheetFrame) -> list[Validat
     height = frame.standard.text_small_mm
     findings.extend(_tabelle_fuori_zona(drawing, frame))
     for sheet in drawing.sheets:
-        if sheet.tabella is None:
-            continue
-        zona = sheet.tabella.riquadro
-        dentro: list[str] = [
-            item.component_id
-            for item in sheet.symbols
-            if _boxes_overlap((item.origin.x_mm, item.origin.y_mm, item.right_mm, item.bottom_mm), zona)
-        ]
-        for _, route, segment in _run_polylines(sheet):
-            if any(
-                _boxes_overlap(
-                    (
-                        min(before.x_mm, after.x_mm),
-                        min(before.y_mm, after.y_mm),
-                        max(before.x_mm, after.x_mm),
-                        max(before.y_mm, after.y_mm),
-                    ),
-                    zona,
+        if sheet.tabella is not None:
+            dentro = _dentro_il_riquadro(sheet, sheet.tabella.riquadro, height)
+            if dentro:
+                findings.append(
+                    _finding(
+                        "DRAWING_OVER_THE_EQUIPMENT_TABLE",
+                        IssueSeverity.BLOCKING,
+                        f"la tavola {sheet.sheet_id}: il disegno passa sulla tabella delle "
+                        f"apparecchiature — {', '.join(dentro)}. La tabella sta in alto a "
+                        f"sinistra (I-141) e il disegno le fa spazio: se non ci riesce, il "
+                        f"foglio e' troppo piccolo per questo disegno",
+                        [sheet.sheet_id, *dentro],
+                    )
                 )
-                or _segment_crosses_box(before, after, zona)
-                for before, after in moves_of(segment)
-            ):
-                dentro.append(f"la tratta {_run_name(sheet, route)}")
-        for label in sheet.labels:
-            if _boxes_overlap(_label_box(label, height), zona) or any(
-                _segment_crosses_box(*segmento, zona) for segmento in segmenti_del_richiamo(label)
-            ):
-                dentro.append(label.id)
-        for reference in sheet.cross_references:
-            if _boxes_overlap(
+        # **E le note di posa** (REL-011, D-231): un riquadro in alto, a destra della
+        # tabella, che il disegno lascia libero allo stesso modo.
+        if sheet.note_di_posa is not None:
+            dentro = _dentro_il_riquadro(sheet, sheet.note_di_posa.riquadro, height)
+            if dentro:
+                findings.append(
+                    _finding(
+                        "DRAWING_OVER_THE_NOTES",
+                        IssueSeverity.BLOCKING,
+                        f"la tavola {sheet.sheet_id}: il disegno passa sulle note di "
+                        f"posa — {', '.join(dentro)}. Le note stanno in alto, a destra "
+                        f"della tabella (D-231), e il disegno fa spazio anche a loro: se "
+                        f"non ci riesce, il foglio e' troppo piccolo per questo disegno",
+                        [sheet.sheet_id, *dentro],
+                    )
+                )
+    return findings
+
+
+def _dentro_il_riquadro(
+    sheet: SheetGeometry, zona: tuple[float, float, float, float], height: float
+) -> list[str]:
+    """Che cosa del disegno entra in un riquadro in alto — la tabella delle
+    apparecchiature, le note di posa —: simboli, tratti di tubazione, sigle e
+    richiami, rimandi. Ciascuno una volta, nell'ordine in cui si trova."""
+    dentro: list[str] = [
+        item.component_id
+        for item in sheet.symbols
+        if _boxes_overlap((item.origin.x_mm, item.origin.y_mm, item.right_mm, item.bottom_mm), zona)
+    ]
+    for _, route, segment in _run_polylines(sheet):
+        if any(
+            _boxes_overlap(
                 (
-                    reference.anchor.x_mm,
-                    reference.anchor.y_mm - height,
-                    reference.anchor.x_mm + text_width_mm(reference.text, height),
-                    reference.anchor.y_mm,
+                    min(before.x_mm, after.x_mm),
+                    min(before.y_mm, after.y_mm),
+                    max(before.x_mm, after.x_mm),
+                    max(before.y_mm, after.y_mm),
                 ),
                 zona,
-            ):
-                dentro.append(reference.id)
-        if not dentro:
-            continue
-        unici = list(dict.fromkeys(dentro))
-        findings.append(
-            _finding(
-                "DRAWING_OVER_THE_EQUIPMENT_TABLE",
-                IssueSeverity.BLOCKING,
-                f"la tavola {sheet.sheet_id}: il disegno passa sulla tabella delle "
-                f"apparecchiature — {', '.join(unici)}. La tabella sta in alto a "
-                f"sinistra (I-141) e il disegno le fa spazio: se non ci riesce, il "
-                f"foglio e' troppo piccolo per questo disegno",
-                [sheet.sheet_id, *unici],
             )
-        )
-    return findings
+            or _segment_crosses_box(before, after, zona)
+            for before, after in moves_of(segment)
+        ):
+            dentro.append(f"la tratta {_run_name(sheet, route)}")
+    for label in sheet.labels:
+        if _boxes_overlap(_label_box(label, height), zona) or any(
+            _segment_crosses_box(*segmento, zona) for segmento in segmenti_del_richiamo(label)
+        ):
+            dentro.append(label.id)
+    for reference in sheet.cross_references:
+        if _boxes_overlap(
+            (
+                reference.anchor.x_mm,
+                reference.anchor.y_mm - height,
+                reference.anchor.x_mm + text_width_mm(reference.text, height),
+                reference.anchor.y_mm,
+            ),
+            zona,
+        ):
+            dentro.append(reference.id)
+    return list(dict.fromkeys(dentro))
 
 
 def _tabelle_fuori_zona(drawing: DrawingGeometry, frame: SheetFrame) -> list[ValidationIssue]:
@@ -1378,6 +1400,25 @@ def orthogonality_of_leaders(drawing: DrawingGeometry) -> list[ValidationIssue]:
     return findings
 
 
+def _ingombro_in_alto(sheet: SheetGeometry) -> tuple[float, float] | None:
+    """Quanto prendono, dall'angolo in alto a sinistra dell'area, la tabella delle
+    apparecchiature e le note di posa alla sua destra (REL-011, D-231): larghezza e
+    altezza del riquadro che li contiene tutti e due. `None` senza nessuno dei due.
+
+    Senza le note e' la misura della tabella, come prima di REL-011."""
+    if sheet.note_di_posa is None:
+        if sheet.tabella is None:
+            return None
+        return sheet.tabella.larghezza_mm, sheet.tabella.altezza_mm
+    riquadri = riquadri_in_alto(sheet)
+    sinistra = min(item[0] for item in riquadri)
+    alto = min(item[1] for item in riquadri)
+    return (
+        max(item[2] for item in riquadri) - sinistra,
+        max(item[3] for item in riquadri) - alto,
+    )
+
+
 def _ci_sta(
     larghezza: float, altezza: float, area: Rect, respiro: float, sheet: SheetGeometry
 ) -> bool:
@@ -1387,42 +1428,48 @@ def _ci_sta(
     lei: sotto — l'altezza della tabella e lo stacco in piu' — oppure a destra.
     E' una condizione sufficiente, misurata sull'ingombro: un disegno che ci
     starebbe solo grazie a un angolo vuoto non la passa, e il rilievo tace. Un
-    rilievo che dice «ci sta» deve essere vero, o non si puo' chiudere."""
-    if sheet.tabella is None:
+    rilievo che dice «ci sta» deve essere vero, o non si puo' chiudere. **Con le
+    note di posa** (REL-011) il conto si fa sul riquadro che contiene tabella e
+    note insieme."""
+    in_alto = _ingombro_in_alto(sheet)
+    if in_alto is None:
         return (
             area.width_mm >= larghezza + respiro - TOLERANCE_MM
             and area.height_mm >= altezza + respiro - TOLERANCE_MM
         )
-    tabella = sheet.tabella
+    largo, alto = in_alto
     stacco = STACCO_DALLA_TABELLA_MM
     sotto = (
         area.width_mm >= larghezza + respiro - TOLERANCE_MM
         and area.height_mm
-        >= altezza + tabella.altezza_mm + stacco + respiro / 2 - TOLERANCE_MM
+        >= altezza + alto + stacco + respiro / 2 - TOLERANCE_MM
     )
     a_destra = (
         area.width_mm
-        >= larghezza + tabella.larghezza_mm + stacco + respiro / 2 - TOLERANCE_MM
+        >= larghezza + largo + stacco + respiro / 2 - TOLERANCE_MM
         and area.height_mm >= altezza + respiro - TOLERANCE_MM
     )
     return sotto or a_destra
 
 
 def _margin_beside_the_table(
-    sheet: SheetGeometry, tabella: TabellaDelleApparecchiature, area: Rect, step_mm: float
+    sheet: SheetGeometry, in_alto: tuple[float, float], area: Rect, step_mm: float
 ) -> float:
     """Il margine che il disegno puo' permettersi nel posto che la tabella lascia
     libero: lo stesso conto di `margin_allowed_mm`, sull'area che resta sotto la
-    tabella e su quella che resta alla sua destra, e vale la piu' generosa."""
+    tabella e su quella che resta alla sua destra, e vale la piu' generosa. Con le
+    note di posa (REL-011), sotto e a destra del riquadro che le contiene con la
+    tabella (`_ingombro_in_alto`)."""
+    largo, alto = in_alto
     stacco = STACCO_DALLA_TABELLA_MM
     sotto = (
         area.x_mm,
-        area.y_mm + tabella.altezza_mm + stacco,
+        area.y_mm + alto + stacco,
         area.right_mm,
         area.bottom_mm,
     )
     a_destra = (
-        area.x_mm + tabella.larghezza_mm + stacco,
+        area.x_mm + largo + stacco,
         area.y_mm,
         area.right_mm,
         area.bottom_mm,
@@ -1499,11 +1546,13 @@ def sheet_fill(drawing: DrawingGeometry, frame: SheetFrame) -> list[ValidationIs
         # un disegno che si e' spostato per lasciarglielo e' piu' vicino al bordo
         # di quanto la sua sola misura gli consentirebbe, ed e' autorizzato. Il
         # margine che poteva permettersi si misura sul posto che la tabella lascia
-        # — sotto di lei o alla sua destra, il piu' largo dei due.
-        if sheet.tabella is not None:
+        # — sotto di lei o alla sua destra, il piu' largo dei due. Con le note di
+        # posa (REL-011) il posto e' quello che lasciano tabella e note insieme.
+        in_alto = _ingombro_in_alto(sheet)
+        if in_alto is not None:
             allowed = min(
                 allowed,
-                _margin_beside_the_table(sheet, sheet.tabella, area, frame.standard.grid_mm),
+                _margin_beside_the_table(sheet, in_alto, area, frame.standard.grid_mm),
             )
         if margin is not None and margin < allowed - TOLERANCE_MM:
             findings.append(
