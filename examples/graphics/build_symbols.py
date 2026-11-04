@@ -1681,12 +1681,12 @@ def valve_antifreeze_body(w: float, h: float) -> str:
     """Valvola antigelo (REL-011, D-230): il segno del valvolame alto 4 mm al centro, e
     sopra, sullo stelo, il fiocco che dice perche' si apre — quando l'acqua sta per
     gelare scarica il tratto esterno. Si apre da sola, senza corrente: niente attuatore.
-    Il simbolo e' alto 8 mm perche' il fiocco stia dentro il suo riquadro."""
+    Il simbolo e' alto 10 mm, sulla griglia, perche' il fiocco stia dentro il suo riquadro."""
     cx, cy = w / 2, h / 2
     inset = w / 6
     left, right = inset, w - inset
     top, bottom = cy - 2.0, cy + 2.0
-    fiocco_y, braccio = 1.1, 1.0
+    fiocco_y, braccio = 2.0, 1.2
     raggi = "".join(
         f'<line x1="{n(cx - dx)}" y1="{n(fiocco_y - dy)}" x2="{n(cx + dx)}" y2="{n(fiocco_y + dy)}"/>'
         for dx, dy in ((braccio, 0.0), (braccio * 0.5, braccio * 0.866), (braccio * 0.5, -braccio * 0.866))
@@ -3249,7 +3249,7 @@ SYMBOLS: list[SymbolSpec] = [
     ),
     # REL-011, D-230: le valvole antigelo sul tratto esterno della pompa di calore.
     inline_symbol(
-        "valve-antifreeze", "Valvola antigelo", (5.0, 8.0), valve_antifreeze_body,
+        "valve-antifreeze", "Valvola antigelo", (5.0, 10.0), valve_antifreeze_body,
         "proposta della sessione, REL-011 (D-230): la forma la approva il PO sulla tavola",
     ),
     inline_symbol(
