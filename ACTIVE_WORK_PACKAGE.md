@@ -6,7 +6,7 @@
 > defangatore —, e che il suo `grafo-completo.json` agli atti è ancora quello delle regole della 1.8.
 
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
-**Stato:** **IN CONSEGNA** (4 novembre 2026) — piano ricomposto, grafo e tavole rigenerati, la prova di rigenerazione; PR al PO.
+**Stato:** **CONSEGNATO** (4 novembre 2026) — fuso con la PR #86 insieme ai rilievi della commessa reale (I-269 … I-281): la 1.10.0 e la 1.11.0 (I-282). Il pacchetto successivo è `REL-018`, le protezioni elettriche (I-278).
 **Base:** `main` dopo la PR #85 (la 1.9.0).
 **Ramo:** quello che l'ambiente della sessione assegna.
 **Approvazione della fusione:** **del PO**, guardando le tavole (D-146, D-147).
