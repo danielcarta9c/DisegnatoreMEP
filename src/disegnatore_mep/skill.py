@@ -269,6 +269,9 @@ def _completa(args: argparse.Namespace, cartelle: Cartelle) -> int:
     risultato = saturation(modello, dati.catalogo, regole)
     completo, proposte, lacune = risultato.model, risultato.applied, risultato.gaps
     rapporto = build_report(proposte, lacune, dati.naming)
+    from disegnatore_mep.diametri.costruttori import avvisi_del_costruttore
+
+    avvisi_del_manuale = avvisi_del_costruttore(completo, dati.catalogo)
 
     in_piu = len(completo.components) - len(modello.components)
     print(
@@ -309,6 +312,12 @@ def _completa(args: argparse.Namespace, cartelle: Cartelle) -> int:
             print(f"    {punto.what_is_missing}")
             print(f"    perche' servirebbe: {punto.rationale}")
             print(f"    fonte: {punto.source} · regola: {punto.rule}")
+
+    if avvisi_del_manuale:
+        # Il manuale del costruttore comanda (I-243): si segnala, non si corregge (D-223, D-226).
+        print("\nAvvisi del manuale del costruttore e della specifica Nove C")
+        for avviso in avvisi_del_manuale:
+            print(f"  - {avviso}")
 
     _stampa_le_scelte_del_progettista(modello, risultato.withheld, proposte, dati)
     _stampa_il_corredo_sull_esistente(completo, proposte)
@@ -825,6 +834,13 @@ def _disegna(args: argparse.Namespace, cartelle: Cartelle) -> int:
     tabella = (
         f" ({tabelle[0].larghezza_mm:g} x {tabelle[0].altezza_mm:g} mm)" if len(tabelle) == 1 else ""
     )
+    # Nell'esecutivo anche le note di posa, a destra della tabella (REL-011, D-231).
+    note = [f.note_di_posa for f in esito.disegno.sheets if f.note_di_posa] if esito.disegno else []
+    if len(note) == 1:
+        tabella += (
+            f" e le note di posa alla sua destra ({note[0].larghezza_mm:g} x "
+            f"{note[0].altezza_mm:g} mm)"
+        )
     print(
         f"Area del disegno dell'{piano.formato}: {area.width_mm:g} x {area.height_mm:g} mm, "
         f"con la tabella delle apparecchiature in alto a sinistra{tabella}; la posa ne occupa "
@@ -1376,11 +1392,53 @@ def costruisci_il_parser() -> argparse.ArgumentParser:
         "della skill non le posa sulla tavola",
     )
     distinta.add_argument(
+        "--lista",
+        action="store_true",
+        help="la lista della spesa per l'installatore: stessi calcoli, solo i materiali da comprare, senza "
+        "l'offerta a corpo (I-262)",
+    )
+    distinta.add_argument(
         "--fornitura",
         help="chi fornisce che cosa in questa offerta, es. apparecchiature=installatore; «confermata» per le "
         "predefinite; senza, le predefinite da confermare",
     )
+    vaso = comandi.add_parser(
+        "vaso",
+        help="dimensiona il vaso d'espansione sul grafo completo e lo scrive in tabella (D-220); nell'esecutivo "
+        "anche precarica, taratura della sicurezza e pressione di carica",
+    )
+    vaso.add_argument("grafo", type=Path, help="il grafo completo (dopo completa)")
+    vaso.add_argument("--contenuto", type=float, required=True, help="litri d'acqua che il vaso vede: tutto il circuito")
+    vaso.add_argument("--tmax", type=float, required=True, help="temperatura massima di mandata, °C")
+    vaso.add_argument("--dislivello", type=float, required=True, help="metri dal vaso al punto piu' alto dell'impianto")
+    vaso.add_argument("--taratura", type=float, default=3.0, help="taratura della valvola di sicurezza, bar (3)")
+    vaso.add_argument("--pressione-minima", type=float, help="minima di esercizio del generatore, bar (Shenling 1,5)")
+    vaso.add_argument("--riempimento", type=float, help="pressione di riempimento del costruttore, bar (Shenling 2,0)")
+    vaso.add_argument("--coefficiente", type=float, help="coefficiente d'espansione della miscela, con il glicole")
+    vaso.add_argument("--stimato", action="store_true", help="il contenuto e' una stima, non un dato")
+    vaso.add_argument("--vaso", help="l'id del vaso, se il grafo ne ha piu' d'uno")
+    vaso.add_argument("--out", type=Path, help="dove scrivere il grafo (di default lo stesso file)")
     return parser
+
+
+def _vaso(args: argparse.Namespace, cartelle: Cartelle) -> int:
+    from disegnatore_mep.vaso.comando import esegui as esegui_il_vaso
+
+    dati = _Dati(cartelle)
+    return esegui_il_vaso(
+        args.grafo,
+        args.out,
+        dati.catalogo,
+        contenuto_l=args.contenuto,
+        temperatura_massima_c=args.tmax,
+        dislivello_m=args.dislivello,
+        vaso_id=args.vaso,
+        taratura_bar=args.taratura,
+        pressione_minima_bar=args.pressione_minima,
+        riempimento_bar=args.riempimento,
+        coefficiente=args.coefficiente,
+        stimato=args.stimato,
+    )
 
 
 def _distinta(args: argparse.Namespace, cartelle: Cartelle) -> int:
@@ -1403,6 +1461,7 @@ def _distinta(args: argparse.Namespace, cartelle: Cartelle) -> int:
         sul_foglio=args.sul_foglio,
         fornitura=args.fornitura,
         report=args.report,
+        lista=args.lista,
     )
 
 
@@ -1422,6 +1481,7 @@ def main(argv: Sequence[str] | None, cartelle: Cartelle) -> int:
             "anteprima": _anteprima,
             "consegna": _consegna,
             "distinta": _distinta,
+            "vaso": _vaso,
             "pianta": _pianta,
         }
         return comando[args.comando](args, cartelle)

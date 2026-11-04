@@ -14,11 +14,13 @@ Quattro cose:
    24 tavole idroniche;
 3. **la villetta del collaudo T2 con la regolazione a bordo** (`docs/collaudi/REL-015/
    pdc-regola/`) si valida e si disegna pulita: le sonde e i comandi vanno alla macchina, non
-   c'e' un regolatore esterno, zero bloccanti e zero tratte cedute sulle due tavole;
+   c'e' un regolatore esterno, zero bloccanti e zero tratte cedute sulle due tavole; ogni
+   circolatore passa da un relè d'appoggio da 10 A (D-228, I-259), mai dalla morsettiera;
 4. **le istruzioni** di Capire e Comporre lo dicono.
 """
 # categoria: difende il motore
 
+import json
 from dataclasses import replace
 from functools import cache
 from pathlib import Path
@@ -44,6 +46,12 @@ CAPIRE = ROOT / "skill" / "capire" / "ISTRUZIONI.md"
 COMPORRE = ROOT / "skill" / "comporre" / "ISTRUZIONI.md"
 
 POMPE_DI_CALORE = ("heat-pump-air-water", "heat-pump-air-water-large")
+RELE_DEI_CIRCOLATORI = {
+    "circ-radiatori": "rele-radiatori",
+    "circ-pannelli": "rele-pannelli",
+    "circ-ricircolo": "rele-ricircolo",
+}
+"""Il relè d'appoggio di ogni circolatore della villetta (D-228)."""
 INGRESSI = ("sonda_acs", "sonda_accumulo", "sonda_zona_2", "termostato")
 USCITE = (
     "out_acs",
@@ -199,9 +207,9 @@ def test_sonde_e_comandi_vanno_alla_pompa_di_calore() -> None:
         (("sonda-pannelli", "signal"), ("pdc", "sonda_zona_2")),
         (("pdc", "out_acs"), ("deviatrice", "comando")),
         (("pdc", "out_miscelatrice"), ("miscelatrice", "comando")),
-        (("pdc", "out_pompa_zona_1"), ("circ-radiatori", "power")),
-        (("pdc", "out_pompa_zona_2"), ("circ-pannelli", "power")),
-        (("pdc", "out_pompa_ricircolo"), ("circ-ricircolo", "power")),
+        (("pdc", "out_pompa_zona_1"), ("rele-radiatori", "bobina")),
+        (("pdc", "out_pompa_zona_2"), ("rele-pannelli", "bobina")),
+        (("pdc", "out_pompa_ricircolo"), ("rele-ricircolo", "bobina")),
         (("comando-a-filo", "a"), ("pdc", "comando_a_filo")),
         (("sez-pdc", "b"), ("pdc", "power")),
     }
@@ -210,13 +218,58 @@ def test_sonde_e_comandi_vanno_alla_pompa_di_calore() -> None:
     # Le sonde del volano e del bollitore sono sui loro attacchi.
     assert frozenset({("volano", "probe"), ("sonda-volano", "a")}) in cavi
     assert frozenset({("bollitore", "probe"), ("sonda-bollitore", "a")}) in cavi
-    # **Lo standard** (I-236, D-215, l'elettricista del PO): il circolatore prende alimentazione
-    # e comando dalla morsettiera della pompa di calore, un cavo solo sul suo `power`. Il suo
-    # `comando` resta libero, e il quadro alimenta la sola macchina.
-    for circolatore in ("circ-radiatori", "circ-pannelli", "circ-ricircolo"):
+    # **Il relè d'appoggio** (D-228, I-259, il PO: «non alimentiamo mai il circolatore diretto
+    # da pdc ma attraverso contattore con Relè di appoggio da 10 A»): l'uscita della macchina
+    # va alla bobina, il quadro all'ingresso del contatto, e il contatto al `power` del
+    # circolatore. Il `comando` del circolatore resta libero.
+    for circolatore, rele in RELE_DEI_CIRCOLATORI.items():
+        assert voci[rele] == "interface-relay", rele
+        assert frozenset({(rele, "b"), (circolatore, "power")}) in cavi, circolatore
+        assert any((rele, "a") in cavo and any(capo[0] == "quadro" for capo in cavo) for cavo in cavi), rele
         assert not any((circolatore, "comando") in cavo for cavo in cavi), circolatore
-    dal_quadro = [cavo for cavo in cavi if any(capo[0] == "quadro" for capo in cavo)]
-    assert dal_quadro == [frozenset({("quadro", "out_1"), ("sez-pdc", "a")})]
+    # Dal quadro: la pompa di calore, col sezionatore, e i tre relè, ciascuno dalla sua uscita.
+    dal_quadro = {
+        next(capo for capo in cavo if capo[0] != "quadro"): next(capo[1] for capo in cavo if capo[0] == "quadro")
+        for cavo in cavi
+        if any(capo[0] == "quadro" for capo in cavo)
+    }
+    assert set(dal_quadro) == {("sez-pdc", "a"), *((rele, "a") for rele in RELE_DEI_CIRCOLATORI.values())}
+    assert len(set(dal_quadro.values())) == len(dal_quadro)
+
+
+def test_nessun_circolatore_e_alimentato_direttamente_dalla_pompa_di_calore() -> None:
+    """D-228: il `power` di un circolatore non e' mai collegato a un'uscita della pompa di
+    calore, nel grafo della villetta e nel suo grafo completo. Lo alimenta il contatto di un
+    relè d'appoggio, una voce `interface-relay`, la cui bobina e' comandata dalla macchina."""
+    for nome in ("grafo.json", "grafo-completo.json"):
+        grafo = load_project(VILLETTA / nome)
+        voci = {item.id: item.definition_id for item in grafo.components}
+        circolatori = {ident for ident, voce in voci.items() if voce.startswith("pump-circulator")}
+        assert circolatori, nome
+        for tubazione in grafo.connections:
+            capi = {
+                (tubazione.endpoint_a.component_id, tubazione.endpoint_a.port_id),
+                (tubazione.endpoint_b.component_id, tubazione.endpoint_b.port_id),
+            }
+            alimentati = {ident for ident, porta in capi if ident in circolatori and porta == "power"}
+            if not alimentati:
+                continue
+            altro = next(ident for ident, _ in capi if ident not in alimentati)
+            assert voci[altro] == "interface-relay", (nome, tubazione.id, altro)
+        # E ogni relè ha la bobina sulla macchina.
+        bobine = {
+            frozenset(
+                {
+                    (t.endpoint_a.component_id, t.endpoint_a.port_id),
+                    (t.endpoint_b.component_id, t.endpoint_b.port_id),
+                }
+            )
+            for t in grafo.connections
+        }
+        for rele in (ident for ident, voce in voci.items() if voce == "interface-relay"):
+            assert any(
+                (rele, "bobina") in cavo and any(capo[0] == "pdc" for capo in cavo) for cavo in bobine
+            ), (nome, rele)
 
 
 @pytest.mark.parametrize("vista", ["idraulica", "elettrico"])
@@ -262,3 +315,38 @@ def test_capire_dice_chi_regola() -> None:
 def test_comporre_dice_come_si_posa_l_elettrico_attorno_alla_pompa_di_calore() -> None:
     testo = COMPORRE.read_text(encoding="utf-8")
     assert "la pompa di calore al centro" in testo.lower()
+
+
+def test_capire_dice_che_il_circolatore_passa_dal_rele() -> None:
+    """D-228 sostituisce D-215 per i circolatori: Capire scrive i tre cavi del relè, e non piu'
+    il cavo solo dalla morsettiera al `power` del circolatore."""
+    testo = CAPIRE.read_text(encoding="utf-8")
+    for parola in ("D-228", "interface-relay", "`bobina`", "relè d'appoggio da 10 A"):
+        assert parola in testo, parola
+    assert "prende alimentazione e comando dalla sua morsettiera" not in testo
+
+
+def test_comporre_dice_dove_si_posano_i_rele() -> None:
+    testo = COMPORRE.read_text(encoding="utf-8").lower()
+    assert "i relè d'appoggio in colonna" in testo
+    assert "sta sopra il suo relè" in testo
+
+
+def test_il_rele_d_appoggio_e_una_voce_del_comando() -> None:
+    """La voce `interface-relay`: tre attacchi a 230 V, tutti del comando e obbligatori, un
+    simbolo che il piano posa (non in linea), la famiglia KA e il corredo passante."""
+    voce = catalogo().resolve("interface-relay")
+    assert voce.definition.name == "Relè d'appoggio 10 A"
+    assert list(voce.definition.functions) == ["power_switching"]
+    porte = {porta.id: porta for porta in voce.definition.ports}
+    assert set(porte) == {"bobina", "a", "b"}
+    assert all(porta.domain is Domain.CONTROL and porta.required for porta in porte.values())
+    assert {str(porta.medium) for porta in porte.values()} == {"power_supply"}
+    assert [str(porte[ident].flow) for ident in ("bobina", "a", "b")] == ["in", "in", "out"]
+    assert not voce.is_inline
+    famiglie = json.loads((NAMING / "families.json").read_text(encoding="utf-8"))["families"]
+    assert {"function": "power_switching", "prefix": "KA", "name": "Relè d'appoggio"} in famiglie
+    corredo = json.loads((ROOT / "rules" / "distinta" / "corredo.json").read_text(encoding="utf-8"))
+    rele = corredo["voci"]["interface-relay"]
+    assert rele["passante"] is True
+    assert [(item["sezione"], item["um"]) for item in rele["voci"]] == [("E", "n")]

@@ -28,6 +28,7 @@ sei regole di intercettazione — una per macchina e per fluido — tornano a es
 """
 
 from enum import StrEnum
+from typing import Literal
 
 from pydantic import Field, model_validator
 
@@ -186,6 +187,11 @@ class RuleCondition(StrictModel):
     collettore passando per lei. Non nomina ne' le macchine ne' il collettore: si
     legge dalle camminate delle mandate, come il tratto comune, e vale per due
     pompe di calore come per una pompa di calore e una caldaia."""
+
+    plant_antifreeze: list[Literal["glicole", "valvole", "non_dichiarato"]] | None = None
+    """Come l'impianto si protegge dal gelo, fra quelli per cui la regola vale (REL-011,
+    D-230): il campo `antigelo` del progetto, «non_dichiarato» se manca. Vuoto vuol
+    dire in ogni caso."""
 
     plant_regime: PlantRegime | None = None
     """Il regime della centrale in cui questa regola vale (D-106).

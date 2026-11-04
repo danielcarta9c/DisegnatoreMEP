@@ -33,6 +33,7 @@ FOULS_CIRCUIT = "fouls_circuit"
 NEEDS_DEBRIS_PROTECTION = "needs_debris_protection"
 PRODUCES_AIR = "produces_air"
 NEEDS_OVERPRESSURE_PROTECTION = "needs_overpressure_protection"
+VIBRATES = "vibrates"
 HOLDS_ITS_OWN_VOLUME = "holds_its_own_volume"
 SHUTOFF_ORDINARY = "shutoff_ordinary"
 INLINE = "attachment_inline"
@@ -342,7 +343,7 @@ REL_003: list[dict[str, Any]] = [
         "heat-pump-air-water-large",
         "Pompa di calore aria-acqua di alta potenza",
         ["heat_generation"],
-        GENERATOR_TRAITS,
+        [*GENERATOR_TRAITS, VIBRATES],
         [
             hydronic_port("water_supply", "out"),
             hydronic_port("water_return", "in"),
@@ -552,6 +553,12 @@ CONTROL_PROPOSAL = (
     "proposta della sessione del 29/10/2026 (REL-012 fase 3, I-226): da approvare dal PO "
     "sulla tavola"
 )
+RELAY_D228 = (
+    "disposizione del PO del 04/11/2026 (I-259, D-228): il circolatore comandato dalla pompa "
+    "di calore passa da un relè d'appoggio da 10 A nel quadro; casi d'installazione Shenling "
+    "ThermaX R290 (P_C1 e P_C4 su un contattore, bobina A1-A2). Forma del segno da approvare "
+    "dal PO sulla tavola"
+)
 PLENUM_T1 = (
     "proposta della sessione del 29/10/2026 (collaudo T1 di REL-012, plenum a quattro uscite): "
     "la voce del plenum a cinque serrande del kit AA-01, con le serrande che il plenum ha; "
@@ -739,6 +746,22 @@ REL_012: list[dict[str, Any]] = [
         [control_port("a", POWER, "in"), control_port("b", POWER, "out")],
         sources=[KIT_AA01],
     ),
+    # Il relè d'appoggio fra l'uscita di una pompa di calore e il circolatore (D-228,
+    # I-259): l'uscita della macchina eccita la bobina, e il circolatore prende
+    # l'alimentazione attraverso il contatto, da una linea protetta del quadro. Tre
+    # attacchi, tutti a 230 V: la bobina, l'ingresso e l'uscita del contatto.
+    definition(
+        "interface-relay",
+        "Relè d'appoggio 10 A",
+        ["power_switching"],
+        QUIET,
+        [
+            control_port("bobina", POWER, "in"),
+            control_port("a", POWER, "in"),
+            control_port("b", POWER, "out"),
+        ],
+        sources=[RELAY_D228],
+    ),
     definition(
         "room-thermostat",
         "Termostato di zona",
@@ -799,6 +822,7 @@ DEFINITIONS: list[dict[str, Any]] = [
             NEEDS_DEBRIS_PROTECTION,
             PRODUCES_AIR,
             NEEDS_OVERPRESSURE_PROTECTION,
+            VIBRATES,
             SHUTOFF_ORDINARY,
             INLINE,
         ],

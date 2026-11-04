@@ -163,6 +163,8 @@ def test_lo_sfiato_sta_prima_del_filtro_come_sul_costruito() -> None:
         "t-sfiato-pdc-r1",
         "valve-isolation-strainer-pdc-r1-water-return-a",
         "strainer-pdc-r1-water-return",
+        # Il giunto antivibrante attaccato alla macchina (D-222).
+        "flexible-joint-pdc-r1-water-return",
         "pdc-r1",
     ]
 

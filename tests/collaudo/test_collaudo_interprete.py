@@ -783,6 +783,9 @@ def test_il_completatore_digerisce_il_grafo(n: int) -> None:
         for b in buchi
         if b.rule_id.startswith("safety-relief-")
         or b.reason is GapReason.ON_BOARD_UNKNOWN
+        # REL-011: le domande che una regola fa al progettista — il volano che manca
+        # (D-219), l'antigelo in una centrale sopra i 35 kW (D-230).
+        or b.reason is GapReason.DESIGNER_QUESTION
     ]
     assert buchi == domande, (
         f"impianto {n}: il completatore lascia punti aperti {[b.key for b in buchi]}"

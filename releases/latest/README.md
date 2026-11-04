@@ -1,8 +1,26 @@
-# L'ultima release: 1.8.1
+# L'ultima release: 1.9.0
 
-`DisegnatoreMEP-v1.8.1.zip` — sha256 `c5b306fd4f86b5fe…`, 135 file — è la 1.8.0 con una regola di Comporre precisata (I-240): la
-terza via della deviatrice verso la serpentina del bollitore corre accanto al ritorno, all'interasse delle autostrade,
-spostando la deviatrice e non il bollitore. Si carica come ogni skill personale, dallo ZIP così com'è.
+`DisegnatoreMEP-v1.9.0.zip` — sha256 `248730560b224e43…`, 140 file — è `REL-011`: **le regole del corredo contro il
+manuale Shenling ThermaX R290 e la specifica tecnica di installazione Nove C**, decise col PO un punto alla volta
+(I-243 … I-264, D-217 … D-232). Si carica come ogni skill personale, dallo ZIP così com'è.
+
+Rispetto alla 1.8.1:
+- **il corredo della pompa di calore**: giunti antivibranti attaccati alla macchina; valvole antigelo nelle case (sopra i
+  35 kW si chiede glicole o valvole); il ritegno su ogni generatore in parallelo, fra sicurezza e rubinetto; vaso,
+  riempimento e manometro fra le macchine e il defangatore; il gruppo di riempimento con disconnettore;
+- **le domande**: il volano a 4 attacchi quando manca, il vaso separato dalle macchine; gli avvisi del manuale
+  (portata fuori campo, volano sotto il minimo, schema in serie);
+- **il vaso dimensionato** (`mep.py vaso`) e **il livello del progetto**: nell'esecutivo precarica, tarature, pressione
+  di carica e il riquadro delle note di posa;
+- **il DN mai sotto l'attacco** delle Shenling;
+- **il relè d'appoggio da 10 A** fra la pompa di calore e ogni circolatore;
+- **la distinta** rivista su una commessa aria-aria, e la **lista della spesa** per l'installatore (`distinta --lista`).
+
+Il banco di regressione di `REL-011` (24 tavole idroniche): tutte cambiano — la legenda del gruppo di riempimento e il
+corredo nuovo —, 22 con gli stessi numeri, due tavole di confronto della prova del PO con più pieghe. Le prove sono in
+`docs/collaudi/REL-011/`.
+
+Prima, la **1.8.1**: la terza via della deviatrice verso la serpentina del bollitore corre accanto al ritorno (I-240).
 
 La 1.8.0 sono **i tre rilievi del collaudo della 1.7.0** (`REL-016`, I-237, I-239, D-216).
 

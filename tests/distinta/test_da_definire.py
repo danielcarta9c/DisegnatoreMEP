@@ -36,7 +36,7 @@ def test_un_ramo_senza_lunghezza_lascia_da_definire_la_sua_parte_delle_voci_a_me
     sostegni = [v for v in distinta.voci if v.regola.endswith("/sostegni")]
     assert [v.quantita for v in sostegni] == [21, None]
     fascette = next(v for v in distinta.voci if v.regola.endswith("/fascette"))
-    assert fascette.quantita == 40, "le fascette si contano per ramo: il numero dei rami si sa"
+    assert fascette.quantita == 20, "le fascette si contano per ramo: il numero dei rami si sa"
     assert any("T03" in d and "quanto e' lungo" in d for d in distinta.domande)
     tratta = next(t for t in distinta.tratte if t.num == "T03")
     assert tratta.da_quotare_m is None

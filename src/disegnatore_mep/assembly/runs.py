@@ -158,6 +158,9 @@ class _Assembler:
         return (
             _rule_of(self._project, component_id) is not None
             and len(self.run_ports(component_id)) == 2
+            # Il giunto antivibrante sta attaccato alla macchina che vibra, anche quando
+            # lo mette una regola (D-222): non si sposta, e la fila parte da lui.
+            and VIBRATION_ISOLATION not in self._definitions[component_id].functions
         )
 
     def anchor_of(self, component_id: str) -> str | None:

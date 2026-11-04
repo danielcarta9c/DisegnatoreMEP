@@ -35,7 +35,14 @@ from disegnatore_mep.layout.hierarchy import Level, hierarchy_of
 from disegnatore_mep.layout.trunks import Trunk
 from disegnatore_mep.model.project import PortRef, ProjectModel
 
-from .calcolatore import Diametro, diametro_per, potenza_da_portata
+from .calcolatore import (
+    VELOCITA_MASSIMA_M_S,
+    Diametro,
+    diametro_per,
+    potenza_da_portata,
+    velocita_m_s,
+)
+from .costruttori import dn_della_macchina
 from .portate import (
     FUNZIONI_DI_MISCELAZIONE,
     TOLLERANZA_M3H,
@@ -218,6 +225,7 @@ def tratti_del_diametro(
     esistenti = frozenset(item.id for item in project.networks if item.esistente)
     tubi_esistenti = frozenset(item.id for item in project.connections if item.esistente)
     legami = _passaggi(project, catalog, tratte)
+    pezzi_del_progetto = {item.id: item for item in project.components}
     livelli = hierarchy_of(project, catalog, tutte)
 
     tratti: list[TrattoDelDiametro] = []
@@ -233,6 +241,16 @@ def tratti_del_diametro(
             fonti = migliore.fonti
         richiesto = bool(richieste) and all(rete in richieste for rete in reti)
         diametro = diametro_per(portata) if portata is not None and portata > TOLLERANZA_M3H else None
+        if diametro is not None and portata is not None:
+            # Mai sotto l'attacco della macchina (D-223): il manuale Shenling dice 1" o 1¼".
+            capi = _capi_della_catena(catena, tratte)
+            minimo = dn_della_macchina((capo.component_id for capo in capi), pezzi_del_progetto)
+            if minimo is not None and diametro.dn < minimo:
+                diametro = Diametro(
+                    dn=minimo,
+                    velocita_m_s=velocita_m_s(portata, minimo),
+                    velocita_massima_m_s=VELOCITA_MASSIMA_M_S[minimo],
+                )
         perche: str | None = None
         if any(rete in esistenti for rete in reti):
             perche = "rete esistente"

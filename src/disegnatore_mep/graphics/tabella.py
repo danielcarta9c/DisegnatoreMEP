@@ -28,7 +28,7 @@ d'una, il trattino, il corpo e le righe della legenda.
 
 import re
 from collections import Counter
-from collections.abc import Iterable
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -165,6 +165,26 @@ def formatta_il_dato(chiave: str, valore: JsonPrimitive) -> str | None:
     return f"{testo.replace('.', ',')} {unita}"
 
 
+PRECARICA = "precarica_bar"
+"""La precarica del vaso d'espansione, in bar: la scrive il comando `vaso`, e solo nel
+progetto esecutivo-costruttivo (D-221, D-224)."""
+
+CONTENUTO_STIMATO = "contenuto_stimato"
+"""Il vaso e' dimensionato su un contenuto d'acqua stimato, non dato (D-220)."""
+
+
+def dati_del_vaso(proprieta: Mapping[str, JsonPrimitive]) -> list[str]:
+    """Quello che la riga del vaso porta dopo il volume: la precarica, se c'e', e
+    «contenuto stimato» (D-221)."""
+    dati: list[str] = []
+    precarica = proprieta.get(PRECARICA)
+    if isinstance(precarica, int | float) and not isinstance(precarica, bool) and precarica > 0:
+        dati.append(f"precarica {precarica:.1f} bar".replace(".", ","))
+    if proprieta.get(CONTENUTO_STIMATO) is True:
+        dati.append("contenuto stimato")
+    return dati
+
+
 def _testo(valore: JsonPrimitive) -> str | None:
     """Un dato di testo — marca, modello —, o `None` se non c'e'.
 
@@ -229,6 +249,8 @@ def righe_della_tabella(
             for chiave in chiavi
             if (scritto := formatta_il_dato(chiave, pezzo.properties.get(chiave))) is not None
         ]
+        if "expansion" in mestieri:
+            dati.extend(dati_del_vaso(pezzo.properties))
         codice = sigle.get(pezzo.id, pezzo.tag)
         riga = RigaDellaTabella(
             component_id=pezzo.id,
@@ -455,9 +477,15 @@ def svg_della_tabella(
     tabella: TabellaDelleApparecchiature, standard: GraphicStandard
 ) -> str:
     """La tabella nell'SVG della tavola: un gruppo, in nero come la legenda."""
-    tratti = tratti_della_tabella(tabella, standard)
+    return svg_dei_tratti(tratti_della_tabella(tabella, standard), "tabella-apparecchiature")
+
+
+def svg_dei_tratti(tratti: TrattiDellaTabella, classe: str) -> str:
+    """Linee e testi di una tabella come un gruppo SVG di quella classe: la tabella
+    delle apparecchiature e il riquadro delle note di posa (REL-011) si scrivono
+    allo stesso modo."""
     parti = [
-        f'<g class="tabella-apparecchiature" stroke="black" '
+        f'<g class="{classe}" stroke="black" '
         f'stroke-width="{tratti.spessore_mm:g}" fill="none">'
     ]
     parti.extend(
@@ -487,6 +515,7 @@ __all__ = [
     "formatta_il_dato",
     "impagina_la_tabella",
     "righe_della_tabella",
+    "svg_dei_tratti",
     "svg_della_tabella",
     "tabella_della_tavola",
     "tratti_della_tabella",

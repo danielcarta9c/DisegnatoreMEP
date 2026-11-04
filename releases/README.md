@@ -60,3 +60,10 @@ Il comando della skill li riapre da sé.
   aggrovigliata non si consegna, il collettore di zona da 3 a 12 vie, le domande della distinta al passo 2. 135 file.
 - **1.8.1** — 3 novembre 2026: la terza via della deviatrice corre accanto al ritorno della serpentina, all'interasse
   delle autostrade: si sposta la deviatrice, non il bollitore (I-240). 135 file.
+
+- **1.9.0** — 4 novembre 2026 (`REL-011`): le regole del corredo contro il manuale Shenling e la specifica Nove C, decise
+  col PO punto per punto (D-217 … D-232) — ritegno su ogni generatore in parallelo, giunti antivibranti, valvole
+  antigelo, vaso con riempimento e manometro fra le macchine e il defangatore, le domande su volano e vaso, il DN mai
+  sotto l'attacco Shenling; il vaso dimensionato (`mep.py vaso`) e il livello del progetto (definitivo / esecutivo),
+  con tarature e note di posa solo nell'esecutivo; il relè d'appoggio da 10 A fra la pompa di calore e i circolatori;
+  la distinta rivista e la lista della spesa (`distinta --lista`). 140 file.

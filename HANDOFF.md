@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-11-03 — **la 1.8.1 è su `main`** (PR #84, I-241): la terza via della deviatrice corre accanto al ritorno della serpentina, spostando la deviatrice (I-240). **Il pacchetto è `REL-011`** (I-238).
+**Aggiornato:** 2026-11-04 — **la 1.9.0 è sul ramo `claude/rel-011-shenling`, PR #85, in attesa del sì del PO** sulle tavole (https://claude.ai/artifact/6R3fbmuvf6oKS8gigExBJA).
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -11,7 +11,25 @@
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
 
-## ▶ Da dove riparte la prossima sessione — scritto il 3 novembre 2026, dopo la fusione della 1.8.0
+## ▶ Da dove riparte la prossima sessione — scritto il 4 novembre 2026
+
+**Prima cosa: la PR #85 (la 1.9.0, `REL-011`).** Il PO guarda le tavole e dice se fondere. **Non fondere senza il suo
+sì.** Dopo il sì: fondere, chiudere nel registro I-242 … I-264 (tranne I-248), scrivere il pacchetto successivo.
+
+- **Che cosa c'è**: le undici decisioni del 3–4 novembre (D-217 … D-232, la tabella in `ACTIVE_WORK_PACKAGE.md`), la
+  distinta rivista con `--lista` (I-262), il relè d'appoggio (D-228). Le prove: `docs/collaudi/REL-011/` (`piani/`,
+  `note/`, `rele/`).
+- **Le misure**: suite `2715 passed, 15 skipped, 10 xfailed`; ruff verde; banco 24/24 si disegnano, 22 con gli stessi
+  numeri; ZIP 140 file.
+- **Domande aperte al PO** (sulla pagina): sigle dei relè; relè dentro o accanto al quadro; le tre generalizzazioni
+  sullo ZIP della distinta; allineare la specifica Nove C (7 l/kW, termometri).
+- **Dopo REL-011**: dimensionare canali dell'aria, cavi e protezioni (I-248); i rimasti di REL-010/009 («Da decidere col
+  PO» del pacchetto); il limite del motore sulle valvole a cavallo di una curva.
+- **Fonti lette in sessione** (OneDrive del PO, non nel repository): manuale ThermaX R290 6-15 kW; «ThermaX R290 Monobloc
+  Installation case» (Alcuni schemi idraulici e setting.pdf); *Specifica tecnica di installazione PdC Shenling* Rev. 01.
+- **I numeri**: il prossimo input è **I-265**, la prossima decisione **D-233**.
+
+## Com'era il 3 novembre 2026, dopo la fusione della 1.8.0
 
 **Il pacchetto è `REL-011`** (`ACTIVE_WORK_PACKAGE.md`): le regole del corredo contro il manuale Shenling. I punti 1–3
 sono già in `docs/collaudi/REL-011/CONFRONTO.md`: si mostrano al PO e si chiede che cosa cambia. `REL-016` è archiviato

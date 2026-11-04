@@ -12,12 +12,36 @@
 > 2026, sulla 1.5.0.
 
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
-**Stato:** **DA COMINCIARE**.
+**Stato:** **IN CONSEGNA** (4 novembre 2026) — punti 1–4 fatti; la release 1.9.0 sul ramo
+`claude/rel-011-shenling`, da mostrare al PO con le tavole.
 **Base:** `main` dopo la PR #79 (la 1.5.0).
 **Ramo:** quello che l'ambiente della sessione assegna.
 **Approvazione della fusione:** **del PO**, guardando le tavole (D-146, D-147).
 
 ---
+
+## Com'è andata — 3 e 4 novembre 2026
+
+Il PO: «Troppo complesso … Devi agire tu in modalità esperta … Le regole del manuale Shenling
+sicuramente comandano» (I-243). Si è fatto un punto per messaggio, con la raccomandazione della
+sessione e solo alternative valide. Le decisioni, tutte approvate o disposte dal PO:
+
+| | decisione | in breve |
+|---|---|---|
+| 1 | D-217 | il ritegno su ogni generatore in parallelo, fra sicurezza e rubinetto |
+| 2 | D-218 | vaso, riempimento e manometro fra il defangatore e le macchine; domanda se il vaso è separabile |
+| 3 | D-219, D-226 | il volano a 4 attacchi chiesto quando manca; i minimi Shenling (25 / 40 / 40 × n l) |
+| 4 | D-220, D-221, D-224 | il vaso dimensionato (comando `vaso`); volume in tabella, tarature solo nell'esecutivo |
+| 5 | D-222 | i giunti antivibranti attaccati a ogni pompa di calore |
+| 6 | D-223 | il DN mai sotto l'attacco Shenling; la portata nel campo del modello |
+| 7 | D-225, D-228 | il circolatore mai diretto dalla pompa di calore: relè d'appoggio da 10 A |
+| 8 | D-227 | sotto i 35 kW nessun termometro: le sonde della macchina |
+| 9 | D-229 | gruppo di riempimento con disconnettore CA, un pezzo solo |
+| 10 | D-230 | valvole antigelo nelle case; sopra i 35 kW si chiede glicole o valvole |
+| 11 | D-231, D-232 | il riquadro «Note», cinque note di posa, solo nell'esecutivo |
+
+E nella stessa release, su richiesta del PO (I-262, I-264): **la distinta rivista** su una
+commessa aria-aria e la **lista della spesa** per l'installatore (`distinta --lista`).
 
 ## Perché
 

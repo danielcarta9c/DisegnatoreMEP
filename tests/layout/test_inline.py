@@ -306,8 +306,11 @@ def test_an_accessory_moves_on_when_its_own_run_bends_back_into_it() -> None:
         for item in project.components
         if registry.resolve(item.definition_id).is_inline
     )
+    # Dal 4 novembre 2026 il defangatore sta fra l'accumulo e i raccordi del ritorno, coi
+    # due rubinetti (D-218): la tratta che lo porta e' quella che esce dall'accumulo, e non
+    # piu' quella fra il raccordo del vaso e il collettore («p4-a-4»).
     trunk = next(
-        item for item in build_trunks(project, inline) if "p4-a-4" in item.connection_ids
+        item for item in build_trunks(project, inline) if "p4-a-2-a" in item.connection_ids
     )
     assert "dirt-separator-collettore-ritorno-a" in trunk.inline_component_ids
     alto = registry.resolve("dirt-separator").symbol.manifest

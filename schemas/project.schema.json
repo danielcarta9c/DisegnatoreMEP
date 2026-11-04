@@ -547,6 +547,22 @@
           ],
           "default": null,
           "title": "Header Note"
+        },
+        "livello": {
+          "anyOf": [
+            {
+              "enum": [
+                "definitivo",
+                "esecutivo"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Livello"
         }
       },
       "required": [
@@ -793,6 +809,22 @@
       },
       "title": "Accessori Tolti",
       "type": "array"
+    },
+    "antigelo": {
+      "anyOf": [
+        {
+          "enum": [
+            "glicole",
+            "valvole"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Antigelo"
     }
   },
   "required": [

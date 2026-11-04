@@ -82,6 +82,7 @@ famiglia vuol dire aggiungere una riga a una tabella, non toccare il programma.
 | **DEF** | Defangatore |
 | **DER** | Derivazione |
 | **FIL** | Filtro |
+| **GA** | Giunto antivibrante |
 | **GR** | Gruppo di riempimento |
 | **MN** | Manometro |
 | **PAV** | Terminale di emissione — sigla che hai scelto tu nel modello |
@@ -142,50 +143,59 @@ numerati. L'indirizzo dice dove sta il pezzo; la sigla che cos'e'.
 | Indirizzo | Sigla | Che cos'e' | Su quale fluido |
 |---|---|---|---|
 | CP.01.N.01 | **PDC-01** | Pompa di calore aria-acqua | acqua di riscaldamento |
-| CP.01.N.02 | **DER-01** | Derivazione a T | acqua di riscaldamento |
-| CP.01.N.03 | **DER-02** | Derivazione a T | acqua di riscaldamento |
-| CP.01.N.04 | **VI-01** | Valvola di intercettazione | acqua di riscaldamento |
-| CP.01.N.05 | **RC-01** | Raccordo a T | acqua di riscaldamento |
-| CP.01.N.06 | **VI-02** | Valvola di intercettazione | acqua di riscaldamento |
-| CP.01.N.07 | **SA-01** | Separatore d'aria | acqua di riscaldamento |
-| CP.01.N.08 | **VI-03** | Valvola di intercettazione | acqua di riscaldamento |
-| CP.01.N.09 | **VD-01** | Valvola deviatrice a tre vie | acqua di riscaldamento |
-| CP.01.N.10 | **VI-04** | Valvola di intercettazione | acqua di riscaldamento |
-| CP.01.N.11 | **VOL-01** | Volano termico a quattro attacchi · tiene in serbo acqua di riscaldamento | acqua di riscaldamento |
+| CP.01.N.02 | **GA-01** | Giunto antivibrante | acqua di riscaldamento |
+| CP.01.N.03 | **DER-01** | Derivazione a T | acqua di riscaldamento |
+| CP.01.N.04 | **DER-02** | Derivazione a T | acqua di riscaldamento |
+| CP.01.N.05 | **VR-03** | Valvola di ritegno | acqua di riscaldamento |
+| CP.01.N.06 | **VI-01** | Valvola di intercettazione | acqua di riscaldamento |
+| CP.01.N.07 | **RC-01** | Raccordo a T | acqua di riscaldamento |
+| CP.01.N.08 | **VI-02** | Valvola di intercettazione | acqua di riscaldamento |
+| CP.01.N.09 | **SA-01** | Separatore d'aria | acqua di riscaldamento |
+| CP.01.N.10 | **VI-03** | Valvola di intercettazione | acqua di riscaldamento |
+| CP.01.N.11 | **VD-01** | Valvola deviatrice a tre vie | acqua di riscaldamento |
+| CP.01.N.12 | **VI-04** | Valvola di intercettazione | acqua di riscaldamento |
+| CP.01.N.13 | **VOL-01** | Volano termico a quattro attacchi · tiene in serbo acqua di riscaldamento | acqua di riscaldamento |
 | RP.01.N.01 | **VI-05** | Valvola di intercettazione | acqua di riscaldamento |
 | RP.01.N.02 | **RC-02** | Raccordo a T | acqua di riscaldamento |
-| RP.01.N.03 | **DER-03** | Derivazione a T | acqua di riscaldamento |
-| RP.01.N.04 | **DER-04** | Derivazione a T | acqua di riscaldamento |
-| RP.01.N.05 | **DER-05** | Derivazione a T | acqua di riscaldamento |
-| RP.01.N.06 | **VI-06** | Valvola di intercettazione | acqua di riscaldamento |
-| RP.01.N.07 | **DEF-01** | Defangatore | acqua di riscaldamento |
-| RP.01.N.08 | **VI-07** | Valvola di intercettazione | acqua di riscaldamento |
+| RP.01.N.03 | **VI-06** | Valvola di intercettazione | acqua di riscaldamento |
+| RP.01.N.04 | **DEF-01** | Defangatore | acqua di riscaldamento |
+| RP.01.N.05 | **VI-07** | Valvola di intercettazione | acqua di riscaldamento |
+| RP.01.N.06 | **DER-03** | Derivazione a T | acqua di riscaldamento |
+| RP.01.N.07 | **DER-04** | Derivazione a T | acqua di riscaldamento |
+| RP.01.N.08 | **DER-05** | Derivazione a T | acqua di riscaldamento |
 | RP.01.N.09 | **RC-03** | Ripartizione a T | acqua di riscaldamento |
 | RP.01.N.10 | **VI-08** | Valvola di intercettazione | acqua di riscaldamento |
 | RP.01.N.11 | **FIL-01** | Filtro a Y | acqua di riscaldamento |
+| RP.01.N.12 | **GA-02** | Giunto antivibrante | acqua di riscaldamento |
 | RP.01a.N.01 | **RC-04** | Ripartizione a T | acqua di riscaldamento |
 | RP.01a.N.02 | **VI-09** | Valvola di intercettazione | acqua di riscaldamento |
 | RP.01a.N.03 | **FIL-02** | Filtro a Y | acqua di riscaldamento |
-| RP.01a.N.04 | **PDC-02** | Pompa di calore aria-acqua | acqua di riscaldamento |
-| CP.02.N.01 | **DER-06** | Derivazione a T | acqua di riscaldamento |
-| CP.02.N.02 | **DER-07** | Derivazione a T | acqua di riscaldamento |
-| CP.02.N.03 | **VI-10** | Valvola di intercettazione | acqua di riscaldamento |
-| CP.02.N.04 | **RC-05** | Raccordo a T | acqua di riscaldamento |
-| CP.03.N.03 | **VI-11** | Valvola di intercettazione | acqua di riscaldamento |
-| CP.03.N.02 | **DER-08** | Derivazione a T | acqua di riscaldamento |
-| CP.03.N.02.1 | **TM-01** | Termometro · pende dal tubo con una propria derivazione | acqua di riscaldamento |
-| CP.03.N.01 | **DER-09** | Derivazione a T | acqua di riscaldamento |
-| CP.03.N.01.1 | **VS-01** | Valvola di sicurezza · pende dal tubo con una propria derivazione | acqua di riscaldamento |
-| RP.01b.N.03 | **PDC-03** | Pompa di calore aria-acqua | acqua di riscaldamento |
+| RP.01a.N.04 | **GA-03** | Giunto antivibrante | acqua di riscaldamento |
+| RP.01a.N.05 | **PDC-02** | Pompa di calore aria-acqua | acqua di riscaldamento |
+| CP.02.N.01 | **GA-04** | Giunto antivibrante | acqua di riscaldamento |
+| CP.02.N.02 | **DER-06** | Derivazione a T | acqua di riscaldamento |
+| CP.02.N.03 | **DER-07** | Derivazione a T | acqua di riscaldamento |
+| CP.02.N.04 | **VR-04** | Valvola di ritegno | acqua di riscaldamento |
+| CP.02.N.05 | **VI-10** | Valvola di intercettazione | acqua di riscaldamento |
+| CP.02.N.06 | **RC-05** | Raccordo a T | acqua di riscaldamento |
+| CP.03.N.05 | **VI-11** | Valvola di intercettazione | acqua di riscaldamento |
+| CP.03.N.04 | **VR-05** | Valvola di ritegno | acqua di riscaldamento |
+| CP.03.N.03 | **DER-08** | Derivazione a T | acqua di riscaldamento |
+| CP.03.N.03.1 | **TM-01** | Termometro · pende dal tubo con una propria derivazione | acqua di riscaldamento |
+| CP.03.N.02 | **DER-09** | Derivazione a T | acqua di riscaldamento |
+| CP.03.N.02.1 | **VS-01** | Valvola di sicurezza · pende dal tubo con una propria derivazione | acqua di riscaldamento |
+| CP.03.N.01 | **GA-05** | Giunto antivibrante | acqua di riscaldamento |
+| RP.01b.N.04 | **PDC-03** | Pompa di calore aria-acqua | acqua di riscaldamento |
+| RP.01b.N.03 | **GA-06** | Giunto antivibrante | acqua di riscaldamento |
 | RP.01b.N.02 | **FIL-03** | Filtro a Y | acqua di riscaldamento |
 | RP.01b.N.01 | **VI-12** | Valvola di intercettazione | acqua di riscaldamento |
-| CP.02.N.02.1 | **TM-02** | Termometro · pende dal tubo con una propria derivazione | acqua di riscaldamento |
-| CP.02.N.01.1 | **VS-02** | Valvola di sicurezza · pende dal tubo con una propria derivazione | acqua di riscaldamento |
-| RP.01.N.05.1 | **VIB-01** | Valvola di intercettazione bloccabile aperta | acqua di riscaldamento |
-| RP.01.N.05.2 | **VE-01** | Vaso di espansione · pende dal tubo con una propria derivazione | acqua di riscaldamento |
-| RP.01.N.04.1 | **GR-01** | Gruppo di riempimento · pende dal tubo con una propria derivazione | acqua di riscaldamento, acqua fredda sanitaria |
-| RP.01.N.03.1 | **RM-01** | Rubinetto portamanometro a tre vie | acqua di riscaldamento |
-| RP.01.N.03.2 | **MN-01** | Manometro · pende dal tubo con una propria derivazione | acqua di riscaldamento |
+| CP.02.N.03.1 | **TM-02** | Termometro · pende dal tubo con una propria derivazione | acqua di riscaldamento |
+| CP.02.N.02.1 | **VS-02** | Valvola di sicurezza · pende dal tubo con una propria derivazione | acqua di riscaldamento |
+| RP.01.N.08.1 | **VIB-01** | Valvola di intercettazione bloccabile aperta | acqua di riscaldamento |
+| RP.01.N.08.2 | **VE-01** | Vaso di espansione · pende dal tubo con una propria derivazione | acqua di riscaldamento |
+| RP.01.N.07.1 | **GR-01** | Gruppo di riempimento con disconnettore · pende dal tubo con una propria derivazione | acqua di riscaldamento, acqua fredda sanitaria |
+| RP.01.N.06.1 | **RM-01** | Rubinetto portamanometro a tre vie | acqua di riscaldamento |
+| RP.01.N.06.2 | **MN-01** | Manometro · pende dal tubo con una propria derivazione | acqua di riscaldamento |
 | RP.02.N.01 | **VI-13** | Valvola di intercettazione | acqua di riscaldamento |
 | CP.01a.N.02 | **BOL-01** | Bollitore ACS · tiene in serbo acqua calda sanitaria | acqua di riscaldamento, acqua fredda sanitaria, acqua calda sanitaria |
 | CP.01a.N.01 | **VI-14** | Valvola di intercettazione | acqua di riscaldamento |
@@ -214,9 +224,9 @@ numerati. L'indirizzo dice dove sta il pezzo; la sigla che cos'e'.
 | CS.01b.N.03 | **VI-26** | Valvola di intercettazione | acqua di riscaldamento |
 | CS.01b.N.04 | **VC-01** | Ventilconvettore | acqua di riscaldamento |
 | RS.03.N.01 | **VI-27** | Valvola di intercettazione | acqua di riscaldamento |
-| CP.01.N.11.1 | **SC-01** | Attacco di scarico · pende dal tubo con una propria derivazione | acqua di riscaldamento |
-| CP.01.N.03.1 | **TM-03** | Termometro · pende dal tubo con una propria derivazione | acqua di riscaldamento |
-| CP.01.N.02.1 | **VS-03** | Valvola di sicurezza · pende dal tubo con una propria derivazione | acqua di riscaldamento |
+| CP.01.N.13.1 | **SC-01** | Attacco di scarico · pende dal tubo con una propria derivazione | acqua di riscaldamento |
+| CP.01.N.04.1 | **TM-03** | Termometro · pende dal tubo con una propria derivazione | acqua di riscaldamento |
+| CP.01.N.03.1 | **VS-03** | Valvola di sicurezza · pende dal tubo con una propria derivazione | acqua di riscaldamento |
 | AF.01.N.01 | **AF-01** | Alimentazione acqua fredda | acqua fredda sanitaria |
 | AF.01.N.02 | **VI-28** | Valvola di intercettazione | acqua fredda sanitaria |
 | AF.01.N.03 | **DER-10** | Derivazione a T sull'acqua fredda | acqua fredda sanitaria |
@@ -261,21 +271,23 @@ Da **PDC-01** a **VOL-01**, circuito primario.
 
 1. **CP.01.N.01 · PDC-01** Pompa di calore aria-acqua · la linea parte dal suo braccio 1
     - qui arriva **RP.01**, da **VOL-01**, entrando dal braccio 2
-2. **CP.01.N.02 · DER-01** Derivazione a T
-    - **CP.01.N.02.1 · VS-03** Valvola di sicurezza · pende dallo stacco
-3. **CP.01.N.03 · DER-02** Derivazione a T
-    - **CP.01.N.03.1 · TM-03** Termometro · pende dallo stacco
-4. **CP.01.N.04 · VI-01** Valvola di intercettazione
-5. **CP.01.N.05 · RC-01** Raccordo a T
+2. **CP.01.N.02 · GA-01** Giunto antivibrante
+3. **CP.01.N.03 · DER-01** Derivazione a T
+    - **CP.01.N.03.1 · VS-03** Valvola di sicurezza · pende dallo stacco
+4. **CP.01.N.04 · DER-02** Derivazione a T
+    - **CP.01.N.04.1 · TM-03** Termometro · pende dallo stacco
+5. **CP.01.N.05 · VR-03** Valvola di ritegno
+6. **CP.01.N.06 · VI-01** Valvola di intercettazione
+7. **CP.01.N.07 · RC-01** Raccordo a T
     - qui arriva **CP.02**, da **PDC-02**, entrando dal braccio 1
-6. **CP.01.N.06 · VI-02** Valvola di intercettazione
-7. **CP.01.N.07 · SA-01** Separatore d'aria
-8. **CP.01.N.08 · VI-03** Valvola di intercettazione
-9. **CP.01.N.09 · VD-01** Valvola deviatrice a tre vie
+8. **CP.01.N.08 · VI-02** Valvola di intercettazione
+9. **CP.01.N.09 · SA-01** Separatore d'aria
+10. **CP.01.N.10 · VI-03** Valvola di intercettazione
+11. **CP.01.N.11 · VD-01** Valvola deviatrice a tre vie
     - qui si stacca **CP.01a**, verso **BOL-01**, dal braccio 3
-10. **CP.01.N.10 · VI-04** Valvola di intercettazione
-11. **CP.01.N.11 · VOL-01** Volano termico a quattro attacchi · tiene in serbo acqua di riscaldamento
-    - **CP.01.N.11.1 · SC-01** Attacco di scarico · pende dallo stacco
+12. **CP.01.N.12 · VI-04** Valvola di intercettazione
+13. **CP.01.N.13 · VOL-01** Volano termico a quattro attacchi · tiene in serbo acqua di riscaldamento
+    - **CP.01.N.13.1 · SC-01** Attacco di scarico · pende dallo stacco
     - qui arriva **RS.01**, da **BAT-01**, entrando dal braccio 4
 
 ### CP.01a — mandata primaria
@@ -283,7 +295,7 @@ Da **PDC-01** a **VOL-01**, circuito primario.
 Da **VD-01** a **BOL-01**, circuito primario.
 Si stacca da **CP.01**.
 
-1. **VD-01** Valvola deviatrice a tre vie · gia' numerato, indirizzo CP.01.N.09 · la linea parte dal suo braccio 3
+1. **VD-01** Valvola deviatrice a tre vie · gia' numerato, indirizzo CP.01.N.11 · la linea parte dal suo braccio 3
 2. **CP.01a.N.01 · VI-14** Valvola di intercettazione
 3. **CP.01a.N.02 · BOL-01** Bollitore ACS · tiene in serbo acqua calda sanitaria
     - qui arriva **ACSR.01**, da **ACS-R**, entrando dal braccio 6
@@ -293,26 +305,27 @@ Si stacca da **CP.01**.
 
 Da **VOL-01** a **PDC-01**, circuito primario.
 
-1. **VOL-01** Volano termico a quattro attacchi · gia' numerato, indirizzo CP.01.N.11 · la linea parte dal suo braccio 2
+1. **VOL-01** Volano termico a quattro attacchi · gia' numerato, indirizzo CP.01.N.13 · la linea parte dal suo braccio 2
 2. **RP.01.N.01 · VI-05** Valvola di intercettazione
 3. **RP.01.N.02 · RC-02** Raccordo a T
     - qui arriva **RP.02**, da **BOL-01**, entrando dal braccio 2
-4. **RP.01.N.03 · DER-03** Derivazione a T
-    - **RP.01.N.03.1 · RM-01** Rubinetto portamanometro a tre vie · pende dallo stacco
-    - **RP.01.N.03.2 · MN-01** Manometro · pende dallo stacco
-5. **RP.01.N.04 · DER-04** Derivazione a T
-    - **RP.01.N.04.1 · GR-01** Gruppo di riempimento · pende dallo stacco
-6. **RP.01.N.05 · DER-05** Derivazione a T
-    - **RP.01.N.05.1 · VIB-01** Valvola di intercettazione bloccabile aperta · pende dallo stacco
-    - **RP.01.N.05.2 · VE-01** Vaso di espansione · pende dallo stacco
-7. **RP.01.N.06 · VI-06** Valvola di intercettazione
-8. **RP.01.N.07 · DEF-01** Defangatore
-9. **RP.01.N.08 · VI-07** Valvola di intercettazione
+4. **RP.01.N.03 · VI-06** Valvola di intercettazione
+5. **RP.01.N.04 · DEF-01** Defangatore
+6. **RP.01.N.05 · VI-07** Valvola di intercettazione
+7. **RP.01.N.06 · DER-03** Derivazione a T
+    - **RP.01.N.06.1 · RM-01** Rubinetto portamanometro a tre vie · pende dallo stacco
+    - **RP.01.N.06.2 · MN-01** Manometro · pende dallo stacco
+8. **RP.01.N.07 · DER-04** Derivazione a T
+    - **RP.01.N.07.1 · GR-01** Gruppo di riempimento con disconnettore · pende dallo stacco
+9. **RP.01.N.08 · DER-05** Derivazione a T
+    - **RP.01.N.08.1 · VIB-01** Valvola di intercettazione bloccabile aperta · pende dallo stacco
+    - **RP.01.N.08.2 · VE-01** Vaso di espansione · pende dallo stacco
 10. **RP.01.N.09 · RC-03** Ripartizione a T
     - qui si stacca **RP.01a**, verso **PDC-02**, dal braccio 3
 11. **RP.01.N.10 · VI-08** Valvola di intercettazione
 12. **RP.01.N.11 · FIL-01** Filtro a Y
-13. **PDC-01** Pompa di calore aria-acqua · **qui il giro si richiude su PDC-01**, entrando dal suo braccio 2 (CP.01.N.01)
+13. **RP.01.N.12 · GA-02** Giunto antivibrante
+14. **PDC-01** Pompa di calore aria-acqua · **qui il giro si richiude su PDC-01**, entrando dal suo braccio 2 (CP.01.N.01)
 
 ### RP.01a — ritorno primario
 
@@ -324,7 +337,8 @@ Si stacca da **RP.01**.
     - qui si stacca **RP.01b**, verso **PDC-03**, dal braccio 3
 3. **RP.01a.N.02 · VI-09** Valvola di intercettazione
 4. **RP.01a.N.03 · FIL-02** Filtro a Y
-5. **RP.01a.N.04 · PDC-02** Pompa di calore aria-acqua
+5. **RP.01a.N.04 · GA-03** Giunto antivibrante
+6. **RP.01a.N.05 · PDC-02** Pompa di calore aria-acqua
 
 ### RP.01b — ritorno primario
 
@@ -334,33 +348,38 @@ Si stacca da **RP.01**.
 1. **RC-04** Ripartizione a T · gia' numerato, indirizzo RP.01a.N.01 · la linea parte dal suo braccio 3
 2. **RP.01b.N.01 · VI-12** Valvola di intercettazione
 3. **RP.01b.N.02 · FIL-03** Filtro a Y
-4. **RP.01b.N.03 · PDC-03** Pompa di calore aria-acqua
+4. **RP.01b.N.03 · GA-06** Giunto antivibrante
+5. **RP.01b.N.04 · PDC-03** Pompa di calore aria-acqua
 
 ### CP.02 — mandata primaria
 
 Da **PDC-02** a **RC-01**, circuito primario.
 
-1. **PDC-02** Pompa di calore aria-acqua · gia' numerato, indirizzo RP.01a.N.04 · la linea parte dal suo braccio 1
-2. **CP.02.N.01 · DER-06** Derivazione a T
-    - **CP.02.N.01.1 · VS-02** Valvola di sicurezza · pende dallo stacco
-3. **CP.02.N.02 · DER-07** Derivazione a T
-    - **CP.02.N.02.1 · TM-02** Termometro · pende dallo stacco
-4. **CP.02.N.03 · VI-10** Valvola di intercettazione
-5. **CP.02.N.04 · RC-05** Raccordo a T
+1. **PDC-02** Pompa di calore aria-acqua · gia' numerato, indirizzo RP.01a.N.05 · la linea parte dal suo braccio 1
+2. **CP.02.N.01 · GA-04** Giunto antivibrante
+3. **CP.02.N.02 · DER-06** Derivazione a T
+    - **CP.02.N.02.1 · VS-02** Valvola di sicurezza · pende dallo stacco
+4. **CP.02.N.03 · DER-07** Derivazione a T
+    - **CP.02.N.03.1 · TM-02** Termometro · pende dallo stacco
+5. **CP.02.N.04 · VR-04** Valvola di ritegno
+6. **CP.02.N.05 · VI-10** Valvola di intercettazione
+7. **CP.02.N.06 · RC-05** Raccordo a T
     - qui arriva **CP.03**, da **PDC-03**, entrando dal braccio 1
-6. **RC-01** Raccordo a T · **qui il giro si richiude su RC-01**, entrando dal suo braccio 1 (CP.01.N.05)
+8. **RC-01** Raccordo a T · **qui il giro si richiude su RC-01**, entrando dal suo braccio 1 (CP.01.N.07)
 
 ### CP.03 — mandata primaria
 
 Da **PDC-03** a **RC-05**, circuito primario.
 
-1. **PDC-03** Pompa di calore aria-acqua · gia' numerato, indirizzo RP.01b.N.03 · la linea parte dal suo braccio 1
-2. **CP.03.N.01 · DER-09** Derivazione a T
-    - **CP.03.N.01.1 · VS-01** Valvola di sicurezza · pende dallo stacco
-3. **CP.03.N.02 · DER-08** Derivazione a T
-    - **CP.03.N.02.1 · TM-01** Termometro · pende dallo stacco
-4. **CP.03.N.03 · VI-11** Valvola di intercettazione
-5. **RC-05** Raccordo a T · **qui il giro si richiude su RC-05**, entrando dal suo braccio 1 (CP.02.N.04)
+1. **PDC-03** Pompa di calore aria-acqua · gia' numerato, indirizzo RP.01b.N.04 · la linea parte dal suo braccio 1
+2. **CP.03.N.01 · GA-05** Giunto antivibrante
+3. **CP.03.N.02 · DER-09** Derivazione a T
+    - **CP.03.N.02.1 · VS-01** Valvola di sicurezza · pende dallo stacco
+4. **CP.03.N.03 · DER-08** Derivazione a T
+    - **CP.03.N.03.1 · TM-01** Termometro · pende dallo stacco
+5. **CP.03.N.04 · VR-05** Valvola di ritegno
+6. **CP.03.N.05 · VI-11** Valvola di intercettazione
+7. **RC-05** Raccordo a T · **qui il giro si richiude su RC-05**, entrando dal suo braccio 1 (CP.02.N.06)
 
 ### RP.02 — ritorno primario
 
@@ -374,7 +393,7 @@ Da **BOL-01** a **RC-02**, circuito primario.
 
 Da **VOL-01** a **BAT-01**, circuito secondario.
 
-1. **VOL-01** Volano termico a quattro attacchi · gia' numerato, indirizzo CP.01.N.11 · la linea parte dal suo braccio 3
+1. **VOL-01** Volano termico a quattro attacchi · gia' numerato, indirizzo CP.01.N.13 · la linea parte dal suo braccio 3
 2. **CS.01.N.01 · VI-15** Valvola di intercettazione
 3. **CS.01.N.02 · RC-06** Ripartizione a T
     - qui si stacca **CS.01a**, verso **PAV-01**, dal braccio 3
@@ -419,7 +438,7 @@ Da **BAT-01** a **VOL-01**, circuito secondario.
 3. **RS.01.N.02 · RC-07** Raccordo a T
     - qui arriva **RS.02**, da **PAV-01**, entrando dal braccio 1
 4. **RS.01.N.03 · VI-19** Valvola di intercettazione
-5. **VOL-01** Volano termico a quattro attacchi · **qui il giro si richiude su VOL-01**, entrando dal suo braccio 4 (CP.01.N.11)
+5. **VOL-01** Volano termico a quattro attacchi · **qui il giro si richiude su VOL-01**, entrando dal suo braccio 4 (CP.01.N.13)
 
 ### RS.02 — ritorno secondario
 
@@ -491,7 +510,7 @@ Da **AF-01** a **BOL-01**, acqua fredda sanitaria.
 Da **AF-02** a **GR-01**, acqua fredda sanitaria.
 
 1. **AF.02.N.01 · AF-02** Alimentazione acqua fredda · la linea parte dal suo braccio 1
-2. **GR-01** Gruppo di riempimento · **qui ci si innesta su GR-01**, che si e' gia' letto, entrando dal suo braccio 1 (RP.01.N.04.1)
+2. **GR-01** Gruppo di riempimento con disconnettore · **qui ci si innesta su GR-01**, che si e' gia' letto, entrando dal suo braccio 1 (RP.01.N.07.1)
 
 ### AF.03 — acqua fredda sanitaria
 
@@ -515,8 +534,11 @@ arriva a ogni pezzo dell'impianto.
 
 **Tubazioni non lette:** nessuna. Ogni tubazione compare nella passeggiata.
 
-**Punti aperti:** nessuno. Per ogni accessorio che le regole hanno chiesto,
-c'era il pezzo adatto al fluido e il posto dove metterlo.
+**Punti aperti: qui una regola si applicava e non c'era dove o con cosa
+servirla.** Non e' una dimenticanza del disegno: e' una scelta che torna al
+progettista.
+
+- **manca valvola antigelo** su **PDC-01** Pompa di calore aria-acqua: servirebbe, e in catalogo non c'e' nessun pezzo che lo faccia sull'acqua di riscaldamento. Va deciso dal progettista.
 
 ---
 

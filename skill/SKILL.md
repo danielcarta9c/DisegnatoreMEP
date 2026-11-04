@@ -7,7 +7,7 @@ compatibility: Richiede l'esecuzione del codice (claude.ai, Claude Cowork o Clau
 
 # Disegnatore MEP
 
-**Versione 1.8.1** — 3 novembre 2026.
+**Versione 1.9.0** — 4 novembre 2026.
 
 Il progettista ha già deciso e dimensionato l'impianto, e te lo descrive a parole. Tu ne fai la
 **tavola dello schema funzionale**: la leggi, chiedi quello che manca, la fai approvare, la componi e
@@ -116,6 +116,16 @@ lancia anche `completa` (passo 3): i punti aperti che trova sono domande dello s
 - un pezzo principale che il catalogo non ha: chiedi se procedere senza, o fermarsi;
 - le potenze dei generatori, se il testo non le dà: senza, il regime della centrale non si
   ricava, e le regole mettono il corredo di una centrale fino a 35 kW — diglielo;
+- **il livello del progetto**, se il testo non lo dice: **definitivo** o **esecutivo-costruttivo**
+  (`metadata.livello`). La tua prima interpretazione è definitivo: tarature, precarica e note di
+  posa escono solo nell'esecutivo (D-224);
+- **marca, modello e potenza delle pompe di calore**: con le Shenling `completa` controlla il
+  manuale — attacchi, portata, volano — e lo dice negli «avvisi del manuale»;
+- **l'antigelo**, sopra i 35 kW: glicole o valvole (`"antigelo"` nel grafo). Nelle case le valvole
+  le mettono le regole; se il progettista dichiara il glicole, niente valvole;
+- **i dati del vaso**, se vuole il vaso dimensionato: il contenuto d'acqua di tutto il circuito che
+  il vaso vede (se non lo sa, lo stimi dai terminali e dici che è una stima), la temperatura
+  massima di mandata, il dislivello fra il vaso e il punto più alto dell'impianto;
 - **i diametri delle tubazioni, se il testo non dice se li vuole**: chiedigli se vuole anche il
   dimensionamento. La tua prima interpretazione è no, e la tavola esce senza; per il sì gli dici
   su quali reti li calcoli e quali dati ti servono — i salti termici, le portate di progetto
@@ -171,6 +181,17 @@ Le regole aggiungono gli accessori che un esecutivo porta, ciascuno con il perch
 dicono quelli che servirebbero e non si possono proporre: i **punti aperti**, che sono domande
 al progettista. Il comando scrive il grafo completo. Se esce con un errore, il grafo di prima
 stesura non regge: si corregge al passo 1.
+
+**Il vaso d'espansione** lo dimensiona il comando, non tu (D-220), sul grafo completo:
+
+```bash
+python3 scripts/mep.py vaso $L/grafo-completo.json --contenuto <l> --tmax <°C> --dislivello <m> [--stimato]
+```
+
+Scrive la taglia sulla riga del vaso in tabella e, nell'esecutivo, la precarica, la taratura
+accanto alle valvole di sicurezza e la pressione di carica accanto al gruppo di riempimento. Con
+le Shenling usa la loro pressione minima (1,5 bar) e di riempimento (2,0 bar). Con il glicole
+passa `--coefficiente` della miscela, dalla sua scheda.
 
 ### 4. L'approvazione — l'unico cancello
 

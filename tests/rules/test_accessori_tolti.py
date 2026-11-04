@@ -32,6 +32,7 @@ from disegnatore_mep.io.canonical import canonical_json
 from disegnatore_mep.io.project_json import load_project
 from disegnatore_mep.model.project import ProjectModel
 from disegnatore_mep.rules.apply import Saturation, saturation
+from disegnatore_mep.rules.proposal import GapReason, RuleGap
 from disegnatore_mep.rules.registry import RuleRegistry
 from disegnatore_mep.validation.topology import validate_project
 
@@ -84,17 +85,26 @@ def _tolti(*pezzi: str) -> list[dict[str, str]]:
     return [{"pezzo": pezzo, "motivo": "sul costruito non c'e'"} for pezzo in pezzi]
 
 
+def _non_domande(gaps: list[RuleGap]) -> list[RuleGap]:
+    """I punti aperti che non sono domande al progettista (REL-011)."""
+    return [item for item in gaps if item.reason is not GapReason.DESIGNER_QUESTION]
+
+
 @cache
 def _senza_scelte() -> Saturation:
     return saturation(load_project(CASO), catalog(), rules())
 
 
 def test_la_misura_di_partenza_e_quella_del_documento() -> None:
-    """La 1.2.2 sul grafo del caso: 70 pezzi diventano 207, nessun punto aperto."""
+    """La 1.2.2 sul grafo del caso: 70 pezzi diventavano 207, nessun punto aperto. Dal 4
+    novembre 2026 (REL-011) 225: i dodici giunti antivibranti delle sei pompe (D-222) e i
+    sei ritegni delle macchine in parallelo (D-217); e una domanda per primario,
+    sull'antigelo, perche' la centrale e' sopra i 35 kW (D-230)."""
     risultato = _senza_scelte()
-    assert len(risultato.model.components) == 207
-    assert len(risultato.model.connections) == 228
-    assert risultato.gaps == []
+    assert len(risultato.model.components) == 225
+    assert len(risultato.model.connections) == 246
+    assert _non_domande(risultato.gaps) == []
+    assert {item.rule_id for item in risultato.gaps} == {"ask-how-the-outdoor-run-is-kept-from-freezing"}
     posati = {item.id for item in risultato.model.components}
     assert set(TERMINALI + DEL_PRIMARIO + SEPARATORI) <= posati, "i pezzi che le prove tolgono ci sono"
 
@@ -105,11 +115,13 @@ def test_un_accessorio_tolto_non_si_posa_e_non_torna_come_punto_aperto() -> None
     posati = {item.id for item in risultato.model.components}
     assert not set(tolti) & posati
     assert sorted(item.component_id for item in risultato.withheld) == sorted(tolti)
-    assert risultato.gaps == []
+    # Il vaso tolto dal primario fa chiedere se la separazione e' voluta (D-218): e'
+    # una domanda, non un pezzo che torna.
+    assert _non_domande(risultato.gaps) == []
     # Chi pendeva da un pezzo tolto se ne va con lui: le due intercettazioni del
     # separatore, la valvola bloccata aperta del vaso, il rubinetto del manometro.
     assert not [item for item in posati if item.startswith(("valve-isolation-air-separator", "valve-gauge-cock"))]
-    assert len(risultato.model.components) == 149
+    assert len(risultato.model.components) == 167
 
 
 def test_la_scelta_regge_a_ogni_rilancio() -> None:
@@ -127,7 +139,7 @@ def test_una_voce_che_non_toglie_niente_si_riconosce() -> None:
         _caso(accessori_tolti=_tolti("valve-safety-pdc-x9-water-supply")), catalog(), rules()
     )
     assert risultato.withheld == []
-    assert len(risultato.model.components) == 207
+    assert len(risultato.model.components) == 225
 
 
 def test_il_bordo_della_singola_macchina_vale_come_quello_del_catalogo() -> None:
@@ -207,7 +219,7 @@ def test_spostare_e_togliere_da_un_posto_e_posare_nell_altro() -> None:
     assert "valve-isolation-locked-open-expansion-connection-tj-mz-b-a" in pezzi
     assert "valve-gauge-cock-3way-pressure-gauge-tj-mz-b-a" in pezzi
     assert "inlet-filling-unit-tj-mz-b" in pezzi
-    assert len(pezzi) == 207, "spostati, non tolti"
+    assert len(pezzi) == 225, "spostati, non tolti"
     secondo = saturation(risultato.model, catalog(), rules())
     assert secondo.applied == []
 

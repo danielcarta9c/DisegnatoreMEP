@@ -408,7 +408,23 @@ def _senza_la_domanda_sull_acqua_di_riempimento(gaps: list[RuleGap]) -> list[Rul
     progettista invece di appendere un pezzo al nulla. E' un punto aperto vero,
     e non riguarda la proprieta' provata qui.
     """
-    return [item for item in gaps if item.reason is not GapReason.NO_SOURCE_NETWORK]
+    return [
+        item for item in gaps
+        if item.reason not in (GapReason.NO_SOURCE_NETWORK, GapReason.DESIGNER_QUESTION)
+    ]
+
+
+ATTACCATI_ALLA_MACCHINA = frozenset({"vibration_isolation", "frost_protection"})
+"""Il giunto antivibrante e la valvola antigelo stanno sul tratto della macchina che vibra
+e che sta fuori, prima di ogni altro pezzo (D-222, D-230): non chiudono niente, e le prove
+del gruppo li saltano."""
+
+
+def _oltre_giunto_e_antigelo(walk: "Walk", pieces: list[str]) -> list[str]:
+    indice = 0
+    while indice < len(pieces) and walk.functions(pieces[indice]) & ATTACCATI_ALLA_MACCHINA:
+        indice += 1
+    return pieces[indice:]
 
 
 @pytest.mark.parametrize("index", range(len(CASI)))
@@ -421,7 +437,7 @@ def test_il_filtro_sta_contro_la_macchina_senza_valvola_in_mezzo(index: int) -> 
     assert machines, "nessuna macchina chiede un filtro: la prova non direbbe nulla"
     for machine in machines:
         inlet = walk.port_with_flow(machine, PortFlow.IN)
-        pieces = walk.stretch_from(machine, inlet)
+        pieces = _oltre_giunto_e_antigelo(walk, walk.stretch_from(machine, inlet))
         assert pieces, (machine, inlet)
         assert "filtration" in walk.functions(pieces[0]), (machine, pieces)
         assert pieces[0] in walk.own_accessories(machine), (machine, pieces[0])
@@ -435,7 +451,7 @@ def test_sul_ritorno_basta_una_valvola_lato_rete_oltre_il_filtro(index: int) -> 
     walk = _walk(index)
     for machine in walk.machines_needing_a_filter():
         inlet = walk.port_with_flow(machine, PortFlow.IN)
-        strainer = walk.stretch_from(machine, inlet)[0]
+        strainer = _oltre_giunto_e_antigelo(walk, walk.stretch_from(machine, inlet))[0]
         away = next(
             port_id
             for port_id in walk.run_ports(strainer)
@@ -590,7 +606,17 @@ def test_il_riempimento_e_uno_solo_e_sta_sul_ritorno_dell_acqua_tecnica(index: i
         if port.medium == HEATING and port.flow is PortFlow.OUT and not port.off_the_run
         and port.id.startswith("primary")
     )
-    assert holder in walk.stretch_from(tank, out_port), (holder, walk.stretch_from(tank, out_port))
+    tratto = walk.stretch_from(tank, out_port)
+    # Dal 3 novembre 2026 il riempimento sta dalla parte delle macchine rispetto al
+    # defangatore (D-218): la camminata si ferma sul defangatore, e si riprende oltre.
+    if tratto and "sludge_separation" in walk.functions(tratto[-1]):
+        defangatore = tratto[-1]
+        oltre = next(
+            port_id for port_id in walk.run_ports(defangatore)
+            if tank not in walk.stretch_from(defangatore, port_id) and not set(walk.stretch_from(defangatore, port_id)) & set(tratto[:-1])
+        )
+        tratto = [*tratto, *walk.stretch_from(defangatore, oltre)]
+    assert holder in tratto, (holder, tratto)
 
 
 @pytest.mark.parametrize("index", (2, 3))

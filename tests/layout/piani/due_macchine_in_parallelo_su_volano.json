@@ -1,0 +1,65 @@
+{
+  "formato": "A3",
+  "note": [
+    "REL-011, 4 novembre 2026: le due pompe di calore in parallelo su un volano a quattro attacchi. Fino a oggi questa configurazione si componeva senza piano (compose_drawing); con giunto antivibrante (D-222), valvola antigelo (D-230) e ritegno (D-217) sugli attacchi di ogni macchina la via senza piano non trova piu' il tratto dritto per il giunto fra la porta e il raccordo della sicurezza, e la composizione passa al piano (D-151), come per l'altra configurazione di queste prove il 2 ottobre 2026 (I-180).",
+    "E' il piano dell'impianto di prova 1 (docs/collaudi/DRAW-018/prova-camera-pulita-2026-09-24/piano-completo-1.json, ricomposto per REL-011) con il volano al posto dell'accumulo combinato e senza la parte sanitaria: macchine impilate a x=0, passo 50 (A2); mandata e ritorno sulle quote del volano (D-159); collettori su due verticali a 10 mm (B3); vaso e manometro appesi sotto il ritorno comune, fra le macchine e il defangatore (D-218)."
+  ],
+  "pezzi": {
+    "nord": {
+      "x": 0,
+      "y": 0
+    },
+    "sud": {
+      "x": 0,
+      "y": 50
+    },
+    "tee-valve-safety-nord-water-supply": {
+      "x": 60,
+      "y": 2.5
+    },
+    "valve-safety-nord-water-supply": {
+      "x": 60,
+      "y": -17.5
+    },
+    "tee-valve-safety-sud-water-supply": {
+      "x": 60,
+      "y": 52.5
+    },
+    "valve-safety-sud-water-supply": {
+      "x": 60,
+      "y": 32.5
+    },
+    "unione": {
+      "x": 112.5,
+      "y": 2.5
+    },
+    "ripartizione": {
+      "x": 122.5,
+      "y": 17.5
+    },
+    "tee-expansion-connection-ripartizione-a": {
+      "x": 155,
+      "y": 17.5
+    },
+    "expansion-connection-ripartizione-a": {
+      "x": 155,
+      "y": 40
+    },
+    "tee-pressure-gauge-ripartizione-a": {
+      "x": 170,
+      "y": 17.5
+    },
+    "pressure-gauge-ripartizione-a": {
+      "x": 170,
+      "y": 40
+    },
+    "volano": {
+      "x": 225,
+      "y": 0
+    },
+    "corpo": {
+      "x": 300,
+      "y": 2.5
+    }
+  }
+}

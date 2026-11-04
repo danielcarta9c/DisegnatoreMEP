@@ -1,0 +1,41 @@
+{
+  "id": "interface-relay",
+  "version": "1.0.0",
+  "name": "Relè d'appoggio 10 A",
+  "width_mm": 10.0,
+  "height_mm": 10.0,
+  "allowed_rotations_deg": [
+    0,
+    90,
+    180,
+    270
+  ],
+  "ports": [
+    {
+      "id": "bobina",
+      "face": "left",
+      "x_mm": 0.0,
+      "y_mm": 7.5
+    },
+    {
+      "id": "a",
+      "face": "right",
+      "x_mm": 10.0,
+      "y_mm": 7.5
+    },
+    {
+      "id": "b",
+      "face": "top",
+      "x_mm": 7.5,
+      "y_mm": 0.0
+    }
+  ],
+  "keep_out": {
+    "left_mm": 2.0,
+    "right_mm": 2.0,
+    "top_mm": 2.0,
+    "bottom_mm": 0.0
+  },
+  "stroke_weight": "medium",
+  "source": "proposta della sessione del 04/11/2026 (D-228, I-259): bobina e contatto di chiusura nello stile CEI dei segni del kit; forma da approvare dal PO sulla tavola"
+}

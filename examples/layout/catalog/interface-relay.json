@@ -1,0 +1,41 @@
+{
+  "id": "interface-relay",
+  "version": "1.0.0",
+  "name": "Relè d'appoggio 10 A",
+  "functions": [
+    "power_switching"
+  ],
+  "traits": [
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
+  "symbol_id": "interface-relay",
+  "composite": false,
+  "ports": [
+    {
+      "id": "bobina",
+      "domain": "control",
+      "medium": "power_supply",
+      "flow": "in",
+      "required": true
+    },
+    {
+      "id": "a",
+      "domain": "control",
+      "medium": "power_supply",
+      "flow": "in",
+      "required": true
+    },
+    {
+      "id": "b",
+      "domain": "control",
+      "medium": "power_supply",
+      "flow": "out",
+      "required": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION",
+    "disposizione del PO del 04/11/2026 (I-259, D-228): il circolatore comandato dalla pompa di calore passa da un relè d'appoggio da 10 A nel quadro; casi d'installazione Shenling ThermaX R290 (P_C1 e P_C4 su un contattore, bobina A1-A2). Forma del segno da approvare dal PO sulla tavola"
+  ]
+}

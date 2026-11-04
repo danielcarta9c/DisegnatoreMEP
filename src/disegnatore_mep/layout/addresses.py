@@ -21,7 +21,7 @@ from disegnatore_mep.graphics.frame import SheetFrame
 from disegnatore_mep.model.project import ProjectModel
 
 from .diametri import riquadro_del_diametro
-from .geometry import DrawingGeometry, zona_della_tabella
+from .geometry import DrawingGeometry, riquadri_in_alto, zona_della_tabella
 from .labels import place_addresses
 
 VERIFY_MARK = "MODALITÀ VERIFICA"
@@ -69,13 +69,10 @@ def with_addresses(
                             area=frame.drawing_rect_mm,
                             # Nemmeno il velo della verifica entra nella
                             # tabella delle apparecchiature (REL-006), ne' sulle
-                            # etichette del DN (REL-007).
+                            # etichette del DN (REL-007), ne' nelle note di posa
+                            # (REL-011).
                             ostacoli=(
-                                *(
-                                    ()
-                                    if sheet.tabella is None
-                                    else (zona_della_tabella(sheet.tabella.riquadro),)
-                                ),
+                                *(zona_della_tabella(item) for item in riquadri_in_alto(sheet)),
                                 *(
                                     riquadro_del_diametro(item, frame.standard.text_small_mm)
                                     for item in sheet.diametri

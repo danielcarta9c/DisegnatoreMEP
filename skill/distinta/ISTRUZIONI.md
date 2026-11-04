@@ -52,8 +52,13 @@ Se non esce niente, cercala in tutto il disco (`find / -type d -name nove-c-repo
 
 ```
 python3 scripts/mep.py distinta <grafo-completo.json> --out <cartella> --report <cartella di nove-c-report>
-                                [--fornitura <scelte>|confermata] [--regole <cartella o fascio>]
+                                [--fornitura <scelte>|confermata] [--regole <cartella o fascio>] [--lista]
 ```
+
+**Con `--lista`** esce la **lista della spesa per l'installatore**, `<commessa>_Lista_materiali_<impianto>.pdf`:
+stessi calcoli e stessi numeri, ma solo i materiali da comprare — niente offerta a corpo, niente assistenze
+murarie e opere del Committente, niente attività, varianti, domande e regole. È quella da dare quando
+l'installatore deve comprare, non quotare; il documento completo resta quello senza `--lista`.
 
 Esce con `0` se è completa, con `2` se ci sono voci **DA DEFINIRE** (con le domande stampate), con `1` se non si è
 potuta fare. Scrive nella cartella:

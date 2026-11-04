@@ -30,8 +30,10 @@ DEL_CARTIGLIO: tuple[str, ...] = (
     "checked_by",
     "approved_by",
     "header_note",
+    "livello",
 )
-"""I dati del cartiglio che i metadati possono non avere (REL-002)."""
+"""I dati del cartiglio che i metadati possono non avere (REL-002), e il livello del
+progetto (REL-011, D-224)."""
 
 
 def _senza_i_vuoti(dati: dict[str, Any], nomi: tuple[str, ...]) -> dict[str, Any]:
@@ -77,6 +79,11 @@ class ProjectMetadata(StrictModel):
     header_note: str | None = Field(default=None, min_length=1)
     """La dicitura che il cartiglio Nove C porta in testata, a destra: nel file
     del PO e' «Conto Termico con sconto in fattura». Senza, resta vuota."""
+    livello: Literal["definitivo", "esecutivo"] | None = None
+    """Il livello del progetto (REL-011, D-224, I-254): nel **definitivo** la tavola non
+    porta tarature, precarica, pressione di caricamento ne' le note di posa; nell'
+    **esecutivo** (esecutivo-costruttivo) si'. Lo chiede l'agente al progettista
+    all'inizio. Assente vale definitivo: i grafi agli atti non cambiano."""
 
     @model_serializer(mode="wrap")
     def _senza_i_dati_non_dati(self, handler: SerializerFunctionWrapHandler) -> dict[str, Any]:
@@ -424,6 +431,11 @@ class ProjectModel(StrictModel):
     accessori_tolti: list[AccessorioTolto] = Field(default_factory=list)
     """Gli accessori delle regole che il progettista toglie (REL-009, I-192).
     Facoltativo e additivo come `diametri`: vuoto non si scrive."""
+    antigelo: Literal["glicole", "valvole"] | None = None
+    """Come si protegge dal gelo il tratto esterno delle pompe di calore (REL-011,
+    D-230): con il **glicole** nell'acqua, o con le **valvole antigelo** che scaricano il
+    tratto esterno. Lo dichiara il progettista. Assente: nelle case (fino a 35 kW) le
+    regole mettono le valvole, nelle centrali grandi chiedono. Assente non si scrive."""
 
     @model_validator(mode="after")
     def schema_version_is_the_current_one(self) -> "ProjectModel":
@@ -513,4 +525,6 @@ class ProjectModel(StrictModel):
             dati.pop("diametri", None)
         if not dati.get("accessori_tolti"):
             dati.pop("accessori_tolti", None)
+        if dati.get("antigelo") is None:
+            dati.pop("antigelo", None)
         return dati

@@ -92,8 +92,8 @@ KIT: list[tuple[str, str, float]] = [
 """Le 62 voci del computo del kit (A-F e Z), nell'ordine del kit."""
 
 DIFFERENZE: dict[str, tuple[float, str]] = {
-    "B.5": (5, "una curva per ramo, non per le sole uscite strette che il kit sceglieva a mano"),
-    "B.7": (40, "8 fascette per ramo, curva compresa: la curva in piu' ne porta 4"),
+    "B.11": (2, "la revisione del PO (I-262) isola anche manicotti e derivazione: un rotolo in piu'"),
+    "F.7": (7, "la revisione del PO (I-262) porta la traccia fino al controsoffitto anche per i comandi"),
     "B.9": (27, "L / 1,2 m per eccesso + 1 per ramo; il kit scriveva 25 a mano"),
     "D.8": (10, "su tutta la condensa: il tratto in controsoffitto (5 m nel kit) lo sa solo la pianta"),
     "E.9": (10.5, "il minimo di 5 m vale per tutto il bus, come dice il rapporto; il codice del kit lo dava ai soli termostati"),
@@ -108,6 +108,14 @@ IN_GIU_DEL_COMMITTENTE: dict[str, tuple[float, str]] = {
         "che il grafo non conosce",
     ),
 }
+RIVISTE_DAL_PO: dict[str, tuple[float | None, str]] = {
+    "B.5": (None, "tolta: i flessibili vanno interi dal plenum alla bocchetta, senza curve rigide (I-262)"),
+    "B.7": (20, "4 fascette per ramo, una per anima e una per mantello alle due estremita': senza curve (I-262)"),
+    "B.10": (None, "rifatta come sezione S, un kit di sospensione per apparecchio (S.2, S.3, S.4) (I-262)"),
+}
+"""Le voci che la revisione della distinta su una commessa aria-aria (4 novembre 2026,
+I-262) ha cambiato di proposito, anche in giu': la regola e' del PO, il kit e' di prima."""
+
 """Dove la distinta conta meno del kit: solo opere del Committente (sezione Z), escluse
 dall'offerta dell'installatore, quindi fuori dal criterio «meglio in su»."""
 
@@ -133,7 +141,10 @@ def _quantita(distinta: Distinta, chiave: str) -> float:
 
 @pytest.mark.parametrize(("rif", "regola", "nel_kit"), KIT, ids=[k[0] for k in KIT])
 def test_ogni_voce_del_kit_e_nella_distinta(distinta: Distinta, rif: str, regola: str, nel_kit: float) -> None:
-    attesa, _ = {**DIFFERENZE, **IN_GIU_DEL_COMMITTENTE}.get(rif, (nel_kit, ""))
+    if rif in RIVISTE_DAL_PO and RIVISTE_DAL_PO[rif][0] is None:
+        assert not [v for v in distinta.voci if regola in v.regola.split(" + ")], rif
+        return
+    attesa, _ = {**DIFFERENZE, **IN_GIU_DEL_COMMITTENTE, **RIVISTE_DAL_PO}.get(rif, (nel_kit, ""))
     assert _quantita(distinta, regola) == pytest.approx(attesa), rif
 
 
@@ -156,8 +167,10 @@ def test_le_sezioni_e_il_numero_delle_voci(distinta: Distinta) -> None:
     """A-F e Z come il kit (62 voci; i manicotti a brasare sono due righe, una per
     diametro: 63); G una attivita' in piu' (le due DiCo in due righe); V le stesse
     cinque varianti; niente in X."""
-    conta = {lettera: len(distinta.voci_della_sezione(lettera)) for lettera in "ABCDEFXZGV"}
-    assert conta == {"A": 5, "B": 11, "C": 11, "D": 9, "E": 13, "F": 7, "X": 0, "Z": 7, "G": 12, "V": 5}
+    conta = {lettera: len(distinta.voci_della_sezione(lettera)) for lettera in "ASBCDEFXZGV"}
+    # La revisione del PO (I-262): staffe e sospensioni in S, niente curve rigide, la
+    # potenza contrattuale fra le opere del Committente, due varianti in piu'.
+    assert conta == {"A": 5, "S": 4, "B": 9, "C": 9, "D": 10, "E": 13, "F": 7, "X": 0, "Z": 9, "G": 12, "V": 7}
     assert not distinta.da_definire
     assert not distinta.domande
 
@@ -217,7 +230,7 @@ def test_le_tabelle_del_foglio(distinta: Distinta) -> None:
                 assert len(riga) == len(tabella["colonne"]), tabella["id"]
                 assert all(isinstance(c, str) and "≥" not in c and "≤" not in c for c in riga)
     computo = tabelle["tabelle"][1]
-    assert [s["titolo"][0] for s in computo["sezioni"]] == list("ABCDEFZ")
+    assert [s["titolo"][0] for s in computo["sezioni"]] == list("ASBCDEFZ")
     tratte = tabelle["tabelle"][0]["sezioni"][0]["righe"]
     assert tratte[0] == ["T01", "PLZ-01 - B1", "Ø200", "flessibile coibentato", "270", "2,4", "4,1", "6"]
 
@@ -242,7 +255,7 @@ def test_il_comando_della_skill(tmp_path: Path, capsys: pytest.CaptureFixture[st
     cartiglio; niente Excel e niente CSV (I-232)."""
     assert main(["distinta", str(AA01), "--out", str(tmp_path)], cartelle_del_repository(ROOT)) == 0
     uscita = capsys.readouterr().out
-    assert "Distinta: 80 voci" in uscita and "Nessuna voce DA DEFINIRE." in uscita
+    assert "Distinta: 85 voci" in uscita and "Nessuna voce DA DEFINIRE." in uscita
     assert sorted(p.name for p in tmp_path.iterdir()) == [
         "AA-01_Distinta_materiali_Climatizzazione_canalizzata_Daikin.md",
         "distinta-calcoli.md",

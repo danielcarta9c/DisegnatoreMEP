@@ -64,6 +64,10 @@ class ComponentTrait(StrEnum):
     """Chiude dentro di se' un volume di fluido che, scaldandosi, spinge oltre
     il limite ammesso: gli serve una via che si apra da sola."""
 
+    VIBRATES = "vibrates"
+    """Ha un compressore o un ventilatore che vibra, e la vibrazione passa nei tubi
+    rigidi che gli si attaccano (REL-011, D-222): gli si attacca prima un giunto."""
+
     HOLDS_ITS_OWN_VOLUME = "holds_its_own_volume"
     """Ha un volume di fluido **proprio**, distinto da quello del circuito.
 

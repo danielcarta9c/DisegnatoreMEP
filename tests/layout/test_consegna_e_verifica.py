@@ -32,6 +32,7 @@ from disegnatore_mep.layout.geometry import DrawingGeometry, PlacedSymbol, Point
 from disegnatore_mep.layout.inline import END_CLEARANCE_MM, SNUG_CLEARANCE_MM
 from disegnatore_mep.layout.trunks import Trunk, build_trunks
 from disegnatore_mep.model.project import (
+    AccessorioTolto,
     ComponentInstance,
     ConnectionModel,
     NetworkModel,
@@ -395,8 +396,28 @@ def test_la_valvola_che_isola_oltre_un_raccordo_passante_si_stringe_al_raccordo(
     """La sicurezza dell'accumulo pende da un raccordo sulla sua mandata: la
     valvola che isola l'accumulo sta prima del raccordo, e il raccordo e'
     l'unico organo che per funzione resta fra lei e l'attacco. Si posa
-    percio' contro il raccordo, non a mezza strada."""
-    project, _, _ = saturate(due_macchine_con_accumulo_combinato(), catalog(), rules())
+    percio' contro il raccordo, non a mezza strada.
+
+    Dal 4 novembre 2026 sulla mandata di ogni pompa di calore in parallelo, fra il
+    raccordo della sicurezza e il rubinetto, stanno la valvola antigelo (D-230) e il
+    ritegno (D-217): il rubinetto non e' piu' il primo organo oltre il raccordo, e
+    l'impianto cosi' com'e' non direbbe niente di questa posa. La prova dichiara percio'
+    quello che un progettista puo' dichiarare: il glicole nell'acqua, che toglie le
+    valvole antigelo, e le due macchine col ritegno a bordo (`accessori_tolti`, I-192).
+    Il rubinetto torna il primo organo oltre il raccordo, come la posa vuole."""
+    progetto = due_macchine_con_accumulo_combinato().model_copy(
+        update={
+            "antigelo": "glicole",
+            "accessori_tolti": [
+                AccessorioTolto(pezzo=f"valve-check-{macchina}-water-supply", motivo="ritegno a bordo")
+                for macchina in ("nord", "sud")
+            ],
+        }
+    )
+    project, _, _ = saturate(ProjectModel.model_validate(progetto.model_dump()), catalog(), rules())
+    assert not any(
+        item.definition_id in {"valve-check", "valve-antifreeze"} for item in project.components
+    ), "la prova vuole il rubinetto subito oltre il raccordo della sicurezza"
     registry = catalog()
     drawing = _dal_piano(project, "due_macchine_con_accumulo_combinato")
     sheet = drawing.sheets[0]

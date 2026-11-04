@@ -1,0 +1,33 @@
+{
+  "id": "ask-how-the-outdoor-run-is-kept-from-freezing",
+  "version": "1.0.0",
+  "name": "Protezione antigelo",
+  "category": "necessary",
+  "cardinality": "per_network",
+  "when": {
+    "network_domain": "hydronic",
+    "network_medium": "heating_water",
+    "anchor_has_trait": "vibrates",
+    "plant_antifreeze": [
+      "non_dichiarato"
+    ],
+    "plant_regime": "over_35_kw"
+  },
+  "then": {
+    "provides_function": "frost_protection",
+    "placement": "on_outlet",
+    "inlet_port": "a",
+    "outlet_port": "b",
+    "question": {
+      "text": "le pompe di calore stanno fuori, e senza corrente la loro protezione antigelo non funziona. In una centrale sopra i 35 kW il tratto esterno si protegge con il glicole nell'acqua o con le valvole antigelo, che lo scaricano quando sta per gelare. Scrivi nel grafo come («antigelo»: «glicole» oppure «valvole»): con le valvole la skill ne mette una sulla mandata e una sul ritorno di ogni macchina; con il glicole il vaso si dimensiona col coefficiente della miscela.",
+      "answered_by": {
+        "antigelo": "dichiarato"
+      }
+    }
+  },
+  "satisfied_by": {
+    "scope": "on_the_network"
+  },
+  "rationale": "Nelle centrali grandi Nove C a volte mette il glicole e a volte le valvole antigelo, secondo la taglia: la scelta e' del progettista, e la skill la chiede invece di indovinarla.",
+  "source": "Manuale Shenling ThermaX R290 6-15 kW, par. 6.4: la protezione antigelo della macchina non si attiva senza corrente (letto il 3 novembre 2026, non nel repository); specifica tecnica di installazione Nove C Rev. 01, par. 1.6: glicole oppure altra soluzione approvata dalla DL; D-230, approvata dal PO il 4 novembre 2026 (I-260, I-263)"
+}

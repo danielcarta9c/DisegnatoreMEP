@@ -1,6 +1,6 @@
 {
   "id": "fluidi",
-  "versione": "1.1.0",
+  "versione": "1.2.0",
   "nota": "Che cosa costa a metro e a giunzione, fluido per fluido (il `medium` della rete). Un tratto è la catena di tubazioni di una rete che passa per i pezzi `passante` del corredo (sezionatore, sifone): la sua lunghezza è la somma delle `lunghezza_m` date, maggiorata con `lunghezze.json`. Le voci si contano sui tratti con una lunghezza da quotare; `raggruppa` dice se la voce si somma per sezione (default) o per fluido. Calcoli: `lunghezza` (somma delle L da quotare), `confezioni` (pezzi interi senza giunte in confezioni, con la riserva), `per_tratta` (n per tratto), `passo` (per tratto, L / passo per eccesso + in_piu), `per_metro` (L totale / ogni_m per eccesso, con un minimo), `metri_arrotondati` (L totale × fattore, per eccesso al passo), `fisso` (n per gruppo), `attraversamenti` (fori di parete del tratto: il dato `attraversamenti` del progettista, o quelli assunti dal fluido), `proprieta` (una voce per valore del dato del progettista sul tratto), `carica_refrigerante`. `fornitura` è una scelta dell'offerta (`distinta.json`, `fornitura`). Fluidi assenti da questo file: le loro linee escono nella sezione X, DA DEFINIRE.",
   "fluidi": [
     {
@@ -26,19 +26,6 @@
           "perche": "Ogni ramo è un pezzo intero, senza giunte: le giunte del flessibile perdono aria e rumore. I pezzi si mettono nelle confezioni dal più lungo (first-fit decreasing); la riserva del 25% copre i tagli sbagliati e la ricollocazione di una bocchetta."
         },
         {
-          "id": "curva-in-lamiera",
-          "sezione": "B",
-          "testo": "Curva 90° {sezione} in lamiera zincata, all'uscita del plenum",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_tratta",
-            "n": 1
-          },
-          "fonte": "kit AA-01: lavoro/dimensionamento.py (4 curve alle uscite con cambio di direzione stretto, scritte a mano sul caso)",
-          "fonte_in_parole": "regola Nove C per i canali flessibili",
-          "perche": "Il flessibile non si piega stretto all'uscita del plenum senza schiacciarsi: una curva rigida per ramo, in dubbio per eccesso (il kit ne contava una per le sole uscite strette)."
-        },
-        {
           "id": "manicotto-di-riserva",
           "sezione": "B",
           "testo": "Manicotto di giunzione {sezione}",
@@ -58,11 +45,11 @@
           "um": "n",
           "calcolo": {
             "tipo": "per_tratta",
-            "n": 8
+            "n": 4
           },
-          "fonte": "kit AA-01: REVISIONE-INDIPENDENTE.md rilievo 17 («fascette ≥ 32 con le curve»); lavoro/dimensionamento.py, 36 fascette",
+          "fonte": "revisione su una commessa aria-aria del 04/11/2026 (flessibili senza curve rigide, indicazione del PO)",
           "fonte_in_parole": "regola Nove C per i canali flessibili",
-          "perche": "Per ramo: le due estremità del flessibile e le due giunzioni della curva, ciascuna con una fascetta sull'anima e una sul mantello isolante: 4 × 2 = 8."
+          "perche": "Per ramo: le due estremità del flessibile, ciascuna con una fascetta sull'anima e una sul mantello isolante: 2 × 2 = 4."
         },
         {
           "id": "nastro-alluminio",
@@ -77,7 +64,7 @@
           },
           "fonte": "kit AA-01: lavoro/dimensionamento.py (2 rotoli per 26 m di flessibile); il passo di 20 m è della sessione di sviluppo, che riproduce il kit: da confermare",
           "fonte_in_parole": "stima Nove C (un rotolo ogni 20 m di flessibile)",
-          "perche": "La sigillatura di giunzioni, curve e plenum."
+          "perche": "La sigillatura di giunzioni, raccordi e plenum."
         },
         {
           "id": "sostegni",
@@ -97,15 +84,15 @@
         {
           "id": "foratura-per-flessibile",
           "sezione": "F",
-          "testo": "Foratura di tramezza Ø250 (o vano 450×250) per flessibili e plenum di bocchetta",
+          "testo": "Foratura di tramezza Ø300 (o vano 470×270) per flessibili coibentati e plenum di bocchetta",
           "um": "n",
           "calcolo": {
             "tipo": "attraversamenti",
             "raggruppa": "fluido"
           },
-          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce F.3; REVISIONE-INDIPENDENTE.md rilievi 1 e 11 (le aperture sono dell'installatore)",
-          "fonte_in_parole": "regola Nove C per le assistenze murarie",
-          "perche": "La macchina sta in un disimpegno e le bocchette nelle stanze: ogni ramo passa almeno una parete. Il progettista scrive sul tratto quante ne passa (`attraversamenti`); se non lo scrive, se ne conta una."
+          "fonte": "revisione su una commessa aria-aria del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+          "fonte_in_parole": "regola Nove C rivista su una commessa aria-aria",
+          "perche": "Il flessibile Ø200 con 25 mm di isolamento e il mantello misura circa 255-260 mm: in un foro Ø250 l'isolamento si schiaccia."
         },
         {
           "id": "velette-per-le-bocchette",
@@ -127,7 +114,7 @@
     {
       "fluido": "return_air",
       "materiale": "canale di ripresa coibentato",
-      "materiale_del_raccordo_diretto": "plenum di ripresa coibentato",
+      "materiale_del_raccordo_diretto": "plenum di ripresa in lamiera",
       "fonte_del_raccordo_diretto": "collaudo T3 di REL-012, §3: la ripresa montata sulla macchina era «canale» nella tabella delle tratte e «plenum di ripresa» nell'Excel; il nome è quello del corredo (corredo.json, return-air-terminal, plenum-di-ripresa)",
       "attraversamenti_se_mancano": 0,
       "fonte_attraversamenti": "kit AA-01: la ripresa sta nello stesso locale dell'unità interna (RAPPORTO.md §2, proposta 2)",
@@ -243,14 +230,14 @@
         {
           "id": "foratura-linee-frigo",
           "sezione": "F",
-          "testo": "Foratura di parete interna Ø80 per linee frigorifere e cavi",
+          "testo": "Foratura di parete interna Ø125 per linee frigorifere e cavi",
           "um": "n",
           "calcolo": {
             "tipo": "attraversamenti",
             "raggruppa": "fluido"
           },
-          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce F.2; REVISIONE-INDIPENDENTE.md rilievo 11",
-          "fonte_in_parole": "regola Nove C per le assistenze murarie",
+          "fonte": "revisione su una commessa aria-aria del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+          "fonte_in_parole": "regola Nove C rivista su una commessa aria-aria",
           "perche": "Le aperture sono dell'installatore (le chiusure del committente). Il progettista scrive sul tratto quante pareti interne passa; se non lo scrive, se ne conta una. Il foro nella parete esterna è nel corredo dell'unità esterna."
         },
         {
@@ -358,14 +345,14 @@
         {
           "id": "foratura-condensa",
           "sezione": "F",
-          "testo": "Foratura per lo scarico della condensa",
+          "testo": "Foratura per lo scarico della condensa (tramezze e parete del bagno)",
           "um": "n",
           "calcolo": {
             "tipo": "attraversamenti",
             "raggruppa": "fluido"
           },
-          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce F.4",
-          "fonte_in_parole": "regola Nove C per le assistenze murarie",
+          "fonte": "revisione su una commessa aria-aria del 02/11/2026 (rilievi del PO e del revisore indipendente)",
+          "fonte_in_parole": "regola Nove C rivista su una commessa aria-aria",
           "perche": "Lo scarico sta in un altro locale (il bagno più vicino): il progettista scrive le pareti passate; se non lo scrive, se ne conta una."
         }
       ]

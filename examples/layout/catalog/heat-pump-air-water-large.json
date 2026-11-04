@@ -11,7 +11,8 @@
     "produces_air",
     "needs_overpressure_protection",
     "shutoff_ordinary",
-    "attachment_inline"
+    "attachment_inline",
+    "vibrates"
   ],
   "carries_on_board": [
     "circulation"

@@ -199,6 +199,11 @@
       "name": "Giunto antivibrante"
     },
     {
+      "function": "frost_protection",
+      "prefix": "VAG",
+      "name": "Valvola antigelo"
+    },
+    {
       "function": "water_treatment",
       "prefix": "DP",
       "name": "Dosatore di polifosfati"
@@ -228,6 +233,11 @@
       "function": "power_isolation",
       "prefix": "SZ",
       "name": "Sezionatore"
+    },
+    {
+      "function": "power_switching",
+      "prefix": "KA",
+      "name": "Relè d'appoggio"
     },
     {
       "function": "room_control",

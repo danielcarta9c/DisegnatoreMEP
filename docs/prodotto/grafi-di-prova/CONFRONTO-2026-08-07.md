@@ -101,7 +101,7 @@ scrivere le regole:
 
 ## Impianto per impianto
 
-**1 — Due pompe di calore e accumulo combinato: da 59 a 43 pezzi.**
+**1 — Due pompe di calore e accumulo combinato: da 59 a 53 pezzi.**
 Escono i due separatori d'aria, i due termometri e una delle due sicurezze; il
 defangatore passa da tre a uno, sul ritorno generale prima della ripartizione verso le
 due macchine; i filtri a Y restano due, uno per macchina, e il circolatore perde il suo;
@@ -109,16 +109,16 @@ entra lo sfogo aria sull'attacco dedicato dell'accumulo, e la sicurezza supersti
 sull'accumulo. Vaso, riempimento e manometro stanno adesso sul tratto comune, non più
 sul ramo della prima macchina.
 
-**2 — Pompa di calore con deviatrice e bollitore: da 58 a 43 pezzi.**
+**2 — Pompa di calore con deviatrice e bollitore: da 58 a 47 pezzi.**
 Escono separatore, termometro e il defangatore doppio; entra lo sfogo sul volano; la
 sicurezza sta sul volano. Lo scarico del bollitore si sposta dall'uscita calda
 all'ingresso dell'acqua fredda.
 
-**3 — Pompa di calore diretta su pavimento: da 55 a 41 pezzi.**
+**3 — Pompa di calore diretta su pavimento: da 55 a 45 pezzi.**
 Stesse uscite del regime piccolo (separatore, termometro), sfogo e sicurezza sul volano
 in linea, e lo scarico del boiler sull'ingresso freddo.
 
-**4 — Ibrido pompa di calore e caldaia: da 68 a 48 pezzi.**
+**4 — Ibrido pompa di calore e caldaia: da 68 a 52 pezzi.**
 Il ritorno generale è il tratto fra il volume tecnico e il punto in cui il ritorno si
 divide verso le due macchine: lì stanno vaso, riempimento, manometro e l'unico
 defangatore. Ogni generatore tiene il suo filtro a Y; sfogo e sicurezza sul volano;
@@ -127,7 +127,7 @@ c'è filtro**, come è giusto in un impianto domestico. *(Dal 17 settembre il gr
 quello nuovo: un ritegno per generatore e la commutatrice sul ritorno della caldaia —
 vedi l'aggiornamento in testa.)*
 
-**5 — Cascata di tre pompe di calore: da 105 a 96 pezzi.**
+**5 — Cascata di tre pompe di calore: da 105 a 105 pezzi.**
 È l'unico dei cinque **sopra i 35 kW** — tre macchine da 35, e non è una centrale
 domestica — quindi tiene il corredo da grande centrale: sicurezza e termometro per ogni
 macchina, e il separatore d'aria sulla mandata generale. I cinque defangatori diventano
@@ -147,8 +147,14 @@ supporre un pezzo che non hai nominato. Di qui i pezzi in più rispetto a ieri, 
 irrigidimento delle regole.
 
 **Ogni punto aperto è una domanda su un dato che non abbiamo, mai un pezzo perso.**
-Tre dei cinque non ne hanno nessuno — l'1, il 5 e, dal 24 settembre sera, il 4 —; gli
-altri due ne hanno **uno a testa**, e ciascuno chiede una cosa sola.
+Due dei cinque non ne hanno nessuno — l'1 e, dal 24 settembre sera, il 4 —; gli altri tre
+ne hanno **uno a testa**, e ciascuno chiede una cosa sola: il 2 e il 3 il vaso sanitario,
+il 5 — sopra i 35 kW — come si protegge dal gelo il tratto esterno (dal 4 novembre 2026,
+D-230).
+
+*Dal 4 novembre 2026 (REL-011) i conteggi qui sopra crescono*: ogni pompa di calore ha i
+suoi due giunti antivibranti (D-222) e, nelle centrali fino a 35 kW, le due valvole antigelo
+(D-230); i generatori in parallelo il loro ritegno (D-217).
 
 *Fino al 24 settembre* l'ibrido (impianto 4) chiedeva della **sicurezza**; da D-182 ogni
 generatore ha la sua, e la domanda non c'è più. Com'era: Dal 9 settembre 2026 (DRAW-006) la
