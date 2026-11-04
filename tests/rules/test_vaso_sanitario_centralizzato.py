@@ -32,12 +32,14 @@ from pydantic import ValidationError
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.registry import SymbolRegistry
+from disegnatore_mep.io.canonical import canonical_json
 from disegnatore_mep.io.project_json import load_project
 from disegnatore_mep.model.project import ProjectModel
 from disegnatore_mep.rules.apply import saturate
 from disegnatore_mep.rules.proposal import GapReason, RuleGap
 from disegnatore_mep.rules.registry import RuleRegistry
 from disegnatore_mep.rules.schema import RuleProposalTemplate
+from disegnatore_mep.validation.topology import validate_project
 
 ROOT = Path(__file__).resolve().parents[2]
 PROVA = ROOT / "examples" / "prova"
@@ -208,3 +210,114 @@ def test_una_regola_che_non_chiede_non_puo_dire_quando_non_chiedere() -> None:
                 "unless_the_anchor_declares": {"produzione": "centralizzata"},
             }
         )
+
+
+# --- senza «centralizzata»: la risposta del progettista, e il vaso scritto a mano (I-272) ---
+#
+# Su una commessa reale (villetta, ACS non centralizzata) il vaso sanitario e' finito **a
+# monte** del gruppo di sicurezza. La regola, senza il dato, non lo posa: chiede. Ma alla
+# risposta «il bollitore non lo ha, mettilo» il grafo non aveva una forma, e il vaso si
+# scriveva a mano sull'acqua fredda (Capire §5, «appeso»). Un pezzo scritto dal progettista
+# e' un punto fisso: le regole posano il gruppo di sicurezza, con il non ritorno dentro,
+# sull'attacco del bollitore, cioe' **fra** il vaso e il bollitore. Il vaso restava dietro il
+# non ritorno, dove la dilatazione non lo trova (D-178).
+
+VASO_A_MONTE = "DHW_EXPANSION_UPSTREAM_OF_THE_CHECK"
+
+
+def _con_il_bordo(progetto: ProjectModel, **campi: list[str]) -> ProjectModel:
+    documento = progetto.model_dump(mode="json")
+    for item in documento["components"]:
+        if item["id"] == "bollitore":
+            item.update(campi)
+    return ProjectModel.model_validate(documento)
+
+
+def _con_il_vaso_a_mano(progetto: ProjectModel) -> ProjectModel:
+    """Il vaso come lo scrive Capire §5: un raccordo sull'acqua fredda fra l'acquedotto e il
+    bollitore, e dal braccio il vaso."""
+    documento = progetto.model_dump(mode="json")
+    tubo = next(
+        item
+        for item in documento["connections"]
+        if {item["endpoint_a"]["component_id"], item["endpoint_b"]["component_id"]}
+        == {"acquedotto", "bollitore"}
+    )
+    rete = tubo["network_id"]
+    documento["connections"].remove(tubo)
+    documento["components"] += [
+        {"id": "tee-vaso", "definition_id": "tee-branch-cold"},
+        {"id": "vaso-sanitario", "definition_id": "expansion-connection-dhw"},
+    ]
+
+    def tubo_fra(ident: str, a: tuple[str, str], b: tuple[str, str]) -> dict[str, object]:
+        return {
+            "id": ident,
+            "network_id": rete,
+            "endpoint_a": {"component_id": a[0], "port_id": a[1]},
+            "endpoint_b": {"component_id": b[0], "port_id": b[1]},
+        }
+
+    documento["connections"] += [
+        tubo_fra("tv-1", ("acquedotto", "a"), ("tee-vaso", "a")),
+        tubo_fra("tv-2", ("tee-vaso", "b"), ("bollitore", "cold_in")),
+        tubo_fra("tv-3", ("tee-vaso", "branch"), ("vaso-sanitario", "a")),
+    ]
+    return ProjectModel.model_validate(documento)
+
+
+def test_detto_che_il_bollitore_non_lo_ha_il_vaso_si_posa_fra_il_non_ritorno_e_il_bollitore() -> None:
+    """La risposta alla domanda della regola — «il bollitore non porta il vaso dentro» — si
+    scrive sul bollitore, `non_a_bordo: ["expansion"]`. Il vaso allora lo posa la regola, con
+    il suo ordine: attaccato al bollitore, e il gruppo di sicurezza dal lato dell'acquedotto."""
+    progetto = _con_il_bordo(
+        load_project(PROVA / "prova-2-pdc-deviatrice-acs.json"), non_a_bordo=[EXPANSION]
+    )
+    done, gaps = _saturato(progetto)
+    assert _domande_sul_vaso(gaps) == [], _domande_sul_vaso(gaps)
+
+    fila = _dal_serbatoio(done, "bollitore")
+    vasi = [i for i, item in enumerate(fila) if EXPANSION in _funzioni(done, item)]
+    ritegni = [i for i, item in enumerate(fila) if NON_RETURN in _funzioni(done, item)]
+    assert vasi and ritegni, fila
+    assert vasi[0] < ritegni[0], f"il vaso deve stare fra il non ritorno e il bollitore: {fila}"
+    assert validate_project(done, catalog()).ok
+
+
+def test_il_vaso_scritto_a_mano_sull_acqua_fredda_ferma_la_validazione() -> None:
+    """Il caso della commessa: il vaso scritto a mano, senza il gruppo. Le regole gli
+    metterebbero il gruppo fra lui e il bollitore; la validazione lo dice prima, e dice la
+    risposta giusta."""
+    progetto = _con_il_vaso_a_mano(load_project(PROVA / "prova-2-pdc-deviatrice-acs.json"))
+    esito = validate_project(progetto, catalog())
+    trovati = [item for item in esito.issues if item.code == VASO_A_MONTE]
+    assert trovati, [item.code for item in esito.issues]
+    assert "non_a_bordo" in trovati[0].message
+
+    # Completato, il vaso sta davvero a monte del gruppo: la stessa prova lo ferma.
+    done, _ = _saturato(progetto)
+    fila = _dal_serbatoio(done, "bollitore")
+    primo_ritegno = min(i for i, item in enumerate(fila) if NON_RETURN in _funzioni(done, item))
+    assert fila.index("vaso-sanitario") > primo_ritegno, fila
+    assert VASO_A_MONTE in {item.code for item in validate_project(done, catalog()).issues}
+
+
+def test_il_vaso_della_regola_passa_la_prova() -> None:
+    """Con l'ACS centralizzata il vaso e' della regola, e sta dove deve: la prova tace."""
+    done, _ = _saturato(load_project(PROVA / "prova-5-cascata-tre-pdc.json"))
+    assert VASO_A_MONTE not in {item.code for item in validate_project(done, catalog()).issues}
+
+
+def test_il_bordo_non_si_dice_in_due_modi() -> None:
+    """Una funzione a bordo e insieme non a bordo e' un grafo che si contraddice; un nome
+    sconosciuto non toglierebbe niente, in silenzio."""
+    progetto = load_project(PROVA / "prova-2-pdc-deviatrice-acs.json")
+    with pytest.raises(ValidationError, match="non_a_bordo"):
+        _con_il_bordo(progetto, a_bordo=[EXPANSION], non_a_bordo=[EXPANSION])
+    esito = validate_project(_con_il_bordo(progetto, non_a_bordo=["vaso"]), catalog())
+    assert "UNKNOWN_ON_BOARD_FUNCTION" in {item.code for item in esito.issues}
+
+
+def test_senza_risposta_il_grafo_non_scrive_il_campo() -> None:
+    """I grafi agli atti restano identici byte per byte."""
+    assert "non_a_bordo" not in canonical_json(load_project(PROVA / "prova-2-pdc-deviatrice-acs.json"))

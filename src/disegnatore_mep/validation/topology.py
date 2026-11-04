@@ -1,7 +1,7 @@
 from collections import Counter
 
 from disegnatore_mep.catalog.registry import CatalogError, ComponentRegistry
-from disegnatore_mep.catalog.schema import PortDefinition
+from disegnatore_mep.catalog.schema import ComponentDefinition, ComponentTrait, PortDefinition
 from disegnatore_mep.domains.registry import DomainRegistry, default_domain_registry
 from disegnatore_mep.model.project import ComponentInstance, PortRef, ProjectModel
 from disegnatore_mep.model.types import IssueSeverity, PortFlow
@@ -101,21 +101,25 @@ def validate_project(
 
     issues.extend(_dosatori_fuori_posto(project, catalog))
     issues.extend(_sfiati_con_due_rubinetti(project, catalog))
+    issues.extend(_vasi_sanitari_dietro_il_ritegno(project, catalog))
+    issues.extend(_note_del_progettista(project))
 
     # Il bordo dichiarato dal progettista nomina funzioni che il catalogo conosce
     # (REL-009, I-192): un nome sbagliato non toglierebbe niente, in silenzio.
     funzioni = {function for definition in catalog.all() for function in definition.functions}
     for component in project.components:
-        for function in component.a_bordo:
-            if function not in funzioni:
-                issues.append(
-                    _issue(
-                        "UNKNOWN_ON_BOARD_FUNCTION",
-                        f"component {component.id}: a_bordo names {function}, which no catalog "
-                        f"entry does; the functions are the `functions` of the catalog entries",
-                        [component.id, function],
+        for campo, voci in (("a_bordo", component.a_bordo), ("non_a_bordo", component.non_a_bordo)):
+            for function in voci:
+                if function not in funzioni:
+                    issues.append(
+                        _issue(
+                            "UNKNOWN_ON_BOARD_FUNCTION",
+                            f"component {component.id}: {campo} names {function}, which no "
+                            f"catalog entry does; the functions are the `functions` of the "
+                            f"catalog entries",
+                            [component.id, function],
+                        )
                     )
-                )
 
     for subsystem in project.subsystems:
         for component_id in subsystem.component_ids:
@@ -394,3 +398,169 @@ def _dosatori_fuori_posto(project: ProjectModel, catalog: ComponentRegistry) -> 
             )
     return issues
 
+
+
+DIETRO_IL_RITEGNO = frozenset({"non_return", "safety"})
+"""I mestieri che chiudono la via del ritorno verso l'acquedotto: il ritegno, e il gruppo
+di sicurezza sanitario che lo porta dentro (D-178)."""
+
+
+def _vasi_sanitari_dietro_il_ritegno(project: ProjectModel, catalog: ComponentRegistry) -> list[ValidationIssue]:
+    """Il vaso sanitario sta **fra il dispositivo di non ritorno e il bollitore** (D-178, I-272).
+
+    Sull'alimentazione fredda di una riserva che si scalda, il ritegno — da solo, o dentro il
+    gruppo di sicurezza — toglie all'acqua che dilata la via verso la rete: il vaso che sta dal
+    lato dell'acquedotto non la vede, e a ogni ciclo si apre la sicurezza. Si cammina
+    dall'attacco di riempimento della riserva verso la rete, lungo la tubazione, e il primo
+    vaso appeso deve venire **prima** del primo pezzo che chiude il ritorno; e un pezzo che lo
+    chiude ci deve essere. Il caso che lo ha mostrato (I-272): il vaso scritto a mano
+    sull'acqua fredda, senza il gruppo. Le regole posano il gruppo sull'attacco del bollitore,
+    cioe' fra lui e il vaso; il vaso lo deve posare la regola, e la risposta «il bollitore non
+    lo porta dentro» si scrive sul bollitore: `non_a_bordo: ["expansion"]`."""
+    pezzi = {item.id: item for item in project.components}
+
+    def definizione(component_id: str) -> ComponentDefinition | None:
+        pezzo = pezzi.get(component_id)
+        if pezzo is None or not catalog.contains(pezzo.definition_id):
+            return None
+        return catalog.get(pezzo.definition_id)
+
+    tubi: dict[tuple[str, str], tuple[str, str, str]] = {}
+    for connessione in project.connections:
+        a, b = connessione.endpoint_a, connessione.endpoint_b
+        tubi[(a.component_id, a.port_id)] = (b.component_id, b.port_id, connessione.network_id)
+        tubi[(b.component_id, b.port_id)] = (a.component_id, a.port_id, connessione.network_id)
+
+    def chiude_il_ritorno(component_id: str) -> bool:
+        voce = definizione(component_id)
+        pezzo = pezzi[component_id]
+        if voce is None:
+            return False
+        bordo = (set(voce.carries_on_board) | set(pezzo.a_bordo)) - set(pezzo.non_a_bordo)
+        return bool(DIETRO_IL_RITEGNO & (set(voce.functions) | bordo))
+
+    def vaso_in_fondo(radice: str, porta: str, rete: str) -> str | None:
+        """Lo stacco dal braccio di un raccordo, sulla stessa rete d'acqua fredda: attraverso
+        valvole e raccordi, fino al vaso."""
+        visti = {radice}
+        frontiera: list[tuple[str, str, str] | None] = [tubi.get((radice, porta))]
+        while frontiera:
+            dove = frontiera.pop()
+            if dove is None or dove[0] in visti:
+                continue
+            pezzo, entrata, _ = dove
+            visti.add(pezzo)
+            voce = definizione(pezzo)
+            if voce is None:
+                continue
+            if "expansion" in voce.functions:
+                return pezzo
+            for port in voce.ports:
+                if port.id != entrata and port.medium == "cold_water":
+                    seguente = tubi.get((pezzo, port.id))
+                    if seguente is not None and seguente[2] == rete:
+                        frontiera.append(seguente)
+        return None
+
+    issues: list[ValidationIssue] = []
+    for riserva in sorted(pezzi):
+        voce = definizione(riserva)
+        if (
+            voce is None
+            or voce.fills_from is None
+            or ComponentTrait.NEEDS_OVERPRESSURE_PROTECTION not in voce.trait_set
+        ):
+            continue
+        dove = tubi.get((riserva, voce.fills_from))
+        if dove is None:
+            continue
+        rete = dove[2]
+        primo_vaso: tuple[int, str] | None = None
+        primo_ritegno: tuple[int, str] | None = None
+        visti = {riserva}
+        passo = 0
+        while dove is not None and dove[2] == rete and dove[0] not in visti:
+            pezzo, entrata, _ = dove
+            visti.add(pezzo)
+            corrente = definizione(pezzo)
+            if corrente is None:
+                break
+            linea = [port for port in corrente.ports if port.medium == "cold_water" and port.id != entrata]
+            if corrente.is_a_fitting:
+                bracci = [port for port in linea if port.id == "branch"]
+                linea = [port for port in linea if port.id != "branch"]
+                if entrata == "branch":
+                    break
+                for braccio in bracci:
+                    vaso = vaso_in_fondo(pezzo, braccio.id, rete)
+                    if vaso is not None and primo_vaso is None:
+                        primo_vaso = (passo, vaso)
+            elif chiude_il_ritorno(pezzo) and primo_ritegno is None:
+                primo_ritegno = (passo, pezzo)
+            if len(linea) != 1:
+                break
+            dove = tubi.get((pezzo, linea[0].id))
+            passo += 1
+        if primo_vaso is None:
+            continue
+        if primo_ritegno is not None and primo_vaso[0] < primo_ritegno[0]:
+            continue
+        vaso = primo_vaso[1]
+        dove_sta = (
+            f"dal lato dell'acquedotto rispetto a {primo_ritegno[1]}, che chiude il ritorno"
+            if primo_ritegno is not None
+            else "dove le regole posano il ritegno e il gruppo di sicurezza fra lui e la riserva"
+        )
+        issues.append(
+            _issue(
+                "DHW_EXPANSION_UPSTREAM_OF_THE_CHECK",
+                f"il vaso sanitario {vaso} sta sull'acqua fredda di {riserva} {dove_sta}: la "
+                f"dilatazione non lo trova, e apre la sicurezza. Il vaso sta fra il dispositivo "
+                f"di non ritorno e la riserva (D-178), e lo posa la regola: togli il vaso scritto "
+                f"a mano e, se {riserva} non lo porta dentro, scrivilo su {riserva} — "
+                f"`non_a_bordo: [\"expansion\"]` — o, se l'acqua calda e' centralizzata, "
+                f"`\"produzione\": \"centralizzata\"` fra le sue proprieta' (I-272)",
+                [vaso, riserva, *([primo_ritegno[1]] if primo_ritegno else [])],
+            )
+        )
+    return issues
+
+
+MASSIMO_DELLE_NOTE = 5
+"""Il tetto delle note di posa (D-232), lo stesso di `graphics.note`."""
+
+
+def _note_del_progettista(project: ProjectModel) -> list[ValidationIssue]:
+    """Le note di posa del progettista (REL-017, I-271) che la tavola non porterebbe: piu'
+    di cinque, o in un progetto che non e' esecutivo. Sono avvisi, non blocchi: la tavola
+    esce, ma una nota che non c'e' non si deve perdere in silenzio."""
+    metadati = project.metadata
+    issues: list[ValidationIssue] = []
+    if len(metadati.note_di_posa) > MASSIMO_DELLE_NOTE:
+        issues.append(
+            ValidationIssue(
+                code="TOO_MANY_INSTALLATION_NOTES",
+                severity=IssueSeverity.WARNING,
+                message=(
+                    f"metadata.note_di_posa ha {len(metadati.note_di_posa)} note e il riquadro "
+                    f"ne porta al massimo {MASSIMO_DELLE_NOTE} (D-232): escono le prime "
+                    f"{MASSIMO_DELLE_NOTE}, e nessuna di quelle generate. Le altre si accorpano "
+                    f"o si tolgono"
+                ),
+                entity_ids=[metadati.project_id],
+            )
+        )
+    if (metadati.note_di_posa or metadati.note_tolte) and metadati.livello != "esecutivo":
+        issues.append(
+            ValidationIssue(
+                code="INSTALLATION_NOTES_ONLY_IN_THE_EXECUTIVE",
+                severity=IssueSeverity.WARNING,
+                message=(
+                    "metadata porta note di posa del progettista, e il progetto non e' "
+                    "esecutivo-costruttivo: nel definitivo il riquadro delle note non esce "
+                    "(D-232). Per farle uscire, metadata.livello = \"esecutivo\""
+                ),
+                entity_ids=[metadati.project_id],
+            )
+        )
+    return issues

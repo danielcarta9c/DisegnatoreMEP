@@ -181,6 +181,11 @@ Regole di forma:
   comunque, come la valvola di sicurezza di ogni generatore: lo dice `completa`. Se il
   testo non lo dice, ometti il campo: quello che il modello porta dentro lo sa già il
   catalogo.
+- **`non_a_bordo`**, su un pezzo: le funzioni che **quella** macchina **non** porta dentro,
+  **solo se il progettista lo dice** — di solito è la risposta a un punto aperto di
+  `completa`, «il catalogo non dice se il bollitore porta a bordo il vaso»: «no, non ce
+  l'ha» si scrive `"non_a_bordo": ["expansion"]` sul bollitore, e il vaso lo posa la regola,
+  al posto giusto (I-272). Una funzione non sta insieme in `a_bordo` e in `non_a_bordo`.
 - **`esistente`**, su un pezzo o su una tubazione: c'era già, e l'intervento non lo tocca
   — «il bollitore esistente», «i collettori d'appartamento e i terminali sono esistenti»,
   «il circuito di carico si riattacca alle tubazioni esistenti che scendono al
@@ -215,6 +220,15 @@ Regole di forma:
   «Conto Termico con sconto in fattura»). Senza, restano vuoti, e non si chiedono.
   `livello`: `"definitivo"` o `"esecutivo"` (esecutivo-costruttivo), **solo se il testo
   lo dice**; senza, vale definitivo, e lo chiedi in `assumptions` (D-224).
+  `note_di_posa`: le note di posa **del progettista**, com'è le scrive, **solo se le dà**
+  — per esempio un isolamento differenziato: `["Isolamento: tratto interrato …; a muro
+  esterno …; in centrale …"]`. Escono nel riquadro «NOTE» dell'esecutivo **prima** di
+  quelle che la skill genera, nel suo ordine; una sua nota che **comincia con la parola
+  del soggetto** di una nota generata — `Isolamento`, `Antigelo`, `Sfiati`, `Vaso`,
+  `Sonda` — **ne prende il posto**. Per togliere una nota generata senza sostituirla,
+  `note_tolte` con il soggetto in minuscolo: `["antigelo"]`. Il tetto resta di cinque
+  note in tutto: oltre, escono le prime cinque e `valida` lo dice; nel definitivo non
+  escono, e `valida` lo dice (I-271).
 - **`antigelo`**: come si protegge dal gelo il tratto esterno delle pompe di calore,
   `"glicole"` o `"valvole"`, **solo se il testo lo dice**. Senza, nelle case le regole
   mettono le valvole antigelo e sopra i 35 kW `completa` lo chiede (D-230).
@@ -465,7 +479,13 @@ testo non l'ha detto. ⚠ **Non vale per il ricircolo sanitario**, che ha la sua
   `"produzione": "centralizzata"`. Non è un aggettivo da buttare: il pezzo che completa
   il grafo lo legge, e dove l'acqua calda è centralizzata mette il vaso di espansione
   sanitario senza chiederlo (**D-178**). Se il testo non lo dice, non lo scrivi e non lo
-  deduci — né dai litri, né dalle potenze: resterà una domanda.
+  deduci — né dai litri, né dalle potenze: resterà una domanda. **Il vaso sanitario non
+  lo scrivi mai a mano**, nemmeno se il progettista lo vuole e l'acqua calda non è
+  centralizzata: scritto a mano è un punto fisso, e le regole posano il gruppo di
+  sicurezza — con il non ritorno dentro — fra lui e il bollitore, dove la dilatazione non
+  lo trova. Il vaso sta fra il non ritorno e il bollitore (D-178): «il bollitore non ce
+  l'ha» si scrive `"non_a_bordo": ["expansion"]` sul bollitore (§3), e la regola lo posa
+  lì. Scritto a mano, `valida` lo ferma (`DHW_EXPANSION_UPSTREAM_OF_THE_CHECK`, I-272).
 - La **logica di regolazione** — priorità sanitaria, master e slave, «la caldaia
   interviene quando…» — non è topologia: non produce nodi né tubi. Non la perdere:
   scrivi una voce in `assumptions` che dice cosa il grafo mostra e cosa no («la
@@ -767,6 +787,10 @@ scrivi dove lui dice, con la voce del catalogo che fa quel mestiere su quel flui
   **senza** rubinetto, la voce è la variante `air-vent-plain`;
 - **sull'attacco di servizio** della macchina, se ce l'ha (`vent`, `drain`, `probe` di un
   volano): la tubazione corta parte da lì.
+
+**Il vaso sanitario no** (§4.5, I-272): sull'acqua fredda dell'accumulo lo posa sempre la
+regola, fra il non ritorno e il bollitore; «il bollitore non ce l'ha» è
+`"non_a_bordo": ["expansion"]` sul bollitore.
 
 Le regole **non lo duplicano**: dove una regola vuole quel mestiere su quel tratto, lo
 trova. Se ne mettono uno dove sul costruito non c'è, si toglie; se lo mettono in un posto

@@ -146,8 +146,17 @@ che mettono il vaso dell'impianto sul ritorno generale in tutti e cinque gli sch
 **Perché esiste.** Anche l'acqua del bollitore si scalda e si dilata, e il ritegno le ha
 tolto la via di ritorno: senza un vaso suo, la dilatazione apre la sicurezza a ogni ciclo.
 
-**Dove va, e perché proprio lì.** Sull'alimentazione fredda della riserva, dal lato del
-serbatoio: è dove il costruttore prescrive di prevederlo, insieme alla sicurezza.
+**Dove va, e perché proprio lì.** Sull'alimentazione fredda della riserva, **fra il
+dispositivo di non ritorno e il bollitore**: attaccato al serbatoio, e il gruppo di
+sicurezza — che il non ritorno lo porta dentro — dal lato dell'acquedotto. Dal lato
+dell'acquedotto la dilatazione non lo troverebbe: il non ritorno gliela chiude, e si apre
+la sicurezza. È dove il costruttore prescrive di prevederlo, insieme alla sicurezza.
+
+**Quando.** Dove la produzione dell'acqua calda è centralizzata, sempre. Altrimenti si
+chiede al progettista se il bollitore lo porta già dentro; se dice di no, il vaso lo posa
+la regola, nello stesso posto. Non si scrive a mano sull'acqua fredda: scritto a mano
+resterebbe dove è stato scritto, e il gruppo di sicurezza gli finirebbe fra lui e il
+bollitore. Un vaso così, la verifica del grafo lo ferma.
 
 **Quante volte.** Uno per circuito di acqua fredda sanitaria.
 

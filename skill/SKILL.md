@@ -215,7 +215,12 @@ al 3 e al 4. **Se toglie un accessorio** — «questo non c'è», «la pompa lo 
 scrivi nel grafo di prima stesura: in `accessori_tolti`, con il nome che `completa` gli dà e il
 motivo del progettista, o in `a_bordo` sulla macchina (`capire.md` §3). **Se lo vuole altrove**,
 la stessa voce dice dove (`altrove`). **Se ne aggiunge uno** che le regole non mettono, in un
-posto preciso, lo scrivi nel grafo dove lui dice (`capire.md` §5). Poi rilanci `completa` e gli
+posto preciso, lo scrivi nel grafo dove lui dice (`capire.md` §5). **Il vaso sanitario no**:
+alla domanda «il bollitore lo porta a bordo?» il «no» è `"non_a_bordo": ["expansion"]` sul
+bollitore, e il vaso lo posa la regola fra il non ritorno e il bollitore (D-178, I-272).
+**Le note di posa sue** vanno in `metadata.note_di_posa`: vengono prima di quelle generate, e
+una che comincia con il soggetto di una generata (Isolamento, Antigelo, Sfiati, Vaso, Sonda) la
+sostituisce; `metadata.note_tolte` ne toglie una (`capire.md` §3, I-271). Poi rilanci `completa` e gli
 riporti che cosa è cambiato. Le scelte restano nel grafo e valgono a ogni rilancio. Lo stesso
 vale prima del passo 4, se le dice già nel testo o nelle risposte del passo 2.
 

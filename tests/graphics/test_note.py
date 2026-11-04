@@ -37,6 +37,7 @@ from disegnatore_mep.graphics.note import (
 from disegnatore_mep.graphics.pdf import per_winansi
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.graphics.sheet import render_sheet
+from disegnatore_mep.io.canonical import canonical_json
 from disegnatore_mep.layout.compose import sgombra_la_tabella
 from disegnatore_mep.layout.geometry import (
     STACCO_DALLA_TABELLA_MM,
@@ -50,9 +51,11 @@ from disegnatore_mep.layout.geometry import (
 )
 from disegnatore_mep.layout.labels import text_width_mm
 from disegnatore_mep.model.project import ComponentInstance, ProjectModel
+from disegnatore_mep.model.types import IssueSeverity
 from disegnatore_mep.piano.esecutore import EsitoDelPiano, esegui_piano
 from disegnatore_mep.piano.formato import carica_piano
 from disegnatore_mep.validation import preflight
+from disegnatore_mep.validation.topology import validate_project
 
 ROOT = Path(__file__).resolve().parents[2]
 SYMBOLS = ROOT / "assets" / "symbols"
@@ -449,3 +452,98 @@ def test_nel_dxf_le_note_ci_sono_sul_layer_della_tabella_uguali_all_svg(
         (round(x1, 6), round(altezza - y1, 6), round(x2, 6), round(altezza - y2, 6))
         for x1, y1, x2, y2 in tratti.linee
     } <= linee
+
+
+# --- le note del progettista (REL-017, I-271) --------------------------------------------
+#
+# Il progettista le scrive in `metadata.note_di_posa`: escono **prima** di quelle generate,
+# nel suo ordine. Una sua nota che comincia con la parola del soggetto di una nota generata
+# — Isolamento, Antigelo, Sfiati, Vaso, Sonda — **la sostituisce**; `metadata.note_tolte`
+# toglie una nota generata senza sostituirla. Il tetto di cinque resta, e solo nell'esecutivo.
+
+NOTA_DEL_PROGETTISTA = (
+    "Isolamento: tratto interrato in guaina corrugata e isolante 30 mm; a muro esterno 40 mm "
+    "con protezione anti-UV; in centrale 20 mm."
+)
+
+
+def _con_le_note(livello: str | None, note: list[str], tolte: list[str] | None = None) -> ProjectModel:
+    documento = json.loads((APPROVATI / "grafo-completo-1.json").read_text(encoding="utf-8"))
+    if livello is not None:
+        documento["metadata"]["livello"] = livello
+    documento["metadata"]["note_di_posa"] = note
+    if tolte is not None:
+        documento["metadata"]["note_tolte"] = tolte
+    return ProjectModel.model_validate(documento)
+
+
+def test_la_nota_del_progettista_sull_isolamento_prende_il_posto_di_quella_generata(
+    catalogo: ComponentRegistry,
+) -> None:
+    """L'isolamento differenziato di una commessa (I-271): la nota del progettista comincia
+    con «Isolamento», e quella generata non esce. Le altre restano, dopo la sua."""
+    modello = _con_le_note("esecutivo", [NOTA_DEL_PROGETTISTA])
+    assert note_di_posa(modello, catalogo, *_tutto(modello)) == [
+        NOTA_DEL_PROGETTISTA,
+        NOTA_ANTIGELO,
+        NOTA_SFIATI_E_SCARICHI,
+        NOTA_VASO,
+        NOTA_SONDA_DEL_VOLANO + IN_CASCATA,
+    ]
+    # La parola si confronta senza maiuscole: «ISOLAMENTO» e' la stessa.
+    gridata = _con_le_note("esecutivo", [NOTA_DEL_PROGETTISTA.upper()])
+    assert NOTA_ISOLAMENTO not in note_di_posa(gridata, catalogo, *_tutto(gridata))
+
+
+def test_le_note_del_progettista_vengono_prima_nel_suo_ordine_e_il_tetto_resta_cinque(
+    catalogo: ComponentRegistry,
+) -> None:
+    """Due note del progettista su soggetti che le generate non hanno: escono per prime, nel
+    suo ordine, e delle generate restano le prime tre — il tetto e' cinque (D-232)."""
+    sue = ["Collari antivibranti sulle staffe delle tubazioni.", "Prova di tenuta a 6 bar per 2 ore."]
+    modello = _con_le_note("esecutivo", sue)
+    note = note_di_posa(modello, catalogo, *_tutto(modello))
+    assert note == [*sue, NOTA_ISOLAMENTO, NOTA_ANTIGELO, NOTA_SFIATI_E_SCARICHI]
+    assert len(note) == MASSIMO_DELLE_NOTE
+
+
+def test_una_nota_generata_si_toglie_senza_sostituirla(catalogo: ComponentRegistry) -> None:
+    modello = _con_le_note("esecutivo", [], ["antigelo", "sonda"])
+    assert note_di_posa(modello, catalogo, *_tutto(modello)) == [
+        NOTA_ISOLAMENTO,
+        NOTA_SFIATI_E_SCARICHI,
+        NOTA_VASO,
+    ]
+    with pytest.raises(ValueError, match="note_tolte"):
+        _con_le_note("esecutivo", [], ["valvole"])
+
+
+def test_piu_di_cinque_note_del_progettista_escono_le_prime_cinque_e_la_validazione_lo_dice(
+    catalogo: ComponentRegistry,
+) -> None:
+    sue = [f"Nota del progettista numero {numero}." for numero in range(1, 8)]
+    modello = _con_le_note("esecutivo", sue)
+    assert note_di_posa(modello, catalogo, *_tutto(modello)) == sue[:MASSIMO_DELLE_NOTE]
+    esito = validate_project(modello, catalogo)
+    avvisi = [item for item in esito.issues if item.code == "TOO_MANY_INSTALLATION_NOTES"]
+    assert esito.ok and avvisi and avvisi[0].severity == IssueSeverity.WARNING
+
+
+@pytest.mark.parametrize("livello", [None, "definitivo"])
+def test_nel_definitivo_neanche_le_note_del_progettista(
+    livello: str | None, catalogo: ComponentRegistry
+) -> None:
+    """D-232: nel definitivo il riquadro non esce, e le note del progettista non lo fanno
+    uscire. La validazione lo dice, perche' non si perdano in silenzio."""
+    modello = _con_le_note(livello, [NOTA_DEL_PROGETTISTA])
+    assert note_di_posa(modello, catalogo, *_tutto(modello)) == []
+    codici = {item.code for item in validate_project(modello, catalogo).issues}
+    assert "INSTALLATION_NOTES_ONLY_IN_THE_EXECUTIVE" in codici
+
+
+def test_senza_note_del_progettista_il_grafo_non_scrive_i_campi() -> None:
+    """I grafi agli atti restano identici byte per byte; una nota vuota non si scrive."""
+    scritto = canonical_json(_modello(APPROVATI / "grafo-completo-1.json", "esecutivo"))
+    assert "note_di_posa" not in scritto and "note_tolte" not in scritto
+    with pytest.raises(ValueError, match="note_di_posa"):
+        _con_le_note("esecutivo", ["  "])

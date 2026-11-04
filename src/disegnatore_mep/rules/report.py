@@ -130,7 +130,10 @@ def build_report(
                         f"{naming.family_of((item.missing_function,), item.rule_id).name.lower()}: "
                         f"il dato e' ignoto, non assente, e questo accessorio "
                         f"{CATEGORY_ADJECTIVES[item.category]} non si aggiunge senza il "
-                        f"dato: va chiesto al progettista"
+                        f"dato: va chiesto al progettista. La risposta si scrive su "
+                        f"{item.anchor.component_id}: \"a_bordo\": [\"{item.missing_function}\"] "
+                        f"se ce l'ha, \"non_a_bordo\": [\"{item.missing_function}\"] se non ce "
+                        f"l'ha, e allora lo posa la regola (I-272)"
                     )
                     if item.reason is GapReason.ON_BOARD_UNKNOWN
                     else (

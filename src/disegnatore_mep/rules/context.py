@@ -173,9 +173,15 @@ class RuleContext:
                 states[component.id] = resolved.definition.hydraulic_states
             # Il catalogo dice il bordo del modello; il progettista quello della
             # singola macchina (REL-009, I-192), e il suo dato vince.
+            # E il «no» del progettista (I-272) vince sul catalogo allo stesso modo.
             dichiarato = frozenset(component.a_bordo)
-            carried[component.id] = frozenset(resolved.definition.carries_on_board) | dichiarato
-            lacking[component.id] = frozenset(resolved.definition.lacks_on_board) - dichiarato
+            negato = frozenset(component.non_a_bordo)
+            carried[component.id] = (
+                frozenset(resolved.definition.carries_on_board) | dichiarato
+            ) - negato
+            lacking[component.id] = (
+                frozenset(resolved.definition.lacks_on_board) - dichiarato
+            ) | negato
             if resolved.definition.fills_from is not None:
                 fill_ports[component.id] = resolved.definition.fills_from
             if resolved.definition.stored_medium is not None:
