@@ -1,0 +1,148 @@
+{
+ "schema_version": "1.1.0",
+ "metadata": {
+  "project_id": "protezione-della-linea",
+  "client": "ND",
+  "project_name": "Protezione della linea della pompa di calore",
+  "commission_code": "ND",
+  "revision": "00",
+  "issue_date": "2026-11-04"
+ },
+ "plant_regime": "up_to_35_kw",
+ "networks": [
+  {
+   "id": "primario",
+   "name": "Circuito dei radiatori",
+   "domain": "hydronic",
+   "medium": "heating_water"
+  },
+  {
+   "id": "el-pdc",
+   "name": "Alimentazione pompa di calore",
+   "domain": "control",
+   "medium": "power_supply"
+  }
+ ],
+ "components": [
+  {
+   "id": "pdc",
+   "definition_id": "heat-pump-air-water",
+   "tag": null,
+   "properties": {
+    "power_kw": 12,
+    "marca": "Shenling",
+    "modello": "ThermaX R290"
+   }
+  },
+  {
+   "id": "circ",
+   "definition_id": "pump-circulator",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "radiatori",
+   "definition_id": "radiator",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "quadro",
+   "definition_id": "electrical-panel",
+   "tag": null,
+   "properties": {
+    "etichetta": "quadro di centrale"
+   }
+  },
+  {
+   "id": "qf-pdc",
+   "definition_id": "circuit-breaker-rcbo",
+   "tag": null,
+   "properties": {}
+  }
+ ],
+ "connections": [
+  {
+   "id": "t1",
+   "network_id": "primario",
+   "endpoint_a": {
+    "component_id": "pdc",
+    "port_id": "water_supply"
+   },
+   "endpoint_b": {
+    "component_id": "circ",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t2",
+   "network_id": "primario",
+   "endpoint_a": {
+    "component_id": "circ",
+    "port_id": "b"
+   },
+   "endpoint_b": {
+    "component_id": "radiatori",
+    "port_id": "in"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t3",
+   "network_id": "primario",
+   "endpoint_a": {
+    "component_id": "radiatori",
+    "port_id": "out"
+   },
+   "endpoint_b": {
+    "component_id": "pdc",
+    "port_id": "water_return"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t4",
+   "network_id": "el-pdc",
+   "endpoint_a": {
+    "component_id": "quadro",
+    "port_id": "out_1"
+   },
+   "endpoint_b": {
+    "component_id": "qf-pdc",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "t5",
+   "network_id": "el-pdc",
+   "endpoint_a": {
+    "component_id": "qf-pdc",
+    "port_id": "b"
+   },
+   "endpoint_b": {
+    "component_id": "pdc",
+    "port_id": "power"
+   },
+   "properties": {},
+   "sezione": "3G6",
+   "lunghezza_m": 15
+  }
+ ],
+ "assumptions": [
+  {
+   "id": "a1",
+   "text": "La linea della pompa di calore è protetta nel quadro da un interruttore magnetotermico differenziale (specifica Nove C §3.2); niente sezionatore locale, che la specifica non chiede come regola. Se lo vuoi, dimmelo e lo metto accanto alla macchina.",
+   "status": "proposed"
+  },
+  {
+   "id": "a2",
+   "text": "Poli, curva, In, Idn e tipo dell'interruttore non dati: li scrive completa dal manuale Shenling (§7.4 p. 55) e dalla specifica Nove C (§3.3), con la regola «vale il maggiore».",
+   "status": "proposed"
+  }
+ ],
+ "rule_applications": [],
+ "subsystems": [],
+ "sheets": []
+}

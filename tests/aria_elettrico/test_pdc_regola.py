@@ -211,7 +211,9 @@ def test_sonde_e_comandi_vanno_alla_pompa_di_calore() -> None:
         (("pdc", "out_pompa_zona_2"), ("rele-pannelli", "bobina")),
         (("pdc", "out_pompa_ricircolo"), ("rele-ricircolo", "bobina")),
         (("comando-a-filo", "a"), ("pdc", "comando_a_filo")),
-        (("sez-pdc", "b"), ("pdc", "power")),
+        # La linea della macchina passa dall'interruttore magnetotermico differenziale nel
+        # quadro, e non piu' dal sezionatore locale del collaudo (REL-018, specifica §3.2).
+        (("qf-pdc", "b"), ("pdc", "power")),
     }
     for a, b in attesi:
         assert frozenset({a, b}) in cavi, (a, b)
@@ -227,13 +229,15 @@ def test_sonde_e_comandi_vanno_alla_pompa_di_calore() -> None:
         assert frozenset({(rele, "b"), (circolatore, "power")}) in cavi, circolatore
         assert any((rele, "a") in cavo and any(capo[0] == "quadro" for capo in cavo) for cavo in cavi), rele
         assert not any((circolatore, "comando") in cavo for cavo in cavi), circolatore
-    # Dal quadro: la pompa di calore, col sezionatore, e i tre relè, ciascuno dalla sua uscita.
+    # Dal quadro: la pompa di calore, con l'interruttore, e i tre relè, ciascuno dalla sua uscita.
     dal_quadro = {
         next(capo for capo in cavo if capo[0] != "quadro"): next(capo[1] for capo in cavo if capo[0] == "quadro")
         for cavo in cavi
         if any(capo[0] == "quadro" for capo in cavo)
     }
-    assert set(dal_quadro) == {("sez-pdc", "a"), *((rele, "a") for rele in RELE_DEI_CIRCOLATORI.values())}
+    assert set(dal_quadro) == {("qf-pdc", "a"), *((rele, "a") for rele in RELE_DEI_CIRCOLATORI.values())}
+    assert voci["qf-pdc"] == "circuit-breaker-rcbo"
+    assert "isolator-switch" not in voci.values()
     assert len(set(dal_quadro.values())) == len(dal_quadro)
 
 
@@ -286,7 +290,7 @@ def test_sulla_tavola_dell_elettrico_si_legge_che_cosa_misura_ogni_sonda() -> No
     grafo = load_project(VILLETTA / "grafo-completo.json")
     vista, _ = vista_del_grafo(grafo, "elettrico", catalogo(), NAMING)
     pezzi = {item.id: item for item in vista.components}
-    assert {"pdc", "quadro", "sez-pdc", "comando-a-filo", "deviatrice", "miscelatrice"} <= set(pezzi)
+    assert {"pdc", "quadro", "qf-pdc", "comando-a-filo", "deviatrice", "miscelatrice"} <= set(pezzi)
     scritte = {
         pezzo: pezzi[pezzo].properties.get("etichetta")
         for pezzo in ("sonda-bollitore", "sonda-volano", "sonda-pannelli")

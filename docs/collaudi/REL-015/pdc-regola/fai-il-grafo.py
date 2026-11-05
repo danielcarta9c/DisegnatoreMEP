@@ -21,8 +21,12 @@ esterno. Quindi:
 - **i comandi dalla macchina**: deviatrice <- `out_acs` (SV1), miscelatrice <- `out_miscelatrice`
   (SV2), circolatore dei radiatori <- `out_pompa_zona_1` (P_C1), circolatore dei pannelli <-
   `out_pompa_zona_2` (P_C2), circolatore del ricircolo <- `out_pompa_ricircolo` (P_C4);
-- **l'alimentazione dal quadro** della macchina (col sezionatore, 3G6, 15 m, come nel
-  collaudo). **I tre circolatori passano da un relè d'appoggio da 10 A** (D-228, I-259, il PO:
+- **l'alimentazione dal quadro** della macchina (3G6, 15 m, come nel collaudo), **protetta
+  nel quadro dall'interruttore magnetotermico differenziale** QF-01 (REL-018, I-278: specifica
+  tecnica di installazione PdC Shenling Nove C Rev. 01, §3.2–3.4) e **senza il sezionatore
+  locale** del collaudo, che la specifica (§3.2) non chiede come regola. I dati
+  dell'interruttore e quelli elettrici della macchina li scrive `completa` dal manuale e dalla
+  specifica. **I tre circolatori passano da un relè d'appoggio da 10 A** (D-228, I-259, il PO:
   «non alimentiamo mai il circolatore diretto da pdc ma attraverso contattore con Relè di
   appoggio da 10 A»): l'uscita della macchina eccita la bobina del relè, e il circolatore prende
   l'alimentazione attraverso il contatto, da un'uscita protetta del quadro. Un relè per
@@ -181,6 +185,27 @@ for item in grafo["connections"]:
         assert item["endpoint_a"]["component_id"] == "quadro", item["id"]
         item["endpoint_a"]["port_id"] = "out_5"
 
+# --- la protezione della linea della macchina (REL-018, I-278) ------------------------------
+# Via il sezionatore locale del collaudo (specifica Nove C §3.2: non e' la regola), e
+# l'interruttore magnetotermico differenziale nel quadro, all'uscita della linea. Il cavo del
+# progettista — 3G6, 15 m — e' il tratto dall'interruttore alla macchina; quello dal quadro
+# all'interruttore sta dentro il quadro, e non ha scritta.
+grafo["components"] = [c for c in grafo["components"] if c["id"] != "sez-pdc"]
+grafo["components"].append(
+    {"id": "qf-pdc", "definition_id": "circuit-breaker-rcbo", "tag": None, "properties": {}}
+)
+for item in grafo["connections"]:
+    if item["id"] == "t25":
+        assert item["endpoint_b"]["component_id"] == "sez-pdc", item["id"]
+        item["endpoint_b"]["component_id"] = "qf-pdc"
+        item.pop("sezione", None)
+        item.pop("lunghezza_m", None)
+    if item["id"] == "t26":
+        assert item["endpoint_a"]["component_id"] == "sez-pdc", item["id"]
+        item["endpoint_a"]["component_id"] = "qf-pdc"
+        item["sezione"] = "3G6"
+        item["lunghezza_m"] = 15
+
 # --- le assunzioni ------------------------------------------------------------------------
 ASSUNZIONI = {
     "a12": None,  # l'alimentazione del regolatore: il regolatore non c'e' piu'
@@ -193,7 +218,7 @@ ASSUNZIONI = {
     ),
     "a14": (
         "Sezioni e lunghezze delle linee: il testo da' solo la linea della pompa di calore "
-        "(3G6, 15 m, scritta sul tratto quadro-sezionatore per la linea intera). Mancano sezione "
+        "(3G6, 15 m, scritta sul tratto dall'interruttore alla macchina per la linea intera). Mancano sezione "
         "e lunghezza di: due comandi dalla pompa di calore (deviatrice, miscelatrice), tre "
         "comandi dei relè dei circolatori, tre linee dal quadro ai circolatori attraverso i "
         "relè, cavi delle tre sonde, comando a filo. "
@@ -225,6 +250,12 @@ ASSUNZIONI = {
     "a23": (
         "Nessun collegamento a un sistema di supervisione: il testo non lo nomina. Il bus della "
         "pompa di calore resta libero."
+    ),
+    "a25": (
+        "Protezione della linea della pompa di calore: un interruttore magnetotermico "
+        "differenziale nel quadro (specifica Nove C §3.2), con i dati che completa scrive dal "
+        "manuale Shenling e dalla specifica; niente sezionatore locale, che la specifica non "
+        "chiede come regola. Se lo vuoi accanto alla macchina, dimmelo."
     ),
     "a24": (
         "Morsetti della pompa di calore: il testo non li da', e sulla tavola non sono scritti; "

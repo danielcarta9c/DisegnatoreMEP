@@ -235,6 +235,11 @@
       "name": "Quadro elettrico"
     },
     {
+      "function": "circuit_protection",
+      "prefix": "QF",
+      "name": "Interruttore magnetotermico differenziale"
+    },
+    {
       "function": "power_isolation",
       "prefix": "SZ",
       "name": "Sezionatore"

@@ -65,6 +65,13 @@ DATI: dict[str, DatoInParole] = {
         "1P+N C16, Idn 30 mA, tipo A, 6 kA»)",
         "«protezione»",
     ),
+    "poli": DatoInParole("I poli dell'interruttore magnetotermico differenziale (es. «2P», «4P»)", "«poli»"),
+    "curva": DatoInParole("La curva dell'interruttore magnetotermico differenziale (es. «C»)", "«curva»"),
+    "in_a": DatoInParole(
+        "La corrente nominale dell'interruttore, in A (es. 32): per le Shenling la scrive `completa`", "«in_a»"
+    ),
+    "idn_ma": DatoInParole("La corrente differenziale dell'interruttore, in mA (es. 30)", "«idn_ma»"),
+    "tipo_differenziale": DatoInParole("Il tipo del differenziale (es. «B», «F», «A»)", "«tipo_differenziale»"),
     "sezione": DatoInParole("La sezione: diametro, lati del canale o cavo (es. «Ø200», «3G2,5»)", "«sezione»"),
     "materiale": DatoInParole("Il materiale della tubazione", "«materiale»"),
     "lunghezza_m": DatoInParole(

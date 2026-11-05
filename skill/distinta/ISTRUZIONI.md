@@ -108,7 +108,8 @@ mancano — `--domande` te li elenca —; non li stimi tu.
 | ogni tubazione | `sezione` | «Ø200», «Ø6,35 (1/4")», «MS 32×3», «3G2,5», «2×0,75 (P1-P2)»: diametro, lati o cavo; sull'acqua il tubo, nella notazione del materiale (I-279), e dove manca vale quello della tavola |
 | mandata e ripresa | `portata_m3h` | per la verifica della velocità e delle griglie di transito |
 | ogni tubazione | `attraversamenti` | quante pareti interne passa; se manca, la distinta ne assume uno per l'aria, la condensa e la linea del gas, e lo dice |
-| linee di alimentazione | `protezione` | il dispositivo nel quadro, dalla targa della macchina: «Magnetotermico-differenziale 1P+N C16, Idn 30 mA, tipo A o F, 6 kA» |
+| linee di alimentazione | `protezione` | il dispositivo nel quadro, dalla targa della macchina: «Magnetotermico-differenziale 1P+N C16, Idn 30 mA, tipo A o F, 6 kA»; non serve su una linea che ha il pezzo `circuit-breaker-rcbo`, che ha la sua voce |
+| interruttore della linea | `poli`, `curva`, `in_a`, `idn_ma`, `tipo_differenziale` | «Interruttore magnetotermico differenziale 2P C32 Idn 30 mA tipo B» (REL-018); su una Shenling li scrive `completa` |
 | un tratto incerto | `lunghezza_minima_m` | un minimo del progettista (il quadro da trovare in sopralluogo) |
 | macchine | `marca`, `modello` | come per la tabella delle apparecchiature (D-190) |
 | unità esterna | `refrigerante`, `precarica_fino_a_m`, `carica_aggiuntiva_g_m`, `lunghezza_max_m` | dalla scheda della macchina |

@@ -1,6 +1,6 @@
 {
   "id": "fluidi",
-  "versione": "1.2.0",
+  "versione": "1.3.0",
   "nota": "Che cosa costa a metro e a giunzione, fluido per fluido (il `medium` della rete). Un tratto è la catena di tubazioni di una rete che passa per i pezzi `passante` del corredo (sezionatore, sifone): la sua lunghezza è la somma delle `lunghezza_m` date, maggiorata con `lunghezze.json`. Le voci si contano sui tratti con una lunghezza da quotare; `raggruppa` dice se la voce si somma per sezione (default) o per fluido. Calcoli: `lunghezza` (somma delle L da quotare), `confezioni` (pezzi interi senza giunte in confezioni, con la riserva), `per_tratta` (n per tratto), `passo` (per tratto, L / passo per eccesso + in_piu), `per_metro` (L totale / ogni_m per eccesso, con un minimo), `metri_arrotondati` (L totale × fattore, per eccesso al passo), `fisso` (n per gruppo), `attraversamenti` (fori di parete del tratto: il dato `attraversamenti` del progettista, o quelli assunti dal fluido), `proprieta` (una voce per valore del dato del progettista sul tratto), `carica_refrigerante`. `fornitura` è una scelta dell'offerta (`distinta.json`, `fornitura`). Fluidi assenti da questo file: le loro linee escono nella sezione X, DA DEFINIRE.",
   "fluidi": [
     {
@@ -383,11 +383,14 @@
           "um": "n",
           "calcolo": {
             "tipo": "proprieta",
-            "proprieta": "protezione"
+            "proprieta": "protezione",
+            "tranne_le_linee_con": [
+              "circuit-breaker-rcbo"
+            ]
           },
           "fonte": "kit AA-01: RAPPORTO.md §7; REVISIONE-INDIPENDENTE.md rilievi 7 e 12 (la protezione della centrale a sé, verificare la targa della macchina)",
           "fonte_in_parole": "targa della macchina (dato del progettista)",
-          "perche": "Ogni linea dedicata ha la sua protezione nel quadro. La taglia dipende dalla targa della macchina: è un dato del progettista (`protezione` del tratto); se manca, la voce è DA DEFINIRE."
+          "perche": "Ogni linea dedicata ha la sua protezione nel quadro. La taglia dipende dalla targa della macchina: è un dato del progettista (`protezione` del tratto); se manca, la voce è DA DEFINIRE. Una linea che attraversa l'interruttore magnetotermico differenziale (`circuit-breaker-rcbo`, REL-018) non la conta: la protezione è quel pezzo, con la sua voce."
         },
         {
           "id": "scatola-di-derivazione",

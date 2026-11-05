@@ -1756,6 +1756,12 @@ SOURCE_I269_CONTACT_THERMOSTAT = (
     "sezionatore con la «T» del termostato di zona; forma da approvare dal PO sulla tavola"
 )
 """La fonte del segno del termostato ambiente a contatto: nessuna fonte esterna acquisita."""
+SOURCE_I278_CIRCUIT_BREAKER = (
+    "proposta della sessione del 04/11/2026 (REL-018, I-278): l'interruttore dello schema "
+    "unifilare IEC 60617 (lama, «×» sul contatto fisso) col toroide del differenziale sull'ingresso "
+    "e il suo legame; forma da approvare dal PO sulla tavola"
+)
+"""La fonte del segno dell'interruttore magnetotermico differenziale."""
 
 SOURCE_REL012_PLENUM = (
     "proposta della sessione del 29/10/2026 (collaudo T1 di REL-012, plenum a quattro uscite): "
@@ -2138,6 +2144,33 @@ def isolator_switch_body(w: float, h: float) -> str:
         + _segment(w * 0.2, cy, w * 0.78, h * 0.14)
         + _segment(w * 0.8, cy, w, cy)
         + _segment(w * 0.8, h * 0.32, w * 0.8, h * 0.68)
+    )
+
+
+def circuit_breaker_rcbo_body(w: float, h: float) -> str:
+    """Interruttore magnetotermico differenziale (REL-018, I-278), nello stile IEC 60617
+    dello schema unifilare: sull'ingresso il toroide del differenziale — un cerchio che la
+    linea attraversa —, poi la lama del sezionatore che si alza dalla linea e la «×»
+    dell'interruttore sul contatto fisso; il legame meccanico fra il toroide e la lama e' a
+    tratti, disegnato a segmenti come quello del relè. Largo il doppio del sezionatore, come
+    il termostato a contatto, perche' tre segni in cinque millimetri non si leggono."""
+    cy = h / 2
+    toro_x, toro_r = w * 0.16, h * 0.2
+    perno_x, punta_x, punta_y = w * 0.36, w * 0.72, h * 0.11
+    fisso_x, croce = w * 0.76, h * 0.14
+    legame_y = cy - toro_r
+    # Dove la lama attraversa la quota del legame: il legame arriva li'.
+    lama_x = perno_x + (cy - legame_y) / (cy - punta_y) * (punta_x - perno_x)
+    passo = (lama_x - toro_x) / 7
+    tratti = [(toro_x + 2 * k * passo, toro_x + (2 * k + 1) * passo) for k in range(4)]
+    return (
+        _segment(0, cy, perno_x, cy)
+        + f'<circle cx="{n(toro_x)}" cy="{n(cy)}" r="{n(toro_r)}"/>'
+        + _segment(perno_x, cy, punta_x, punta_y)
+        + _segment(fisso_x - croce, cy - croce, fisso_x + croce, cy + croce)
+        + _segment(fisso_x - croce, cy + croce, fisso_x + croce, cy - croce)
+        + _segment(fisso_x, cy, w, cy)
+        + "".join(_segment(x0, legame_y, x1, legame_y) for x0, x1 in tratti)
     )
 
 
@@ -3445,6 +3478,12 @@ SYMBOLS: list[SymbolSpec] = [
     inline_symbol(
         "isolator-switch", "Sezionatore onnipolare", INLINE_ACCESSORY,
         isolator_switch_body, SOURCE_REL012_KIT,
+    ),
+    # L'interruttore magnetotermico differenziale della linea (REL-018, I-278): in linea
+    # come il sezionatore, largo come il termostato a contatto, con le stesse rotazioni.
+    inline_symbol(
+        "circuit-breaker-rcbo", "Interruttore magnetotermico differenziale", WIDE_INLINE_ACCESSORY,
+        circuit_breaker_rcbo_body, SOURCE_I278_CIRCUIT_BREAKER,
     ),
     # Il relè d'appoggio del circolatore comandato dalla pompa di calore (D-228,
     # I-259): tre attacchi su tre facce, un pezzo che il piano posa.

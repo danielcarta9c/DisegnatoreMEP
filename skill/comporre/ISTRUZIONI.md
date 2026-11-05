@@ -576,8 +576,8 @@ Il campo **`vista`** del piano dice quale parte del grafo la tavola disegna:
 | `vista` | che cosa disegna |
 |---|---|
 | `"tutto"` (se il campo manca) | il grafo intero: la tavola unica |
-| `"idraulica"` | tutto **tranne** i cavi e i bus, e tranne i pezzi che stanno solo sul comando (quadro, sezionatore, relè d'appoggio, termostato ambiente a contatto, regolatore, sonda esterna). La sonda a immersione resta sul suo tubo, senza il cavo |
-| `"elettrico"` | i **soli** cavi e bus, e i pezzi che toccano: quadro, sezionatore, relè d'appoggio, termostato ambiente a contatto, regolatore, sonde, e le macchine, i circolatori e le valvole che hanno un cavo. Niente acqua. La tabella in alto a sinistra elenca **ogni pezzo** della tavola con la sua sigla, tranne il sezionatore (I-276) |
+| `"idraulica"` | tutto **tranne** i cavi e i bus, e tranne i pezzi che stanno solo sul comando (quadro, interruttore magnetotermico differenziale, sezionatore, relè d'appoggio, termostato ambiente a contatto, regolatore, sonda esterna). La sonda a immersione resta sul suo tubo, senza il cavo |
+| `"elettrico"` | i **soli** cavi e bus, e i pezzi che toccano: quadro, interruttore magnetotermico differenziale, sezionatore, relè d'appoggio, termostato ambiente a contatto, regolatore, sonde, e le macchine, i circolatori e le valvole che hanno un cavo. Niente acqua. La tabella in alto a sinistra elenca **ogni pezzo** della tavola con la sua sigla, tranne il sezionatore (I-276) |
 
 Per due tavole scrivi **due piani** sullo stesso grafo completo, `piano-idraulica.json` con
 `"vista": "idraulica"` e `piano-elettrico.json` con `"vista": "elettrico"`, e disegna due volte. Il
@@ -594,6 +594,17 @@ I pezzi da posare non sono gli stessi nelle due viste: chiedili per ciascuna, co
 circolatore va nel piano**: non ha il suo tubo, e non sta più in linea. Il sezionatore resta in
 linea sul suo cavo, e lo posa il motore. **Il relè d'appoggio va nel piano** anche lui: ha tre
 attacchi, e non sta in linea.
+
+**L'interruttore magnetotermico differenziale** (`circuit-breaker-rcbo`, REL-018) sta in linea
+sulla linea della macchina, **all'uscita del quadro**: è nel quadro, e la tavola lo disegna
+stretto all'uscita da cui la linea parte, prima del cavo. **Non va nel piano**: lo posa il motore,
+con la sigla (QF-01) accanto, e sta solo sulla tavola dell'elettrico, in tabella («2P C32 · Idn 30
+mA tipo B») e in legenda. La scritta del cavo — «3G6 · L 15 m» — resta sulla linea, sul tratto
+verso la macchina. Tu dai al motore una linea su cui stia: se l'uscita del quadro guarda la
+macchina con un tratto dritto di almeno **due centimetri** (il segno è largo un centimetro),
+l'interruttore ci sta sopra e si legge come l'uscita della linea; se il cavo gira subito, il
+motore lo posa sul primo tratto dritto dopo la piega, accanto al quadro. Se c'è anche il
+sezionatore (solo se il progettista lo vuole), quello resta accanto alla macchina.
 
 **Il termostato ambiente a contatto** (`room-thermostat-contact`, I-269) sta in linea sul cavo
 fra il quadro e il circolatore che accende, come il sezionatore: **non va nel piano**, lo posa il
@@ -653,9 +664,8 @@ comando a filo. Così (la villetta di `docs/collaudi/REL-015/pdc-regola/`):
   della scritta (`etichetta`: «bollitore», «volano», «mandata pannelli»): tre sonde uguali senza
   scritta non dicono quale cavo va dove;
 - **il quadro in basso a destra, sotto la colonna dei relè.** L'alimentazione della macchina
-  entra da sotto, attraverso il sezionatore: l'uscita del quadro che la alimenta deve stare più
-  in basso del sezionatore, altrimenti il cavo scende oltre la porta e risale, ed è un
-  bloccante (B12). La macchina da un'uscita sotto (`out_5`); i relè dalle uscite sopra e a
+  esce da sotto il quadro, attraverso l'interruttore QF-01 che il motore stringe all'uscita, ed
+  entra da sotto nella macchina. La macchina da un'uscita sotto (`out_5`); i relè dalle uscite sopra e a
   destra — il relè più basso dalla prima (`out_1`), quello sopra dalla seconda (`out_2`), il più
   alto dall'uscita a destra (`out_3`): le linee salgono affiancate a destra della colonna, e la
   più esterna va al relè più alto, così non si incrociano (la villetta: quadro a x 75, y 35);

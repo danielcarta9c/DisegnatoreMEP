@@ -630,7 +630,8 @@ tubazione per tratto. Cambiano le voci, i fluidi e il dominio.
 `zone-controller`; bocchetta di mandata `air-supply-terminal`; ripresa
 `return-air-terminal`; sifone `condensate-trap` e allaccio allo scarico
 `condensate-outlet` (un confine, come l'acquedotto); quadro `electrical-panel`; sezionatore
-`isolator-switch`; termostato di zona `room-thermostat` (sul bus); termostato ambiente a
+`isolator-switch`; interruttore magnetotermico differenziale `circuit-breaker-rcbo` (in linea
+all'uscita del quadro, sotto); termostato di zona `room-thermostat` (sul bus); termostato ambiente a
 contatto `room-thermostat-contact` (in linea su un'alimentazione, sotto); comando a filo `wired-remote`. Una
 bocchetta per ogni bocchetta del testo: qui il terminale **non** è rappresentativo, perché
 ognuna ha il suo ramo, la sua portata e la sua lunghezza.
@@ -656,7 +657,8 @@ parti. Una tubazione scritta al contrario la validazione la ferma
 dell'impianto si ferma e le sigle che non hai scritto non si assegnano.
 
 **L'elettrico e il comando si trascrivono solo dove il catalogo ha gli attacchi**: le
-voci dell'aria-aria, il quadro (`out_1`…`out_6`), il sezionatore, il relè d'appoggio
+voci dell'aria-aria, il quadro (`out_1`…`out_6`), il sezionatore, l'interruttore magnetotermico
+differenziale (`a`, `b`), il relè d'appoggio
 (`bobina`, `a`, `b`), il termostato ambiente a contatto (`a`, `b`), il regolatore
 (`power`, `bus`, `out_1`…`out_4` per i comandi, `probe_1`…`probe_3` per le sonde), le sonde
 (`signal`), e sulle macchine idroniche gli attacchi di comando facoltativi: caldaie `power` e
@@ -747,6 +749,51 @@ circolatore, dimmelo e metto un relè d'appoggio comandato dal termostato.»* Il
 alimentato dal quadro e acceso da un termostato, senza la pompa di calore, è una scelta del
 progettista: la disegni solo se il testo la dice.
 
+**La protezione della linea della pompa di calore** (REL-018, I-278). La linea che dal quadro
+alimenta una pompa di calore aria-acqua ha **sempre** il suo interruttore magnetotermico
+differenziale nel quadro (specifica tecnica di installazione PdC Shenling Nove C Rev. 01, §3.2:
+bipolare, curva C, Idn 30 mA, tipo B, ad alta velocità): un pezzo `circuit-breaker-rcbo`
+(«Interruttore magnetotermico differenziale», sigla QF-nn), **in serie** all'uscita del quadro,
+e **una rete sola** `power_supply` per la linea:
+
+- dall'uscita del quadro (`out_n`) all'attacco `a` dell'interruttore, e dall'attacco `b` al
+  `power` della macchina — `quadro.out_n → QF.a`, `QF.b → pdc.power`; l'interruttore è un pezzo
+  `passante`, come il sezionatore, e la linea dal quadro alla macchina è un tratto;
+- **il cavo** del progettista — `sezione` e `lunghezza_m`, «3G6», 15 m — va sul tratto
+  **dall'interruttore alla macchina**: quello dal quadro all'interruttore sta dentro il quadro, e
+  resta senza;
+- i dati dell'interruttore, **solo se il progettista li dà**:
+
+  | dato | chiave | come si scrive |
+  |---|---|---|
+  | poli | `poli` | il testo: `"poli": "2P"`, `"4P"` |
+  | curva | `curva` | il testo: `"curva": "C"` |
+  | corrente nominale | `in_a` | un numero, in ampere: `"in_a": 32` |
+  | corrente differenziale | `idn_ma` | un numero, in milliampere: `"idn_ma": 30` |
+  | tipo del differenziale | `tipo_differenziale` | il testo: `"tipo_differenziale": "B"` (`"A"`, `"F"`) |
+  | ad alta velocità | `alta_velocita` | `true` o `false` |
+
+  «2P C32 Idn 30 mA tipo B» sono `"poli": "2P"`, `"curva": "C"`, `"in_a": 32`, `"idn_ma": 30`,
+  `"tipo_differenziale": "B"`. Se il testo non li dà **non inventarli**: su una Shenling li
+  scrive `completa` dal manuale (§7.4 p. 55) e dalla specifica (§3.3), con la regola «vale il
+  maggiore», e lo dice; su un'altra macchina restano senza, e la distinta li chiede.
+
+**Il sezionatore locale, di regola, no** (specifica §3.2): la linea della pompa di calore ha
+l'interruttore nel quadro e basta. Il sezionatore `isolator-switch` accanto alla macchina lo
+metti **solo se il testo lo chiede** — «col sezionatore vicino alla macchina» —, sulla stessa
+linea, fra l'interruttore e la macchina (`QF.b → sezionatore.a`, `sezionatore.b → pdc.power`).
+
+**Le altre linee di servizio** — circolatori, valvole, relè — un interruttore loro **lo hanno
+solo se il progettista lo dichiara**: la regola è da chiedere al PO, e tu non lo aggiungi.
+L'aria-aria del kit resta com'è: quadro e sezionatore di prossimità, e l'interruttore solo se
+il testo lo nomina.
+
+**`completa` controlla la linea delle Shenling** e lo dice fra gli avvisi del manuale: un'In
+dichiarata sotto la corrente massima della macchina (una 15 kW protetta C25: sotto i 30 A del
+manuale), un cavo dichiarato sotto la sezione del manuale (un 3G4 su una 12 kW, che ne vuole 6
+mm²), una linea dal quadro senza l'interruttore. Sono avvisi, non blocchi: il dato resta del
+progettista.
+
 **Non scrivere i morsetti della scheda**
 (CN27, SV1…) se il progettista non li dà: il nome della porta dice già dove va il cavo.
 
@@ -763,9 +810,10 @@ testa** e non fra le `properties`, perché la tavola li scrive lungo la linea:
   dice 1/4"), «3G2,5», «1000×250». Un testo, che non si converte;
 - `lunghezza_m` — la lunghezza del tratto che il progettista dà, in metri; zero è un raccordo
   diretto, e il tratto non porta scritta (salvo una `scritta` tua);
-  un tratto spezzato da un sezionatore o da un sifone si scrive in due tubazioni, ma è una
-  linea sola: la lunghezza si scrive su **una** delle due, per il tratto intero — la più lunga:
-  dal quadro al sezionatore, dall'unità al sifone, mai il moncone fra sifone e scarico —, e
+  un tratto spezzato da un sezionatore, da un interruttore o da un sifone si scrive in due
+  tubazioni, ma è una linea sola: la lunghezza si scrive su **una** delle due, per il tratto
+  intero — la più lunga: dal quadro al sezionatore, dall'interruttore alla macchina, dall'unità
+  al sifone, mai il moncone fra sifone e scarico —, e
   l'altra resta senza (non `0`, che vuol dire raccordo diretto);
 - `scritta` — il testo che la tavola porta sul tratto, se il progettista ne vuole uno suo:
   «Ø200 · 270 m³/h · L 6 m», «bus · L 9 m», «di fabbrica». Se c'è, vince sugli altri due;

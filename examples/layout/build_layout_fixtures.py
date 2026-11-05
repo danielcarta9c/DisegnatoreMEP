@@ -564,6 +564,13 @@ CONTACT_THERMOSTAT_I269 = (
     "ambiente in chiamata chiude il contatto, e il circolatore prende l'alimentazione dal "
     "quadro attraverso di lui. Forma del segno da approvare dal PO sulla tavola"
 )
+CIRCUIT_BREAKER_I278 = (
+    "proposta della sessione del 04/11/2026 (REL-018, I-278): l'interruttore magnetotermico "
+    "differenziale della linea dedicata, nel quadro; specifica tecnica di installazione PdC "
+    "Shenling Nove C Rev. 01, par. 3.2-3.4 (bipolare, curva C, Idn 30 mA, tipo B, ad alta "
+    "velocita'), e manuale ThermaX R290 6-15 kW, par. 7.4 p. 55 e p. 51. Forma del segno da "
+    "approvare dal PO sulla tavola"
+)
 PLENUM_T1 = (
     "proposta della sessione del 29/10/2026 (collaudo T1 di REL-012, plenum a quattro uscite): "
     "la voce del plenum a cinque serrande del kit AA-01, con le serrande che il plenum ha; "
@@ -750,6 +757,19 @@ REL_012: list[dict[str, Any]] = [
         QUIET,
         [control_port("a", POWER, "in"), control_port("b", POWER, "out")],
         sources=[KIT_AA01],
+    ),
+    # L'interruttore magnetotermico differenziale della linea (REL-018, I-278): nel quadro,
+    # all'uscita della linea dedicata. Passante come il sezionatore — l'ingresso dal quadro,
+    # l'uscita verso la macchina —, ma con un altro mestiere: protegge la linea, non la
+    # seziona sul posto. Il mestiere gli da' la sua famiglia (QF, `naming/families.json`) e
+    # la sua riga nella tabella dell'elettrico, che il sezionatore non ha (I-276).
+    definition(
+        "circuit-breaker-rcbo",
+        "Interruttore magnetotermico differenziale",
+        ["circuit_protection"],
+        QUIET,
+        [control_port("a", POWER, "in"), control_port("b", POWER, "out")],
+        sources=[CIRCUIT_BREAKER_I278],
     ),
     # Il relè d'appoggio fra l'uscita di una pompa di calore e il circolatore (D-228,
     # I-259): l'uscita della macchina eccita la bobina, e il circolatore prende

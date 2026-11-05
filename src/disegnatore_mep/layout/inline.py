@@ -96,6 +96,16 @@ sezionatore finiva accanto al quadro finche' la tubazione lato macchina non si e
 chiamata `e-1a`."""
 
 
+FUNZIONI_DI_PARTENZA = frozenset({"circuit_protection"})
+"""Chi sta **all'uscita del quadro**, per mestiere (REL-018, I-278): l'interruttore
+magnetotermico differenziale della linea sta nel quadro (specifica tecnica di installazione
+PdC Shenling Nove C Rev. 01, par. 3.2), e sulla tavola si disegna stretto all'uscita da cui la
+linea parte, prima del cavo e della sua scritta. E' lo specchio di `FUNZIONI_DI_PROSSIMITA`: il
+capo e' quello **da cui il fluido esce** — l'uscita del quadro, `out` per il catalogo —, e
+l'organo gli si stringe come la valvola di una catena (D-120). Sulla stessa linea il
+sezionatore, se il progettista lo vuole, resta accanto alla macchina."""
+
+
 FUNZIONI_CON_UN_LATO = frozenset({PIPE_REDUCTION})
 """Chi non ha un verso del fluido ma ha **un lato**, e si disegna girato verso di lui:
 la riduzione all'attacco (D-233), che l'acqua attraversa nei due versi — sulla mandata
@@ -387,11 +397,30 @@ def place_inline_accessories(
     def di_prossimita(index: int) -> bool:
         return bool(FUNZIONI_DI_PROSSIMITA & set(resolved[index].definition.functions))
 
+    def uscente(ref: PortRef) -> bool:
+        """Il capo della tratta e' l'attacco da cui il fluido **esce**: l'uscita del quadro."""
+        definition_id = definitions.get(ref.component_id)
+        if definition_id is None:
+            return False
+        porta = next(
+            (item for item in catalog.resolve(definition_id).definition.ports if item.id == ref.port_id),
+            None,
+        )
+        return porta is not None and porta.flow is PortFlow.OUT
+
+    def di_partenza(index: int) -> bool:
+        return bool(FUNZIONI_DI_PARTENZA & set(resolved[index].definition.functions))
+
     # L'organo di prossimita' (`FUNZIONI_DI_PROSSIMITA`) si stringe alla macchina
     # che alimenta, da qualunque capo la tratta cominci.
     if not head_chain and not strict_head and di_prossimita(0) and alimentato(trunk.start):
         head_chain = [0]
     if not tail_chain and not strict_tail and di_prossimita(last) and alimentato(trunk.end):
+        tail_chain = [last]
+    # L'interruttore della linea (`FUNZIONI_DI_PARTENZA`) si stringe all'uscita del quadro.
+    if not head_chain and not strict_head and di_partenza(0) and uscente(trunk.start):
+        head_chain = [0]
+    if not tail_chain and not strict_tail and di_partenza(last) and uscente(trunk.end):
         tail_chain = [last]
     if set(head_chain) & set(tail_chain):
         head_chain = []
