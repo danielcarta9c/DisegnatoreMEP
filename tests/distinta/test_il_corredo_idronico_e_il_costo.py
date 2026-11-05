@@ -12,7 +12,7 @@ from disegnatore_mep.distinta import RegoleDellaDistinta, componi_la_distinta
 from disegnatore_mep.distinta.calcolo import prezzo_della_voce
 from disegnatore_mep.distinta.costo import prezza_la_distinta
 from disegnatore_mep.distinta.listino import ErroreDelListino, leggi_il_listino
-from disegnatore_mep.skill import cartelle_del_repository, main
+from disegnatore_mep.skill import cartelle_del_repository, consegna, main
 
 from .conftest import ROOT
 
@@ -128,10 +128,9 @@ def test_la_centrale_ha_tubo_valvole_e_raccordi_del_suo_pollice(
     assert sezione_i["Tee a pressare tubo multistrato MS 32×3"].quantita == 1
     # Le valvole sono passanti: GT-01 - VI-01 - DER-01 10 m × 1,15 = 11,5; DER-01 - VOL-01
     # 1 × 1,15 → 1,5; VOL-01 - VI-02 - GT-01 11 × 1,15 = 12,65 → 13 (l'acqua non aggiunge il
-    # metro per tratto); DER-01 - SF-01 senza lunghezza, in centrale: 1 m (se_manca_m).
+    # metro per tratto); DER-01 - SF-01 e' uno stacco avvitato sul tee: niente tubo.
     tubo = sezione_i["Tubo multistrato MS 32×3, nudo"]
-    assert tubo.quantita == pytest.approx(11.5 + 1.5 + 13 + 1)
-    assert any("quotati senza maggiorazione" in a for a in distinta.avvisi)
+    assert tubo.quantita == pytest.approx(11.5 + 1.5 + 13)
     assert not distinta.voci_della_sezione("X")
 
 
@@ -144,7 +143,7 @@ def test_il_costo_e_la_somma_delle_voci_prezzate_e_dice_quelle_da_prezzare(
     assert all(r.sezione != "A" for r in costo.righe), "le apparecchiature si comprano a parte"
     assert costo.totale == pytest.approx(sum(r.totale or 0 for r in costo.righe))
     tubo = next(r for r in costo.righe if r.testo == "Tubo multistrato MS 32×3, nudo")
-    assert tubo.totale == pytest.approx(27.0 * listino.get("I04").prezzo)
+    assert tubo.totale == pytest.approx(26.0 * listino.get("I04").prezzo)
     sfiato = next(r for r in costo.righe if r.testo.startswith("Valvola automatica di sfogo aria"))
     assert sfiato.totale == pytest.approx(listino.get("I43a").prezzo) and sfiato.nota
     valvole = next(r for r in costo.righe if r.testo.startswith("Valvola a sfera"))
@@ -161,9 +160,25 @@ def test_il_comando_scrive_il_costo_accanto_alla_distinta(tmp_path: Path, capsys
     )
     stampa = capsys.readouterr().out
     assert "Costo della minuteria (uso interno, non va all'installatore)" in stampa
-    md = (tmp_path / "d" / "costo-minuteria.md").read_text(encoding="utf-8")
+    md = (tmp_path / "d" / "interno" / "costo-minuteria.md").read_text(encoding="utf-8")
     assert "Uso interno Nove C" in md and "Totale prezzato" in md
-    dati = json.loads((tmp_path / "d" / "costo-minuteria.json").read_text(encoding="utf-8"))
+    dati = json.loads((tmp_path / "d" / "interno" / "costo-minuteria.json").read_text(encoding="utf-8"))
     assert dati["totale_eur"] > 0 and dati["listino"]["revisione"].startswith("03")
     documento = next((tmp_path / "d").glob("Distinta_*.md")).read_text(encoding="utf-8")
     assert "€" not in documento, "il documento per l'installatore resta senza prezzi"
+    consegnati = consegna(tmp_path / "d", tmp_path / "consegna")
+    assert consegnati and not [p for p in consegnati if p.name.startswith("costo-minuteria")], "il costo non si consegna"
+
+
+def test_un_tratto_in_centrale_senza_lunghezza_vale_un_metro(
+    regole: RegoleDellaDistinta, nomi: tuple[dict[str, str], dict[str, str]]
+) -> None:
+    grafo = _centrale()
+    grafo["components"].append({"id": "v3", "definition_id": "valve-isolation", "tag": "VI-03", "properties": {}})
+    grafo["connections"] += [
+        _tubo("x1", "primario", ("tee", "branch"), ("v3", "a"), sezione="MS 32×3"),
+    ]
+    grafo["connections"] = [c for c in grafo["connections"] if c["id"] != "s1"]
+    grafo["components"] = [c for c in grafo["components"] if c["id"] != "sfiato"]
+    distinta = componi_la_distinta(grafo, regole, *nomi)
+    assert any("quotati senza maggiorazione" in a and "1 m" in a for a in distinta.avvisi)

@@ -200,7 +200,13 @@ def costo_in_markdown(costo: Costo, titoli: dict[str, str]) -> str:
     return "\n".join(righe)
 
 
-def scrivi_il_costo(costo: Costo, uscita: Path, titoli: dict[str, str]) -> list[Path]:
+CARTELLA_INTERNA = "interno"
+"""Dove il costo si scrive, dentro la cartella della distinta: una cartella a parte,
+che `consegna` non copia (il costo non va all'installatore, collaudo T4 di REL-021)."""
+
+
+def scrivi_il_costo(costo: Costo, cartella_della_distinta: Path, titoli: dict[str, str]) -> list[Path]:
+    uscita = cartella_della_distinta / CARTELLA_INTERNA
     uscita.mkdir(parents=True, exist_ok=True)
     md = uscita / "costo-minuteria.md"
     md.write_text(costo_in_markdown(costo, titoli), encoding="utf-8")

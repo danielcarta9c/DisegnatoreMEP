@@ -1,7 +1,7 @@
 {
   "id": "corredo",
   "versione": "1.6.0",
-  "nota": "Il corredo di posa di ogni voce del catalogo, per id di voce (`definition_id` del pezzo). Il catalogo non si tocca: il corredo sta qui. `apparecchiatura`: il pezzo è una macchina fornita da Nove C e va nella sezione A, una riga per marca e modello (un pezzo con la proprietà `compreso_in` è nella fornitura di un altro e non ha riga sua). `fornitura`: chi la fornisce, una scelta dell'offerta di `distinta.json` («opere_edili», «bocchette_e_griglie») o «committente»; senza, l'installatore. `per_locale` conta una volta per locale servito (il dato `locale` del pezzo, o la sua etichetta), e niente per un locale con `varco`. `passante`: il pezzo sta in mezzo a una linea (sezionatore, interruttore, relè, termostato a contatto, sifone), e il tratto lo attraversa. `voci`: il materiale e le opere che il pezzo porta con sé; `calcolo` è `per_pezzo` (n per pezzo) o `per_linea` (n per ogni tratto di quel fluido che arriva al pezzo). Nei testi, `{proprieta}` è un dato del progettista sul pezzo (o la `sezione` del tratto che gli arriva): se manca, il testo dice DA DEFINIRE e la distinta fa la domanda. Copre l'aria-aria e l'elettrico del kit AA-01 e, da REL-020, l'idronico (sezione I: proposta della sessione sul listino del PO, da confermare). Nei testi idronici `{pollice}` è il pollice del tubo su cui sta il pezzo e `{sezione}` il tubo del tratto («multistrato MS 32×3»): li dà il calcolo dei diametri, o il progettista con la `sezione` del tratto. Un pezzo `confine` (terminali, rete esistente, utenze) chiude la centrale: i tratti fino a lui vogliono la lunghezza del progettista. `prezzo` (REL-021) dice con quali codici del listino della minuteria si prezza la voce: un codice, o una scelta per il valore di un dato (`per`: `pollice`, `sezione`, `volume_l`, …) con le sue espressioni (`scegli`), per `n` unità del listino a unità della voce; una voce senza `prezzo`, o senza una scelta che vale, nel costo è DA PREZZARE. La riduzione all'attacco della macchina (D-233, REL-017) è nella sezione I con il suo testo, perché i due pollici li sa il pezzo.",
+  "nota": "Il corredo di posa di ogni voce del catalogo, per id di voce (`definition_id` del pezzo). Il catalogo non si tocca: il corredo sta qui. `apparecchiatura`: il pezzo è una macchina fornita da Nove C e va nella sezione A, una riga per marca e modello (un pezzo con la proprietà `compreso_in` è nella fornitura di un altro e non ha riga sua). `fornitura`: chi la fornisce, una scelta dell'offerta di `distinta.json` («opere_edili», «bocchette_e_griglie») o «committente»; senza, l'installatore. `per_locale` conta una volta per locale servito (il dato `locale` del pezzo, o la sua etichetta), e niente per un locale con `varco`. `passante`: il pezzo sta in mezzo a una linea (sezionatore, interruttore, relè, termostato a contatto, sifone), e il tratto lo attraversa. `voci`: il materiale e le opere che il pezzo porta con sé; `calcolo` è `per_pezzo` (n per pezzo) o `per_linea` (n per ogni tratto di quel fluido che arriva al pezzo). Nei testi, `{proprieta}` è un dato del progettista sul pezzo (o la `sezione` del tratto che gli arriva): se manca, il testo dice DA DEFINIRE e la distinta fa la domanda. Copre l'aria-aria e l'elettrico del kit AA-01 e, da REL-020, l'idronico (sezione I: proposta della sessione sul listino del PO, da confermare). Nei testi idronici `{pollice}` è il pollice del tubo su cui sta il pezzo e `{sezione}` il tubo del tratto («multistrato MS 32×3»): li dà il calcolo dei diametri, o il progettista con la `sezione` del tratto. Un pezzo `stacco` (sicurezza, manometro, sfiato, scarico, sonda) si avvita sul tee o sul suo rubinetto: il tratto fino a lui, senza lunghezza, non ha tubo. Un pezzo `confine` (terminali, rete esistente, utenze) chiude la centrale: i tratti fino a lui vogliono la lunghezza del progettista. `prezzo` (REL-021) dice con quali codici del listino della minuteria si prezza la voce: un codice, o una scelta per il valore di un dato (`per`: `pollice`, `sezione`, `volume_l`, …) con le sue espressioni (`scegli`), per `n` unità del listino a unità della voce; una voce senza `prezzo`, o senza una scelta che vale, nel costo è DA PREZZARE. La riduzione all'attacco della macchina (D-233, REL-017) è nella sezione I con il suo testo, perché i due pollici li sa il pezzo.",
   "voci": {
     "split-outdoor-unit": {
       "nome": "Unità esterna split a pompa di calore",
@@ -3145,7 +3145,8 @@
             }
           ]
         }
-      ]
+      ],
+      "stacco": true
     },
     "air-vent": {
       "nome": "Valvola di sfogo aria con rubinetto",
@@ -3173,7 +3174,8 @@
           ],
           "prezzo_nota": "listino: sola valvola di sfogo (I43a), senza rubinetto"
         }
-      ]
+      ],
+      "stacco": true
     },
     "air-vent-plain": {
       "nome": "Valvola di sfogo aria",
@@ -3200,7 +3202,8 @@
             }
           ]
         }
-      ]
+      ],
+      "stacco": true
     },
     "air-vent-solar": {
       "nome": "Valvola di sfogo aria solare",
@@ -3222,7 +3225,8 @@
           "perche": "Lo sfiato del circuito solare; non è nel listino.",
           "prezzo": []
         }
-      ]
+      ],
+      "stacco": true
     },
     "pressure-gauge": {
       "nome": "Manometro",
@@ -3250,7 +3254,8 @@
           ],
           "prezzo_nota": "listino: manometro 0-12 bar (I44)"
         }
-      ]
+      ],
+      "stacco": true
     },
     "pressure-gauge-solar": {
       "nome": "Manometro solare",
@@ -3278,7 +3283,8 @@
           ],
           "prezzo_nota": "listino: manometro 0-12 bar (I44)"
         }
-      ]
+      ],
+      "stacco": true
     },
     "thermometer": {
       "nome": "Termometro",
@@ -3305,7 +3311,8 @@
             }
           ]
         }
-      ]
+      ],
+      "stacco": true
     },
     "thermometer-solar": {
       "nome": "Termometro solare",
@@ -3332,7 +3339,8 @@
             }
           ]
         }
-      ]
+      ],
+      "stacco": true
     },
     "valve-safety": {
       "nome": "Valvola di sicurezza",
@@ -3359,7 +3367,8 @@
             }
           ]
         }
-      ]
+      ],
+      "stacco": true
     },
     "valve-safety-solar": {
       "nome": "Valvola di sicurezza solare",
@@ -3381,7 +3390,8 @@
           "perche": "La sicurezza del circuito solare; non è nel listino.",
           "prezzo": []
         }
-      ]
+      ],
+      "stacco": true
     },
     "dhw-safety-group": {
       "nome": "Gruppo di sicurezza sanitario",
@@ -3430,7 +3440,8 @@
             }
           ]
         }
-      ]
+      ],
+      "stacco": true
     },
     "drain-connection-cold": {
       "nome": "Attacco di scarico sull'acqua fredda",
@@ -3457,7 +3468,8 @@
             }
           ]
         }
-      ]
+      ],
+      "stacco": true
     },
     "drain-connection-dhw": {
       "nome": "Attacco di scarico sanitario",
@@ -3484,7 +3496,8 @@
             }
           ]
         }
-      ]
+      ],
+      "stacco": true
     },
     "drain-connection-solar": {
       "nome": "Attacco di carico e scarico solare",
@@ -3511,7 +3524,8 @@
             }
           ]
         }
-      ]
+      ],
+      "stacco": true
     },
     "filling-unit": {
       "nome": "Gruppo di riempimento con disconnettore",
@@ -3657,7 +3671,8 @@
           "perche": "La sonda arriva con la macchina o con il regolatore; l'installatore mette il pozzetto, che non è nel listino.",
           "prezzo": []
         }
-      ]
+      ],
+      "stacco": true
     },
     "temperature-probe-dhw": {
       "nome": "Sonda di temperatura sanitaria",
@@ -3679,7 +3694,8 @@
           "perche": "La sonda arriva con la macchina o con il regolatore; l'installatore mette il pozzetto, che non è nel listino.",
           "prezzo": []
         }
-      ]
+      ],
+      "stacco": true
     },
     "temperature-probe-solar": {
       "nome": "Sonda di temperatura solare",
@@ -3701,7 +3717,8 @@
           "perche": "La sonda arriva con la macchina o con il regolatore; l'installatore mette il pozzetto, che non è nel listino.",
           "prezzo": []
         }
-      ]
+      ],
+      "stacco": true
     },
     "tee-branch": {
       "nome": "Raccordo a T",

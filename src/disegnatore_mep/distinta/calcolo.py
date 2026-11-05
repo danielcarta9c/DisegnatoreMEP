@@ -384,6 +384,14 @@ def _se_manca(lavoro: _Lavoro, tratta: Tratta) -> float | None:
     accumulo o un confine della centrale, la cui distanza la sa il progettista."""
     for classe in lavoro.regole.lunghezze.get("classi", []):
         if tratta.fluido in classe.get("fluidi", []) and classe.get("se_manca_m"):
+            if any(
+                (pezzo := lavoro.impianto.pezzi.get(capo)) is not None
+                and lavoro.regole.corredo.get(pezzo.voce, {}).get("stacco")
+                for capo in tratta.capi
+            ):
+                # Collaudo T4 di REL-021: la sicurezza, il manometro, lo sfiato si avvitano
+                # sul tee (o sul loro rubinetto): niente tubo.
+                return 0.0
             for capo in tratta.capi:
                 pezzo = lavoro.impianto.pezzi.get(capo)
                 corredo = lavoro.regole.corredo.get(pezzo.voce) if pezzo else None
@@ -427,6 +435,10 @@ def _lunghezze(lavoro: _Lavoro) -> None:
             )
             lavoro.mancanti_dei_tratti.append(lavoro.del_tratto("lunghezza_m", tratta))
         if tratta.diretta:
+            continue
+        if tratta.lunghezza_m is None and (assunta := _se_manca(lavoro, tratta)) == 0.0:
+            # Uno stacco avvitato: un raccordo diretto, come un tratto con lunghezza 0.
+            tratta.lunghezza_m, tratta.senza_lunghezza = 0.0, ()
             continue
         if tratta.lunghezza_m is None and (assunta := _se_manca(lavoro, tratta)) is not None:
             tratta.da_quotare_m = assunta
@@ -996,8 +1008,9 @@ def _corredo(lavoro: _Lavoro) -> None:
                 # REL-020: il pollice e il tubo li da' il calcolo dei diametri, o il
                 # progettista con la `sezione` del tratto: non sono dati del pezzo.
                 domanda = (
-                    f"{pezzo.sigla} ({lavoro.nome_della_voce(pezzo.voce)}): su che tubo sta? Servono i diametri "
-                    "(`diametri` nel grafo) o la `sezione` del tratto (es. «MS 32×3»)."
+                    f"{pezzo.sigla} ({lavoro.nome_della_voce(pezzo.voce)}): su che tubo sta? Il tubo del suo "
+                    "tratto non c'e': i diametri non sono chiesti su quella rete, o il calcolo non ne ha la "
+                    "portata. Serve la `sezione` del tratto (es. «MS 32×3»)."
                 )
                 if domanda not in riga.domande:
                     riga.domande.append(domanda)

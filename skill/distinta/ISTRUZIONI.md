@@ -132,7 +132,8 @@ attacchi, le staffe e il trattamento dell'acqua. Ogni accessorio in linea porta 
 raccordi a pressare (tre per i pezzi a tre vie); ogni derivazione un tee; ogni linea d'acqua il tubo, i gomiti, i
 collari, i manicotti di riserva e la guaina. Le valvole, i filtri, i giunti e i circolatori **non spezzano il tratto**:
 la linea dalla pompa di calore al volano è un tratto solo, con una lunghezza sola. I **tratti corti in centrale**, fra
-due accessori o fra un tee e lo sfiato, senza lunghezza valgono **1 m** e la distinta lo dice; un tratto che arriva a
+due accessori, senza lunghezza valgono **1 m** e la distinta lo dice; gli stacchi di servizio (sicurezza,
+manometro, sfiato, scarico, sonda) si avvitano sul tee e non hanno tubo; un tratto che arriva a
 una macchina, a un accumulo o a un confine (terminali, utenze, rete esistente) la lunghezza la vuole dal
 progettista. L'acqua non aggiunge il metro per tratto della maggiorazione: resta il 15%.
 
@@ -202,8 +203,8 @@ Le scelte predefinite stanno in `distinta.json`, `fornitura`: si cambiano lì so
 ## Il costo della minuteria, se lo chiede
 
 Se il progettista chiede **quanto costa la minuteria** (il materiale da comprare, o un riferimento per confrontare i
-preventivi degli installatori), lancia la distinta con `--costo`: accanto al documento escono `costo-minuteria.md` e
-`costo-minuteria.json`, con il prezzo di ogni voce dal **listino della minuteria** di Nove C
+preventivi degli installatori), lancia la distinta con `--costo`: nella sottocartella `interno/` della distinta escono `costo-minuteria.md` e
+`costo-minuteria.json` (`consegna` non li copia), con il prezzo di ogni voce dal **listino della minuteria** di Nove C
 (`riferimenti/listino-minuteria.md`; un altro con `--listino <file>`). È un conto **interno**:
 
 - **non va all'installatore** e non si mette nel suo documento, che resta senza prezzi;
