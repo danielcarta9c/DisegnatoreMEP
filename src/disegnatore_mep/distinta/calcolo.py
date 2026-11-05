@@ -822,6 +822,15 @@ def _sezione_al_pezzo(lavoro: _Lavoro, pezzo: str, fluido: str | None = None) ->
     return con_la_sezione[0].sezione if con_la_sezione else None
 
 
+def _dicitura_del_tubo(sezione: str) -> str:
+    """La sezione di un tubo d'acqua come la dice la tavola («multistrato MS 26×3»), se si
+    legge; se no com'e' scritta."""
+    from disegnatore_mep.diametri.tubi import tubo_dal_testo
+
+    tubo = tubo_dal_testo(sezione)
+    return tubo.dicitura if tubo else sezione
+
+
 def _pollice_del_tubo(sezione: str | None) -> str | None:
     """Il pollice dei raccordi del tubo scritto nella sezione («MS 26×3» → «¾"»), dove il
     calcolo non l'ha dato al pezzo (REL-020: un pezzo a tre vie, o il tubo del progettista)."""
@@ -1398,6 +1407,11 @@ def componi_la_distinta(
         fornitura=fornitura or la_fornitura(regole),
         pollici=tubi.pollici,
     )
+    for tratta in lavoro.tratte:
+        if tratta.fluido in FLUIDI_D_ACQUA and tratta.sezioni:
+            # REL-020: «MS 26×3» del progettista e «multistrato MS 26×3» della tavola sono lo
+            # stesso tubo, e fanno una riga sola.
+            tratta.sezioni = tuple(dict.fromkeys(_dicitura_del_tubo(s) for s in tratta.sezioni))
     if impianto.esclusi:
         lavoro.avvisi.append(f"Esistenti, fuori dalla distinta: {', '.join(impianto.esclusi)}.")
     _ordina_e_numera(lavoro)

@@ -124,12 +124,12 @@ def test_la_centrale_ha_tubo_valvole_e_raccordi_del_suo_pollice(
     distinta = componi_la_distinta(_centrale(), regole, *nomi)
     sezione_i = {v.testo: v for v in distinta.voci_della_sezione("I")}
     assert sezione_i["Valvola a sfera a passaggio totale 1\" FF, con leva"].quantita == 2
-    assert sezione_i["Raccordo diritto a pressare M 1\" × tubo MS 32×3"].quantita == 4
-    assert sezione_i["Tee a pressare tubo MS 32×3"].quantita == 1
+    assert sezione_i["Raccordo diritto a pressare M 1\" × tubo multistrato MS 32×3"].quantita == 4
+    assert sezione_i["Tee a pressare tubo multistrato MS 32×3"].quantita == 1
     # Le valvole sono passanti: GT-01 - VI-01 - DER-01 10 m × 1,15 = 11,5; DER-01 - VOL-01
     # 1 × 1,15 → 1,5; VOL-01 - VI-02 - GT-01 11 × 1,15 = 12,65 → 13 (l'acqua non aggiunge il
     # metro per tratto); DER-01 - SF-01 senza lunghezza, in centrale: 1 m (se_manca_m).
-    tubo = sezione_i["Tubo MS 32×3, nudo"]
+    tubo = sezione_i["Tubo multistrato MS 32×3, nudo"]
     assert tubo.quantita == pytest.approx(11.5 + 1.5 + 13 + 1)
     assert any("quotati senza maggiorazione" in a for a in distinta.avvisi)
     assert not distinta.voci_della_sezione("X")
@@ -143,7 +143,7 @@ def test_il_costo_e_la_somma_delle_voci_prezzate_e_dice_quelle_da_prezzare(
     assert {r.sezione for r in costo.righe} <= {"S", "I", "E", "B", "C", "D", "X"}
     assert all(r.sezione != "A" for r in costo.righe), "le apparecchiature si comprano a parte"
     assert costo.totale == pytest.approx(sum(r.totale or 0 for r in costo.righe))
-    tubo = next(r for r in costo.righe if r.testo == "Tubo MS 32×3, nudo")
+    tubo = next(r for r in costo.righe if r.testo == "Tubo multistrato MS 32×3, nudo")
     assert tubo.totale == pytest.approx(27.0 * listino.get("I04").prezzo)
     sfiato = next(r for r in costo.righe if r.testo.startswith("Valvola automatica di sfogo aria"))
     assert sfiato.totale == pytest.approx(listino.get("I43a").prezzo) and sfiato.nota
