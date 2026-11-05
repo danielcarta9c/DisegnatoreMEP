@@ -601,7 +601,39 @@
           "fonte": "kit AA-01: RAPPORTO.md §7; REVISIONE-INDIPENDENTE.md rilievi 7 e 12 (la protezione della centrale a sé, verificare la targa della macchina)",
           "fonte_in_parole": "targa della macchina (dato del progettista)",
           "perche": "Ogni linea dedicata ha la sua protezione nel quadro. La taglia dipende dalla targa della macchina: è un dato del progettista (`protezione` del tratto); se manca, la voce è DA DEFINIRE. Una linea che attraversa l'interruttore magnetotermico differenziale (`circuit-breaker-rcbo`, REL-018) non la conta: la protezione è quel pezzo, con la sua voce.",
-          "prezzo": []
+          "prezzo": [
+            {
+              "per": "protezione",
+              "scegli": [
+                {
+                  "se": "(?i)(1P\\+N|2P)\\b.*\\bC\\s*16\\b.*tipo\\s*A\\b",
+                  "codice": "E15a"
+                },
+                {
+                  "se": "(?i)(1P\\+N|2P)\\b.*\\bC\\s*20\\b.*tipo\\s*A\\b",
+                  "codice": "E16a"
+                },
+                {
+                  "se": "(?i)(1P\\+N|2P)\\b.*\\bC\\s*25\\b.*tipo\\s*A\\b",
+                  "codice": "E16b"
+                },
+                {
+                  "se": "(?i)(1P\\+N|2P)\\b.*\\bC\\s*32\\b.*tipo\\s*A\\b",
+                  "codice": "E17"
+                },
+                {
+                  "se": "(?i)4P\\b.*\\bC\\s*16\\b.*tipo\\s*A\\b",
+                  "codice": "E18a"
+                },
+                {
+                  "se": "(?i)4P\\b.*\\bC\\s*20\\b.*tipo\\s*A\\b",
+                  "codice": "E18b"
+                }
+              ],
+              "n": 1.0
+            }
+          ],
+          "prezzo_nota": "dal testo della protezione: il listino ha i magnetotermici differenziali di tipo A da 16 a 32 A"
         },
         {
           "id": "scatola-di-derivazione",

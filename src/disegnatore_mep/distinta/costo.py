@@ -155,15 +155,18 @@ def costo_in_markdown(costo: Costo, titoli: dict[str, str]) -> str:
         f"# Costo della minuteria — {nome}",
         "",
         "> **Uso interno Nove C.** Non va all'installatore: il suo documento resta senza prezzi. È il costo, a "
-        "prezzi di listino, del materiale che la distinta conta (tubi, raccordi, valvolame, cavi, accessori), "
-        "**escluse le apparecchiature** (pompa di calore, accumuli, bollitori: si comprano a parte) e la manodopera.",
+        "prezzi di listino, del materiale che la distinta conta (tubi, raccordi, valvolame, canali, cavi, accessori), "
+        "**escluse le apparecchiature** della sezione A (macchine, unità interne ed esterne, accumuli, bollitori, "
+        "plenum motorizzati: si comprano a parte) e la manodopera.",
         "",
         f"- **Listino:** {costo.listino.titolo}, revisione {costo.listino.revisione or '—'}. Prezzi netti, IVA esclusa.",
         f"- **Totale prezzato: {_euro(costo.totale)} €**, su {len(prezzate)} voci di {len(costo.righe)}.",
         f"- **Da prezzare: {len(costo.da_prezzare)} voci**, che il totale non contiene (elencate in fondo, ciascuna "
         "col suo perché).",
-        "- Il conto è il **consumo** (quantità × prezzo per unità): le confezioni intere costano di più. Le quantità "
-        "sono quelle della distinta, già maggiorate.",
+        "- Il conto è quantità × prezzo per unità del listino. Le quantità sono quelle della distinta: già maggiorate "
+        "per l'offerta a corpo (+15%, i minimi delle linee), e dove la distinta conta confezioni (il flessibile in "
+        "rotoli da 10 m) si pagano le confezioni intere; il resto è il consumo, e al banco le confezioni intere costano "
+        "di più.",
         "",
         "## Per sezione",
         "",
