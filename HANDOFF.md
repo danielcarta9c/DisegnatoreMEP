@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-11-05 — **la 1.12.1 è su `main`** (PR #87, I-283). `REL-018` è consegnato; **il pacchetto successivo si chiede al PO**.
+**Aggiornato:** 2026-11-05 — **la 1.14.0 è su `main`** (`REL-019` … `REL-021`, I-287). Il pacchetto successivo si chiede al PO.
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -11,7 +11,25 @@
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
 
-## ▶ Da dove riparte la prossima sessione — scritto il 5 novembre 2026, dopo la fusione della 1.12.1
+## ▶ Da dove riparte la prossima sessione — scritto il 5 novembre 2026, dopo la fusione della 1.14.0
+
+**Nessun pacchetto attivo**: `REL-019`, `REL-020` e `REL-021` sono consegnati nella 1.14.0, fusa su disposizione del
+PO (I-287). Il prossimo lo sceglie il PO.
+
+- **Che cosa c'è nella 1.14.0**: il listino della minuteria nella skill (D-235); la distinta idronica, sezione I
+  (D-236, proposta da confermare dal PO); `distinta --costo`, il costo a listino in `interno/`.
+- **Le misure alla fusione**: suite `2878 passed, 15 skipped, 10 xfailed`; ruff verde; ZIP 150 file,
+  `tests/test_le_release.py` verde; tavole invariate (il pacchetto non tocca il disegno).
+- **Il riferimento del PO**: la PdC 12 kW con la 3 vie del collaudo T1 esce a 1.799 € prezzati più 12 voci da
+  prezzare, contro i circa 1.700 € reali di Nove C: la skill sta sopra del 30-40% a listino completo
+  (`docs/collaudi/REL-021/RAPPORTO.md`). Da tarare su una distinta vera del PO.
+- **Candidate per il prossimo pacchetto** (da proporre al PO): le risposte della distinta sui pezzi che `completa`
+  crea, e la lunghezza sul tratto giusto quando `completa` spezza una tubazione (il difetto che pesa di più sull'uso);
+  le voci mancanti del listino (interruttore tipo B, antigelo, cavi 3G1,5, relè, …); la taratura delle stime del
+  corredo su una commessa vera; il resto dell'elenco del rapporto; le candidate di prima (I-248, sopra i 35 kW, TAC).
+- **I numeri**: il prossimo input è **I-288**, la prossima decisione **D-237**.
+
+## Com'era il 5 novembre 2026, dopo la fusione della 1.12.1
 
 **Nessun pacchetto attivo**: `REL-018` (le protezioni elettriche) è consegnato, e il prossimo lo sceglie il PO.
 

@@ -28,6 +28,10 @@
       "titolo": "Scarichi condensa (unità interna e unità esterna)"
     },
     {
+      "lettera": "I",
+      "titolo": "Circuito idraulico (tubazioni, valvolame e accessori, con il loro corredo di posa)"
+    },
+    {
       "lettera": "E",
       "titolo": "Elettrico, comando e regolazione"
     },
@@ -62,6 +66,7 @@
     "B",
     "C",
     "D",
+    "I",
     "E",
     "F",
     "X",

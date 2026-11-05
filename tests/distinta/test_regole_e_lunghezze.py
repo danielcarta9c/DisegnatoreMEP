@@ -80,7 +80,7 @@ def test_le_regole_della_cartella_sono_quelle_del_kit(regole: RegoleDellaDistint
     regola = regole.lunghezze["regola"]
     assert (regola["aggiunta_m"], regola["fattore"], regola["passo_m"]) == (1.0, 1.15, 0.5)
     minimi = {c["classe"]: c["minimo_m"] for c in regole.lunghezze["classi"]}
-    assert minimi == {"frigo": 12.0, "condensa": 10.0, "bus": 5.0, "ramo_aria": 2.0, "potenza": 0.0}
+    assert minimi == {"frigo": 12.0, "condensa": 10.0, "bus": 5.0, "ramo_aria": 2.0, "potenza": 0.0, "acqua": 0.0}
 
 
 def test_l_eccesso_non_conta_il_rumore_della_virgola_mobile() -> None:

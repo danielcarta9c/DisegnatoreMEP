@@ -100,6 +100,10 @@ GRAVITA: dict[IssueSeverity, str] = {
 }
 
 ESTENSIONI_DA_CONSEGNARE = (".pdf", ".dxf", ".md", ".jpg")
+
+NON_DA_CONSEGNARE = frozenset({"costo-minuteria.md", "costo-minuteria.json"})
+"""Il costo della minuteria e' interno a Nove C (REL-021): non si consegna, nemmeno se
+qualcuno lo sposta accanto alla distinta."""
 """Quello che il progettista riceve: il PDF, il DXF, i rilievi, il logo del cartiglio, e
 il PDF della distinta (REL-015, I-232: niente piu' Excel). L'SVG resta nella cartella di
 lavoro (collaudo T2 di REL-012, §1). Il logo no: il DXF lo nomina (`graphics.dxf`), e
@@ -117,6 +121,8 @@ class Cartelle:
     naming: Path
     cartiglio: Path
     """Il modello del cartiglio Nove C, con il logo accanto (REL-002)."""
+    listino: Path | None = None
+    """Il listino della minuteria (REL-019, D-235), che `distinta --costo` legge."""
 
 
 FASCI = ("simboli", "catalogo", "regole")
@@ -181,6 +187,7 @@ def cartelle_della_skill(radice: Path) -> Cartelle:
         regole=aperti / "regole",
         naming=dati / "naming",
         cartiglio=dati / "cartiglio" / "Cartiglio_NoveC_A3.json",
+        listino=radice / "riferimenti" / "listino-minuteria.md",
     )
 
 
@@ -192,6 +199,7 @@ def cartelle_del_repository(radice: Path) -> Cartelle:
         regole=radice / "rules" / "hydronic",
         naming=radice / "naming",
         cartiglio=radice / "assets" / "cartigli" / "Cartiglio_NoveC_A3.json",
+        listino=radice / "skill" / "distinta" / "LISTINO-MINUTERIA.md",
     )
 
 
@@ -1354,6 +1362,8 @@ def consegna(cartelle: Path | Sequence[Path], destinazione: Path) -> list[Path]:
         for percorso in sorted(cartella.iterdir()):
             if not (percorso.is_file() and percorso.suffix in ESTENSIONI_DA_CONSEGNARE):
                 continue
+            if percorso.name in NON_DA_CONSEGNARE:
+                continue
             gia = scelti.get(percorso.name)
             if gia is not None and gia.read_bytes() != percorso.read_bytes():
                 raise ValueError(
@@ -1492,6 +1502,15 @@ def costruisci_il_parser() -> argparse.ArgumentParser:
         "l'offerta a corpo (I-262)",
     )
     distinta.add_argument(
+        "--costo",
+        action="store_true",
+        help="anche il costo della minuteria a prezzi del listino (uso interno Nove C, non va all'installatore): "
+        "costo-minuteria.md e .json nella sottocartella interno/, che consegna non copia",
+    )
+    distinta.add_argument(
+        "--listino", type=Path, help="con --costo, un altro listino della minuteria (di default quello della skill)"
+    )
+    distinta.add_argument(
         "--fornitura",
         help="chi fornisce che cosa in questa offerta, es. apparecchiature=installatore; «confermata» per le "
         "predefinite; senza, le predefinite da confermare",
@@ -1558,6 +1577,7 @@ def _distinta(args: argparse.Namespace, cartelle: Cartelle) -> int:
         report=args.report,
         lista=args.lista,
         cartella_dei_simboli=cartelle.simboli,
+        listino=(args.listino or cartelle.listino) if (args.costo or args.listino) else None,
     )
 
 

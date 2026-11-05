@@ -116,6 +116,23 @@ def domande(
     return 2 if quante else 0
 
 
+def _il_costo(distinta: Distinta, listino: Path, uscita: Path) -> None:
+    """`--costo` (REL-021): la distinta prezzata col listino, in un file a parte."""
+    from .costo import prezza_la_distinta, scrivi_il_costo
+    from .listino import leggi_il_listino
+
+    costo = prezza_la_distinta(distinta, leggi_il_listino(listino))
+    titoli = {s["lettera"]: s["titolo"] for s in distinta.regole.distinta["sezioni"]}
+    scritti = scrivi_il_costo(costo, uscita, titoli)
+    print(
+        f"Costo della minuteria (uso interno, non va all'installatore): {costo.totale:.2f} € netti su "
+        f"{len(costo.righe) - len(costo.da_prezzare)} voci prezzate; {len(costo.da_prezzare)} DA PREZZARE, fuori dal "
+        "totale."
+    )
+    for percorso in scritti:
+        print(f"  {percorso}")
+
+
 def esegui(
     grafo: Path,
     uscita: Path,
@@ -128,6 +145,7 @@ def esegui(
     report: Path | None = None,
     lista: bool = False,
     cartella_dei_simboli: Path | None = None,
+    listino: Path | None = None,
 ) -> int:
     tabelle = tabelle_scelte(sul_foglio)
     distinta = _componi(
@@ -160,6 +178,8 @@ def esegui(
                 print(f"  - {avviso}")
         else:
             print("Il controllo dei report: nessun avviso.")
+    if listino is not None:
+        _il_costo(distinta, listino, uscita)
     if tabelle != TABELLE_DEL_FOGLIO:
         print(f"In tabelle-del-foglio.json: {', '.join(tabelle)}.")
     oltre = [e for e in distinta.verifica if e.esito == "oltre"]

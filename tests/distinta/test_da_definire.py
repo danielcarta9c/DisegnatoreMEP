@@ -81,28 +81,29 @@ def test_un_dato_del_pezzo_che_manca_resta_nel_testo_come_da_definire(
 def test_una_voce_senza_corredo_e_un_fluido_senza_regole_vanno_in_x(
     grafo_aa01: dict[str, Any], regole: RegoleDellaDistinta, nomi: tuple[dict[str, str], dict[str, str]]
 ) -> None:
-    """Un pezzo idronico in un grafo aria-aria: la distinta conta i pezzi (il numero
-    si sa) e chiede il resto, invece di tacere."""
-    grafo_aa01["networks"].append({"id": "acqua", "name": "Acqua di riscaldamento", "domain": "hydronic", "medium": "heating_water"})
+    """Pezzi e un fluido che le regole non conoscono (da REL-020 l'idronico ha le sue:
+    restano il solare e il gas): la distinta conta i pezzi (il numero si sa) e chiede il
+    resto, invece di tacere."""
+    grafo_aa01["networks"].append({"id": "gas", "name": "Gas", "domain": "gas", "medium": "natural_gas"})
     grafo_aa01["components"] += [
-        {"id": "pdc", "definition_id": "heat-pump-air-water", "tag": "PDC-01", "properties": {}},
-        {"id": "pompa", "definition_id": "pump-circulator", "tag": "P-01", "properties": {}},
+        {"id": "collettore-solare", "definition_id": "solar-collector", "tag": "CS-01", "properties": {}},
+        {"id": "regolatore", "definition_id": "plant-controller", "tag": "RG-01", "properties": {}},
     ]
     grafo_aa01["connections"].append(
         {
-            "id": "w-1",
-            "network_id": "acqua",
-            "endpoint_a": {"component_id": "pdc", "port_id": "supply"},
-            "endpoint_b": {"component_id": "pompa", "port_id": "a"},
+            "id": "g-1",
+            "network_id": "gas",
+            "endpoint_a": {"component_id": "collettore-solare", "port_id": "a"},
+            "endpoint_b": {"component_id": "regolatore", "port_id": "a"},
             "properties": {"lunghezza_m": 3},
         }
     )
     distinta = _distinta(grafo_aa01, regole, nomi)
     x = distinta.voci_della_sezione("X")
     assert [(v.testo.split(":")[0], v.quantita, v.fornitura) for v in x] == [
-        ("Linea di acqua di riscaldamento DA DEFINIRE (sezione)", 5.0, DA_DEFINIRE),
-        ("Pompa di calore aria-acqua", 1.0, DA_DEFINIRE),
-        ("Pompa di circolazione", 1.0, DA_DEFINIRE),
+        ("Linea di gas metano DA DEFINIRE (sezione)", 5.0, DA_DEFINIRE),
+        ("Collettore solare", 1.0, DA_DEFINIRE),
+        ("Regolatore d'impianto", 1.0, DA_DEFINIRE),
     ]
     assert all(v.da_definire and v.domande for v in x)
 

@@ -48,6 +48,12 @@ CALCOLI_CON_LA_LUNGHEZZA = frozenset(
 
 MARCA_E_MODELLO = "marca e modello"
 
+DATI_DEL_TUBO = ("pollice", "sezione")
+
+FLUIDI_D_ACQUA = frozenset({"heating_water", "cold_water", "domestic_hot_water", "solar_fluid"})
+"""I fluidi che corrono nei tubi d'acqua (REL-020)."""
+"""I dati di un pezzo in linea sull'acqua che vengono dal tubo, non dal pezzo (REL-020)."""
+
 PEZZO = "pezzo"
 TRATTO = "tratto"
 REGOLE = "regole"
@@ -93,6 +99,62 @@ class Voce:
     contributi: list[tuple[str, float]] = field(default_factory=list, repr=False)
     mancanti: list[Mancante] = field(default_factory=list, repr=False)
     """I dati che mancano a questa voce, uno per domanda (`Mancante`)."""
+    prezzo: "PrezzoDellaVoce | None" = field(default=None, repr=False)
+    """Con quali codici del listino della minuteria si prezza (REL-021); `None`: la
+    regola non lo dice."""
+
+
+@dataclass(frozen=True)
+class PrezzoDellaVoce:
+    """I codici del listino di una voce, scelti sui suoi dati (REL-021): per ogni
+    unita' della voce, `n` unita' di ciascun codice. `manca` dice perche' un codice
+    non c'e' (il dato che serve, o nessuna scelta che vale): la voce e' DA PREZZARE."""
+
+    codici: tuple[tuple[str, float], ...]
+    manca: str = ""
+    nota: str = ""
+
+
+def prezzo_della_voce(regola: Mapping[str, Any], valori: Mapping[str, Any]) -> PrezzoDellaVoce | None:
+    """I codici del listino della regola `regola` (il suo campo `prezzo`) sui dati
+    `valori`: un codice fisso, o la scelta per il valore di un dato (`per`), con la
+    prima espressione (`se`) che vale. Senza `prezzo` nella regola, `None`; con un
+    `prezzo` vuoto, DA PREZZARE (la voce non e' nel listino)."""
+    componenti = regola.get("prezzo")
+    if componenti is None:
+        return None
+    nota = str(regola.get("prezzo_nota") or "")
+    if not componenti:
+        return PrezzoDellaVoce((), "non e' nel listino", nota)
+    codici: list[tuple[str, float]] = []
+    for componente in componenti:
+        n = float(componente.get("n", 1))
+        if "codice" in componente:
+            codici.append((str(componente["codice"]), n))
+            continue
+        per = str(componente["per"])
+        if "{" in per:
+            # Piu' dati insieme: «{poli} {curva}{in_a} {tipo_differenziale}» → «2P C32 B».
+            testo, mancanti = riempi(per, valori)
+            if mancanti:
+                return PrezzoDellaVoce((), f"manca il dato «{mancanti[0]}»", nota)
+        else:
+            valore = valori.get(per)
+            if valore in (None, ""):
+                return PrezzoDellaVoce((), f"manca il dato «{per}»", nota)
+            testo = in_parole(valore) if isinstance(valore, float) else str(valore)
+        scelte = componente.get("scegli", [])
+        if scelte and all("almeno" in s for s in scelte):
+            # La taglia commerciale non minore del valore (il vaso da 24 l → quello da 25).
+            misura = numero(testo)
+            adatte = sorted((float(s["almeno"]), str(s["codice"])) for s in scelte if misura is not None and float(s["almeno"]) >= misura)
+            scelto = adatte[0][1] if adatte else None
+        else:
+            scelto = next((str(s["codice"]) for s in scelte if re.search(str(s["se"]), testo)), None)
+        if scelto is None:
+            return PrezzoDellaVoce((), f"nessuna voce del listino per {per} «{testo}»", nota)
+        codici.append((scelto, n))
+    return PrezzoDellaVoce(tuple(codici), "", nota)
 
 
 @dataclass(frozen=True)
@@ -316,8 +378,32 @@ def _minimo_della_classe(regole: RegoleDellaDistinta, fluido: str) -> Minimo | N
     return None
 
 
+def _se_manca(lavoro: _Lavoro, tratta: Tratta) -> float | None:
+    """La lunghezza da quotare assunta per un tratto senza lunghezza (REL-020): solo se
+    la classe del fluido la dice (`se_manca_m`) e nessuno dei capi e' una macchina, un
+    accumulo o un confine della centrale, la cui distanza la sa il progettista."""
+    for classe in lavoro.regole.lunghezze.get("classi", []):
+        if tratta.fluido in classe.get("fluidi", []) and classe.get("se_manca_m"):
+            if any(
+                (pezzo := lavoro.impianto.pezzi.get(capo)) is not None
+                and lavoro.regole.corredo.get(pezzo.voce, {}).get("stacco")
+                for capo in tratta.capi
+            ):
+                # Collaudo T4 di REL-021: la sicurezza, il manometro, lo sfiato si avvitano
+                # sul tee (o sul loro rubinetto): niente tubo.
+                return 0.0
+            for capo in tratta.capi:
+                pezzo = lavoro.impianto.pezzi.get(capo)
+                corredo = lavoro.regole.corredo.get(pezzo.voce) if pezzo else None
+                if corredo is None or corredo.get("apparecchiatura") or corredo.get("confine"):
+                    return None
+            return float(classe["se_manca_m"])
+    return None
+
+
 def _lunghezze(lavoro: _Lavoro) -> None:
     regola = lavoro.regole.lunghezze["regola"]
+    assunti: list[str] = []
     segue = {str(s["fluido"]): s for s in lavoro.regole.lunghezze.get("segue", [])}
 
     def calcola(tratta: Tratta, altri: Sequence[Minimo]) -> None:
@@ -331,7 +417,12 @@ def _lunghezze(lavoro: _Lavoro) -> None:
         if scritto:
             minimi.append(Minimo(scritto, "minimo scritto sul tratto"))
         minimi.extend(altri)
-        esito = da_quotare(tratta.lunghezza_m, regola, minimi)
+        della_regola = regola
+        for classe in lavoro.regole.lunghezze.get("classi", []):
+            if tratta.fluido in classe.get("fluidi", []) and "aggiunta_m" in classe:
+                # REL-020: una classe con la sua aggiunta (l'acqua in centrale, tratti corti).
+                della_regola = {**regola, "aggiunta_m": float(classe["aggiunta_m"])}
+        esito = da_quotare(tratta.lunghezza_m, della_regola, minimi)
         tratta.da_quotare_m = esito.da_quotare
         tratta.calcolo_della_lunghezza = esito.calcolo
 
@@ -344,6 +435,15 @@ def _lunghezze(lavoro: _Lavoro) -> None:
             )
             lavoro.mancanti_dei_tratti.append(lavoro.del_tratto("lunghezza_m", tratta))
         if tratta.diretta:
+            continue
+        if tratta.lunghezza_m is None and (assunta := _se_manca(lavoro, tratta)) == 0.0:
+            # Uno stacco avvitato: un raccordo diretto, come un tratto con lunghezza 0.
+            tratta.lunghezza_m, tratta.senza_lunghezza = 0.0, ()
+            continue
+        if tratta.lunghezza_m is None and (assunta := _se_manca(lavoro, tratta)) is not None:
+            tratta.da_quotare_m = assunta
+            tratta.calcolo_della_lunghezza = f"assunti {in_parole(assunta)} m (tratto in centrale senza lunghezza)"
+            assunti.append(f"{tratta.num} {in_parole(assunta)} m")
             continue
         if tratta.lunghezza_m is None:
             lavoro.domande_dei_tratti.append(
@@ -360,6 +460,11 @@ def _lunghezze(lavoro: _Lavoro) -> None:
             )
         if tratta.fluido not in segue:
             calcola(tratta, ())
+    if assunti:
+        lavoro.avvisi.append(
+            f"Tratti in centrale senza lunghezza, quotati senza maggiorazione ({', '.join(assunti)}: regole delle "
+            "lunghezze, `se_manca_m`); se il progettista le sa, le scrive sul tratto."
+        )
     for tratta in lavoro.tratte:
         if tratta.diretta or tratta.lunghezza_m is None or tratta.fluido not in segue:
             continue
@@ -458,6 +563,7 @@ def _voce_del_fluido(
             da_definire=quantita is None or bool(mancanti),
             domande=domande,
             mancanti=dati,
+            prezzo=prezzo_della_voce(voce, {**valori, **(extra or {})}),
         )
 
     senza_lunghezza = [t for t in gruppo if t.da_quotare_m is None]
@@ -670,6 +776,14 @@ def _voci_dei_fluidi(lavoro: _Lavoro) -> None:
                     for chi in t.pezzi
                 )
             ]
+            # Una voce che vale solo sulle linee che partono da un certo pezzo (REL-021): la
+            # protezione nel quadro, non sui comandi che escono dalla scheda di una macchina.
+            da = set(voce["calcolo"].get("solo_le_linee_da", ()))
+            if da:
+                della_voce = [
+                    t for t in della_voce
+                    if any((pezzo := lavoro.impianto.pezzi.get(chi)) is not None and pezzo.voce in da for chi in t.capi)
+                ]
             if not della_voce:
                 continue
             for gruppo in _gruppi(della_voce, raggruppa):
@@ -715,11 +829,35 @@ def _voci_dei_fluidi(lavoro: _Lavoro) -> None:
 # --- il corredo dei pezzi --------------------------------------------------------
 
 
-def _sezione_al_pezzo(lavoro: _Lavoro, pezzo: str) -> str | None:
-    for tratta in lavoro.tratte:
-        if pezzo in tratta.pezzi and tratta.sezione:
-            return tratta.sezione
-    return None
+def _sezione_al_pezzo(lavoro: _Lavoro, pezzo: str, fluido: str | None = None) -> str | None:
+    """La sezione del primo tratto che passa per il pezzo. Un pezzo d'acqua con un
+    attacco elettrico (circolatore, deviatrice) sta anche su una linea elettrica: il suo
+    tubo e' quello dell'acqua (REL-020), e un fluido dato sceglie i soli suoi tratti."""
+    tratte = [t for t in lavoro.tratte if pezzo in t.pezzi]
+    if fluido is not None:
+        tratte = [t for t in tratte if t.fluido == fluido]
+    else:
+        tratte = [t for t in tratte if t.fluido in FLUIDI_D_ACQUA] or tratte
+    con_la_sezione = [t for t in tratte if t.sezione]
+    return con_la_sezione[0].sezione if con_la_sezione else None
+
+
+def _dicitura_del_tubo(sezione: str) -> str:
+    """La sezione di un tubo d'acqua come la dice la tavola («multistrato MS 26×3»), se si
+    legge; se no com'e' scritta."""
+    from disegnatore_mep.diametri.tubi import tubo_dal_testo
+
+    tubo = tubo_dal_testo(sezione)
+    return tubo.dicitura if tubo else sezione
+
+
+def _pollice_del_tubo(sezione: str | None) -> str | None:
+    """Il pollice dei raccordi del tubo scritto nella sezione («MS 26×3» → «¾"»), dove il
+    calcolo non l'ha dato al pezzo (REL-020: un pezzo a tre vie, o il tubo del progettista)."""
+    from disegnatore_mep.diametri.tubi import tubo_dal_testo
+
+    tubo = tubo_dal_testo(sezione)
+    return tubo.pollici if tubo else None
 
 
 @dataclass
@@ -840,6 +978,66 @@ def _corredo(lavoro: _Lavoro) -> None:
     per_locale: dict[int, tuple[list[_Locale], list[Pezzo]]] = {}
     """Le righe contate per locale, con i locali e le bocchette senza locale."""
     senza_corredo: dict[tuple[str, str | None], list[Pezzo]] = {}
+
+    def aggiungi(
+        pezzo: Pezzo, voce: Mapping[str, Any], valori: Mapping[str, Any], quantita: float, chi: str, senza_locale: bool
+    ) -> None:
+        calcolo = voce["calcolo"]
+        testo, mancanti = riempi(str(voce["testo"]), valori)
+        sezione, fornitura = lavoro.sezione_e_fornitura(voce)
+        chiave = (sezione, testo, str(voce["um"]), fornitura)
+        riga = righe.get(chiave)
+        if riga is None:
+            riga = Voce(
+                sezione=chiave[0],
+                testo=testo,
+                um=chiave[2],
+                quantita=0.0,
+                fornitura=chiave[3],
+                regola=f"corredo/{pezzo.voce}/{voce['id']}",
+                fonte=str(voce["fonte_in_parole"]),
+                perche=str(voce["perche"]),
+                calcolo="",
+                da_definire=bool(mancanti),
+                prezzo=prezzo_della_voce(voce, valori),
+            )
+            righe[chiave] = riga
+            lavoro.voci.append(riga)
+        elif f"corredo/{pezzo.voce}/{voce['id']}" not in riga.regola.split(" + "):
+            riga.regola += f" + corredo/{pezzo.voce}/{voce['id']}"
+            if str(voce["fonte_in_parole"]) not in riga.fonte:
+                riga.fonte += f"; {voce['fonte_in_parole']}"
+        if calcolo["tipo"] == "per_locale":
+            per_locale[id(riga)] = _locali_serviti(lavoro, pezzo.voce)
+        riga.quantita = (riga.quantita or 0) + quantita
+        riga.contributi.append((chi, quantita))
+        for mancante in mancanti:
+            if mancante in DATI_DEL_TUBO:
+                # REL-020: il pollice e il tubo li da' il calcolo dei diametri, o il
+                # progettista con la `sezione` del tratto: non sono dati del pezzo.
+                domanda = (
+                    f"{pezzo.sigla} ({lavoro.nome_della_voce(pezzo.voce)}): su che tubo sta? Il tubo del suo "
+                    "tratto non c'e': i diametri non sono chiesti su quella rete, o il calcolo non ne ha la "
+                    "portata. Serve la `sezione` del tratto (es. «MS 32×3»)."
+                )
+                if domanda not in riga.domande:
+                    riga.domande.append(domanda)
+                if not any(pezzo.id in t.pezzi and not t.sezione for t in lavoro.tratte):
+                    # Il tubo dei suoi tratti c'e', ma non dice il pollice: si chiede sul pezzo.
+                    riga.mancanti.append(lavoro.del_pezzo("sezione", pezzo))
+                continue
+            domanda = f"{pezzo.sigla} ({lavoro.nome_della_voce(pezzo.voce)}): manca il dato «{mancante}» per «{testo}»."
+            riga.domande.append(domanda)
+            riga.mancanti.append(lavoro.del_pezzo(mancante, pezzo))
+        if senza_locale:
+            riga.da_definire = True
+            riga.domande.append(
+                f"{pezzo.sigla} ({lavoro.nome_della_voce(pezzo.voce)}): che locale serve? Serve `locale` sulla "
+                "bocchetta (o un'etichetta col nome del locale): le griglie di transito si contano per locale, "
+                "e intanto questa bocchetta ne conta una sua."
+            )
+            riga.mancanti.append(lavoro.del_pezzo("locale", pezzo))
+
     for pezzo in lavoro.impianto.pezzi.values():
         corredo = lavoro.regole.corredo.get(pezzo.voce)
         if corredo is None:
@@ -849,6 +1047,10 @@ def _corredo(lavoro: _Lavoro) -> None:
         valori: dict[str, Any] = {k: v for k, v in pezzo.proprieta.items() if v not in (None, "")}
         valori["sigla"] = pezzo.sigla
         valori.setdefault("sezione", _sezione_al_pezzo(lavoro, pezzo.id))
+        if lavoro.pollici.get(pezzo.id):
+            valori.setdefault("pollice", lavoro.pollici[pezzo.id])
+        elif (pollice := _pollice_del_tubo(valori.get("sezione"))) is not None:
+            valori.setdefault("pollice", pollice)
         for voce in corredo.get("voci", []):
             calcolo = voce["calcolo"]
             n = float(calcolo["n"])
@@ -859,6 +1061,16 @@ def _corredo(lavoro: _Lavoro) -> None:
                     t for t in lavoro.tratte if t.fluido == calcolo["fluido"] and not t.diretta and pezzo.id in t.capi
                 ]
                 quantita = n * len(linee)
+                if linee and "{sezione}" in str(voce["testo"]):
+                    # REL-020: le linee che arrivano al pezzo possono avere tubi diversi, e
+                    # ciascuna porta il suo: una riga per tubo.
+                    per_sezione: dict[str | None, int] = {}
+                    for linea in linee:
+                        per_sezione[linea.sezione] = per_sezione.get(linea.sezione, 0) + 1
+                    if len(per_sezione) > 1 or next(iter(per_sezione)) != valori.get("sezione"):
+                        for sezione_della_linea, quante in per_sezione.items():
+                            aggiungi(pezzo, voce, {**valori, "sezione": sezione_della_linea}, n * quante, chi, False)
+                        continue
             elif calcolo["tipo"] == "per_locale":
                 locali, _ = _locali_serviti(lavoro, pezzo.voce)
                 suo = next((locale for locale in locali if pezzo in locale.pezzi), None)
@@ -872,45 +1084,7 @@ def _corredo(lavoro: _Lavoro) -> None:
                 quantita = n
             if not quantita:
                 continue
-            testo, mancanti = riempi(str(voce["testo"]), valori)
-            sezione, fornitura = lavoro.sezione_e_fornitura(voce)
-            chiave = (sezione, testo, str(voce["um"]), fornitura)
-            riga = righe.get(chiave)
-            if riga is None:
-                riga = Voce(
-                    sezione=chiave[0],
-                    testo=testo,
-                    um=chiave[2],
-                    quantita=0.0,
-                    fornitura=chiave[3],
-                    regola=f"corredo/{pezzo.voce}/{voce['id']}",
-                    fonte=str(voce["fonte_in_parole"]),
-                    perche=str(voce["perche"]),
-                    calcolo="",
-                    da_definire=bool(mancanti),
-                )
-                righe[chiave] = riga
-                lavoro.voci.append(riga)
-            elif f"corredo/{pezzo.voce}/{voce['id']}" not in riga.regola.split(" + "):
-                riga.regola += f" + corredo/{pezzo.voce}/{voce['id']}"
-                if str(voce["fonte_in_parole"]) not in riga.fonte:
-                    riga.fonte += f"; {voce['fonte_in_parole']}"
-            if calcolo["tipo"] == "per_locale":
-                per_locale[id(riga)] = _locali_serviti(lavoro, pezzo.voce)
-            riga.quantita = (riga.quantita or 0) + quantita
-            riga.contributi.append((chi, quantita))
-            for mancante in mancanti:
-                domanda = f"{pezzo.sigla} ({lavoro.nome_della_voce(pezzo.voce)}): manca il dato «{mancante}» per «{testo}»."
-                riga.domande.append(domanda)
-                riga.mancanti.append(lavoro.del_pezzo(mancante, pezzo))
-            if senza_locale:
-                riga.da_definire = True
-                riga.domande.append(
-                    f"{pezzo.sigla} ({lavoro.nome_della_voce(pezzo.voce)}): che locale serve? Serve `locale` sulla "
-                    "bocchetta (o un'etichetta col nome del locale): le griglie di transito si contano per locale, "
-                    "e intanto questa bocchetta ne conta una sua."
-                )
-                riga.mancanti.append(lavoro.del_pezzo("locale", pezzo))
+            aggiungi(pezzo, voce, valori, quantita, chi, senza_locale)
     for riga in righe.values():
         if id(riga) in per_locale:
             locali, senza = per_locale[id(riga)]
@@ -1254,6 +1428,11 @@ def componi_la_distinta(
         fornitura=fornitura or la_fornitura(regole),
         pollici=tubi.pollici,
     )
+    for tratta in lavoro.tratte:
+        if tratta.fluido in FLUIDI_D_ACQUA and tratta.sezioni:
+            # REL-020: «MS 26×3» del progettista e «multistrato MS 26×3» della tavola sono lo
+            # stesso tubo, e fanno una riga sola.
+            tratta.sezioni = tuple(dict.fromkeys(_dicitura_del_tubo(s) for s in tratta.sezioni))
     if impianto.esclusi:
         lavoro.avvisi.append(f"Esistenti, fuori dalla distinta: {', '.join(impianto.esclusi)}.")
     _ordina_e_numera(lavoro)

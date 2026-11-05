@@ -1,7 +1,7 @@
 {
   "id": "lunghezze",
   "versione": "1.1.0",
-  "nota": "La regola delle lunghezze da quotare. La lunghezza di un tratto è un dato del progettista (`lunghezza_m` della tubazione: la lunghezza stimata, dalla pianta o dal sopralluogo); la distinta la maggiora così: L da quotare = (L + aggiunta) × fattore, arrotondata per eccesso al passo, mai sotto il minimo del fluido né sotto il minimo che il progettista scrive sul tratto (`lunghezza_minima_m`). Un tratto con `lunghezza_m` 0 è un raccordo diretto (il plenum montato sulla macchina, un cablaggio di fabbrica): niente materiale e niente maggiorazione.",
+  "nota": "La regola delle lunghezze da quotare. La lunghezza di un tratto è un dato del progettista (`lunghezza_m` della tubazione: la lunghezza stimata, dalla pianta o dal sopralluogo); la distinta la maggiora così: L da quotare = (L + aggiunta) × fattore, arrotondata per eccesso al passo, mai sotto il minimo del fluido né sotto il minimo che il progettista scrive sul tratto (`lunghezza_minima_m`). Un tratto con `lunghezza_m` 0 è un raccordo diretto (il plenum montato sulla macchina, un cablaggio di fabbrica): niente materiale e niente maggiorazione. Da REL-020 una classe può dire `se_manca_m`: la lunghezza da quotare assunta, senza maggiorazione, per i suoi tratti senza `lunghezza_m`, solo fra pezzi che non sono apparecchiature né confini, con un avviso. Una classe può dire anche `aggiunta_m`, al posto di quella della regola, per i suoi fluidi.",
   "regola": {
     "aggiunta_m": 1.0,
     "fattore": 1.15,
@@ -63,6 +63,21 @@
       "fonte": "kit AA-01: lavoro/dimensionamento.py (i minimi delle linee E-1 ed E-3 sono scritti a mano per quel caso: qui diventano `lunghezza_minima_m` sul tratto)",
       "fonte_in_parole": "regola Nove C per le linee elettriche",
       "perche": "Nessun minimo generale: la posizione del quadro la dà il progettista, e se è incerta lo dice col minimo sul tratto."
+    },
+    {
+      "classe": "acqua",
+      "fluidi": [
+        "heating_water",
+        "domestic_hot_water",
+        "cold_water",
+        "solar_fluid"
+      ],
+      "minimo_m": 0.0,
+      "se_manca_m": 1.0,
+      "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
+      "fonte_in_parole": "stima Nove C per i tratti in centrale (da confermare)",
+      "perche": "In centrale i tratti fra due accessori sono corti e il progettista non li misura uno per uno: senza lunghezza se ne quota 1 m, senza maggiorazione, e la distinta lo dice. Un tratto che arriva a una macchina, a un accumulo o a un confine della centrale (terminali, utenze, rete esistente) la lunghezza la vuole dal progettista. La maggiorazione dell'acqua non aggiunge il metro per tratto della regola generale (pensato per le linee lunghe dell'aria e del frigorifero): in centrale i tratti sono tanti e corti, e il metro in più li raddoppierebbe; resta il 15% e l'arrotondamento.",
+      "aggiunta_m": 0.0
     }
   ],
   "segue": [

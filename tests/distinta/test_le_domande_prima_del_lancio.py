@@ -119,7 +119,8 @@ def test_le_domande_sono_in_parole_senza_codici_interni(tmp_path: Path) -> None:
         assert not re.findall(r"\b[0-9a-f]{16}\b", stampa)
         assert not re.findall(r"\b(?:fluidi|corredo|attivita)/", stampa)
         assert "DA DEFINIRE (" not in stampa and "`" not in stampa
-    assert "non ha regole nella distinta" in stampa, "l'idronico senza regole si dice"
+    assert "«Regolatore d'impianto» (RG-01) non ha il corredo di posa" in stampa, "quello senza regole si dice"
+    assert "non ha regole nella distinta" not in stampa, "da REL-020 l'acqua ha le sue regole"
 
 
 def test_i_dati_di_macchina_si_chiedono_anche_senza_la_lunghezza(

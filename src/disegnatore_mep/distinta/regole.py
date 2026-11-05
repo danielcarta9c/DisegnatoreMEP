@@ -22,6 +22,7 @@ non li conferma (o li cambia) con `--fornitura`.
 
 import hashlib
 import json
+import re
 from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
@@ -204,6 +205,39 @@ def _ha_fonte_e_perche(voce: Mapping[str, Any], dove: str, difetti: list[str]) -
             difetti.append(f"{dove}: manca «{chiave}»")
 
 
+def _controlla_il_prezzo(prezzo: object, dove: str, difetti: list[str]) -> None:
+    """Il `prezzo` di una voce (REL-021): una lista di codici del listino, ciascuno fisso
+    (`codice`) o scelto sul valore di un dato (`per`, `scegli` con le sue `se`)."""
+    if prezzo is None:
+        return
+    if not isinstance(prezzo, list):
+        difetti.append(f"{dove}: «prezzo» e' una lista di codici del listino")
+        return
+    for componente in prezzo:
+        if not isinstance(componente, dict) or not isinstance(componente.get("n", 1), int | float):
+            difetti.append(f"{dove}: un codice del «prezzo» vuole «codice» o «per» e «scegli», e un «n» numerico")
+            continue
+        if isinstance(componente.get("codice"), str) and componente["codice"]:
+            continue
+        scegli = componente.get("scegli")
+        if not isinstance(componente.get("per"), str) or not isinstance(scegli, list) or not scegli:
+            difetti.append(f"{dove}: un codice del «prezzo» vuole «codice» o «per» e «scegli»")
+            continue
+        for scelta in scegli:
+            if "almeno" in scelta:
+                if not isinstance(scelta["almeno"], int | float):
+                    difetti.append(f"{dove}: «almeno» del «prezzo» vuole un numero")
+                if not isinstance(scelta.get("codice"), str) or not scelta["codice"]:
+                    difetti.append(f"{dove}: una scelta del «prezzo» senza «codice»")
+                continue
+            try:
+                re.compile(str(scelta.get("se")))
+            except re.error as errore:
+                difetti.append(f"{dove}: l'espressione {scelta.get('se')!r} del «prezzo» non si legge ({errore})")
+            if not isinstance(scelta.get("codice"), str) or not scelta["codice"]:
+                difetti.append(f"{dove}: una scelta del «prezzo» senza «codice»")
+
+
 def _controlla_la_voce(
     voce: Mapping[str, Any],
     dove: str,
@@ -221,6 +255,7 @@ def _controlla_la_voce(
             difetti.append(f"{dove}: manca «{chiave}»")
     if voce.get("sezione") not in lettere:
         difetti.append(f"{dove}: la sezione {voce.get('sezione')!r} non e' fra quelle di distinta.json")
+    _controlla_il_prezzo(voce.get("prezzo"), dove, difetti)
     calcolo = voce.get("calcolo")
     if calcoli and (not isinstance(calcolo, dict) or calcolo.get("tipo") not in calcoli):
         tipo = calcolo.get("tipo") if isinstance(calcolo, dict) else calcolo

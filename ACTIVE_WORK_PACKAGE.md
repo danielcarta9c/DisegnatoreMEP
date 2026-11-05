@@ -1,48 +1,41 @@
-# REL-018 — Le protezioni elettriche sulla tavola dell'elettrico
+# REL-020 e REL-021 — La distinta idronica, e la distinta prezzata col listino
 
-> **Scritto il 4 novembre 2026**, dopo la fusione della 1.11.0 (`REL-017`, PR #86, I-282). Il PO, sulla tavola uscita
-> in sessione per una commessa: «è uscita senza le protezioni elettriche (che interruttori ecc... ) non so mi sembra ci
-> siamo persi qualcosa rispetto al lavoro fatto sulla parte aria» (I-278). Verificato: il catalogo non ha mai avuto le
-> protezioni; l'aria-aria porta quadro, sezionatore e la scritta del cavo come dato del progettista.
+> **Scritto il 5 novembre 2026**, dopo `REL-019` (il listino della minuteria nella skill). Il PO: «Mentre gli agenti
+> completano il listino puoi partire con rel-019 finito questo passa direttamente a rel-020 così correli tutto il
+> corredo mep, idronico elettrico areaulico e espansione diretta. Al termine fai più test diversi anche con sub agenti
+> freschi e verifica se i prezzi ti tornano realistici (esempio una pdc da 12 kw con sistema a 3 vie completata noi
+> abbiamo come capex di minuteria tubi e elettrici sui 1700€, esclusi volani termici bollitori e pdc che li compro a
+> parte). Poi fai merge e rilascia skill rev nuova da installare» (I-287).
 
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
-**Stato:** **CONSEGNATO** (5 novembre 2026) — fuso con la PR #87, la 1.12.1 (I-283, D-234). **Il pacchetto successivo non è scelto**: si chiede al PO (le candidate sono in `HANDOFF.md`).
-**Base:** `main` dopo la PR #86 (la 1.11.0).
-**Ramo:** quello che l'ambiente della sessione assegna.
-**Approvazione della fusione:** **del PO**, guardando le tavole (D-146, D-147).
+**Stato:** **CONSEGNATO** (5 novembre 2026) — la 1.14.0, fusa su disposizione del PO (I-287). **Il pacchetto
+successivo non è scelto**: si chiede al PO (le candidate sono in `HANDOFF.md` e in `docs/collaudi/REL-021/RAPPORTO.md`).
+**Base:** `main` dopo la PR #87 (la 1.12.1), con `REL-019` (PR #88) sotto.
+**Ramo:** `claude/distinta-idronica-prezzata`.
 
-## Le fonti (OneDrive del PO, non nel repository: si citano con la pagina)
+## REL-020 — il corredo idronico della distinta (D-236, proposta della sessione)
 
-- Manuale ThermaX R290 6-15 kW, §7.4 p. 55: corrente massima e cablaggio per taglia (6 kW 16 A 4 mm²; 9 kW 20,5 A
-  4 mm²; 12 e 15 kW monofase 30 A 6 mm²; 12 e 15 kW trifase 14 A 2,5 mm²); p. 5 e 51: sezionamento onnipolare,
-  differenziale 30 mA ad alta velocità, compatibile con l'inverter, alimentazione dedicata.
-- Specifica tecnica di installazione PdC Shenling Nove C Rev. 01, §3.2–3.4: magnetotermico differenziale bipolare,
-  curva C, Idn 30 mA, tipo B, ad alta velocità, nel quadro, con targhetta; niente sezionatore locale come regola;
-  tabella §3.3 (9 kW C25/B25 3G4; 12 kW C25/B25 3G4; 15 kW C32/B40 3G6) con «se targa o manuale chiedono valori
-  maggiori vale il maggiore»; linee di servizio 3G1,5.
+- La sezione **I** «Circuito idraulico»: ogni voce idronica del catalogo ha il suo corredo (tutte tranne collettore
+  solare, regolatore d'impianto e sonda esterna, che restano in X). Pompa di calore, accumuli e bollitori sono
+  apparecchiature (A); gli accessori in linea portano sé stessi del pollice del tubo e i raccordi a pressare; le
+  derivazioni un tee; gli stacchi di servizio si avvitano sul tee; i terminali e la rete esistente sono confini.
+- Le linee d'acqua (riscaldamento, acqua calda e fredda sanitaria): tubo, gomiti (uno ogni 3 m), collari (uno ogni
+  1,5 m), un manicotto di riserva, guaina; nastro e sigillanti una volta.
+- Le valvole, i filtri, i giunti e i circolatori sono passanti: la linea da macchina a macchina è un tratto solo. I
+  tratti corti in centrale senza lunghezza valgono 1 m (`se_manca_m`), con un avviso; l'acqua non aggiunge il metro
+  per tratto della maggiorazione.
+- Le domande dei tubi d'acqua si dicono per rete, quando i tratti sono tanti.
 
-## Le cose da fare
+## REL-021 — la distinta prezzata (D-236)
 
-1. **Il pezzo**: interruttore magnetotermico differenziale, passante sulla linea all'uscita del quadro, sigla QF-nn,
-   in tabella (poli, curva e In, Idn, tipo) e in legenda, solo sulla tavola dell'elettrico. Simbolo: **proposta della
-   sessione**, da giudicare sulla tavola (il PO, alla domanda «simbolo QF-nn o scritta?», ha detto «vai avanti»).
-2. **I valori per le Shenling** quando il progettista non li dà: la tabella §3.3 con la regola «vale il maggiore» del
-   manuale — il 12 kW monofase va a **C32, differenziale tipo B 40 A, 3G6** (manuale 30 A e 6 mm²; assunzione detta al
-   PO e non corretta). Gli stessi dati riempiono la tabella dell'elettrico della macchina (alimentazione, corrente
-   massima, cavo minimo). 6 kW e trifase: fuori dalla specifica, si propongono dal manuale e si dichiarano.
-3. **Gli avvisi**: una protezione o un cavo dichiarati sotto il manuale (la corrente massima, la sezione) sono un
-   avviso di `completa` (il caso della commessa da 15 kW protetta C25).
-4. **Il sezionatore locale**: di regola no (specifica §3.2); Capire lo mette solo se il testo lo chiede.
-5. **La distinta**: la voce dell'interruttore (la P15 della specifica) con la sua dicitura.
-6. Le istruzioni di Capire e Comporre; le prove; la villetta di riferimento con QF-01 sulla linea della PdC.
+- Ogni voce di materiale delle regole (idronico, elettrico, aria, frigorifero, condensa) ha il suo `prezzo`: un codice
+  del listino, o la scelta sul valore di un dato (pollice, tubo, sezione del cavo, taglia del vaso, protezione).
+- `mep.py distinta … --costo` scrive `interno/costo-minuteria.md` e `.json`: il costo a listino del materiale, escluse
+  apparecchiature, opere e attività; le voci DA PREZZARE fuori dal totale, ciascuna col suo perché. `consegna` non
+  copia il costo. Il documento per l'installatore resta senza prezzi (D-235).
 
-## Fuori
+## Le misure alla consegna
 
-- Il calcolo generale di cavi e protezioni per macchine qualsiasi (portata del cavo, caduta di tensione): **I-248**.
-- Le protezioni delle linee di servizio (circolatori, valvole): solo se il progettista le dichiara; la regola è da
-  chiedere al PO.
-
-## Criteri di accettazione
-
-Le tavole per prime; suite a 0 failed senza skip o xfail nuovi; `ruff check src tests` verde; il banco di `REL-011`
-fra `main` e il ramo; nessun dato di cliente nel diff; `tests/test_le_release.py` verde se c'è una release.
+- Suite intera, ruff, costruzione della skill e `tests/test_le_release.py`: in `HANDOFF.md`.
+- I collaudi con quattro agenti freschi e il confronto col riferimento del PO: `docs/collaudi/REL-021/RAPPORTO.md`.
+- Le tavole non cambiano: il pacchetto non tocca il disegno.

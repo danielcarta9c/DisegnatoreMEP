@@ -1,23 +1,21 @@
-# L'ultima release: 1.12.1
+# L'ultima release: 1.14.0
 
-`DisegnatoreMEP-v1.12.1.zip` — sha256 `2a3a66a9d86034ee…`, 147 file — è `REL-018`, con le tre scelte di D-234: **le protezioni elettriche sulla
-tavola dell'elettrico** (I-278). Si carica come ogni skill personale, dallo ZIP così com'è.
+`DisegnatoreMEP-v1.14.0.zip` — sha256 `af0c5451bf57de42…`, 150 file — è `REL-019`, `REL-020` e `REL-021` (I-284 …
+I-287, D-235, D-236): **la distinta della parte idronica e il costo della minuteria**. Si carica come ogni skill
+personale, dallo ZIP così com'è.
 
-Rispetto alla 1.11.0 (la 1.12.0 aveva il 6 kW a C16; la 1.12.1 lo porta a C20, scrive in Capire il differenziale separato
-con la corrente del magnetotermico, e lascia le linee di servizio protette solo se dichiarate):
-- **l'interruttore magnetotermico differenziale** (`circuit-breaker-rcbo`, sigla QF-nn) in serie sulla linea dal quadro
-  alla pompa di calore, stretto all'uscita del quadro; in tabella («2P C32 · Idn 30 mA tipo B») e in legenda; simbolo
-  proposto dalla sessione;
-- **i dati elettrici delle Shenling** (manuale ThermaX R290 §7.4 p. 55; specifica Nove C §3.2–3.4, «vale il maggiore»),
-  scritti da `completa` dove il progettista non li dà, e detti: 6 kW 16 A 3G4 C20 (D-234); 9 kW 20,5 A 3G4 C25; 12 e 15 kW
-  30 A 3G6 C32; tutti 230 V 1~, differenziale 30 mA tipo B; il trifase solo se dichiarato (14 A, 5G2,5, 4P C16);
-- **gli avvisi**: protezione sotto la corrente massima del manuale, cavo sotto la sua sezione, linea della pompa di
-  calore senza protezione;
-- **niente sezionatore locale** di regola (specifica §3.2): Capire lo mette solo se il testo lo chiede;
-- **la distinta** con la voce dell'interruttore.
+Rispetto alla 1.12.1:
+- **il listino della minuteria** nella skill (`riferimenti/listino-minuteria.md`): le 150 voci Tecnomat del PO e il
+  riferimento online delle 18 che mancavano;
+- **la distinta idronica**: la sezione I con il corredo di ogni pezzo d'acqua del catalogo — prima usciva tutto nella X;
+- **`distinta --costo`**: il costo a listino del materiale, in `interno/`, fuori dal documento per l'installatore e
+  dalla consegna; le voci che il listino non ha sono DA PREZZARE, col loro perché;
+- la protezione si chiede solo sulle linee che partono dal quadro.
 
-Il banco di regressione di `REL-011` (24 tavole idroniche): 24 su 24 con 0 tratte cedute e 0 rilievi bloccanti, tavole
-identiche alla 1.11.0. Le prove sono in `docs/collaudi/REL-018/protezione/` e nella villetta di `REL-015/pdc-regola/`.
+I collaudi (quattro agenti freschi) e il confronto col riferimento del PO sono in `docs/collaudi/REL-021/RAPPORTO.md`.
+Il disegno non cambia.
+
+Prima, la **1.12.1** (`REL-018`, D-234): le protezioni elettriche sulla tavola dell'elettrico.
 
 Prima, la **1.11.0** (`REL-017`, D-233): sulla tavola il tubo da comprare e la riduzione all'attacco.
 
