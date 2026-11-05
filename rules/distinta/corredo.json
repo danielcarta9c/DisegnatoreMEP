@@ -2296,15 +2296,15 @@
         {
           "id": "raccordi-in-linea",
           "sezione": "I",
-          "testo": "Raccordo diritto a pressare M {pollice} × tubo {sezione}",
+          "testo": "Raccordo diritto a pressare M × tubo {sezione}, dopo il giunto e la riduzione",
           "um": "n",
           "calcolo": {
             "tipo": "per_pezzo",
-            "n": 2
+            "n": 1
           },
           "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
           "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni attacco filettato in linea sul multistrato vuole un raccordo a pressare: due per un pezzo a due vie.",
+          "perche": "Il giunto si avvita sull'attacco della macchina (la riduzione sul giunto, se c'è): verso il tubo, un raccordo a pressare.",
           "prezzo": [
             {
               "per": "sezione",
@@ -4313,50 +4313,8 @@
       "apparecchiatura": true,
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-      "perche": "La pompa di calore la compra Nove C a parte: la distinta conta gli attacchi, le staffe e il trattamento dell'acqua.",
+      "perche": "La pompa di calore la compra Nove C a parte: la distinta conta gli attacchi, le staffe e il trattamento dell'acqua. Sugli attacchi della macchina si avvitano il giunto antivibrante e la riduzione: il raccordo al tubo lo porta il giunto (collaudo T1 di REL-021).",
       "voci": [
-        {
-          "id": "attacco-heating_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "heating_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
         {
           "id": "staffe-pdc",
           "sezione": "S",
@@ -4421,50 +4379,8 @@
       "apparecchiatura": true,
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-      "perche": "La pompa di calore la compra Nove C a parte: la distinta conta gli attacchi, le staffe e il trattamento dell'acqua.",
+      "perche": "La pompa di calore la compra Nove C a parte: la distinta conta gli attacchi, le staffe e il trattamento dell'acqua. Sugli attacchi della macchina si avvitano il giunto antivibrante e la riduzione: il raccordo al tubo lo porta il giunto (collaudo T1 di REL-021).",
       "voci": [
-        {
-          "id": "attacco-heating_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "heating_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
         {
           "id": "staffe-pdc",
           "sezione": "S",
@@ -4529,50 +4445,8 @@
       "apparecchiatura": true,
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-      "perche": "Il generatore lo compra Nove C a parte: la distinta conta gli attacchi e il trattamento dell'acqua.",
+      "perche": "Il generatore lo compra Nove C a parte: la distinta conta gli attacchi e il trattamento dell'acqua. Sugli attacchi della macchina si avvitano il giunto antivibrante e la riduzione: il raccordo al tubo lo porta il giunto (collaudo T1 di REL-021).",
       "voci": [
-        {
-          "id": "attacco-heating_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "heating_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
         {
           "id": "pulitore",
           "sezione": "I",
@@ -4618,50 +4492,8 @@
       "apparecchiatura": true,
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-      "perche": "Il generatore lo compra Nove C a parte: la distinta conta gli attacchi e il trattamento dell'acqua.",
+      "perche": "Il generatore lo compra Nove C a parte: la distinta conta gli attacchi e il trattamento dell'acqua. Sugli attacchi della macchina si avvitano il giunto antivibrante e la riduzione: il raccordo al tubo lo porta il giunto (collaudo T1 di REL-021).",
       "voci": [
-        {
-          "id": "attacco-heating_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "heating_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
         {
           "id": "pulitore",
           "sezione": "I",

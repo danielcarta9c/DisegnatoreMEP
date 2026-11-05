@@ -1,17 +1,19 @@
-# L'ultima release: 1.13.0
+# L'ultima release: 1.14.0
 
-`DisegnatoreMEP-v1.13.0.zip` — sha256 `0d86685a8bdd35de…`, 148 file — è `REL-019` (I-284 … I-286, D-235): **il listino
-interno della minuteria** nella skill. Si carica come ogni skill personale, dallo ZIP così com'è.
+`DisegnatoreMEP-v1.14.0.zip` — sha256 `af0c5451bf57de42…`, 150 file — è `REL-019`, `REL-020` e `REL-021` (I-284 …
+I-287, D-235, D-236): **la distinta della parte idronica e il costo della minuteria**. Si carica come ogni skill
+personale, dallo ZIP così com'è.
 
 Rispetto alla 1.12.1:
-- **`riferimenti/listino-minuteria.md`**, dal foglio del PO (`listino_minuteria_pdc_rev02.xlsx`):
-  - le 150 voci Tecnomat del 2 novembre;
-  - il riferimento online delle 18 voci che mancavano, con 167 riscontri, la forbice e la mediana per misura e il link
-    di ogni prezzo;
-  - quello che resta da prezzare;
-- **`SKILL.md`** lo nomina nella sezione della distinta: l'agente lo apre solo quando il progettista chiede un costo, e
-  una voce che manca resta «DA PREZZARE»;
-- **il documento della distinta per l'installatore resta senza prezzi**; disegno e distinta invariati.
+- **il listino della minuteria** nella skill (`riferimenti/listino-minuteria.md`): le 150 voci Tecnomat del PO e il
+  riferimento online delle 18 che mancavano;
+- **la distinta idronica**: la sezione I con il corredo di ogni pezzo d'acqua del catalogo — prima usciva tutto nella X;
+- **`distinta --costo`**: il costo a listino del materiale, in `interno/`, fuori dal documento per l'installatore e
+  dalla consegna; le voci che il listino non ha sono DA PREZZARE, col loro perché;
+- la protezione si chiede solo sulle linee che partono dal quadro.
+
+I collaudi (quattro agenti freschi) e il confronto col riferimento del PO sono in `docs/collaudi/REL-021/RAPPORTO.md`.
+Il disegno non cambia.
 
 Prima, la **1.12.1** (`REL-018`, D-234): le protezioni elettriche sulla tavola dell'elettrico.
 

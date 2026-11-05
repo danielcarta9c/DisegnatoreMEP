@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-11-05 — **la 1.13.0 è sul ramo `claude/listino-minuteria`** (`REL-019`, il listino della minuteria); la fusione è del PO. Su `main` c'è la 1.12.1 (PR #87).
+**Aggiornato:** 2026-11-05 — **la 1.14.0 è su `main`** (`REL-019` … `REL-021`, I-287). Il pacchetto successivo si chiede al PO.
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -11,21 +11,23 @@
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
 
-## ▶ Da dove riparte la prossima sessione — scritto il 5 novembre 2026, con la 1.13.0 sul ramo
+## ▶ Da dove riparte la prossima sessione — scritto il 5 novembre 2026, dopo la fusione della 1.14.0
 
-**Il pacchetto è `REL-019`** (`ACTIVE_WORK_PACKAGE.md`): il listino della minuteria nella skill. È sviluppato sul
-ramo `claude/listino-minuteria`, con la sua PR; **la fusione è del PO**. `REL-018` è archiviato in
-`docs/plans/pacchetti/REL-018.md`.
+**Nessun pacchetto attivo**: `REL-019`, `REL-020` e `REL-021` sono consegnati nella 1.14.0, fusa su disposizione del
+PO (I-287). Il prossimo lo sceglie il PO.
 
-- **Che cosa c'è nella 1.13.0**:
-  - `skill/distinta/LISTINO-MINUTERIA.md`, nella skill `riferimenti/listino-minuteria.md`, con le 150 voci Tecnomat
-    del PO e i 167 riscontri online delle 18 voci mancanti, con forbice e mediana;
-  - il capitolo di quello che resta da prezzare.
-  - Il disegno e la distinta sono invariati (D-235).
-- **I-284 misurato**: sulla villetta la distinta compone l'elettrico, e manda i 40 pezzi idronici fra le voci senza
-  regola. **Candidate per il prossimo pacchetto**: il corredo idronico della distinta, poi la distinta prezzata con il
-  listino (`distinta --listino`); più quelle che restano dalla 1.12.1.
-- **I numeri**: il prossimo input è **I-287**, la prossima decisione **D-236**.
+- **Che cosa c'è nella 1.14.0**: il listino della minuteria nella skill (D-235); la distinta idronica, sezione I
+  (D-236, proposta da confermare dal PO); `distinta --costo`, il costo a listino in `interno/`.
+- **Le misure alla fusione**: suite `2878 passed, 15 skipped, 10 xfailed`; ruff verde; ZIP 150 file,
+  `tests/test_le_release.py` verde; tavole invariate (il pacchetto non tocca il disegno).
+- **Il riferimento del PO**: la PdC 12 kW con la 3 vie del collaudo T1 esce a 1.799 € prezzati più 12 voci da
+  prezzare, contro i circa 1.700 € reali di Nove C: la skill sta sopra del 30-40% a listino completo
+  (`docs/collaudi/REL-021/RAPPORTO.md`). Da tarare su una distinta vera del PO.
+- **Candidate per il prossimo pacchetto** (da proporre al PO): le risposte della distinta sui pezzi che `completa`
+  crea, e la lunghezza sul tratto giusto quando `completa` spezza una tubazione (il difetto che pesa di più sull'uso);
+  le voci mancanti del listino (interruttore tipo B, antigelo, cavi 3G1,5, relè, …); la taratura delle stime del
+  corredo su una commessa vera; il resto dell'elenco del rapporto; le candidate di prima (I-248, sopra i 35 kW, TAC).
+- **I numeri**: il prossimo input è **I-288**, la prossima decisione **D-237**.
 
 ## Com'era il 5 novembre 2026, dopo la fusione della 1.12.1
 

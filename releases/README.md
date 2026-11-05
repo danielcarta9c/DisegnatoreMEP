@@ -92,3 +92,9 @@ Il comando della skill li riapre da sé.
   (`riferimenti/listino-minuteria.md`), dal foglio del PO: le 150 voci Tecnomat del 2 novembre e il riferimento online
   delle 18 voci mancanti, con forbice e mediana, fonte e link di ogni prezzo. Lo apre l'agente solo quando il progettista
   chiede un costo; il documento per l'installatore resta senza prezzi. Disegno e distinta invariati. 148 file.
+- **1.14.0** — 5 novembre 2026 (`REL-020`, `REL-021`, I-287, D-236): **la distinta della parte idronica e il costo
+  della minuteria** — la sezione I con il corredo di ogni voce idronica del catalogo (tubo della tavola, raccordi a
+  pressare, valvolame del pollice del tubo, tee, guaina, collari), i tratti corti in centrale a 1 m, gli stacchi senza
+  tubo; `distinta --costo` prezza col listino della minuteria tutto il materiale (idronico, elettrico, aria,
+  frigorifero) in `interno/costo-minuteria.md`, che `consegna` non copia; la protezione chiesta solo sulle linee dal
+  quadro. Collaudata con quattro agenti freschi (`docs/collaudi/REL-021/RAPPORTO.md`). Tavole invariate. 150 file.

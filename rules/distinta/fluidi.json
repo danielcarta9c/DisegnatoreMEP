@@ -596,11 +596,14 @@
             "proprieta": "protezione",
             "tranne_le_linee_con": [
               "circuit-breaker-rcbo"
+            ],
+            "solo_le_linee_da": [
+              "electrical-panel"
             ]
           },
           "fonte": "kit AA-01: RAPPORTO.md §7; REVISIONE-INDIPENDENTE.md rilievi 7 e 12 (la protezione della centrale a sé, verificare la targa della macchina)",
           "fonte_in_parole": "targa della macchina (dato del progettista)",
-          "perche": "Ogni linea dedicata ha la sua protezione nel quadro. La taglia dipende dalla targa della macchina: è un dato del progettista (`protezione` del tratto); se manca, la voce è DA DEFINIRE. Una linea che attraversa l'interruttore magnetotermico differenziale (`circuit-breaker-rcbo`, REL-018) non la conta: la protezione è quel pezzo, con la sua voce.",
+          "perche": "Ogni linea dedicata ha la sua protezione nel quadro. La taglia dipende dalla targa della macchina: è un dato del progettista (`protezione` del tratto); se manca, la voce è DA DEFINIRE. Una linea che attraversa l'interruttore magnetotermico differenziale (`circuit-breaker-rcbo`, REL-018) non la conta: la protezione è quel pezzo, con la sua voce. Solo sulle linee che partono dal quadro: un cavo di comando che parte dall'uscita della scheda di una macchina non ha una protezione nel quadro (collaudi T2 e T4 di REL-021).",
           "prezzo": [
             {
               "per": "protezione",
@@ -890,11 +893,11 @@
           "um": "n",
           "calcolo": {
             "tipo": "fisso",
-            "n": 2
+            "n": 1
           },
           "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
           "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Due manicotti di riserva per tubo, per una giunta imprevista.",
+          "perche": "Un manicotto di riserva per tubo, per una giunta imprevista (collaudo T1 di REL-021: due erano troppi).",
           "prezzo": [
             {
               "per": "sezione",
@@ -1127,11 +1130,11 @@
           "um": "n",
           "calcolo": {
             "tipo": "fisso",
-            "n": 2
+            "n": 1
           },
           "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
           "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Due manicotti di riserva per tubo, per una giunta imprevista.",
+          "perche": "Un manicotto di riserva per tubo, per una giunta imprevista (collaudo T1 di REL-021: due erano troppi).",
           "prezzo": [
             {
               "per": "sezione",
@@ -1320,11 +1323,11 @@
           "um": "n",
           "calcolo": {
             "tipo": "fisso",
-            "n": 2
+            "n": 1
           },
           "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
           "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Due manicotti di riserva per tubo, per una giunta imprevista.",
+          "perche": "Un manicotto di riserva per tubo, per una giunta imprevista (collaudo T1 di REL-021: due erano troppi).",
           "prezzo": [
             {
               "per": "sezione",

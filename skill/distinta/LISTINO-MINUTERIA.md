@@ -707,6 +707,20 @@ Famiglia: Elettrico - accessori.
 
 ## 3. Ancora da prezzare
 
+**Le voci che la distinta conta e il listino non ha** (dai collaudi della 1.14.0, 5 novembre 2026). Nel costo della
+minuteria escono DA PREZZARE, fuori dal totale; sono le prime da aggiungere al listino:
+
+- **elettrico**: l'interruttore magnetotermico differenziale **tipo B** della pompa di calore (2P C20, C25, C32), la voce
+  più cara della minuteria elettrica; il magnetotermico differenziale 1P+N C10 tipo A; il relè d'appoggio 10 A su guida
+  DIN; i cavi FG16OR16 **3G1,5**, 2×1,5, 4G1,5 e il bus 2×0,75; la scatola 503;
+- **idraulica**: la **valvola antigelo** 1" (due per pompa di calore); il gruppo di sicurezza sanitario; la valvola a
+  sfera ½"; il pozzetto portasonda ½"; il rubinetto portamanometro a tre vie; la riduzione filettata M × F (1¼" × 1");
+  il circolatore per ricircolo sanitario; la miscelatrice a tre vie con servomotore; i vasi oltre i 25 l; raccordi,
+  gomiti e guaina per il multistrato 16×2; la guaina dello spessore della nota della tavola (30 mm da 20 a 39 mm, 40 mm
+  da 40 a 59 mm: nel listino c'è solo il 19 mm, che il costo usa dichiarandolo);
+- **aria e frigorifero**: il plenum di ripresa con filtro, la canalina coprilinee 110×75 con i suoi accessori, le
+  fascette e i sostegni dei flessibili, il manicotto del flessibile, il collare delle linee frigorifere.
+
 Quello che manca, dopo il §1 e il §2:
 
 - **I60, guaina sp. 19 per tubo 54 esatto.** IT-FLEX e Armaflex esistono, ma senza prezzo

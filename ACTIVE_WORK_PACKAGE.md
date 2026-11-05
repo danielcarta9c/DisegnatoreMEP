@@ -1,45 +1,41 @@
-# REL-019 — Il listino della minuteria nella skill
+# REL-020 e REL-021 — La distinta idronica, e la distinta prezzata col listino
 
-> **Scritto il 5 novembre 2026**, dopo la fusione della 1.12.1 (`REL-018`, PR #87). Il PO ha dato il suo listino di
-> minuteria (`listino_minuteria_pdc_rev02.xlsx`: 150 voci Tecnomat del 2 novembre, 19 da completare) e ha chiesto come
-> procedere (I-284); poi di completare le voci senza prezzo per avere un riferimento verso gli installatori (I-285), e
-> di portare il listino nella skill come file Markdown (I-286, D-235).
+> **Scritto il 5 novembre 2026**, dopo `REL-019` (il listino della minuteria nella skill). Il PO: «Mentre gli agenti
+> completano il listino puoi partire con rel-019 finito questo passa direttamente a rel-020 così correli tutto il
+> corredo mep, idronico elettrico areaulico e espansione diretta. Al termine fai più test diversi anche con sub agenti
+> freschi e verifica se i prezzi ti tornano realistici (esempio una pdc da 12 kw con sistema a 3 vie completata noi
+> abbiamo come capex di minuteria tubi e elettrici sui 1700€, esclusi volani termici bollitori e pdc che li compro a
+> parte). Poi fai merge e rilascia skill rev nuova da installare» (I-287).
 
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
-**Stato:** **SVILUPPATO** sul ramo `claude/listino-minuteria` (la 1.13.0); **la fusione è del PO**.
-**Base:** `main` dopo la PR #87 (la 1.12.1).
-**Approvazione della fusione:** **del PO**. Questo pacchetto non cambia nessuna tavola: il PO guarda il listino.
+**Stato:** **CONSEGNATO** (5 novembre 2026) — la 1.14.0, fusa su disposizione del PO (I-287). **Il pacchetto
+successivo non è scelto**: si chiede al PO (le candidate sono in `HANDOFF.md` e in `docs/collaudi/REL-021/RAPPORTO.md`).
+**Base:** `main` dopo la PR #87 (la 1.12.1), con `REL-019` (PR #88) sotto.
+**Ramo:** `claude/distinta-idronica-prezzata`.
 
-## Che cosa si fa
+## REL-020 — il corredo idronico della distinta (D-236, proposta della sessione)
 
-1. **Il listino in Markdown**, `skill/distinta/LISTINO-MINUTERIA.md`: le 150 righe Tecnomat per famiglia, con le
-   stesse colonne del foglio. La colonna con l'IVA si toglie, perché è sempre il netto × 1,22, verificato su 150 righe
-   su 150.
-2. **Le 18 voci mancanti** (F04/F05 era già coperta da F01–F03), con riscontri online: negozio, articolo, confezione,
-   prezzo mostrato, IVA, netto per unità, link. Per voce e misura: il minimo, la mediana e il massimo.
-3. **Quello che resta senza prezzo**, in un capitolo a parte, con le misure che le note del rilievo Tecnomat danno come
-   non trovate.
-4. **Nella skill** come `riferimenti/listino-minuteria.md`, costruito da `scripts/costruisci-skill.py`. `SKILL.md` lo
-   nomina nella sezione della distinta e nella tabella dei file. L'agente lo apre solo quando il progettista chiede un
-   costo.
-5. **La 1.13.0**: versione, ZIP in `releases/`, `tests/test_le_release.py` verde.
+- La sezione **I** «Circuito idraulico»: ogni voce idronica del catalogo ha il suo corredo (tutte tranne collettore
+  solare, regolatore d'impianto e sonda esterna, che restano in X). Pompa di calore, accumuli e bollitori sono
+  apparecchiature (A); gli accessori in linea portano sé stessi del pollice del tubo e i raccordi a pressare; le
+  derivazioni un tee; gli stacchi di servizio si avvitano sul tee; i terminali e la rete esistente sono confini.
+- Le linee d'acqua (riscaldamento, acqua calda e fredda sanitaria): tubo, gomiti (uno ogni 3 m), collari (uno ogni
+  1,5 m), un manicotto di riserva, guaina; nastro e sigillanti una volta.
+- Le valvole, i filtri, i giunti e i circolatori sono passanti: la linea da macchina a macchina è un tratto solo. I
+  tratti corti in centrale senza lunghezza valgono 1 m (`se_manca_m`), con un avviso; l'acqua non aggiunge il metro
+  per tratto della maggiorazione.
+- Le domande dei tubi d'acqua si dicono per rete, quando i tratti sono tanti.
 
-## Criteri, con il loro comando
+## REL-021 — la distinta prezzata (D-236)
 
-- La skill si costruisce e passa i controlli: `python3 scripts/costruisci-skill.py --out <cartella>`.
-- `tests/skill`, `tests/test_le_release.py`, `tests/test_package.py` e la suite intera verdi; ruff verde.
-- Le 150 righe Tecnomat del file sono le 150 del foglio: lo misura lo script di conversione della sessione.
-- Il disegno e la distinta non cambiano: nessun file di `src/` o `rules/` cambia, oltre la versione.
+- Ogni voce di materiale delle regole (idronico, elettrico, aria, frigorifero, condensa) ha il suo `prezzo`: un codice
+  del listino, o la scelta sul valore di un dato (pollice, tubo, sezione del cavo, taglia del vaso, protezione).
+- `mep.py distinta … --costo` scrive `interno/costo-minuteria.md` e `.json`: il costo a listino del materiale, escluse
+  apparecchiature, opere e attività; le voci DA PREZZARE fuori dal totale, ciascuna col suo perché. `consegna` non
+  copia il costo. Il documento per l'installatore resta senza prezzi (D-235).
 
-## Che cosa non si fa
+## Le misure alla consegna
 
-- **Non si cambia il documento per l'installatore**: resta senza prezzi (D-213, I-232).
-- **La distinta prezzata** (`distinta --listino`: quantità × prezzo, confezioni intere, «DA PREZZARE») è un pacchetto a
-  parte. Va dopo il corredo idronico della distinta, perché oggi i pezzi idronici escono senza regola (I-284).
-
-## Il limite della sessione
-
-Le pagine dei negozi non si aprono dalla rete della sessione: i prezzi del §2 vengono dai riassunti del motore di
-ricerca. Sei ricerche di controllo: due hanno ritrovato lo stesso prezzo (cavo 3G6, RS e Leroy Merlin); una è coerente
-con i prezzi americani dello stesso codice (Caleffi 551007); tre non hanno ritrovato la riga. Il listino lo dice, nel
-§2.
+- Suite intera, ruff, costruzione della skill e `tests/test_le_release.py`: in `HANDOFF.md`.
+- I collaudi con quattro agenti freschi e il confronto col riferimento del PO: `docs/collaudi/REL-021/RAPPORTO.md`.
+- Le tavole non cambiano: il pacchetto non tocca il disegno.

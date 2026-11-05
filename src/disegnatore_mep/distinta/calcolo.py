@@ -776,6 +776,14 @@ def _voci_dei_fluidi(lavoro: _Lavoro) -> None:
                     for chi in t.pezzi
                 )
             ]
+            # Una voce che vale solo sulle linee che partono da un certo pezzo (REL-021): la
+            # protezione nel quadro, non sui comandi che escono dalla scheda di una macchina.
+            da = set(voce["calcolo"].get("solo_le_linee_da", ()))
+            if da:
+                della_voce = [
+                    t for t in della_voce
+                    if any((pezzo := lavoro.impianto.pezzi.get(chi)) is not None and pezzo.voce in da for chi in t.capi)
+                ]
             if not della_voce:
                 continue
             for gruppo in _gruppi(della_voce, raggruppa):
