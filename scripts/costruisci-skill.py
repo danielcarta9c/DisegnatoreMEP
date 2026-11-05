@@ -16,6 +16,7 @@ Che cosa ci mette, e da dove:
 | `SKILL.md` | `skill/SKILL.md` — l'ingresso |
 | `riferimenti/capire.md`, `comporre.md`, `rivedere.md`, `distinta.md`, `pianta.md` | le istruzioni in `skill/<pezzo>/ISTRUZIONI.md` |
 | `riferimenti/regole-del-piano.md` | `docs/regole-del-piano.md` |
+| `riferimenti/listino-minuteria.md` | `skill/distinta/LISTINO-MINUTERIA.md` — il listino interno della minuteria |
 | `scripts/mep.py` | `skill/scripts/mep.py` — il comando |
 | `scripts/disegnatore_mep/` | `src/disegnatore_mep/` — il motore, tutto |
 | `dati/simboli.json` | `assets/symbols/`, in un file solo |
@@ -335,6 +336,8 @@ def costruisci(uscita: Path) -> tuple[Path, Path]:
     regole = (ROOT / "docs" / "regole-del-piano.md").read_text(encoding="utf-8")
     titolo, _, resto = regole.partition("\n")
     _scrivi(riferimenti / "regole-del-piano.md", _con_l_indice(f"{titolo}\n\n{NOTA_DELLE_REGOLE}{resto}"))
+    listino = (ROOT / "skill" / "distinta" / "LISTINO-MINUTERIA.md").read_text(encoding="utf-8")
+    _scrivi(riferimenti / "listino-minuteria.md", _con_l_indice(listino))
 
     scripts = skill / "scripts"
     _copia(ROOT / "skill" / "scripts" / "mep.py", scripts / "mep.py")

@@ -7,7 +7,7 @@ compatibility: Richiede l'esecuzione del codice (claude.ai, Claude Cowork o Clau
 
 # Disegnatore MEP
 
-**Versione 1.12.1** — 5 novembre 2026.
+**Versione 1.13.0** — 5 novembre 2026.
 
 Il progettista ha già deciso e dimensionato l'impianto, e te lo descrive a parole. Tu ne fai la
 **tavola dello schema funzionale**: la leggi, chiedi quello che manca, la fai approvare, la componi e
@@ -374,6 +374,12 @@ DEFINIRE» e diventa una domanda: non inventi la quantità. Esce con **2** se ci
 definire. Le domande le hai fatte al passo 2 con `--domande`: al lancio restano «DA DEFINIRE» solo
 i dati che il progettista ha lasciato aperti.
 
+Se il progettista chiede **quanto costa la minuteria**, o un prezzo di riferimento per confrontare
+i preventivi, apri [riferimenti/listino-minuteria.md](riferimenti/listino-minuteria.md). È il
+listino interno di Nove C, con la data e la fonte di ogni prezzo. Quel conto lo dai al
+progettista e resta fuori dal documento per l'installatore, che non ha prezzi. Una voce che
+non è nel listino resta «DA PREZZARE»: non la stimi.
+
 ### Su richiesta — la pianta dei posizionamenti e dei tracciati
 
 Solo se il progettista l'ha chiesta e ti ha dato la planimetria. Leggi **per intero**
@@ -433,6 +439,7 @@ così basta un sì. Un messaggio per passo, non uno per domanda.
 | [riferimenti/rivedere.md](riferimenti/rivedere.md) | le istruzioni di Rivedere: dalla tavola ai vincoli | al passo 7 |
 | [riferimenti/regole-del-piano.md](riferimenti/regole-del-piano.md) | le regole del disegno, con le fonti | quando un rilievo cita una regola |
 | [riferimenti/distinta.md](riferimenti/distinta.md) | la distinta materiali per l'installatore | solo se il progettista la chiede |
+| [riferimenti/listino-minuteria.md](riferimenti/listino-minuteria.md) | il listino interno della minuteria, con data e fonte dei prezzi | solo se il progettista chiede un costo |
 | [riferimenti/pianta.md](riferimenti/pianta.md) | la pianta dei posizionamenti e dei tracciati | solo se il progettista la chiede |
 | `dati/` | simboli, catalogo, regole degli accessori e della distinta — un file ciascuno —, nomi, cartiglio, lo schema e un esempio della pianta | li legge il comando; una voce e un manifesto si leggono con `catalogo <id>` e `simbolo <id>` |
 | `scripts/mep.py` | il comando | si esegue, non si legge |

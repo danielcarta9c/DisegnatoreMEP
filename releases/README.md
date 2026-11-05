@@ -88,3 +88,7 @@ Il comando della skill li riapre da sé.
   protezione; niente sezionatore locale di regola. 147 file.
 - **1.12.1** — 5 novembre 2026 (D-234): le tre scelte delle protezioni — il 6 kW a C20, il differenziale separato con
   la corrente del magnetotermico (il «B40»), le linee di servizio protette solo se dichiarate. 147 file.
+- **1.13.0** — 5 novembre 2026 (`REL-019`, I-284 … I-286): **il listino interno della minuteria** nella skill
+  (`riferimenti/listino-minuteria.md`), dal foglio del PO: le 150 voci Tecnomat del 2 novembre e il riferimento online
+  delle 18 voci mancanti, con forbice e mediana, fonte e link di ogni prezzo. Lo apre l'agente solo quando il progettista
+  chiede un costo; il documento per l'installatore resta senza prezzi. Disegno e distinta invariati. 148 file.

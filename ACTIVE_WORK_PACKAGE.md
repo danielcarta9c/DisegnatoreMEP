@@ -1,48 +1,45 @@
-# REL-018 — Le protezioni elettriche sulla tavola dell'elettrico
+# REL-019 — Il listino della minuteria nella skill
 
-> **Scritto il 4 novembre 2026**, dopo la fusione della 1.11.0 (`REL-017`, PR #86, I-282). Il PO, sulla tavola uscita
-> in sessione per una commessa: «è uscita senza le protezioni elettriche (che interruttori ecc... ) non so mi sembra ci
-> siamo persi qualcosa rispetto al lavoro fatto sulla parte aria» (I-278). Verificato: il catalogo non ha mai avuto le
-> protezioni; l'aria-aria porta quadro, sezionatore e la scritta del cavo come dato del progettista.
+> **Scritto il 5 novembre 2026**, dopo la fusione della 1.12.1 (`REL-018`, PR #87). Il PO ha dato il suo listino di
+> minuteria (`listino_minuteria_pdc_rev02.xlsx`: 150 voci Tecnomat del 2 novembre, 19 da completare) e ha chiesto come
+> procedere (I-284); poi di completare le voci senza prezzo per avere un riferimento verso gli installatori (I-285), e
+> di portare il listino nella skill come file Markdown (I-286, D-235).
 
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
-**Stato:** **CONSEGNATO** (5 novembre 2026) — fuso con la PR #87, la 1.12.1 (I-283, D-234). **Il pacchetto successivo non è scelto**: si chiede al PO (le candidate sono in `HANDOFF.md`).
-**Base:** `main` dopo la PR #86 (la 1.11.0).
-**Ramo:** quello che l'ambiente della sessione assegna.
-**Approvazione della fusione:** **del PO**, guardando le tavole (D-146, D-147).
+**Stato:** **SVILUPPATO** sul ramo `claude/listino-minuteria` (la 1.13.0); **la fusione è del PO**.
+**Base:** `main` dopo la PR #87 (la 1.12.1).
+**Approvazione della fusione:** **del PO**. Questo pacchetto non cambia nessuna tavola: il PO guarda il listino.
 
-## Le fonti (OneDrive del PO, non nel repository: si citano con la pagina)
+## Che cosa si fa
 
-- Manuale ThermaX R290 6-15 kW, §7.4 p. 55: corrente massima e cablaggio per taglia (6 kW 16 A 4 mm²; 9 kW 20,5 A
-  4 mm²; 12 e 15 kW monofase 30 A 6 mm²; 12 e 15 kW trifase 14 A 2,5 mm²); p. 5 e 51: sezionamento onnipolare,
-  differenziale 30 mA ad alta velocità, compatibile con l'inverter, alimentazione dedicata.
-- Specifica tecnica di installazione PdC Shenling Nove C Rev. 01, §3.2–3.4: magnetotermico differenziale bipolare,
-  curva C, Idn 30 mA, tipo B, ad alta velocità, nel quadro, con targhetta; niente sezionatore locale come regola;
-  tabella §3.3 (9 kW C25/B25 3G4; 12 kW C25/B25 3G4; 15 kW C32/B40 3G6) con «se targa o manuale chiedono valori
-  maggiori vale il maggiore»; linee di servizio 3G1,5.
+1. **Il listino in Markdown**, `skill/distinta/LISTINO-MINUTERIA.md`: le 150 righe Tecnomat per famiglia, con le
+   stesse colonne del foglio. La colonna con l'IVA si toglie, perché è sempre il netto × 1,22, verificato su 150 righe
+   su 150.
+2. **Le 18 voci mancanti** (F04/F05 era già coperta da F01–F03), con riscontri online: negozio, articolo, confezione,
+   prezzo mostrato, IVA, netto per unità, link. Per voce e misura: il minimo, la mediana e il massimo.
+3. **Quello che resta senza prezzo**, in un capitolo a parte, con le misure che le note del rilievo Tecnomat danno come
+   non trovate.
+4. **Nella skill** come `riferimenti/listino-minuteria.md`, costruito da `scripts/costruisci-skill.py`. `SKILL.md` lo
+   nomina nella sezione della distinta e nella tabella dei file. L'agente lo apre solo quando il progettista chiede un
+   costo.
+5. **La 1.13.0**: versione, ZIP in `releases/`, `tests/test_le_release.py` verde.
 
-## Le cose da fare
+## Criteri, con il loro comando
 
-1. **Il pezzo**: interruttore magnetotermico differenziale, passante sulla linea all'uscita del quadro, sigla QF-nn,
-   in tabella (poli, curva e In, Idn, tipo) e in legenda, solo sulla tavola dell'elettrico. Simbolo: **proposta della
-   sessione**, da giudicare sulla tavola (il PO, alla domanda «simbolo QF-nn o scritta?», ha detto «vai avanti»).
-2. **I valori per le Shenling** quando il progettista non li dà: la tabella §3.3 con la regola «vale il maggiore» del
-   manuale — il 12 kW monofase va a **C32, differenziale tipo B 40 A, 3G6** (manuale 30 A e 6 mm²; assunzione detta al
-   PO e non corretta). Gli stessi dati riempiono la tabella dell'elettrico della macchina (alimentazione, corrente
-   massima, cavo minimo). 6 kW e trifase: fuori dalla specifica, si propongono dal manuale e si dichiarano.
-3. **Gli avvisi**: una protezione o un cavo dichiarati sotto il manuale (la corrente massima, la sezione) sono un
-   avviso di `completa` (il caso della commessa da 15 kW protetta C25).
-4. **Il sezionatore locale**: di regola no (specifica §3.2); Capire lo mette solo se il testo lo chiede.
-5. **La distinta**: la voce dell'interruttore (la P15 della specifica) con la sua dicitura.
-6. Le istruzioni di Capire e Comporre; le prove; la villetta di riferimento con QF-01 sulla linea della PdC.
+- La skill si costruisce e passa i controlli: `python3 scripts/costruisci-skill.py --out <cartella>`.
+- `tests/skill`, `tests/test_le_release.py`, `tests/test_package.py` e la suite intera verdi; ruff verde.
+- Le 150 righe Tecnomat del file sono le 150 del foglio: lo misura lo script di conversione della sessione.
+- Il disegno e la distinta non cambiano: nessun file di `src/` o `rules/` cambia, oltre la versione.
 
-## Fuori
+## Che cosa non si fa
 
-- Il calcolo generale di cavi e protezioni per macchine qualsiasi (portata del cavo, caduta di tensione): **I-248**.
-- Le protezioni delle linee di servizio (circolatori, valvole): solo se il progettista le dichiara; la regola è da
-  chiedere al PO.
+- **Non si cambia il documento per l'installatore**: resta senza prezzi (D-213, I-232).
+- **La distinta prezzata** (`distinta --listino`: quantità × prezzo, confezioni intere, «DA PREZZARE») è un pacchetto a
+  parte. Va dopo il corredo idronico della distinta, perché oggi i pezzi idronici escono senza regola (I-284).
 
-## Criteri di accettazione
+## Il limite della sessione
 
-Le tavole per prime; suite a 0 failed senza skip o xfail nuovi; `ruff check src tests` verde; il banco di `REL-011`
-fra `main` e il ramo; nessun dato di cliente nel diff; `tests/test_le_release.py` verde se c'è una release.
+Le pagine dei negozi non si aprono dalla rete della sessione: i prezzi del §2 vengono dai riassunti del motore di
+ricerca. Sei ricerche di controllo: due hanno ritrovato lo stesso prezzo (cavo 3G6, RS e Leroy Merlin); una è coerente
+con i prezzi americani dello stesso codice (Caleffi 551007); tre non hanno ritrovato la riga. Il listino lo dice, nel
+§2.
