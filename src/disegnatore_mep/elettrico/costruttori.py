@@ -17,7 +17,7 @@ Le fonti stanno sul OneDrive del PO, non nel repository, e si citano con la pagi
 **Vale il maggiore** (§3.3): il 12 kW monofase, che la specifica protegge C25 con un 3G4, ne
 assorbe 30 secondo il manuale e vuole 6 mm²: va a **C32 e 3G6**, come il 15 kW (assunzione
 detta al PO in REL-018 e non corretta). **Il 6 kW non e' nella specifica**: i suoi valori sono
-**proposti dal manuale** — 16 A e 4 mm², quindi C16 e 3G4 —, e cosi' le taglie trifase — 14 A
+**proposti dal manuale** — 16 A e 4 mm², quindi C20 e 3G4 (D-234: un C16 su 16 A massimi non lascia margine) —, e cosi' le taglie trifase — 14 A
 e 2,5 mm², quindi 4P C16 e 5G2,5 —, che si usano solo se il progettista scrive
 un'alimentazione a 400 V. Senza alimentazione dichiarata la macchina e' **monofase**, ed e'
 un'assunzione che `completa` dice.
@@ -108,7 +108,7 @@ def _trifase(fonte: str) -> LineaDelManuale:
 
 
 SHENLING_THERMAX_R290_LINEA: dict[tuple[float, int], LineaDelManuale] = {
-    (6.0, 1): _monofase(16, 4, "3G4", 16, "proposta dal manuale (§7.4 p. 55): la specifica non ha il 6 kW"),
+    (6.0, 1): _monofase(16, 4, "3G4", 20, "proposta dal manuale (§7.4 p. 55) e D-234: la specifica non ha il 6 kW"),
     (9.0, 1): _monofase(20.5, 4, "3G4", 25, "specifica §3.3 (C25/B25, 3G4)"),
     (12.0, 1): _monofase(
         30, 6, "3G6", 32, "specifica §3.3 (C25/B25, 3G4) col manuale (30 A, 6 mm²): vale il maggiore"
@@ -123,8 +123,8 @@ protezione e' il magnetotermico differenziale della specifica Nove C (§3.2–3.
 curva C, Idn 30 mA, tipo B, ad alta velocita'), con la taglia della tabella §3.3 e la
 regola «vale il maggiore»: il 12 kW sale da C25 e 3G4 a **C32 e 3G6**. Il 6 kW e le taglie
 trifase non sono nella specifica, e sono **proposte dal manuale**: la protezione e' la
-prima taglia commerciale non sotto la corrente massima (C16 per 16 A e per 14 A), quattro
-poli sul trifase."""
+taglia commerciale sopra la corrente massima — C20 per i 16 A del 6 kW, C16 per i 14 A del
+trifase (D-234) —, quattro poli sul trifase."""
 
 
 def _e_shenling(pezzo: ComponentInstance) -> bool:

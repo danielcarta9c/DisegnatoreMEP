@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-11-04 — **la 1.11.0 è su `main`** (PR #86, I-282). **Il pacchetto è `REL-018`**: le protezioni elettriche (I-278).
+**Aggiornato:** 2026-11-05 — **la 1.12.1 è su `main`** (PR #87, I-283). `REL-018` è consegnato; **il pacchetto successivo si chiede al PO**.
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -11,7 +11,22 @@
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
 
-## ▶ Da dove riparte la prossima sessione — scritto il 4 novembre 2026, dopo la fusione della 1.11.0
+## ▶ Da dove riparte la prossima sessione — scritto il 5 novembre 2026, dopo la fusione della 1.12.1
+
+**Nessun pacchetto attivo**: `REL-018` (le protezioni elettriche) è consegnato, e il prossimo lo sceglie il PO.
+
+- **Che cosa c'è nella 1.12.x** (PR #87): l'interruttore magnetotermico differenziale QF-nn sulla linea della pompa di
+  calore; i dati elettrici delle Shenling scritti da `completa` (`elettrico/costruttori.py`: manuale §7.4 p. 55 e
+  specifica Nove C §3.2–3.4, «vale il maggiore»; D-234: il 6 kW a C20); gli avvisi su protezione, cavo e linea senza
+  protezione; niente sezionatore locale di regola.
+- **Le misure alla fusione**: suite `2869 passed, 15 skipped, 10 xfailed`; ruff verde; banco 24/24 con 0 cedute e 0
+  bloccanti, tavole identiche alla 1.11.0; ZIP 147 file.
+- **Candidate per il prossimo pacchetto** (da proporre al PO, non da scegliere): **I-248** il dimensionamento generale
+  di cavi e protezioni (portata, caduta di tensione) e dei canali dell'aria; il materiale di base sopra i 35 kW (oltre MS
+  63×4,5); la sezione idronica della distinta; i rimasti di `REL-010` e `REL-009`; il prefisso TAC.
+- **I numeri**: il prossimo input è **I-284**, la prossima decisione **D-235**.
+
+## Com'era il 4 novembre 2026, dopo la fusione della 1.11.0
 
 **Il pacchetto è `REL-018`** (`ACTIVE_WORK_PACKAGE.md`): le protezioni elettriche sulla tavola dell'elettrico.
 `REL-017` è archiviato in `docs/plans/pacchetti/REL-017.md`.

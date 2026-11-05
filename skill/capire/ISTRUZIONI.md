@@ -773,6 +773,11 @@ e **una rete sola** `power_supply` per la linea:
   | tipo del differenziale | `tipo_differenziale` | il testo: `"tipo_differenziale": "B"` (`"A"`, `"F"`) |
   | ad alta velocità | `alta_velocita` | `true` o `false` |
 
+  Se il testo dice **magnetotermico e differenziale separati**, è sempre un pezzo solo: il
+  differenziale puro va scelto con una corrente nominale non minore del magnetotermico (40 A
+  sul C32, il «B40» della specifica §3.3), e lo dice la descrizione del progettista, non un dato
+  in più (D-234).
+
   «2P C32 Idn 30 mA tipo B» sono `"poli": "2P"`, `"curva": "C"`, `"in_a": 32`, `"idn_ma": 30`,
   `"tipo_differenziale": "B"`. Se il testo non li dà **non inventarli**: su una Shenling li
   scrive `completa` dal manuale (§7.4 p. 55) e dalla specifica (§3.3), con la regola «vale il

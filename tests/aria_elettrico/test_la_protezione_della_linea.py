@@ -295,7 +295,7 @@ def test_i_dati_del_progettista_non_si_sovrascrivono(tmp_path: Path) -> None:
 def test_la_tabella_dei_dati_shenling() -> None:
     """La tabella sola (manuale §7.4 p. 55, specifica §3.3, «vale il maggiore»)."""
     attesi = {
-        (6.0, 1): (16, 4, "3G4", "2P", 16),
+        (6.0, 1): (16, 4, "3G4", "2P", 20),  # D-234: C20, non C16, sui 16 A del 6 kW
         (9.0, 1): (20.5, 4, "3G4", "2P", 25),
         (12.0, 1): (30, 6, "3G6", "2P", 32),
         (15.0, 1): (30, 6, "3G6", "2P", 32),

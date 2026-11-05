@@ -6,7 +6,7 @@
 > protezioni; l'aria-aria porta quadro, sezionatore e la scritta del cavo come dato del progettista.
 
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
-**Stato:** **IN CORSO** (4 novembre 2026).
+**Stato:** **CONSEGNATO** (5 novembre 2026) — fuso con la PR #87, la 1.12.1 (I-283, D-234). **Il pacchetto successivo non è scelto**: si chiede al PO (le candidate sono in `HANDOFF.md`).
 **Base:** `main` dopo la PR #86 (la 1.11.0).
 **Ramo:** quello che l'ambiente della sessione assegna.
 **Approvazione della fusione:** **del PO**, guardando le tavole (D-146, D-147).

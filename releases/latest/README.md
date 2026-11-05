@@ -1,14 +1,15 @@
-# L'ultima release: 1.12.0
+# L'ultima release: 1.12.1
 
-`DisegnatoreMEP-v1.12.0.zip` — sha256 `d9a8ae3e1332053d…`, 147 file — è `REL-018`: **le protezioni elettriche sulla
+`DisegnatoreMEP-v1.12.1.zip` — sha256 `2a3a66a9d86034ee…`, 147 file — è `REL-018`, con le tre scelte di D-234: **le protezioni elettriche sulla
 tavola dell'elettrico** (I-278). Si carica come ogni skill personale, dallo ZIP così com'è.
 
-Rispetto alla 1.11.0:
+Rispetto alla 1.11.0 (la 1.12.0 aveva il 6 kW a C16; la 1.12.1 lo porta a C20, scrive in Capire il differenziale separato
+con la corrente del magnetotermico, e lascia le linee di servizio protette solo se dichiarate):
 - **l'interruttore magnetotermico differenziale** (`circuit-breaker-rcbo`, sigla QF-nn) in serie sulla linea dal quadro
   alla pompa di calore, stretto all'uscita del quadro; in tabella («2P C32 · Idn 30 mA tipo B») e in legenda; simbolo
   proposto dalla sessione;
 - **i dati elettrici delle Shenling** (manuale ThermaX R290 §7.4 p. 55; specifica Nove C §3.2–3.4, «vale il maggiore»),
-  scritti da `completa` dove il progettista non li dà, e detti: 6 kW 16 A 3G4 C16; 9 kW 20,5 A 3G4 C25; 12 e 15 kW
+  scritti da `completa` dove il progettista non li dà, e detti: 6 kW 16 A 3G4 C20 (D-234); 9 kW 20,5 A 3G4 C25; 12 e 15 kW
   30 A 3G6 C32; tutti 230 V 1~, differenziale 30 mA tipo B; il trifase solo se dichiarato (14 A, 5G2,5, 4P C16);
 - **gli avvisi**: protezione sotto la corrente massima del manuale, cavo sotto la sua sezione, linea della pompa di
   calore senza protezione;

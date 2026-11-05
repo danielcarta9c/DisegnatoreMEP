@@ -86,3 +86,5 @@ Il comando della skill li riapre da sé.
   manuale e dalla specifica Nove C («vale il maggiore»: 12 kW 230 V 1~, 30 A, 3G6, 2P C32 Idn 30 mA tipo B) scritti da
   `completa` dove il progettista non li dà; gli avvisi per protezione o cavo sotto il manuale e per la linea senza
   protezione; niente sezionatore locale di regola. 147 file.
+- **1.12.1** — 5 novembre 2026 (D-234): le tre scelte delle protezioni — il 6 kW a C20, il differenziale separato con
+  la corrente del magnetotermico (il «B40»), le linee di servizio protette solo se dichiarate. 147 file.
