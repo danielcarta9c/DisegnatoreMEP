@@ -660,7 +660,19 @@ def _voci_dei_fluidi(lavoro: _Lavoro) -> None:
             continue
         for voce in regola_del_fluido.get("voci", []):
             raggruppa = str(voce["calcolo"].get("raggruppa", "sezione"))
-            for gruppo in _gruppi(tratte, raggruppa):
+            # Una voce che non vale sulle linee con un certo pezzo in mezzo (REL-018): la
+            # protezione della linea, dove la linea attraversa l'interruttore, che ha la sua.
+            tranne = set(voce["calcolo"].get("tranne_le_linee_con", ()))
+            della_voce = [
+                t for t in tratte
+                if not tranne or not any(
+                    (pezzo := lavoro.impianto.pezzi.get(chi)) is not None and pezzo.voce in tranne
+                    for chi in t.pezzi
+                )
+            ]
+            if not della_voce:
+                continue
+            for gruppo in _gruppi(della_voce, raggruppa):
                 lavoro.voci.extend(_voce_del_fluido(lavoro, fluido, regola_del_fluido, voce, gruppo))
     senza_regola: dict[str, list[Tratta]] = {}
     for tratta in lavoro.tratte:

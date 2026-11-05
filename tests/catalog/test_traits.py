@@ -109,6 +109,10 @@ FLUIDS_AND_QUANTITIES = frozenset(
         "condensa",
         "aeraulic",
         "aeraulico",
+        # Il circuito e' l'insieme che una proprieta' sporca (`fouls_circuit`) e che
+        # l'interruttore della linea protegge (`circuit-breaker-rcbo`, REL-018): e'
+        # l'impianto di cui si parla, non una categoria di componente.
+        "circuit",
     }
 )
 

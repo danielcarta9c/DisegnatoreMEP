@@ -115,7 +115,8 @@ def test_the_libraries_are_not_empty() -> None:
     # 92 da REL-011: la valvola antigelo (D-230) e il rele' d'appoggio (D-228).
     # 93 da REL-017: il termostato ambiente a contatto sulla linea del circolatore (I-269).
     # 94 da REL-017: la riduzione all'attacco della macchina (I-281, D-233).
-    assert len(published()) == 94
+    # 95 da REL-018: l'interruttore magnetotermico differenziale della linea (I-278).
+    assert len(published()) == 95
 
 
 @pytest.mark.parametrize("symbol", published(), ids=lambda item: item.manifest.id)

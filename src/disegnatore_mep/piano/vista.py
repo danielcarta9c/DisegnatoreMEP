@@ -11,8 +11,9 @@ e' una decisione su come si compone la tavola, non sull'impianto:
 - **`tutto`**, la tavola unica: il grafo intero. E' la vista di sempre, e senza
   elettrico nel grafo e' l'unica che esiste;
 - **`idraulica`**: il grafo **senza il dominio del comando** — niente cavi e bus, e
-  niente pezzi che stanno solo sul comando (il quadro, il sezionatore, il relè, il
-  termostato ambiente a contatto, il regolatore, la sonda esterna). La sonda a
+  niente pezzi che stanno solo sul comando (il quadro, l'interruttore magnetotermico
+  differenziale, il sezionatore, il relè, il termostato ambiente a contatto, il regolatore,
+  la sonda esterna). La sonda a
   immersione **resta**, sul suo tubo: il
   pozzetto e' un fatto idraulico, e chi monta deve sapere dove va (*proposta*);
   perde il suo cavo;

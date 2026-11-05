@@ -34,6 +34,7 @@ from pathlib import Path
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.catalog.schema import ComponentDefinition
+from disegnatore_mep.elettrico.protezione import FUNZIONE_DI_PROTEZIONE, scritta_della_protezione
 from disegnatore_mep.graph.naming import Naming, NamingError
 from disegnatore_mep.graph.plant import GraphError, read_plant
 from disegnatore_mep.layout.geometry import (
@@ -67,6 +68,7 @@ FUNZIONI_DELLA_TABELLA: tuple[str, ...] = (
     "zone_control",
     "unit_control",
     "room_contact_control",
+    FUNZIONE_DI_PROTEZIONE,
 )
 """I mestieri delle apparecchiature principali, e il vaso di espansione (I-141).
 
@@ -81,6 +83,11 @@ giudicare sulla tavola.
 **Il termostato ambiente a contatto** (I-269) entra sempre: sta solo sulla tavola
 dell'elettrico, sulla linea del circolatore che accende, e va in tabella e in
 legenda con la sua sigla.
+
+**L'interruttore magnetotermico differenziale** della linea (REL-018, I-278) entra sempre
+anche lui, con poli, curva e corrente nominale, Idn e tipo: «2P C32 · Idn 30 mA tipo B»
+(`elettrico.protezione`). A differenza del sezionatore (`FUORI_DALLA_TABELLA_DELL_ELETTRICO`)
+la tabella e' il posto dove si leggono i suoi dati, che sulla linea non ci stanno.
 
 Generatori, accumuli e bollitori, separatori idraulici, scambiatori,
 circolatori — e i vasi. **Fuori** le valvole, come il PO ha detto, e con loro
@@ -239,6 +246,8 @@ def dati_idronici(mestieri: Iterable[str], proprieta: Mapping[str, JsonPrimitive
     ]
     if "expansion" in fa:
         dati.extend(dati_del_vaso(proprieta))
+    if FUNZIONE_DI_PROTEZIONE in fa:
+        dati.extend(scritta_della_protezione(proprieta))
     dati.extend(
         scritto
         for item in fa
@@ -252,8 +261,13 @@ def dati_elettrici(mestieri: Iterable[str], proprieta: Mapping[str, JsonPrimitiv
     """Le caratteristiche di una riga sulla tavola dell'elettrico (I-277): alimentazione,
     potenza elettrica, corrente massima, cavo minimo (`CARATTERISTICHE_ELETTRICHE`), e la
     portata del contatto di chi ne ha uno. I numeri si scrivono come nella tabella
-    idraulica, con la virgola e l'unita'; i testi come il progettista li ha dati."""
+    idraulica, con la virgola e l'unita'; i testi come il progettista li ha dati.
+
+    L'interruttore magnetotermico differenziale (REL-018) porta i suoi: «2P C32 · Idn 30 mA
+    tipo B» (`elettrico.protezione.scritta_della_protezione`)."""
     dati: list[str] = []
+    if FUNZIONE_DI_PROTEZIONE in set(mestieri):
+        dati.extend(scritta_della_protezione(proprieta))
     for chiave in CARATTERISTICHE_ELETTRICHE:
         valore = proprieta.get(chiave)
         scritto = (

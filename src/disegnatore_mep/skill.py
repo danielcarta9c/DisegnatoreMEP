@@ -280,8 +280,17 @@ def _completa(args: argparse.Namespace, cartelle: Cartelle) -> int:
     completo, riduzioni = posa_le_riduzioni(completo, dati.catalogo)
     rapporto = build_report(proposte, lacune, dati.naming)
     from disegnatore_mep.diametri.costruttori import avvisi_del_costruttore
+    from disegnatore_mep.elettrico.costruttori import avvisi_della_linea, scrivi_i_dati_del_manuale
+    from disegnatore_mep.piano.vista import sigle_del_grafo_intero
 
+    # I dati elettrici della linea della pompa di calore che il progettista non ha dato,
+    # dal manuale Shenling e dalla specifica Nove C (REL-018, I-278): si scrivono dove
+    # mancano, e si dice quello che si e' scritto. Non e' una regola: come la riduzione, li
+    # scrive questo passo, a ogni rilancio dal grafo di prima stesura.
+    sigle_elettriche = sigle_del_grafo_intero(completo, dati.catalogo, cartelle.naming)
+    completo, dati_elettrici_scritti = scrivi_i_dati_del_manuale(completo, dati.catalogo, sigle_elettriche)
     avvisi_del_manuale = avvisi_del_costruttore(completo, dati.catalogo)
+    avvisi_del_manuale += avvisi_della_linea(completo, dati.catalogo, sigle_elettriche)
 
     in_piu = len(completo.components) - len(modello.components)
     print(
@@ -323,6 +332,12 @@ def _completa(args: argparse.Namespace, cartelle: Cartelle) -> int:
             print(f"    perche' servirebbe: {punto.rationale}")
             print(f"    fonte: {punto.source} · regola: {punto.rule}")
 
+    if dati_elettrici_scritti:
+        # Un'informazione, come le riduzioni: il dato del progettista vince sempre, e qui
+        # si dice solo quello che mancava (REL-018).
+        print("\nDati elettrici scritti dal manuale Shenling e dalla specifica Nove C (informazione)")
+        for scritto in dati_elettrici_scritti:
+            print(f"  - {scritto}")
     if avvisi_del_manuale:
         # Il manuale del costruttore comanda (I-243): si segnala, non si corregge (D-223, D-226).
         print("\nAvvisi del manuale del costruttore e della specifica Nove C")

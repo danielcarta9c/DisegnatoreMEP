@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-11-04 — **la 1.9.0 è su `main`** (PR #85, I-268). **Il pacchetto è `REL-017`**: la villetta di riferimento con le regole nuove.
+**Aggiornato:** 2026-11-05 — **la 1.12.1 è su `main`** (PR #87, I-283). `REL-018` è consegnato; **il pacchetto successivo si chiede al PO**.
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -11,7 +11,39 @@
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
 
-## ▶ Da dove riparte la prossima sessione — scritto il 4 novembre 2026, dopo la fusione della 1.9.0
+## ▶ Da dove riparte la prossima sessione — scritto il 5 novembre 2026, dopo la fusione della 1.12.1
+
+**Nessun pacchetto attivo**: `REL-018` (le protezioni elettriche) è consegnato, e il prossimo lo sceglie il PO.
+
+- **Che cosa c'è nella 1.12.x** (PR #87): l'interruttore magnetotermico differenziale QF-nn sulla linea della pompa di
+  calore; i dati elettrici delle Shenling scritti da `completa` (`elettrico/costruttori.py`: manuale §7.4 p. 55 e
+  specifica Nove C §3.2–3.4, «vale il maggiore»; D-234: il 6 kW a C20); gli avvisi su protezione, cavo e linea senza
+  protezione; niente sezionatore locale di regola.
+- **Le misure alla fusione**: suite `2869 passed, 15 skipped, 10 xfailed`; ruff verde; banco 24/24 con 0 cedute e 0
+  bloccanti, tavole identiche alla 1.11.0; ZIP 147 file.
+- **Candidate per il prossimo pacchetto** (da proporre al PO, non da scegliere): **I-248** il dimensionamento generale
+  di cavi e protezioni (portata, caduta di tensione) e dei canali dell'aria; il materiale di base sopra i 35 kW (oltre MS
+  63×4,5); la sezione idronica della distinta; i rimasti di `REL-010` e `REL-009`; il prefisso TAC.
+- **I numeri**: il prossimo input è **I-284**, la prossima decisione **D-235**.
+
+## Com'era il 4 novembre 2026, dopo la fusione della 1.11.0
+
+**Il pacchetto è `REL-018`** (`ACTIVE_WORK_PACKAGE.md`): le protezioni elettriche sulla tavola dell'elettrico.
+`REL-017` è archiviato in `docs/plans/pacchetti/REL-017.md`.
+
+- **Che cosa c'è nella 1.10.0 e nella 1.11.0** (PR #86): il termostato ambiente a contatto (TAC-nn); la tabella
+  dell'elettrico con tutti i pezzi del foglio e i soli dati elettrici; il vaso sanitario messo dalla regola
+  (`non_a_bordo`); le note di posa del progettista; l'avviso della prevalenza della pompa a bordo (8 m assunti sulle
+  Shenling); **il tubo da comprare** sulla tavola al posto dell'Øi (D-233: multistrato di base, scelto per velocità;
+  `diametri/tubi.json` con le fonti SRC-053 … 057); **la riduzione all'attacco** dopo il giunto antivibrante.
+- **Le misure alla fusione**: suite `2841 passed, 15 skipped, 10 xfailed`; ruff verde; banco 24/24 con 0 cedute e 0
+  bloccanti; ZIP 144 file.
+- **Aperte, da chiedere al PO**: il materiale di base sopra i 35 kW (oltre MS 63×4,5 la tavola resta senza scritte); la
+  lunghezza del progettista non più scritta sui tubi dell'acqua; la sezione della distinta per le voci idroniche; il
+  prefisso TAC (TA è delle bocchette).
+- **I numeri**: il prossimo input è **I-283**, la prossima decisione **D-234**.
+
+## Com'era il 4 novembre 2026, dopo la fusione della 1.9.0
 
 **Il pacchetto è `REL-017`** (`ACTIVE_WORK_PACKAGE.md`): il piano idraulico della villetta di riferimento
 (`docs/collaudi/REL-015/pdc-regola/`) va ricomposto per il corredo nuovo; un agente della sessione del 4 novembre ci

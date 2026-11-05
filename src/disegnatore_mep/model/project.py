@@ -182,6 +182,8 @@ CHIAVI_DEI_DATI_NUMERICI: dict[str, str] = {
     "delta_t_k": "K",
     "potenza_elettrica_kw": "kW",
     "corrente_max_a": "A",
+    "in_a": "A",
+    "idn_ma": "mA",
     "prevalenza_utile_kpa": "kPa",
     "prevalenza_utile_m": "m c.a.",
 }
@@ -191,6 +193,11 @@ CHIAVI_DEI_DATI_NUMERICI: dict[str, str] = {
 la potenza assorbita e la corrente massima —, che la tabella della tavola
 dell'elettrico scrive al posto di quelli idronici (I-277); con loro, come testi,
 `alimentazione` e `cavo_minimo` (`graphics.tabella.CARATTERISTICHE_ELETTRICHE`).
+
+`in_a` e `idn_ma` sono la **corrente nominale** e la **corrente differenziale** di un
+interruttore magnetotermico differenziale (REL-018, I-278), in ampere e in milliampere: con
+`poli`, `curva` e `tipo_differenziale`, testi, la tabella della tavola dell'elettrico li
+scrive «2P C32 · Idn 30 mA tipo B» (`elettrico.protezione`).
 
 Potenza, volume, portata e prevalenza di un pezzo, **come il progettista li ha
 dati**: un numero, nell'unita' che il nome dichiara. Le prime quattro sono le

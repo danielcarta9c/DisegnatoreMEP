@@ -1,26 +1,25 @@
-# L'ultima release: 1.11.0
+# L'ultima release: 1.12.1
 
-`DisegnatoreMEP-v1.11.0.zip` — sha256 `2fd795f3dcca463a…`, 144 file — è ancora `REL-017`, con **il tubo da comprare
-sulla tavola** al posto del diametro interno (I-279, I-281, D-233). Si carica come ogni skill personale, dallo ZIP così
-com'è.
+`DisegnatoreMEP-v1.12.1.zip` — sha256 `2a3a66a9d86034ee…`, 147 file — è `REL-018`, con le tre scelte di D-234: **le protezioni elettriche sulla
+tavola dell'elettrico** (I-278). Si carica come ogni skill personale, dallo ZIP così com'è.
 
-Rispetto alla 1.10.0:
-- **il materiale delle tubazioni** (`materiale_tubazioni`: multistrato, acciaio, rame; sul progetto o sulla rete),
-  multistrato se il testo non lo dice, dichiarato come assunzione;
-- **il tubo commerciale scelto per velocità** (tab. 9 del Quaderno Caleffi 5, sul pollice del tubo): «MS 32×3»,
-  «DN 25 (1")», «Cu 28×1» sulla tavola, con la riga della legenda del materiale; l'Øi resta solo nel foglio dei calcoli
-  (Øi minimo, tubo, Øi reale, velocità); le tabelle dei tubi con le fonti in `diametri/tubi.json`;
-- **il tubo del progettista vince** (`sezione`), con un avviso se la velocità supera il limite;
-- **una scritta per tratta**, niente sui tratti cortissimi fra due raccordi e sugli stacchi;
-- **la distinta** con la stessa dicitura («multistrato MS 32×3») e il pollice degli accessori in linea;
-- **la nota dell'isolamento** con lo spessore sul tubo vero («MS 32×3: 30 mm»);
-- **l'attacco della Shenling non è più un minimo** (D-233, emenda D-223): di regola MS 32×3 sul 12 kW, MS 40×3,5 sul
-  15 kW; dove il tubo è sotto l'attacco c'è **la riduzione all'attacco**, un pezzo con il suo simbolo (trapezio, proposta)
-  subito dopo il giunto antivibrante, in legenda e in distinta;
-- **la prevalenza della pompa a bordo**: senza il dato del progettista, 8 m c.a. sulle Shenling (indicativo del PO).
+Rispetto alla 1.11.0 (la 1.12.0 aveva il 6 kW a C16; la 1.12.1 lo porta a C20, scrive in Capire il differenziale separato
+con la corrente del magnetotermico, e lascia le linee di servizio protette solo se dichiarate):
+- **l'interruttore magnetotermico differenziale** (`circuit-breaker-rcbo`, sigla QF-nn) in serie sulla linea dal quadro
+  alla pompa di calore, stretto all'uscita del quadro; in tabella («2P C32 · Idn 30 mA tipo B») e in legenda; simbolo
+  proposto dalla sessione;
+- **i dati elettrici delle Shenling** (manuale ThermaX R290 §7.4 p. 55; specifica Nove C §3.2–3.4, «vale il maggiore»),
+  scritti da `completa` dove il progettista non li dà, e detti: 6 kW 16 A 3G4 C20 (D-234); 9 kW 20,5 A 3G4 C25; 12 e 15 kW
+  30 A 3G6 C32; tutti 230 V 1~, differenziale 30 mA tipo B; il trifase solo se dichiarato (14 A, 5G2,5, 4P C16);
+- **gli avvisi**: protezione sotto la corrente massima del manuale, cavo sotto la sua sezione, linea della pompa di
+  calore senza protezione;
+- **niente sezionatore locale** di regola (specifica §3.2): Capire lo mette solo se il testo lo chiede;
+- **la distinta** con la voce dell'interruttore.
 
-Il banco di regressione di `REL-011` (24 tavole idroniche): 24 su 24 con 0 tratte cedute e 0 rilievi bloccanti.
-Le prove sono in `docs/collaudi/REL-017/tubi/` e `docs/collaudi/REL-017/riduzione/`.
+Il banco di regressione di `REL-011` (24 tavole idroniche): 24 su 24 con 0 tratte cedute e 0 rilievi bloccanti, tavole
+identiche alla 1.11.0. Le prove sono in `docs/collaudi/REL-018/protezione/` e nella villetta di `REL-015/pdc-regola/`.
+
+Prima, la **1.11.0** (`REL-017`, D-233): sulla tavola il tubo da comprare e la riduzione all'attacco.
 
 Prima, la **1.10.0**: i rilievi di una commessa reale (I-269 … I-277) — il termostato ambiente a contatto, la tabella
 elettrica con i dati elettrici, il vaso sanitario messo dalla regola, le note di posa del progettista, l'avviso della

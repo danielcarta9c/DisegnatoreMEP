@@ -81,3 +81,10 @@ Il comando della skill li riapre da sé.
   che vince con un avviso, una scritta per tratta; la distinta con la stessa dicitura e il pollice degli accessori; la
   nota dell'isolamento sul tubo vero; l'attacco della Shenling non più un minimo ma la **riduzione all'attacco**, un
   pezzo con il suo simbolo dopo il giunto antivibrante; la prevalenza della pompa a bordo assunta 8 m se non data. 144 file.
+- **1.12.0** — 5 novembre 2026 (`REL-018`, I-278): **le protezioni elettriche** — l'interruttore magnetotermico
+  differenziale (QF-nn) sulla linea della pompa di calore, in tabella e in legenda; i dati elettrici delle Shenling dal
+  manuale e dalla specifica Nove C («vale il maggiore»: 12 kW 230 V 1~, 30 A, 3G6, 2P C32 Idn 30 mA tipo B) scritti da
+  `completa` dove il progettista non li dà; gli avvisi per protezione o cavo sotto il manuale e per la linea senza
+  protezione; niente sezionatore locale di regola. 147 file.
+- **1.12.1** — 5 novembre 2026 (D-234): le tre scelte delle protezioni — il 6 kW a C20, il differenziale separato con
+  la corrente del magnetotermico (il «B40»), le linee di servizio protette solo se dichiarate. 147 file.

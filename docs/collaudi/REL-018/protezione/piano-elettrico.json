@@ -1,0 +1,18 @@
+{
+ "formato": "A3",
+ "vista": "elettrico",
+ "note": [
+  "La pompa di calore a sinistra, il quadro sotto a destra: la macchina dalla prima uscita sopra (out_1), il cavo entra da sotto.",
+  "L'interruttore magnetotermico differenziale non va nel piano: lo posa il motore sulla linea, stretto all'uscita del quadro (REL-018), con la sigla accanto; la scritta del cavo «3G6 · L 15 m» resta sul tratto verso la macchina."
+ ],
+ "pezzi": {
+  "pdc": {
+   "x": 0,
+   "y": 0
+  },
+  "quadro": {
+   "x": 60,
+   "y": 65
+  }
+ }
+}

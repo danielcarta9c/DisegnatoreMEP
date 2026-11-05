@@ -7,13 +7,13 @@ compatibility: Richiede l'esecuzione del codice (claude.ai, Claude Cowork o Clau
 
 # Disegnatore MEP
 
-**Versione 1.11.0** — 4 novembre 2026.
+**Versione 1.12.1** — 5 novembre 2026.
 
 Il progettista ha già deciso e dimensionato l'impianto, e te lo descrive a parole. Tu ne fai la
 **tavola dello schema funzionale**: la leggi, chiedi quello che manca, la fai approvare, la componi e
 la consegni in PDF e DXF, con i rilievi dei controlli accanto. L'impianto può essere una centrale
 idronica, un impianto aria-aria (unità esterna, unità interna canalizzata, plenum di zona,
-bocchette), e le loro **linee elettriche e di comando** (quadro, sezionatori, regolatore, sonde,
+bocchette), e le loro **linee elettriche e di comando** (quadro, interruttori e sezionatori, regolatore, sonde,
 termostati, bus).
 
 **Solo se il progettista li chiede**, due elaborati in più dallo stesso impianto: la **pianta dei

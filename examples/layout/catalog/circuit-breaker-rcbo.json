@@ -1,0 +1,34 @@
+{
+  "id": "circuit-breaker-rcbo",
+  "version": "1.0.0",
+  "name": "Interruttore magnetotermico differenziale",
+  "functions": [
+    "circuit_protection"
+  ],
+  "traits": [
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
+  "symbol_id": "circuit-breaker-rcbo",
+  "composite": false,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "control",
+      "medium": "power_supply",
+      "flow": "in",
+      "required": true
+    },
+    {
+      "id": "b",
+      "domain": "control",
+      "medium": "power_supply",
+      "flow": "out",
+      "required": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION",
+    "proposta della sessione del 04/11/2026 (REL-018, I-278): l'interruttore magnetotermico differenziale della linea dedicata, nel quadro; specifica tecnica di installazione PdC Shenling Nove C Rev. 01, par. 3.2-3.4 (bipolare, curva C, Idn 30 mA, tipo B, ad alta velocita'), e manuale ThermaX R290 6-15 kW, par. 7.4 p. 55 e p. 51. Forma del segno da approvare dal PO sulla tavola"
+  ]
+}

@@ -267,14 +267,6 @@
    }
   },
   {
-   "id": "sez-pdc",
-   "definition_id": "isolator-switch",
-   "tag": null,
-   "properties": {
-    "posizione": "vicino alla pompa di calore"
-   }
-  },
-  {
    "id": "sonda-volano",
    "definition_id": "temperature-probe",
    "tag": null,
@@ -304,6 +296,12 @@
   {
    "id": "rele-ricircolo",
    "definition_id": "interface-relay",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "qf-pdc",
+   "definition_id": "circuit-breaker-rcbo",
    "tag": null,
    "properties": {}
   }
@@ -629,18 +627,16 @@
     "port_id": "out_5"
    },
    "endpoint_b": {
-    "component_id": "sez-pdc",
+    "component_id": "qf-pdc",
     "port_id": "a"
    },
-   "properties": {},
-   "sezione": "3G6",
-   "lunghezza_m": 15
+   "properties": {}
   },
   {
    "id": "t26",
    "network_id": "el-pdc",
    "endpoint_a": {
-    "component_id": "sez-pdc",
+    "component_id": "qf-pdc",
     "port_id": "b"
    },
    "endpoint_b": {
@@ -648,7 +644,8 @@
     "port_id": "power"
    },
    "properties": {},
-   "sezione": "3G6"
+   "sezione": "3G6",
+   "lunghezza_m": 15
   },
   {
    "id": "t40",
@@ -922,7 +919,7 @@
   },
   {
    "id": "a14",
-   "text": "Sezioni e lunghezze delle linee: il testo da' solo la linea della pompa di calore (3G6, 15 m, scritta sul tratto quadro-sezionatore per la linea intera). Mancano sezione e lunghezza di: due comandi dalla pompa di calore (deviatrice, miscelatrice), tre comandi dei relè dei circolatori, tre linee dal quadro ai circolatori attraverso i relè, cavi delle tre sonde, comando a filo. Senza, quei tratti restano senza scritta.",
+   "text": "Sezioni e lunghezze delle linee: il testo da' solo la linea della pompa di calore (3G6, 15 m, scritta sul tratto dall'interruttore alla macchina per la linea intera). Mancano sezione e lunghezza di: due comandi dalla pompa di calore (deviatrice, miscelatrice), tre comandi dei relè dei circolatori, tre linee dal quadro ai circolatori attraverso i relè, cavi delle tre sonde, comando a filo. Senza, quei tratti restano senza scritta.",
    "status": "proposed"
   },
   {
@@ -968,6 +965,11 @@
   {
    "id": "a23",
    "text": "Nessun collegamento a un sistema di supervisione: il testo non lo nomina. Il bus della pompa di calore resta libero.",
+   "status": "proposed"
+  },
+  {
+   "id": "a25",
+   "text": "Protezione della linea della pompa di calore: un interruttore magnetotermico differenziale nel quadro (specifica Nove C §3.2), con i dati che completa scrive dal manuale Shenling e dalla specifica; niente sezionatore locale, che la specifica non chiede come regola. Se lo vuoi accanto alla macchina, dimmelo.",
    "status": "proposed"
   },
   {
