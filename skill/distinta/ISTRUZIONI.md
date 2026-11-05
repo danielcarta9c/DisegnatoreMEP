@@ -90,8 +90,8 @@ La copertina dei report Nove C **senza le card dei KPI**, **senza la pagina «Ch
 1. l'impianto e le avvertenze — **a corpo, fisso e invariabile**; **quantità indicative**; **sopralluogo
    obbligatorio**; la fornitura, da confermare o confermata; la distinta non progetta;
 2. le tratte — sezione, materiale, portata, L stimata e L da quotare —, e la verifica dell'aria e delle linee;
-3. il computo per sezioni (A apparecchiature, B aria, C frigorifero, D condensa, E elettrico, F assistenze murarie,
-   X senza regola, Z opere del Committente), una tabella per sezione;
+3. il computo per sezioni (A apparecchiature, S staffaggi, B aria, C frigorifero, D condensa, I circuito idraulico,
+   E elettrico, F assistenze murarie, X senza regola, Z opere del Committente), una tabella per sezione;
 4. le attività a corpo (G);
 5. le varianti a prezzo unitario (V) e le righe vuote delle voci che aggiunge l'installatore (H);
 6. le voci da definire e le domande, quello che è da confermare, le segnalazioni e le assunzioni;
@@ -125,6 +125,16 @@ distinta li legge in tutti e due i posti.
 **Sull'acqua il tubo è quello della tavola** (I-279): la linea si dice come lo schema, «multistrato MS 32×3», e gli
 accessori in linea — valvole, filtri, giunti, la deviatrice — portano il pollice del tubo su cui stanno (MS 32×3 →
 1"), dalla tabella di equivalenza del produttore.
+
+**L'idronico ha il suo corredo** (REL-020, sezione I, proposta da confermare dal PO). La pompa di calore, gli
+accumuli e il bollitore sono apparecchiature (sezione A, si comprano a parte): la distinta conta i raccordi ai loro
+attacchi, le staffe e il trattamento dell'acqua. Ogni accessorio in linea porta sé stesso, del pollice del tubo, e due
+raccordi a pressare (tre per i pezzi a tre vie); ogni derivazione un tee; ogni linea d'acqua il tubo, i gomiti, i
+collari, i manicotti di riserva e la guaina. Le valvole, i filtri, i giunti e i circolatori **non spezzano il tratto**:
+la linea dalla pompa di calore al volano è un tratto solo, con una lunghezza sola. I **tratti corti in centrale**, fra
+due accessori o fra un tee e lo sfiato, senza lunghezza valgono **1 m** e la distinta lo dice; un tratto che arriva a
+una macchina, a un accumulo o a un confine (terminali, utenze, rete esistente) la lunghezza la vuole dal
+progettista. L'acqua non aggiunge il metro per tratto della maggiorazione: resta il 15%.
 
 **La lunghezza di un tratto spezzato basta su una tubazione.** Un tratto è la linea che l'installatore posa in un
 pezzo, da macchina a macchina: il sezionatore sulla linea dell'unità esterna e il sifone sullo scarico della condensa
@@ -184,10 +194,25 @@ Le scelte predefinite stanno in `distinta.json`, `fornitura`: si cambiano lì so
   che dice un'altra lunghezza, una linea frigorifera oltre il massimo della macchina: **non cambia niente**. Riferisci,
   e il progettista decide.
 - Non sa se le lunghezze sono giuste: sono del progettista. Il sopralluogo dell'installatore resta obbligatorio.
-- **Le regole coprono l'aria-aria e l'elettrico del kit AA-01.** Una voce di catalogo senza corredo (oggi tutto
-  l'idronico) o un fluido senza regole esce nella sezione **X**, contato e DA DEFINIRE: dillo al progettista, non
-  completarlo tu.
+- **Le regole coprono l'aria-aria e l'elettrico del kit AA-01 e l'idronico** (REL-020). Una voce di catalogo senza
+  corredo (il collettore solare, il regolatore d'impianto, la sonda esterna) o un fluido senza regole (il gas)
+  esce nella sezione **X**, contato e DA DEFINIRE: dillo al progettista, non completarlo tu.
 - Non calcola perdite di carico né prevalenze.
+
+## Il costo della minuteria, se lo chiede
+
+Se il progettista chiede **quanto costa la minuteria** (il materiale da comprare, o un riferimento per confrontare i
+preventivi degli installatori), lancia la distinta con `--costo`: accanto al documento escono `costo-minuteria.md` e
+`costo-minuteria.json`, con il prezzo di ogni voce dal **listino della minuteria** di Nove C
+(`riferimenti/listino-minuteria.md`; un altro con `--listino <file>`). È un conto **interno**:
+
+- **non va all'installatore** e non si mette nel suo documento, che resta senza prezzi;
+- prezza il materiale (sezioni S, B, C, D, I, E e la X), **non** le apparecchiature (pompa di calore, accumuli,
+  bollitori, unità interne ed esterne: si comprano a parte), le opere, le attività e le voci a corpo;
+- è il **consumo** (quantità × prezzo per unità del listino): le confezioni intere costano di più;
+- una voce senza codice, con un codice che il listino non ha, o con la quantità DA DEFINIRE, è **DA PREZZARE**, fuori
+  dal totale, col suo perché: **non la stimi tu**. Riporta il totale, quante voci sono da prezzare e le più pesanti;
+- i prezzi del listino hanno una data e due gradi di affidabilità (il rilievo al banco e il riferimento online): dillo.
 
 ## Come la consegni
 

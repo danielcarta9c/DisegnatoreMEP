@@ -167,5 +167,6 @@ def test_in_distinta_una_riga_per_le_due_riduzioni(dodici: tuple[dict[str, Any],
     assert len(riduzione) == 1
     celle = [c.strip() for c in riduzione[0].strip("|").split("|")]
     assert celle[2:5] == ["n", "2", "installatore"]
-    assert any('Giunto antivibrante 1¼":' in r for r in righe)
-    assert not any('Giunto antivibrante 1":' in r for r in righe)
+    # REL-020: il giunto ha il suo corredo, «Giunto antivibrante 1¼"» nella sezione I.
+    assert any('Giunto antivibrante 1¼" |' in r for r in righe)
+    assert not any('Giunto antivibrante 1" |' in r for r in righe)

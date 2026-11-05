@@ -7,7 +7,7 @@ compatibility: Richiede l'esecuzione del codice (claude.ai, Claude Cowork o Clau
 
 # Disegnatore MEP
 
-**Versione 1.13.0** — 5 novembre 2026.
+**Versione 1.14.0** — 5 novembre 2026.
 
 Il progettista ha già deciso e dimensionato l'impianto, e te lo descrive a parole. Tu ne fai la
 **tavola dello schema funzionale**: la leggi, chiedi quello che manca, la fai approvare, la componi e
@@ -375,10 +375,11 @@ definire. Le domande le hai fatte al passo 2 con `--domande`: al lancio restano 
 i dati che il progettista ha lasciato aperti.
 
 Se il progettista chiede **quanto costa la minuteria**, o un prezzo di riferimento per confrontare
-i preventivi, apri [riferimenti/listino-minuteria.md](riferimenti/listino-minuteria.md). È il
-listino interno di Nove C, con la data e la fonte di ogni prezzo. Quel conto lo dai al
-progettista e resta fuori dal documento per l'installatore, che non ha prezzi. Una voce che
-non è nel listino resta «DA PREZZARE»: non la stimi.
+i preventivi, aggiungi `--costo` al comando: esce `costo-minuteria.md`, la distinta prezzata con
+il listino interno di Nove C ([riferimenti/listino-minuteria.md](riferimenti/listino-minuteria.md),
+con la data e la fonte di ogni prezzo). Quel conto lo dai al progettista e resta fuori dal
+documento per l'installatore, che non ha prezzi. Una voce che non è nel listino resta «DA
+PREZZARE»: non la stimi.
 
 ### Su richiesta — la pianta dei posizionamenti e dei tracciati
 

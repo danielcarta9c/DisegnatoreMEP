@@ -338,7 +338,7 @@ rivenditori italiani con un prezzo pubblico. Ogni riga ha il suo link.
   americani dello stesso codice; le altre tre non hanno ritrovato la riga.
 - **IVA.** Dove il negozio non dice se l'IVA è compresa, la si presume compresa, perché a un
   privato il prezzo si espone IVA inclusa. Queste righe sono scritte «non detta».
-- **Forbice e mediana.** Il riepilogo dà, per voce e misura, il netto per unità più basso,
+- **Forbice e mediana.** Il riepilogo dà, per voce e misura (con il suo **codice**, che le regole della distinta usano: l'ID, più una lettera quando la voce ha più misure), il netto per unità più basso,
   la mediana e il più alto dei riscontri. La mediana è il riferimento da usare. Una riga
   segnata «fuori forbice» non entra nel conto.
 - **Misure vicine.** Dove la misura del piano non c'era, si danno quelle vicine, ed è scritto
@@ -346,76 +346,77 @@ rivenditori italiani con un prezzo pubblico. Ogni riga ha il suo link.
 
 ### Riepilogo
 
-| ID | Voce | Misura | Riscontri | Netto/UM min € | Mediana € | Max € | UM |
-|---|---|---|--:|--:|--:|--:|---|
-| I39 | Separatore d'aria (disaeratore) | 1" | 3 | 84,11 | 96,83 | 126,93 | cad |
-| I39 | Separatore d'aria (disaeratore) | 1"1/4 | 3 | 95,08 | 167,58 | 168,82 | cad |
-| I60 | Guaina isolante elastomerica sp. 19 mm per tubo 50-54 | sp. 19, tubo Ø42 (sotto) | 1 | 3,30 | 3,30 | 3,30 | m |
-| I60 | Guaina isolante elastomerica sp. 19 mm per tubo 50-54 | sp. 19, tubo Ø60 (sopra) | 1 | 4,49 | 4,49 | 4,49 | m |
-| I60 | Guaina isolante elastomerica sp. 19 mm per tubo 50-54 | sp. 13, tubo Ø54 | 1 | 2,06 | 2,06 | 2,06 | m |
-| I62 | Finitura esterna dell'isolante (PVC, alluminio, nastro UV) | benda PVC Isogenopak h 100 mm | 1 | 1,71 | 1,71 | 1,71 | m |
-| I62 | Finitura esterna dell'isolante (PVC, alluminio, nastro UV) | nastro PVC per clima | 1 | 0,14 | 0,14 | 0,14 | m |
-| I62 | Finitura esterna dell'isolante (PVC, alluminio, nastro UV) | foglio alluminio/poliestere UV autoadesivo | 1 | 15,16 | 15,16 | 15,16 | m |
-| I62 | Finitura esterna dell'isolante (PVC, alluminio, nastro UV) | lamierino alluminio 0,5 mm | 1 | 12,21 | 12,21 | 12,21 | m² |
-| I62 | Finitura esterna dell'isolante (PVC, alluminio, nastro UV) | curva 90° PUR + PVC | 1 | 6,45 | 6,45 | 6,45 | cad |
-| I68 | Tubo di scarico condensa Ø32 / Ø40 con raccordi | Ø32 PP (HT) barra 2 m | 4 | 1,73 | 1,94 | 2,10 | m |
-| I68 | Tubo di scarico condensa Ø32 / Ø40 con raccordi | Ø40 PP (HT) barra 2 m | 3 | 1,68 | 1,72 | 2,21 | m |
-| I68 | Tubo di scarico condensa Ø32 / Ø40 con raccordi | Ø40 PVC arancio barra 2 m | 2 | 1,91 | 2,28 | 2,66 | m |
-| I68 | Tubo di scarico condensa Ø32 / Ø40 con raccordi | curva Ø32 87°/45° | 1 | 0,78 | 0,78 | 0,78 | cad |
-| I68 | Tubo di scarico condensa Ø32 / Ø40 con raccordi | curva Ø40 87°/45° | 2 | 0,47 | 0,64 | 0,81 | cad |
-| I68 | Tubo di scarico condensa Ø32 / Ø40 con raccordi | manicotto Ø32 | 1 | 1,48 | 1,48 | 1,48 | cad |
-| I68 | Tubo di scarico condensa Ø32 / Ø40 con raccordi | manicotto Ø40 | 1 | 1,39 | 1,39 | 1,39 | cad |
-| F07 | Canalina copritubo per condizionatori | 60x45 | 5 | 2,03 | 2,46 | 3,24 | m |
-| F07 | Canalina copritubo per condizionatori | 80x60 | 5 | 2,58 | 3,44 | 4,27 | m |
-| F08 | Curve e raccordi della canalina copritubo | 60x45 curva piana | 3 | 2,75 | 3,28 | 4,43 | cad |
-| F08 | Curve e raccordi della canalina copritubo | 60x45 angolo interno/esterno | 4 | 1,47 | 2,00 | 2,30 | cad |
-| F08 | Curve e raccordi della canalina copritubo | 60x45 passaggio a muro | 2 | 1,84 | 2,19 | 2,54 | cad |
-| F08 | Curve e raccordi della canalina copritubo | 60x45 tappo terminale | 2 | 1,57 | 1,74 | 1,92 | cad |
-| F08 | Curve e raccordi della canalina copritubo | 80x60 curva piana | 3 | 1,80 | 3,50 | 3,69 | cad |
-| F08 | Curve e raccordi della canalina copritubo | 80x60 angolo interno/esterno | 4 | 2,20 | 2,41 | 3,24 | cad |
-| F08 | Curve e raccordi della canalina copritubo | 80x60 giunto | 1 | 1,80 | 1,80 | 1,80 | cad |
-| F08 | Curve e raccordi della canalina copritubo | 80x60 passaggio a muro | 2 | 1,80 | 1,90 | 1,99 | cad |
-| F08 | Curve e raccordi della canalina copritubo | 80x60 tappo terminale | 2 | 1,39 | 2,01 | 2,62 | cad |
-| F09 | Dadi a cartella e giunzioni per rame | dado a cartella 1/4" | 3 | 0,49 | 0,57 | 0,73 | cad |
-| F09 | Dadi a cartella e giunzioni per rame | dado a cartella 3/8" | 2 | 0,90 | 0,98 | 1,06 | cad |
-| F09 | Dadi a cartella e giunzioni per rame | dado a cartella 1/2" | 2 | 1,06 | 1,12 | 1,19 | cad |
-| F09 | Dadi a cartella e giunzioni per rame | dado a cartella 5/8" | 2 | 1,20 | 1,23 | 1,27 | cad |
-| F09 | Dadi a cartella e giunzioni per rame | giunto a doppia cartella 1/4" | 3 | 0,70 | 1,07 | 1,14 | cad |
-| F09 | Dadi a cartella e giunzioni per rame | giunto a doppia cartella 3/8" | 2 | 1,55 | 1,77 | 2,00 | cad |
-| F09 | Dadi a cartella e giunzioni per rame | giunto a doppia cartella 1/2" | 2 | 1,96 | 2,17 | 2,38 | cad |
-| F09 | Dadi a cartella e giunzioni per rame | giunto a doppia cartella 5/8" | 3 | 2,87 | 3,58 | 5,67 | cad |
-| F09 | Dadi a cartella e giunzioni per rame | manicotto a brasare 1/4" | 2 | 0,28 | 0,75 | 1,23 | cad |
-| F09 | Dadi a cartella e giunzioni per rame | manicotto a brasare 3/8" | 1 | 2,20 | 2,20 | 2,20 | cad |
-| A01 | Tubo flessibile isolato per aria, rotolo 10 m | Ø125 | 4 | 3,24 | 5,95 | 11,30 | m |
-| A01 | Tubo flessibile isolato per aria, rotolo 10 m | Ø160 | 4 | 5,09 | 7,33 | 7,72 | m |
-| A01 | Tubo flessibile isolato per aria, rotolo 10 m | Ø200 | 3 | 4,46 | 8,84 | 9,20 | m |
-| A03 | Canale spiroidale zincato e raccordi | spiroidale Ø125 | 1 | 9,36 | 9,36 | 9,36 | m |
-| A03 | Canale spiroidale zincato e raccordi | spiroidale Ø160 | 2 | 10,04 | 11,01 | 11,98 | m |
-| A03 | Canale spiroidale zincato e raccordi | spiroidale Ø200 | 3 | 12,29 | 13,23 | 15,98 | m |
-| A03 | Canale spiroidale zincato e raccordi | curva 90° Ø125 | 2 | 7,25 | 7,41 | 7,57 | cad |
-| A03 | Canale spiroidale zincato e raccordi | curva 90° Ø160 | 2 | 10,93 | 10,96 | 11,00 | cad |
-| A03 | Canale spiroidale zincato e raccordi | curva 90° Ø200 | 2 | 15,03 | 15,15 | 15,26 | cad |
-| A03 | Canale spiroidale zincato e raccordi | tee 90° Ø160 | 1 | 16,86 | 16,86 | 16,86 | cad |
-| A03 | Canale spiroidale zincato e raccordi | riduzione 160/125 | 2 | 6,23 | 7,79 | 9,35 | cad |
-| A03 | Canale spiroidale zincato e raccordi | riduzione 200/160 | 2 | 8,03 | 8,77 | 9,51 | cad |
-| A04 | Bocchetta di mandata a doppio filare di alette | 300x100 | 3 | 12,10 | 18,85 | 31,97 | cad |
-| A04 | Bocchetta di mandata a doppio filare di alette | 400x150 | 4 | 23,77 | 24,57 | 43,44 | cad |
-| A05 | Griglia di ripresa con filtro | 400x200 | 4 | 34,10 | 46,88 | 76,72 | cad |
-| A05 | Griglia di ripresa con filtro | 600x300 | 3 | 48,38 | 60,86 | 80,13 | cad |
-| A06 | Plenum porta-bocchetta | 300x100 | 4 | 18,55 | 21,95 | 32,99 | cad |
-| A06 | Plenum porta-bocchetta | 400x150 | 4 | 28,00 | 30,69 | 31,50 | cad |
-| A08 | Pendini e sospensioni | barra filettata M8 1 m | 2 | 1,07 | 1,10 | 1,14 | cad |
-| A08 | Pendini e sospensioni | sospensione a cavetto 3 m | 2 | 7,68 | 8,54 | 9,39 | cad |
-| E02 | Cavo FG16OR16 0,6/1 kV 3G4 | 3G4 | 5 | 1,88 | 2,28 | 2,44 | m |
-| E03 | Cavo FG16OR16 0,6/1 kV 3G6 | 3G6 | 6 | 2,93 | 3,32 | 5,21 | m |
-| E05 | Cavo FG16OR16 0,6/1 kV 5G4 | 5G4 | 5 | 3,46 | 3,77 | 3,85 | m |
-| E29 | Fascette, collari e graffette per cavi | fascette 4,8x300 nere | 3 | 0,030 | 0,038 | 0,045 | cad |
-| E29 | Fascette, collari e graffette per cavi | fascette 4,8x300 nere UV | 1 | 0,099 | 0,099 | 0,099 | cad |
-| E29 | Fascette, collari e graffette per cavi | fascette 4,8x350 nere | 1 | 0,040 | 0,040 | 0,040 | cad |
-| E29 | Fascette, collari e graffette per cavi | collare fissatubo Ø20 | 2 | 0,093 | 0,12 | 0,16 | cad |
-| E29 | Fascette, collari e graffette per cavi | collare fissatubo Ø25 | 2 | 0,11 | 0,14 | 0,16 | cad |
-| E29 | Fascette, collari e graffette per cavi | clip a scatto Ø25 | 2 | 0,069 | 0,085 | 0,10 | cad |
-| E29 | Fascette, collari e graffette per cavi | graffetta a chiodo 12-14 mm | 2 | 0,020 | 0,038 | 0,057 | cad |
+| Codice | ID | Voce | Misura | Riscontri | Netto/UM min € | Mediana € | Max € | UM |
+|---|---|---|---|--:|--:|--:|--:|---|
+| I39a | I39 | Separatore d'aria (disaeratore) | 1" | 3 | 84,11 | 96,83 | 126,93 | cad |
+| I39b | I39 | Separatore d'aria (disaeratore) | 1"1/4 | 3 | 95,08 | 167,58 | 168,82 | cad |
+| I60a | I60 | Guaina isolante elastomerica sp. 19 mm per tubo 50-54 | sp. 19, tubo Ø42 (sotto) | 1 | 3,30 | 3,30 | 3,30 | m |
+| I60b | I60 | Guaina isolante elastomerica sp. 19 mm per tubo 50-54 | sp. 19, tubo Ø60 (sopra) | 1 | 4,49 | 4,49 | 4,49 | m |
+| I60c | I60 | Guaina isolante elastomerica sp. 19 mm per tubo 50-54 | sp. 13, tubo Ø54 | 1 | 2,06 | 2,06 | 2,06 | m |
+| I62a | I62 | Finitura esterna dell'isolante (PVC, alluminio, nastro UV) | benda PVC Isogenopak h 100 mm | 1 | 1,71 | 1,71 | 1,71 | m |
+| I62b | I62 | Finitura esterna dell'isolante (PVC, alluminio, nastro UV) | nastro PVC per clima | 1 | 0,14 | 0,14 | 0,14 | m |
+| I62c | I62 | Finitura esterna dell'isolante (PVC, alluminio, nastro UV) | foglio alluminio/poliestere UV autoadesivo | 1 | 15,16 | 15,16 | 15,16 | m |
+| I62d | I62 | Finitura esterna dell'isolante (PVC, alluminio, nastro UV) | lamierino alluminio 0,5 mm | 1 | 12,21 | 12,21 | 12,21 | m² |
+| I62e | I62 | Finitura esterna dell'isolante (PVC, alluminio, nastro UV) | curva 90° PUR + PVC | 1 | 6,45 | 6,45 | 6,45 | cad |
+| I68a | I68 | Tubo di scarico condensa Ø32 / Ø40 con raccordi | Ø32 PP (HT) barra 2 m | 4 | 1,73 | 1,94 | 2,10 | m |
+| I68b | I68 | Tubo di scarico condensa Ø32 / Ø40 con raccordi | Ø40 PP (HT) barra 2 m | 3 | 1,68 | 1,72 | 2,21 | m |
+| I68c | I68 | Tubo di scarico condensa Ø32 / Ø40 con raccordi | Ø40 PVC arancio barra 2 m | 2 | 1,91 | 2,28 | 2,66 | m |
+| I68d | I68 | Tubo di scarico condensa Ø32 / Ø40 con raccordi | curva Ø32 87°/45° | 1 | 0,78 | 0,78 | 0,78 | cad |
+| I68e | I68 | Tubo di scarico condensa Ø32 / Ø40 con raccordi | curva Ø40 87°/45° | 2 | 0,47 | 0,64 | 0,81 | cad |
+| I68f | I68 | Tubo di scarico condensa Ø32 / Ø40 con raccordi | manicotto Ø32 | 1 | 1,48 | 1,48 | 1,48 | cad |
+| I68g | I68 | Tubo di scarico condensa Ø32 / Ø40 con raccordi | manicotto Ø40 | 1 | 1,39 | 1,39 | 1,39 | cad |
+| F07a | F07 | Canalina copritubo per condizionatori | 60x45 | 5 | 2,03 | 2,46 | 3,24 | m |
+| F07b | F07 | Canalina copritubo per condizionatori | 80x60 | 5 | 2,58 | 3,44 | 4,27 | m |
+| F08a | F08 | Curve e raccordi della canalina copritubo | 60x45 curva piana | 3 | 2,75 | 3,28 | 4,43 | cad |
+| F08b | F08 | Curve e raccordi della canalina copritubo | 60x45 angolo interno/esterno | 4 | 1,47 | 2,00 | 2,30 | cad |
+| F08c | F08 | Curve e raccordi della canalina copritubo | 60x45 passaggio a muro | 2 | 1,84 | 2,19 | 2,54 | cad |
+| F08d | F08 | Curve e raccordi della canalina copritubo | 60x45 tappo terminale | 2 | 1,57 | 1,74 | 1,92 | cad |
+| F08e | F08 | Curve e raccordi della canalina copritubo | 80x60 curva piana | 3 | 1,80 | 3,50 | 3,69 | cad |
+| F08f | F08 | Curve e raccordi della canalina copritubo | 80x60 angolo interno/esterno | 4 | 2,20 | 2,41 | 3,24 | cad |
+| F08g | F08 | Curve e raccordi della canalina copritubo | 80x60 giunto | 1 | 1,80 | 1,80 | 1,80 | cad |
+| F08h | F08 | Curve e raccordi della canalina copritubo | 80x60 passaggio a muro | 2 | 1,80 | 1,90 | 1,99 | cad |
+| F08i | F08 | Curve e raccordi della canalina copritubo | 80x60 tappo terminale | 2 | 1,39 | 2,01 | 2,62 | cad |
+| F09a | F09 | Dadi a cartella e giunzioni per rame | dado a cartella 1/4" | 3 | 0,49 | 0,57 | 0,73 | cad |
+| F09b | F09 | Dadi a cartella e giunzioni per rame | dado a cartella 3/8" | 2 | 0,90 | 0,98 | 1,06 | cad |
+| F09c | F09 | Dadi a cartella e giunzioni per rame | dado a cartella 1/2" | 2 | 1,06 | 1,12 | 1,19 | cad |
+| F09d | F09 | Dadi a cartella e giunzioni per rame | dado a cartella 5/8" | 2 | 1,20 | 1,23 | 1,27 | cad |
+| F09e | F09 | Dadi a cartella e giunzioni per rame | giunto a doppia cartella 1/4" | 3 | 0,70 | 1,07 | 1,14 | cad |
+| F09f | F09 | Dadi a cartella e giunzioni per rame | giunto a doppia cartella 3/8" | 2 | 1,55 | 1,77 | 2,00 | cad |
+| F09g | F09 | Dadi a cartella e giunzioni per rame | giunto a doppia cartella 1/2" | 2 | 1,96 | 2,17 | 2,38 | cad |
+| F09h | F09 | Dadi a cartella e giunzioni per rame | giunto a doppia cartella 5/8" | 3 | 2,87 | 3,58 | 5,67 | cad |
+| F09i | F09 | Dadi a cartella e giunzioni per rame | manicotto a brasare 1/4" | 2 | 0,28 | 0,75 | 1,23 | cad |
+| F09j | F09 | Dadi a cartella e giunzioni per rame | manicotto a brasare 3/8" | 1 | 2,20 | 2,20 | 2,20 | cad |
+| A01a | A01 | Tubo flessibile isolato per aria, rotolo 10 m | Ø125 | 4 | 3,24 | 5,95 | 11,30 | m |
+| A01b | A01 | Tubo flessibile isolato per aria, rotolo 10 m | Ø160 | 4 | 5,09 | 7,33 | 7,72 | m |
+| A01c | A01 | Tubo flessibile isolato per aria, rotolo 10 m | Ø200 | 3 | 4,46 | 8,84 | 9,20 | m |
+| A03a | A03 | Canale spiroidale zincato e raccordi | spiroidale Ø125 | 1 | 9,36 | 9,36 | 9,36 | m |
+| A03b | A03 | Canale spiroidale zincato e raccordi | spiroidale Ø160 | 2 | 10,04 | 11,01 | 11,98 | m |
+| A03c | A03 | Canale spiroidale zincato e raccordi | spiroidale Ø200 | 3 | 12,29 | 13,23 | 15,98 | m |
+| A03d | A03 | Canale spiroidale zincato e raccordi | curva 90° Ø125 | 2 | 7,25 | 7,41 | 7,57 | cad |
+| A03e | A03 | Canale spiroidale zincato e raccordi | curva 90° Ø160 | 2 | 10,93 | 10,96 | 11,00 | cad |
+| A03f | A03 | Canale spiroidale zincato e raccordi | curva 90° Ø200 | 2 | 15,03 | 15,15 | 15,26 | cad |
+| A03g | A03 | Canale spiroidale zincato e raccordi | tee 90° Ø160 | 1 | 16,86 | 16,86 | 16,86 | cad |
+| A03h | A03 | Canale spiroidale zincato e raccordi | riduzione 160/125 | 2 | 6,23 | 7,79 | 9,35 | cad |
+| A03i | A03 | Canale spiroidale zincato e raccordi | riduzione 200/160 | 2 | 8,03 | 8,77 | 9,51 | cad |
+| A04a | A04 | Bocchetta di mandata a doppio filare di alette | 300x100 | 3 | 12,10 | 18,85 | 31,97 | cad |
+| A04b | A04 | Bocchetta di mandata a doppio filare di alette | 400x150 | 4 | 23,77 | 24,57 | 43,44 | cad |
+| A05a | A05 | Griglia di ripresa con filtro | 400x200 | 4 | 34,10 | 46,88 | 76,72 | cad |
+| A05b | A05 | Griglia di ripresa con filtro | 600x300 | 3 | 48,38 | 60,86 | 80,13 | cad |
+| A06a | A06 | Plenum porta-bocchetta | 300x100 | 4 | 18,55 | 21,95 | 32,99 | cad |
+| A06b | A06 | Plenum porta-bocchetta | 400x150 | 4 | 28,00 | 30,69 | 31,50 | cad |
+| A08a | A08 | Pendini e sospensioni | barra filettata M8 1 m | 2 | 1,07 | 1,10 | 1,14 | cad |
+| A08b | A08 | Pendini e sospensioni | sospensione a cavetto 3 m | 2 | 7,68 | 8,54 | 9,39 | cad |
+| E02 | E02 | Cavo FG16OR16 0,6/1 kV 3G4 | 3G4 | 5 | 1,88 | 2,28 | 2,44 | m |
+| E03 | E03 | Cavo FG16OR16 0,6/1 kV 3G6 | 3G6 | 6 | 2,93 | 3,32 | 5,21 | m |
+| E05 | E05 | Cavo FG16OR16 0,6/1 kV 5G4 | 5G4 | 5 | 3,46 | 3,77 | 3,85 | m |
+| E29a | E29 | Fascette, collari e graffette per cavi | fascette 4,8x300 nere | 3 | 0,030 | 0,038 | 0,045 | cad |
+| E29b | E29 | Fascette, collari e graffette per cavi | fascette 4,8x300 nere UV | 1 | 0,099 | 0,099 | 0,099 | cad |
+| E29c | E29 | Fascette, collari e graffette per cavi | fascette 4,8x350 nere | 1 | 0,040 | 0,040 | 0,040 | cad |
+| E29d | E29 | Fascette, collari e graffette per cavi | collare fissatubo Ø20 | 2 | 0,093 | 0,12 | 0,16 | cad |
+| E29e | E29 | Fascette, collari e graffette per cavi | collare fissatubo Ø25 | 2 | 0,11 | 0,14 | 0,16 | cad |
+| E29f | E29 | Fascette, collari e graffette per cavi | clip a scatto Ø25 | 2 | 0,069 | 0,085 | 0,10 | cad |
+| E29g | E29 | Fascette, collari e graffette per cavi | graffetta a chiodo 12-14 mm | 2 | 0,020 | 0,038 | 0,057 | cad |
+
 ### Il dettaglio, voce per voce
 
 ### I39 — Separatore d'aria (disaeratore)

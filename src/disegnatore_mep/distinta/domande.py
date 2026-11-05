@@ -55,6 +55,10 @@ DATI: dict[str, DatoInParole] = {
         "«tubo»",
         "se manca, la riduzione e' stata scritta a mano: si rilancia `completa`",
     ),
+    "pollice": DatoInParole(
+        "Il pollice del tubo su cui sta il pezzo (es. «1\"»): lo danno i diametri del tubo", "«sezione» del tratto"
+    ),
+    "volume_l": DatoInParole("La taglia del vaso d'espansione, in litri: la scrive il comando vaso", "«volume_l»"),
     "dimensione": DatoInParole("La dimensione della bocchetta (es. «400×200»)", "«dimensione»"),
     "locale": DatoInParole(
         "Il locale che la bocchetta serve (es. «Soggiorno»): le griglie di transito si contano per locale",
@@ -72,7 +76,11 @@ DATI: dict[str, DatoInParole] = {
     ),
     "idn_ma": DatoInParole("La corrente differenziale dell'interruttore, in mA (es. 30)", "«idn_ma»"),
     "tipo_differenziale": DatoInParole("Il tipo del differenziale (es. «B», «F», «A»)", "«tipo_differenziale»"),
-    "sezione": DatoInParole("La sezione: diametro, lati del canale o cavo (es. «Ø200», «3G2,5»)", "«sezione»"),
+    "sezione": DatoInParole(
+        "La sezione: diametro, lati del canale, cavo o tubo (es. «Ø200», «3G2,5», «MS 32×3»; per l'acqua bastano i "
+        "diametri, se il progettista li chiede)",
+        "«sezione»",
+    ),
     "materiale": DatoInParole("Il materiale della tubazione", "«materiale»"),
     "lunghezza_m": DatoInParole(
         "La lunghezza stimata del tratto, in metri (0 se è un raccordo diretto)", "«lunghezza_m»"
@@ -87,12 +95,31 @@ col suo nome: lo vede la prova delle regole, che ogni dato dei testi qui abbia l
 
 DOVE = {PEZZO: "sul pezzo", TRATTO: "su una tubazione del tratto"}
 
+TRATTI_PER_RETE = 4
+"""Oltre quanti tratti della stessa rete una domanda li dice per rete, non uno per uno."""
+
 
 def _chi(mancanti: Sequence[Mancante]) -> str:
     """I pezzi o i tratti di un dato, con il loro nome una volta sola: «TA-01, TA-02
     (Bocchetta di mandata)», «T08 (Alimentazione centrale di zona: QE-01 - CZ-01)»."""
     gruppi: list[tuple[str, list[str]]] = []
+    per_rete: dict[str, int] = {}
     for mancante in mancanti:
+        if mancante.su == TRATTO and ": " in mancante.di:
+            rete = mancante.di.split(": ", 1)[0]
+            per_rete[rete] = per_rete.get(rete, 0) + 1
+    for mancante in mancanti:
+        if mancante.su == TRATTO and ": " in mancante.di and per_rete[mancante.di.split(": ", 1)[0]] > TRATTI_PER_RETE:
+            # REL-020: una centrale senza diametri ha decine di tratti per rete; si
+            # dicono per rete, perche' la risposta del progettista e' una per rete.
+            rete = mancante.di.split(": ", 1)[0]
+            for di, sigle in gruppi:
+                if di == rete:
+                    sigle.append(mancante.chi)
+                    break
+            else:
+                gruppi.append((rete, [mancante.chi]))
+            continue
         if mancante.su == TRATTO:
             gruppi.append((mancante.di, [mancante.chi]))
             continue
