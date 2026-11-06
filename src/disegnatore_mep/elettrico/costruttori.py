@@ -99,12 +99,18 @@ class LineaDelManuale:
         }
 
 
+TIPO_DOMESTICO = "A"
+"""Il tipo del differenziale che `completa` scrive (D-237, I-289): in ambito domestico Nove C
+mette il **tipo A**, perche' il tipo B della specifica Rev. 01 §3.2 costa troppo (il PO, 6
+novembre 2026). Il tipo B resta se il progettista lo scrive sull'interruttore."""
+
+
 def _monofase(corrente: float, sezione: float, cavo: str, in_a: float, fonte: str) -> LineaDelManuale:
-    return LineaDelManuale(MONOFASE, corrente, sezione, cavo, "2P", "C", in_a, 30, "B", True, fonte)
+    return LineaDelManuale(MONOFASE, corrente, sezione, cavo, "2P", "C", in_a, 30, TIPO_DOMESTICO, True, fonte)
 
 
 def _trifase(fonte: str) -> LineaDelManuale:
-    return LineaDelManuale("400 V 3N~", 14, 2.5, "5G2,5", "4P", "C", 16, 30, "B", True, fonte)
+    return LineaDelManuale("400 V 3N~", 14, 2.5, "5G2,5", "4P", "C", 16, 30, TIPO_DOMESTICO, True, fonte)
 
 
 SHENLING_THERMAX_R290_LINEA: dict[tuple[float, int], LineaDelManuale] = {

@@ -98,3 +98,7 @@ Il comando della skill li riapre da sé.
   tubo; `distinta --costo` prezza col listino della minuteria tutto il materiale (idronico, elettrico, aria,
   frigorifero) in `interno/costo-minuteria.md`, che `consegna` non copia; la protezione chiesta solo sulle linee dal
   quadro. Collaudata con quattro agenti freschi (`docs/collaudi/REL-021/RAPPORTO.md`). Tavole invariate. 150 file.
+- **1.15.0** — 6 novembre 2026 (`REL-022`, I-288, I-289, D-237): **la distinta dal contesto della chat** — i metri,
+  l'isolamento e i gomiti dei tubi d'acqua li dice il progettista nella chat (blocco `distinta` del grafo, che `completa`
+  conserva), non si misurano sul grafo; la pompa di calore a terra, su staffe solo se chieste; il differenziale domestico
+  di tipo A; il listino rev. 04 con 27 voci nuove. 150 file.

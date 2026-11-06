@@ -223,7 +223,7 @@ def test_completa_scrive_i_dati_del_manuale_e_lo_dice(tmp_path: Path) -> None:
         "curva": "C",
         "in_a": 32,
         "idn_ma": 30,
-        "tipo_differenziale": "B",
+        "tipo_differenziale": "A",
         "alta_velocita": True,
     }
     assert "Dati elettrici scritti dal manuale Shenling e dalla specifica Nove C (informazione)" in stampa
@@ -244,7 +244,8 @@ def test_la_tavola_dell_elettrico_esce_pulita_con_qf_in_tabella_e_in_legenda() -
     righe = {riga.codice: riga for riga in foglio.tabella.righe}
     assert set(righe) == {"GT-01", "QE-01", "QF-01"}
     assert righe["QF-01"].descrizione == "Interruttore magnetotermico differenziale"
-    assert righe["QF-01"].caratteristiche == "2P C32 · Idn 30 mA tipo B"
+    # D-237 (I-289): in ambito domestico il differenziale e' di tipo A.
+    assert righe["QF-01"].caratteristiche == "2P C32 · Idn 30 mA tipo A"
     # I dati elettrici della macchina, dal manuale (I-277 riempita da REL-018).
     assert righe["GT-01"].caratteristiche == "230 V 1~ · 30 A · 3G6"
     assert (VOCE, "Interruttore magnetotermico differenziale") in {(v.symbol_id, v.name) for v in foglio.legend}
@@ -308,7 +309,7 @@ def test_la_tabella_dei_dati_shenling() -> None:
         assert (linea.corrente_max_a, linea.sezione_mm2, linea.cavo_minimo, linea.poli, linea.in_a) == (
             corrente, sezione, cavo, poli, nominale,
         ), chiave
-        assert (linea.curva, linea.idn_ma, linea.tipo_differenziale, linea.alta_velocita) == ("C", 30, "B", True)
+        assert (linea.curva, linea.idn_ma, linea.tipo_differenziale, linea.alta_velocita) == ("C", 30, "A", True)
         assert linea.in_a >= linea.corrente_max_a, chiave
     assert "vale il maggiore" in SHENLING_THERMAX_R290_LINEA[(12.0, 1)].fonte
     assert "proposta dal manuale" in SHENLING_THERMAX_R290_LINEA[(6.0, 1)].fonte
@@ -384,7 +385,7 @@ def test_la_distinta_ha_la_voce_dell_interruttore_e_non_la_protezione_della_line
     grafo = json.loads((CASO / "grafo-completo.json").read_text(encoding="utf-8"))
     distinta = _distinta(grafo)
     voce = next(v for v in distinta.voci if v.regola == f"corredo/{VOCE}/interruttore")
-    assert voce.testo == "Interruttore magnetotermico differenziale 2P C32 Idn 30 mA tipo B"
+    assert voce.testo == "Interruttore magnetotermico differenziale 2P C32 Idn 30 mA tipo A"
     assert (voce.quantita, voce.sezione, voce.da_definire) == (1, "E", False)
     # La linea con l'interruttore non chiede anche la `protezione` del tratto.
     assert not any(v.regola.endswith("/protezione-della-linea") for v in distinta.voci)

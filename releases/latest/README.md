@@ -1,4 +1,22 @@
-# L'ultima release: 1.14.0
+# L'ultima release: 1.15.0
+
+`DisegnatoreMEP-v1.15.0.zip` — sha256 `83a10f809cbf763e…`, 150 file — è `REL-022` (I-288, I-289, D-237). Si carica
+come ogni skill personale, dallo ZIP così com'è.
+
+Rispetto alla 1.14.0:
+- **i tubi d'acqua dalla chat**: l'agente chiede al progettista, per rete, il tubo, i metri e l'isolamento (preisolato,
+  o nudo con guaina e spessore) e li scrive nel blocco `distinta` del grafo, che `completa` non cancella; il grafo non
+  dà più lunghezze per l'acqua;
+- **i gomiti a corpo** come ipotesi (20) che si chiede in chat;
+- **la pompa di calore a terra** su supporti antivibranti; le staffe solo se il progettista le chiede;
+- **il differenziale di tipo A** in ambito domestico sulla linea della pompa di calore (il tipo B se il progettista lo
+  scrive);
+- **il listino rev. 04**: 27 voci nuove, dall'interruttore tipo B alle valvole antigelo, dai cavi 3G1,5 al circolatore
+  sanitario.
+
+La PdC 12 kW con la 3 vie dei collaudi esce a 1.929 € di materiale (`docs/collaudi/REL-022/RAPPORTO.md`).
+
+Prima, la **1.14.0**:
 
 `DisegnatoreMEP-v1.14.0.zip` — sha256 `af0c5451bf57de42…`, 150 file — è `REL-019`, `REL-020` e `REL-021` (I-284 …
 I-287, D-235, D-236): **la distinta della parte idronica e il costo della minuteria**. Si carica come ogni skill
