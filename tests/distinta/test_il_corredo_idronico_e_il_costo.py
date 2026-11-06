@@ -202,3 +202,17 @@ def test_il_tubo_preisolato_non_ha_guaina_e_le_staffe_solo_se_chieste(
     assert [v.testo for v in distinta.voci_della_sezione("S")] == [
         "Staffe a muro per l'unità esterna, portata 160 kg, con gommini antivibranti (coppia)"
     ]
+
+
+def test_completa_conserva_i_dati_della_chat(tmp_path: Path) -> None:
+    """I tubi d'acqua del progettista stanno nel blocco «distinta» del grafo: un nuovo
+    `completa` non li cancella (collaudi T1, T2 e T4 di REL-021: le risposte si perdevano)."""
+    grafo = json.loads((ROOT / "docs" / "collaudi" / "REL-017" / "diametri" / "grafo.json").read_text(encoding="utf-8"))
+    blocco = {"tubi": [{"rete": "primario", "tubo": "MS 32×3", "metri": 30, "isolamento": "preisolato"}], "gomiti": 18}
+    grafo["distinta"] = blocco
+    prima = tmp_path / "grafo.json"
+    prima.write_text(json.dumps(grafo, ensure_ascii=False), encoding="utf-8")
+    dopo = tmp_path / "grafo-completo.json"
+    assert main(["completa", str(prima), "--out", str(dopo)], cartelle_del_repository(ROOT)) == 0
+    letto = json.loads(dopo.read_text(encoding="utf-8"))["distinta"]
+    assert letto["gomiti"] == 18 and letto["tubi"][0]["metri"] == 30 and letto["tubi"][0]["isolamento"] == "preisolato"
