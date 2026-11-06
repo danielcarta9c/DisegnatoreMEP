@@ -621,7 +621,7 @@ def posa_i_diametri(
         in_linea.append(trovato)
     scritti = [tratto for tratto, trovato in zip(tratti, in_linea, strict=True) if trovato is not None]
 
-    def lato(tratto: TrattoDaScrivere) -> bool | None:
+    def lato_di(tratto: TrattoDaScrivere) -> bool | None:
         return lato_del_tratto(tratto.connection_ids, foglio.routes)
 
     for tratto, trovato in zip(tratti, in_linea, strict=True):
@@ -636,7 +636,7 @@ def posa_i_diametri(
             trovato is None
             and tratto.strada_principale
             and not tratto.ripetuto
-            and not detto_da_un_vicino(tratto, scritti, lato)
+            and not detto_da_un_vicino(tratto, scritti, lato_di)
         ):
             trovato = staccata(tratto, testo, propri)
             if trovato is not None:

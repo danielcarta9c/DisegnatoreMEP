@@ -1,23 +1,87 @@
-# REL-023 — Il corredo standard: una 12 kW sui 1.700 € di materiale
+# REL-024 — La 2.0: la skill che si consegna ai progettisti
 
-> **Scritto il 6 novembre 2026**, dopo `REL-022` (la 1.15.0). Il PO: «Dobbiamo fare dopo un lavoro di ottimizzazione
-> e pensare ad un corredo standard per cui su una 12 kw stiamo sui 1700 di materiale. Mettiamolo come prox task una
-> volta finito quello che stiamo facendo» (I-289).
+> **Scritto il 6 novembre 2026**, dopo la 1.15.0. Il PO: «per me la 2.0 è consolidamento. Voglio iniziare a
+> distribuirla ai miei progettisti. fino adesso l'ho usata solo io» (I-295). La skill non cambia mestiere: cambia
+> chi la usa. Fino alla 1.15.0 l'ha usata una persona sola, che conosce ogni decisione; dalla 2.0 la usano
+> progettisti che non hanno letto niente di questo repository.
 
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
-**Stato:** **IN CORSO** — i punti 2 (le giunzioni, I-291) e una parte dell'1 (antigelo di base senza valvole, I-290; il circolatore fuori dalla minuteria, I-292) sono su `main` nella 1.15.0 (PR #90, approvata dal PO, I-294); il differenziale è chiuso da D-240. Restano 1 (defangatore, intercettazioni; glicole o valvole quando il PO decide), 3 e 4.
-**Base:** `main` dopo la 1.15.0.
+**Stato:** **IN CORSO** — fase 1: la CI e mypy fusi con la PR #92, nella 1.15.1 (I-296); restano il banco come prova e la prova senza rete. `REL-023` è sospeso (`docs/plans/pacchetti/REL-023.md`).
+**Base:** `main` dopo la 1.15.0 (PR #91).
+**Approvazione della fusione:** **del PO**, guardando le tavole (D-146, D-147), a ogni PR.
+**Il numero:** le PR intermedie restano 1.x; la **2.0.0** esce solo dalla fase 5, dopo la prova del PO con i progettisti.
 
-## Il punto di partenza (misurato, `docs/collaudi/REL-022/RAPPORTO.md`)
+## Il punto di partenza (misurato il 6 novembre 2026 su `main`, la 1.15.0)
 
-La 12 kW con la 3 vie del collaudo T1 costa **1.929 €** a listino, il 13% sopra il riferimento. Le voci più pesanti:
-33 raccordi a pressare M 1" × MS 32 (212 €), 43 m di MS 32 preisolato (170 €), 2 valvole antigelo (155 €), 20 gomiti
-MS 32 (149 €), il defangatore magnetico 1" (105 €), la deviatrice (93 €), il circolatore (92 €).
+| controllo | esito |
+|---|---|
+| `pytest` | 2889 passed, 15 skipped, 11 xfailed |
+| `ruff check src tests` | verde; `ruff check .` 59 errori negli script di `docs/collaudi/`; 258 file non formattati |
+| `mypy` (strict, `pyproject.toml`) | **fermo sugli stub di numpy** prima di controllare; con `--python-version 3.13` **50 errori in 13 file** |
+| CI | **assente**: in `.github/` c'è solo il modello della PR |
+| build della skill | riproducibile: lo ZIP ricostruito ha lo sha256 di `releases/latest` (`56514abd…`), 150 file su 200 |
+| tag git | nessuno |
+| prova di fumo | lo ZIP della 1.15.0 in una cartella pulita, Python con il solo pydantic: T1 di `REL-023` dal grafo al PDF, A3, 0 cedute, 0 bloccanti; ezdxf **installato da PyPI al volo** |
+| valutazioni della skill | le tre di `skill/evals/`, da `REL-001` (settembre): mai rifatte sulle release dopo |
+| banco delle tavole | `docs/collaudi/REL-011/banco.py`: uno strumento di sessione, non una prova |
+| `skill/SKILL.md` | 459 righe su 500 |
 
-## Che cosa si fa (da concordare col PO prima di scrivere le regole)
+## Le cinque fasi
 
-1. **Il corredo standard di una centrale domestica**: quali accessori Nove C mette davvero (antigelo o glicole, un
-   defangatore di quale fascia, quante intercettazioni), con il PO, su una sua distinta d'acquisto reale.
-2. **I raccordi** — **FATTO** (D-239): un nipplo fra due accessori, un raccordo a pressare fra tubo e accessorio, i tee dal grafo, i gomiti a corpo o dal contesto del progetto. Collaudo in `docs/collaudi/REL-023/RAPPORTO.md`: il T1 coi metri di una commessa vera fa 1.425 €.
-3. **Le scelte del listino** di fascia giusta per Nove C (marche, prezzi d'acquisto invece che al banco).
-4. **La prova**: la 12 kW con la 3 vie sui 1.700 € di materiale, e le altre taglie in proporzione.
+### Fase 1 — La messa in sicurezza (nessuna tavola cambia)
+
+1. **La CI** su GitHub Actions, a ogni PR e su `main`: `pytest`, `ruff check src tests`, `mypy`, la costruzione della
+   skill con `tests/test_le_release.py`. Una PR rossa non si fonde.
+2. **`mypy` verde davvero**: la configurazione che non si ferma sugli stub di terzi, e i 50 errori corretti nel codice,
+   non silenziati.
+3. **Il banco diventa una prova**: le tavole di riferimento (i cinque impianti, la villetta, il T1) rifatte a ogni
+   PR e confrontate con quelle registrate; una differenza non voluta è rossa, una voluta si registra con la tavola nella
+   PR.
+4. **La prova senza rete**: che cosa succede alla skill in un ambiente senza PyPI. O le dipendenze viaggiano nello ZIP
+   dentro il limite dei 200 file, o la skill lo dice al progettista con un messaggio chiaro, prima di cominciare.
+
+### Fase 2 — La prova dell'agente, che resta agli atti
+
+5. **Sei impianti tipo in camera pulita**, con Opus e Sonnet, dal testo del progettista alla tavola: PdC piccola con
+   volano e bollitore, cascata, ibrido caldaia + PdC, aria-aria, l'elettrico, il costruito. Testi scritti **come li
+   scriverebbe un progettista che non conosce la skill**. Gli esiti — tavole, domande fatte, tempi — diventano il
+   riferimento con cui si giudica ogni release successiva (`skill/evals/`).
+
+### Fase 3 — Il debito di decisioni, chiuso col PO
+
+6. Una per una, con la domanda e la proposta: D-225 (sospesa), D-236 (proposta fusa, da confermare), il contenuto di
+   D-231; il glicole e il materiale sopra i 35 kW; le voci del canalizzato DA PREZZARE; il ritegno sul ricircolo; il
+   gruppo di riempimento nei soli riscaldamento. Quello che il PO non decide va in «limiti noti», non resta muto.
+
+### Fase 4 — La skill per chi non l'ha scritta
+
+7. **La guida del progettista**: una pagina sola — che cosa chiedere, che cosa la skill domanda, che cosa consegna, che
+   cosa non fa mai, i modelli che funzionano (non Haiku).
+8. **I limiti noti** e le **note di release leggibili** (che cosa cambia per chi disegna, senza I- e D-).
+9. **I documenti interni riallineati**: `PROJECT_STATE.md` (fermo alla 1.5), `docs/ARCHITETTURA-DEL-PIANO.md` (il pezzo
+   3 dato per inesistente), `HANDOFF.md` accorciato davvero.
+10. **`skill/SKILL.md`** sotto le 400 righe, con il dettaglio nei riferimenti, per lasciare spazio alle 2.x.
+
+### Fase 5 — La release candidate
+
+11. **2.0.0-rc1** consegnata dal PO a due o tre progettisti su commesse vere; i loro rilievi raccolti in un posto solo;
+    le correzioni; la **2.0.0** con il tag git, la release su GitHub, `releases/latest/`. Poi la potatura dei rami
+    vecchi (una quarantina, già fusi).
+
+## Le decisioni del PO sulla distribuzione (I-296, 6 novembre 2026)
+
+- **Il repository resta pubblico**, con i prezzi e le fatture della commessa PR.BG.017 («no problem»).
+- **I progettisti vedono i costi** della distinta (`distinta --costo`).
+- **La distribuzione, la skill `nove-c-report` e il canale dei rilievi dei progettisti li cura il PO**: la skill dei
+  report l'hanno già tutti. Per la fase 5 resta da sapere, al momento della rc, chi la prova e dove arrivano i rilievi.
+
+## Fuori
+
+Nessuna capacità nuova: l'anello revisore → pianificatore (`DRAW-016` punti 2 e 3), l'espansione diretta e il VRV, le
+famiglie di `docs/DEFERRED.md` §1, il corredo standard di `REL-023` sono delle 2.x.
+
+## Criteri di accettazione, per ogni PR
+
+Le tavole per prime; suite a 0 failed senza skip o xfail nuovi; la CI verde; nessun dato di cliente nuovo nel diff;
+`tests/test_le_release.py` verde se c'è una release. Per la 2.0.0: le cinque fasi chiuse, ciascuna con il comando e il
+suo output nel rapporto (`docs/collaudi/REL-024/RAPPORTO.md`).

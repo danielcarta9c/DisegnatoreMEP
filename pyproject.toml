@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "disegnatore-mep"
-version = "1.15.0"
+version = "1.15.1"
 description = "Deterministic foundation for technical MEP schematics"
 requires-python = ">=3.11"
 dependencies = [
@@ -19,6 +19,10 @@ dxf = [
 ]
 dev = [
   "ezdxf==1.4.4",
+  # L'anteprima PNG (stessa versione che la skill installa da se', scripts/mep.py): senza,
+  # le prove della pianta che si aspettano il PNG passavano solo dove c'era pdftoppm.
+  # L'ha trovato la prima esecuzione della CI (REL-024).
+  "pypdfium2==5.13.0",
   "mypy==2.3.0",
   "pytest==9.1.1",
   "ruff==0.15.22",
@@ -46,9 +50,14 @@ select = ["E", "F", "I", "UP", "B", "SIM"]
 ignore = ["E501"]
 
 [tool.mypy]
-python_version = "3.11"
+# 3.12, non 3.11: numpy arriva con ezdxf e i suoi stub usano la sintassi di Python 3.12
+# (`type X = ...`). Con "3.11" mypy si fermava li', prima di controllare il nostro codice, e
+# per settimane e' sembrato «un problema dell'ambiente» mentre gli errori veri crescevano
+# sotto (REL-024). Il minimo di 3.11 lo tiene la CI, che fa girare le prove anche su 3.11.
+python_version = "3.12"
 strict = true
 plugins = ["pydantic.mypy"]
 packages = ["disegnatore_mep"]
 mypy_path = ["src", "tests/collaudo"]
 explicit_package_bases = true
+

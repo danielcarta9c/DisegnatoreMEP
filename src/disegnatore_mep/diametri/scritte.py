@@ -156,10 +156,10 @@ def scritte_dei_tratti(
     # tubazioni; niente sugli stacchi di servizio, salvo una scritta libera (I-279).
     catena_di: dict[str, TrattoDelDiametro] = {}
     if testi.keys() & d_acqua:
-        for catena in tratti_del_diametro(project, catalog, tutte):
-            if all(rete in idrauliche for rete in catena.reti):
-                for item in catena.connection_ids:
-                    catena_di[item] = catena
+        for tratto in tratti_del_diametro(project, catalog, tutte):
+            if all(rete in idrauliche for rete in tratto.reti):
+                for item in tratto.connection_ids:
+                    catena_di[item] = tratto
     fatte: set[int] = set()
 
     def del_tubo(tubazione: str) -> Tubo | None:

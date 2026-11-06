@@ -203,8 +203,8 @@ def linea_della_macchina(project: ProjectModel, catalog: ComponentRegistry, macc
     tubazioni: list[str] = []
     visti = {macchina}
     while capo in arrivi:
-        chi, porta, tubazione = arrivi[capo]
-        tubazioni.append(tubazione)
+        chi, porta, cavo = arrivi[capo]
+        tubazioni.append(cavo)
         if chi in visti or chi not in pezzi:
             return LineaDellaMacchina(macchina, tuple(passanti), tuple(tubazioni), None)
         visti.add(chi)

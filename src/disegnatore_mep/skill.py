@@ -927,9 +927,11 @@ def _disegna(args: argparse.Namespace, cartelle: Cartelle) -> int:
     # Chi compone deve sapere quanto posto prende la tabella, per giudicare se una posa
     # piu' stretta le passa sotto o accanto nello stesso formato: la camera Opus di
     # REL-001 e' salita all'A2, e lo stesso disegno stava nell'A3.
-    tabelle = [f.tabella for f in esito.disegno.sheets if f.tabella] if esito.disegno else []
+    del_foglio = [f.tabella for f in esito.disegno.sheets if f.tabella] if esito.disegno else []
     tabella = (
-        f" ({tabelle[0].larghezza_mm:g} x {tabelle[0].altezza_mm:g} mm)" if len(tabelle) == 1 else ""
+        f" ({del_foglio[0].larghezza_mm:g} x {del_foglio[0].altezza_mm:g} mm)"
+        if len(del_foglio) == 1
+        else ""
     )
     # Nell'esecutivo anche le note di posa, a destra della tabella (REL-011, D-231).
     note = [f.note_di_posa for f in esito.disegno.sheets if f.note_di_posa] if esito.disegno else []

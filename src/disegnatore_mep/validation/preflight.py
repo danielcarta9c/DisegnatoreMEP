@@ -445,7 +445,7 @@ def runs_crossing_themselves(
         linee: dict[object, list[RoutedTrunk]] = {}
         for route in sheet.routes:
             catena = e_autostrada(route, conosciute)
-            chiave = catena.connection_ids if catena is not None else ("tratta", id(route))
+            chiave: object = catena.connection_ids if catena is not None else ("tratta", id(route))
             linee.setdefault(chiave, []).append(route)
         for chiave, routes in linee.items():
             tratti = [

@@ -1,0 +1,59 @@
+# La CI di Disegnatore MEP (REL-024, fase 1).
+#
+# Fino alla 1.15.0 i controlli giravano solo quando la sessione se ne ricordava, e mypy e'
+# rimasto rotto per settimane senza che nessuno lo vedesse. Da qui gira a ogni PR e su main:
+# una PR rossa non si fonde (CLAUDE.md). La prova della release, tests/test_le_release.py,
+# e' dentro la suite: costruisce la skill e ne controlla i limiti del caricamento su claude.ai.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  prove:
+    name: prove (Python ${{ matrix.python }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        # 3.11 e' il minimo di pyproject.toml; 3.12 il riferimento (scripts/setup-env.sh).
+        python: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - name: Dipendenze
+        run: python -m pip install -e ".[dev]"
+      - name: pytest
+        run: python -m pytest -q -p no:cacheprovider
+
+  controlli:
+    name: ruff e mypy
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - name: Dipendenze
+        run: python -m pip install -e ".[dev]"
+      - name: ruff
+        run: python -m ruff check src tests
+      - name: mypy
+        run: python -m mypy

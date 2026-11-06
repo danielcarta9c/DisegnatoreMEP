@@ -645,7 +645,7 @@ class _Tavola:
         self.doc = new(DXF_VERSION, setup=False, units=units.MM)
         self.msp = self.doc.modelspace()
         self.blocchi: set[str] = set()
-        self.varianti: dict[tuple[str, tuple[str, ...]], str] = {}
+        self.varianti: dict[tuple[str, tuple[str, ...], tuple[str, ...]], str] = {}
         """I blocchi di un simbolo senza qualche moncone (collaudo T1 di REL-012):
         uno per combinazione di porte scollegate, `NoveC_<simbolo>_V<n>`."""
         self._intestazione()
