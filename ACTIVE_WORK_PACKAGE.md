@@ -5,8 +5,8 @@
 > volta finito quello che stiamo facendo» (I-289).
 
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
-**Stato:** **IN CORSO** — i punti 2 (le giunzioni, I-291) e una parte dell'1 (antigelo di base senza valvole, I-290; il circolatore fuori dalla minuteria, I-292) sono sul ramo della 1.15.0, `claude/distinta-dal-contesto`, in attesa che il PO guardi le tavole e approvi la fusione. Restano 1 (defangatore, intercettazioni, il tipo del differenziale), 3 e 4.
-**Base:** il ramo della 1.15.0 (PR #90).
+**Stato:** **IN CORSO** — i punti 2 (le giunzioni, I-291) e una parte dell'1 (antigelo di base senza valvole, I-290; il circolatore fuori dalla minuteria, I-292) sono su `main` nella 1.15.0 (PR #90, approvata dal PO, I-294); il differenziale è chiuso da D-240. Restano 1 (defangatore, intercettazioni; glicole o valvole quando il PO decide), 3 e 4.
+**Base:** `main` dopo la 1.15.0.
 
 ## Il punto di partenza (misurato, `docs/collaudi/REL-022/RAPPORTO.md`)
 
