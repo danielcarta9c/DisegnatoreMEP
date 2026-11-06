@@ -4,7 +4,8 @@
  "note": [
   "PdC e volano allo stesso y=60: mandata a 65 e ritorno a 80 rette (D-159, B1).",
   "Deviatrice sulla mandata, terza via in basso verso il serpentino del bollitore; il ritorno del serpentino risale alla confluenza accanto alla discesa (B1, B11).",
-  "Vaso, riempimento e manometro appesi in giu' dal ritorno (A4, B10). Bollitore sotto il volano, AF da sinistra con i suoi appesi in giu'."
+  "Vaso, riempimento e manometro appesi in giu' dal ritorno (A4, B10). Bollitore sotto il volano, AF da sinistra con i suoi appesi in giu'.",
+  "REL-023: bollitore e i suoi pezzi 10 mm a destra, perche' la discesa dalla terza via della deviatrice arrivi dritta alla valvola del serpentino (rilievo del PO del 6 novembre 2026, B1)."
  ],
  "pezzi": {
   "pdc": {
@@ -88,26 +89,26 @@
    "regola": "fra gli organi del ritorno e il volano; riceve il serpentino da sotto"
   },
   "bollitore": {
-   "x": 185,
+   "x": 195,
    "y": 140,
    "regola": "A1 accumuli; sotto il volano"
   },
   "sonda-acs": {
-   "x": 220,
+   "x": 230,
    "y": 157.5
   },
   "mixing-valve-thermostatic-bollitore-dhw-out": {
-   "x": 235,
+   "x": 245,
    "y": 125,
    "rotazione": 0,
    "regola": "D-175 AF dalla terza via in basso"
   },
   "inlet-mixing-valve-thermostatic-bollitore-dhw-out": {
-   "x": 235,
+   "x": 245,
    "y": 152.5
   },
   "utenze": {
-   "x": 262.5,
+   "x": 270,
    "y": 127.5
   },
   "tee-expansion-connection-dhw-bollitore-cold-in": {

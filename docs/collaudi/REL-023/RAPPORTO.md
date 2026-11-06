@@ -17,6 +17,14 @@ le due valvole antigelo non ci sono più, e la nota 2 dice «Antigelo: la pompa 
 sua protezione antigelo funziona solo con la corrente». La stessa cosa sulla villetta di `REL-017`
 (`docs/collaudi/REL-017/vaso-note/tavola/`), rifatta con il suo `rifai.sh`.
 
+**Il rilievo del PO sulla tavola del T1** (6 novembre 2026, «occhio a ste robe»): la discesa dalla terza via della
+deviatrice al serpentino del bollitore faceva un dente proprio sull'incrocio col ritorno. Il disegno lo diceva
+(`HIGHWAY_IS_NOT_STRAIGHT`: tre pieghe dove ne basta una), era già nella tavola di `REL-021`, e la sessione non l'ha
+riferito prima di mostrare la tavola. Corretto nel piano: il bollitore e i suoi pezzi 10 mm a destra, lo stacco delle
+utenze accorciato di 2,5 mm. Restano nella tavola, come nella villetta di `REL-017`, la coppia del secondario che
+fra collettore e volano cambia interasse (10 e 15 mm, `SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER`): gli attacchi del volano
+e del collettore hanno passi diversi, e il piano da solo non li allinea.
+
 ## Le misure
 
 Il costo della minuteria del T1, con la stessa skill costruita da `scripts/costruisci-skill.py`:
