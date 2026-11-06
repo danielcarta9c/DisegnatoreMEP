@@ -107,3 +107,6 @@ Il comando della skill li riapre da sé.
 - **1.15.1** — 6 novembre 2026 (`REL-024`, I-295, I-296): **la prima della 2.0 di consolidamento** — la CI su GitHub
   Actions (prove su 3.11 e 3.12, ruff, mypy), mypy strict verde, pypdfium2 fra le dipendenze di sviluppo. Tavole,
   distinta e pianta identiche byte per byte alla 1.15.0. 150 file.
+- **1.15.2** — 6 novembre 2026 (`REL-024`, fase 1): **il banco delle tavole come prova** (`scripts/banco.py`,
+  `tests/test_il_banco.py`: 28 casi, a ogni PR) e **la skill senza rete** — un'installazione facoltativa non riuscita
+  non si ritenta a ogni comando, pip con un limite d'attesa. Tavole identiche alla 1.15.1. 150 file.

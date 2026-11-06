@@ -6,7 +6,7 @@
 > progettisti che non hanno letto niente di questo repository.
 
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
-**Stato:** **IN CORSO** — fase 1: la CI e mypy fusi con la PR #92, nella 1.15.1 (I-296); restano il banco come prova e la prova senza rete. `REL-023` è sospeso (`docs/plans/pacchetti/REL-023.md`).
+**Stato:** **IN CORSO** — **fase 1 chiusa** sul ramo della PR della 1.15.2: la CI e mypy (1.15.1, PR #92), il banco come prova e la skill senza rete (`docs/collaudi/REL-024/RAPPORTO.md`). Il prossimo: la fase 2.
 **Base:** `main` dopo la 1.15.0 (PR #91).
 **Approvazione della fusione:** **del PO**, guardando le tavole (D-146, D-147), a ogni PR.
 **Il numero:** le PR intermedie restano 1.x; la **2.0.0** esce solo dalla fase 5, dopo la prova del PO con i progettisti.

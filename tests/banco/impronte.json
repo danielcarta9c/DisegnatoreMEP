@@ -1,0 +1,174 @@
+{
+ "nota": "Impronte del banco delle tavole: le riscrive `python scripts/banco.py --registra`, e una tavola cambiata si mostra al PO nella PR (D-146).",
+ "casi": {
+  "aria-aria-rel012": {
+   "grafo-completo.json": "f465daf6a04ce7a94ac73e8c156444f9d06f9df366ae792d5c6823c3d38fb084",
+   "sintesi-1": "Formato A3 · tratte 20 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 5 · sormonti 0 · avvisi e regole: TAG_OMITTED x1",
+   "tavola/caso-prova-aria-aria-t1-rilievi.md": "86f7a38ccf7eb9add4abedd368a925672f2af327f776ac45081e3865a2d15908",
+   "tavola/caso-prova-aria-aria-t1.svg": "4059c0b49187ecbe8cbc9ab5471c42df140f937c13d47f9c2a938b71e7601de5"
+  },
+  "caso-reale-2": {
+   "grafo-completo.json": "a2d227f10d2bdbc2a908f21b393a0e2e16fd9d9fe38b001c2051b950e43c13b1",
+   "sintesi-1": "Formato A1 · tratte 137 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 13 · sormonti 12 · avvisi e regole: HIGHWAY_IS_NOT_STRAIGHT x1, PIECE_OUTSIDE_ITS_BAND x7, SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x4, SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x4",
+   "tavola/centrale-pdc-condominio-caso-reale-2-t1-rilievi.md": "30df6416e6576999edfb8ff3df77836dbcd9638b1e6083eec29f498a563bd9b5",
+   "tavola/centrale-pdc-condominio-caso-reale-2-t1.svg": "9e27df67f4eecda46bf057fe7298f51411f2f6176d5df46b19ba88eb3ed705e3"
+  },
+  "collaudo-t3-rel012": {
+   "sintesi-1": "Formato A2 · tratte 18 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 4 · sormonti 0 · avvisi e regole: DRAWING_TOUCHES_THE_BORDER x1, SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x1, TAG_OMITTED x1",
+   "pianta/pianta-dettaglio-A.svg": "a4ae5e59cdc86a9930cf7d9a32caadeba7d43494eb8c2e3f7fedb09175d57834",
+   "pianta/pianta-dettaglio-B.svg": "5b7b4d6cd19623f0248aa0a1526ea5eba2433f954f5f7216ad5e563b50deb6f9",
+   "pianta/pianta-dettaglio-C.svg": "f7108a91ab00b67578d38e8cecfdb01811958ba4a546c045b599d59f8987d3df",
+   "pianta/pianta.svg": "f8c24e74a9f5289c11e61391daa6deb102839422a054a3b880652843de0bbbd2",
+   "pianta/pianta.tracciati.json": "e56ae634e7496c818018277843a9954c328d62c5efefa289ad1fce9dd67d1943",
+   "tavola/canalizzato-appartamento-secondo-piano-t1-rilievi.md": "b3dbcb324b6e90ebc42d19086682d340741d5cba886b056ba5cab2f3a0c38ff5",
+   "tavola/canalizzato-appartamento-secondo-piano-t1.svg": "fa3404f87f22574f28023489ed5b1110c67c521189284e0f0881bf3fae0e39b8"
+  },
+  "impianto-1": {
+   "sintesi-1": "Formato A3 · tratte 25 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 4 · sormonti 1 · avvisi e regole: SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x1, SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x1",
+   "tavola/prova-1-due-pdc-accumulo-combinato-t1-rilievi.md": "e37fce450ef2dc652aa5a74487514da0a1e3a0311800f70d61c2a8f920a5760d",
+   "tavola/prova-1-due-pdc-accumulo-combinato-t1.svg": "de2542a70896e34f389e49a699cf2b6b47e04a9c6be2b92a99bf35f4995febe4"
+  },
+  "impianto-1-completato": {
+   "grafo-completo.json": "869ec56e8eb4f33c357692d828fbfe47ea6ec72502c7a92d149e9e28f490c0e9",
+   "sintesi-1": "Formato A3 · tratte 25 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 4 · sormonti 1 · avvisi e regole: SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x1, SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x1",
+   "tavola/prova-1-due-pdc-accumulo-combinato-t1-rilievi.md": "e37fce450ef2dc652aa5a74487514da0a1e3a0311800f70d61c2a8f920a5760d",
+   "tavola/prova-1-due-pdc-accumulo-combinato-t1.svg": "de2542a70896e34f389e49a699cf2b6b47e04a9c6be2b92a99bf35f4995febe4"
+  },
+  "impianto-2": {
+   "sintesi-1": "Formato A3 · tratte 25 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 5 · sormonti 1 · avvisi e regole: SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x1, SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x1",
+   "tavola/prova-2-pdc-deviatrice-acs-t1-rilievi.md": "dc92478fa94f8f4ac40f5c69343a19b91d0b8343b3b9450a33752a271195cccf",
+   "tavola/prova-2-pdc-deviatrice-acs-t1.svg": "48451c408fbbcd24bf22c57f7cfe625dc3c76869e1dd8354529c23a462aaabbf"
+  },
+  "impianto-2-completato": {
+   "grafo-completo.json": "bef303eebf36db8d0e137d83ae3592c5108e8744c16fe98f3e1dce8ebe4fb4b5",
+   "sintesi-1": "Formato A3 · tratte 25 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 5 · sormonti 1 · avvisi e regole: SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x1, SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x1",
+   "tavola/prova-2-pdc-deviatrice-acs-t1-rilievi.md": "dc92478fa94f8f4ac40f5c69343a19b91d0b8343b3b9450a33752a271195cccf",
+   "tavola/prova-2-pdc-deviatrice-acs-t1.svg": "8bf07cacc9e6ee038c0f8be91207b870f432cee8bc56394d1a4def4312f63826"
+  },
+  "impianto-3": {
+   "sintesi-1": "Formato A3 · tratte 24 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 3 · sormonti 2 · avvisi e regole: SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x2",
+   "tavola/prova-3-pdc-diretta-pavimento-t1-rilievi.md": "b3484c8f03f94ee00970114f89d11b549cd7fbdf35015be7531bdb5a1e62812a",
+   "tavola/prova-3-pdc-diretta-pavimento-t1.svg": "07b7e67ab0bf29addca51c7f9c791616445e06bb40a844140bf2cd162e17f42d"
+  },
+  "impianto-3-completato": {
+   "grafo-completo.json": "12b51a8a3dc0e7b35784601fd0053dfbc36e5fde4c9756341dbcc051bf62ece5",
+   "sintesi-1": "Formato A3 · tratte 24 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 3 · sormonti 2 · avvisi e regole: SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x2",
+   "tavola/prova-3-pdc-diretta-pavimento-t1-rilievi.md": "b3484c8f03f94ee00970114f89d11b549cd7fbdf35015be7531bdb5a1e62812a",
+   "tavola/prova-3-pdc-diretta-pavimento-t1.svg": "9d951d741be789f261a3ccaa1aa2dafa5266ba238e79f4a5273c3ac200dae60b"
+  },
+  "impianto-4": {
+   "sintesi-1": "Formato A3 · tratte 27 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 6 · sormonti 2 · avvisi e regole: SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x1, SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x2",
+   "tavola/prova-4-ibrido-pdc-caldaia-t1-rilievi.md": "ce5f77dc87b61043ff27e954d34910071dfa77a7fb828643e3e82f85cd2708e8",
+   "tavola/prova-4-ibrido-pdc-caldaia-t1.svg": "32e19c264e9d2c6a29f314b1924b7d30c40806a79d9bdd8a8c71cc5f76ba947e"
+  },
+  "impianto-4-completato": {
+   "grafo-completo.json": "c6e24a4cc52bb432c11c034c073a9086d41c31dcc4f53569099d567d5df6c114",
+   "sintesi-1": "Formato A3 · tratte 27 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 6 · sormonti 2 · avvisi e regole: SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x1, SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x2",
+   "tavola/prova-4-ibrido-pdc-caldaia-t1-rilievi.md": "ce5f77dc87b61043ff27e954d34910071dfa77a7fb828643e3e82f85cd2708e8",
+   "tavola/prova-4-ibrido-pdc-caldaia-t1.svg": "2832a863c1c3bd8b0a6c72b17ea5dadb6ed8a1b916dd4295de5a3c5119811625"
+  },
+  "impianto-5": {
+   "sintesi-1": "Formato A2 · tratte 56 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 9 · sormonti 5 · avvisi e regole: SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x1",
+   "tavola/prova-5-cascata-tre-pdc-t1-rilievi.md": "a5173f35a8e4307e62211ebafd428dfadeca0508ff8d11d359c39d3618ada297",
+   "tavola/prova-5-cascata-tre-pdc-t1.svg": "4ae7f26e783c4d50e15cb73e02bf97bb7f67bdc4d7cbdc205b13cf56fde1ec82"
+  },
+  "impianto-5-completato": {
+   "grafo-completo.json": "0a906bd82ceac77d0b29df840cb192b082e56f8dd8305620a9476e88ce583c60",
+   "sintesi-1": "Formato A2 · tratte 56 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 9 · sormonti 5 · avvisi e regole: SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x1",
+   "tavola/prova-5-cascata-tre-pdc-t1-rilievi.md": "a5173f35a8e4307e62211ebafd428dfadeca0508ff8d11d359c39d3618ada297",
+   "tavola/prova-5-cascata-tre-pdc-t1.svg": "3ec80292fc883fac9a6594fd8f55f805901cf79ed47cc51525c1aacea1ccb734"
+  },
+  "impianto-6a": {
+   "sintesi-1": "Formato A2 · tratte 48 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 10 · sormonti 3 · avvisi e regole: HIGHWAY_IS_NOT_STRAIGHT x1, SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x2",
+   "tavola/prova-6-centrale-ibrida-solare-t1-rilievi.md": "f655b382a5b5c441aeec26076c510016a2b01161f981e72b8f587730de340219",
+   "tavola/prova-6-centrale-ibrida-solare-t1.svg": "3e991a0499b2a95c2f83dd736877b017aa8c053e2351b3e986e6ee6bae9d0b0b"
+  },
+  "impianto-6a-completato": {
+   "grafo-completo.json": "426b522ecda9d246040afe9739534a5403ca52ab938c0edf94fdf7f20dec16db",
+   "sintesi-1": "Formato A2 · tratte 48 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 10 · sormonti 3 · avvisi e regole: HIGHWAY_IS_NOT_STRAIGHT x1, SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x2",
+   "tavola/prova-6-centrale-ibrida-solare-t1-rilievi.md": "f655b382a5b5c441aeec26076c510016a2b01161f981e72b8f587730de340219",
+   "tavola/prova-6-centrale-ibrida-solare-t1.svg": "3e991a0499b2a95c2f83dd736877b017aa8c053e2351b3e986e6ee6bae9d0b0b"
+  },
+  "impianto-6b": {
+   "sintesi-1": "Formato A2 · tratte 48 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 9 · sormonti 3 · avvisi e regole: HIGHWAY_IS_NOT_STRAIGHT x1, PARALLEL_PUMPS_FACE_DIFFERENT_WAYS x1, SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x1",
+   "tavola/prova-6-centrale-ibrida-solare-t1-rilievi.md": "3260296ec71ce4b84b2926e9ed7cc70a0ab8010b575b21486575ec7f5796cad3",
+   "tavola/prova-6-centrale-ibrida-solare-t1.svg": "16e174773c0455d607af7a6691ea0335ac37a31084727bccad7f934b114fe10f"
+  },
+  "impianto-6b-completato": {
+   "grafo-completo.json": "426b522ecda9d246040afe9739534a5403ca52ab938c0edf94fdf7f20dec16db",
+   "sintesi-1": "Formato A2 · tratte 48 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 9 · sormonti 3 · avvisi e regole: HIGHWAY_IS_NOT_STRAIGHT x1, PARALLEL_PUMPS_FACE_DIFFERENT_WAYS x1, SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x1",
+   "tavola/prova-6-centrale-ibrida-solare-t1-rilievi.md": "3260296ec71ce4b84b2926e9ed7cc70a0ab8010b575b21486575ec7f5796cad3",
+   "tavola/prova-6-centrale-ibrida-solare-t1.svg": "16e174773c0455d607af7a6691ea0335ac37a31084727bccad7f934b114fe10f"
+  },
+  "impianto-7": {
+   "sintesi-1": "Formato A2 · tratte 45 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 7 · sormonti 3 · avvisi e regole: SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x1",
+   "tavola/riqualificazione-centrale-pdc-cascata-caldaia-t1-rilievi.md": "45a2e62162233c771e48531cb6c20f47c6cbdb40e8753c390e61aca280e3b260",
+   "tavola/riqualificazione-centrale-pdc-cascata-caldaia-t1.svg": "5cb56a96a31af518b2178204eaaa969b87beb19745672ca81ec233f82f6fdda9"
+  },
+  "prova-po-A": {
+   "grafo-completo.json": "ed03b89fb07ba18eb4a72545c7eef6001bdba7ec1844caf8b8e8c0befc019310",
+   "sintesi-1": "Formato A3 · tratte 24 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 12 · sormonti 6 · avvisi e regole: DRAWING_TOUCHES_THE_BORDER x1, HIGHWAY_IS_NOT_STRAIGHT x3, PARALLEL_RUNS_WITHOUT_A_FREE_LANE x3, SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x2, SHEET_TOO_FULL x1",
+   "tavola/prova-po-1-t1-rilievi.md": "27e9b087bac7305189838ddf21475beda1cb72306a378da679707a75576a14ed",
+   "tavola/prova-po-1-t1.svg": "89e8479218ae4b456caf67d3b4abcf460ab714285e2067915392fe74ba52cdfd"
+  },
+  "prova-po-B": {
+   "grafo-completo.json": "ed03b89fb07ba18eb4a72545c7eef6001bdba7ec1844caf8b8e8c0befc019310",
+   "sintesi-1": "Formato A3 · tratte 24 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 9 · sormonti 1 · avvisi e regole: DRAWING_TOUCHES_THE_BORDER x1, HIGHWAY_IS_NOT_STRAIGHT x2, RUN_LEAVES_ITS_QUOTA_AND_COMES_BACK x1, SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x3",
+   "tavola/prova-po-1-t1-rilievi.md": "aae690f8c26cb838bcf8619e21906b4d9b16f15194875bf3bf103137b0a09e26",
+   "tavola/prova-po-1-t1.svg": "f846bc0059a726e4e59367ff875534bc05f74bc0aa32c78e8025a56158d560e5"
+  },
+  "prova-po-C": {
+   "grafo-completo.json": "ed03b89fb07ba18eb4a72545c7eef6001bdba7ec1844caf8b8e8c0befc019310",
+   "sintesi-1": "Formato A3 · tratte 24 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 11 · sormonti 1 · avvisi e regole: DRAWING_TOUCHES_THE_BORDER x1, HIGHWAY_IS_NOT_STRAIGHT x4, PARALLEL_RUNS_WITHOUT_A_FREE_LANE x2, SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x2",
+   "tavola/prova-po-1-t1-rilievi.md": "b4a1afd9533127d9136ee81118a0936978f7e04591272a7b1bb953f0b365b05f",
+   "tavola/prova-po-1-t1.svg": "0d52d2a88c2290763dd6e79b97c4ed006df0df6c3c58ce07de4bbfbb5d8dde5c"
+  },
+  "prova-po-D": {
+   "grafo-completo.json": "ed03b89fb07ba18eb4a72545c7eef6001bdba7ec1844caf8b8e8c0befc019310",
+   "sintesi-1": "Formato A3 · tratte 24 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 5 · sormonti 1 · avvisi e regole: DRAWING_TOUCHES_THE_BORDER x1, HIGHWAY_IS_NOT_STRAIGHT x1, SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x1",
+   "tavola/prova-po-1-t1-rilievi.md": "616d415332f27cd65f8436d8a1c3d78d8c0374f46302cff301685354b143f7db",
+   "tavola/prova-po-1-t1.svg": "83a957e9c008884f8376db1814b7aaf62508e9902c536f6e1f3e53c7d3fd852a"
+  },
+  "prova-pulita-A": {
+   "grafo-completo.json": "a2d227f10d2bdbc2a908f21b393a0e2e16fd9d9fe38b001c2051b950e43c13b1",
+   "sintesi-1": "Formato A1 · tratte 137 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 15 · sormonti 20 · avvisi e regole: DRAWING_TOUCHES_THE_BORDER x1, HIGHWAY_IS_NOT_STRAIGHT x1, SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x8, SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x4",
+   "tavola/centrale-pdc-condominio-caso-reale-2-t1-rilievi.md": "413894ef8fc95fb4497238ca08ed9776a3b9e53d95f5121233c341bc50202ff7",
+   "tavola/centrale-pdc-condominio-caso-reale-2-t1.svg": "3959ce9e9996e9a422a1e8c7d15c4cb689dfad4955affe44a032e3a8fbedcec2"
+  },
+  "prova-pulita-B": {
+   "grafo-completo.json": "a2d227f10d2bdbc2a908f21b393a0e2e16fd9d9fe38b001c2051b950e43c13b1",
+   "sintesi-1": "Formato A1 · tratte 137 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 18 · sormonti 14 · avvisi e regole: HIGHWAY_IS_NOT_STRAIGHT x2, PARALLEL_RUNS_WITHOUT_A_FREE_LANE x4, SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x10, SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x4",
+   "tavola/centrale-pdc-condominio-caso-reale-2-t1-rilievi.md": "97cc5c81cb51a44f4f545656cb963939313a2777c2d90a13347c838bb962d8ef",
+   "tavola/centrale-pdc-condominio-caso-reale-2-t1.svg": "4c6314174a1d0a91f3930ee5eb59af295a97a1c0db596ec6ed0415bcfb6caaea"
+  },
+  "prova-pulita-C": {
+   "grafo-completo.json": "a2d227f10d2bdbc2a908f21b393a0e2e16fd9d9fe38b001c2051b950e43c13b1",
+   "sintesi-1": "Formato A1 · tratte 137 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 14 · sormonti 14 · avvisi e regole: HIGHWAY_IS_NOT_STRAIGHT x1, SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x4",
+   "tavola/centrale-pdc-condominio-caso-reale-2-t1-rilievi.md": "bb0ac40f6ca3a1e9646770b32683595a29bd6ae130d4f3a8272b88a033d7a75c",
+   "tavola/centrale-pdc-condominio-caso-reale-2-t1.svg": "cb9fbe9ef09887cff5eb22be1cd38764b59267e04c1f1b76ef6a84a64a779c12"
+  },
+  "simboli-rel009": {
+   "grafo-completo.json": "6ac33fcccaef4ad5b09255bae3d32ab4ff77bd5a8974e9cbc10bef7a680e14f3",
+   "sintesi-1": "Formato A2 · tratte 31 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 3 · sormonti 0 · avvisi e regole: PARALLEL_RUNS_WITHOUT_A_FREE_LANE x1, SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x6, SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x1",
+   "tavola/prova-simboli-nuovi-rel-009-t1-rilievi.md": "13f29b760099b853b8472d55246e0f83c8e808b0cb9b3d177cd9ae06a975ed3e",
+   "tavola/prova-simboli-nuovi-rel-009-t1.svg": "d9a0b28c5724341c0d0d246fbd6f7c540b03e831dda75a3aab6bae3170a53bf6"
+  },
+  "t1-rel023": {
+   "grafo-completo.json": "8edf5c3d67758a10689e6a5259363884148d86ba445ed7be4116307fe394a420",
+   "sintesi-1": "Formato A3 · tratte 29 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 7 · sormonti 1 · avvisi e regole: SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x1",
+   "distinta/distinta.json": "574173b9e90ba2dbdad1d5a0d8f6ddb11e30bce3e433d169e8a995ccbdc33235",
+   "distinta/tabelle-del-foglio.json": "b5205489c4f338cc92b933468cad687ffdd639f481cf8d66ce6baf93fdeb8385",
+   "tavola/villetta-pdc-volano-bollitore-idraulica-t1-rilievi.md": "cdd9435ae4a4956befee423041ca05d87ddf104c6fe8a2b1cbdd52231404ab57",
+   "tavola/villetta-pdc-volano-bollitore-idraulica-t1.svg": "ca7e6515259372777067fdeb9dd99eee306d89edc4a1248cddf658338cee07fb"
+  },
+  "villetta-rel015": {
+   "grafo-completo.json": "08246248eb4294df9f32abef01726584a4fe2157d6c82068e4c272e037dcc38f",
+   "sintesi-1": "Formato A2 · tratte 37 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 9 · sormonti 2 · avvisi e regole: PARALLEL_RUNS_WITHOUT_A_FREE_LANE x1, SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x1",
+   "sintesi-2": "Formato A3 · tratte 16 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 15 · sormonti 0 · avvisi e regole: PARALLEL_RUNS_WITHOUT_A_FREE_LANE x7",
+   "tavola/centrale-termica-villetta-pdc-regola-elettrico-t1-rilievi.md": "44b833d53a43342e9778e478798a3b08bb47fb34e9679810d80402f7d9ae9a84",
+   "tavola/centrale-termica-villetta-pdc-regola-elettrico-t1.svg": "39cf106ffae27519b135a2abcc30ca921fccb3d50c5eefbf85333e6ba1331103",
+   "tavola/centrale-termica-villetta-pdc-regola-idraulica-t1-rilievi.md": "b99546f4573e293782f75fbbd08f6d8801172d9ab25c36820d6ffd2402bd4432",
+   "tavola/centrale-termica-villetta-pdc-regola-idraulica-t1.svg": "d7861366b2c0a7e93d37aa1811b48e1de7604c3967dfea59faa925b6b3ed3318"
+  }
+ }
+}

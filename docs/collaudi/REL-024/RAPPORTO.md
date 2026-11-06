@@ -75,3 +75,65 @@ girare le prove in parallelo.
 
 Il banco come prova (punto 3: `confronta.sh` è il primo passo, ma è ancora uno strumento di sessione) e la prova
 senza rete (punto 4).
+
+---
+
+# Fase 1, seconda parte: il banco come prova e la skill senza rete
+
+**6 novembre 2026**, dopo la 1.15.1 (PR #92).
+
+## Le tavole
+
+**Nessuna tavola cambia**, e da qui lo dice una prova. Il banco nuovo: 28 casi, i 24 di `REL-011` più il T1 di
+`REL-023` con la sua distinta, la villetta di `REL-015` (idraulica ed elettrico), l'aria-aria di `REL-012` fase 2 e il
+collaudo T3 di `REL-012` con la sua pianta. `python scripts/banco.py` → `28 uguali, 0 cambiati, su 28`.
+
+## Il banco come prova (punto 3)
+
+- `scripts/banco.py` rifà ogni caso dal codice del repository (`completa` se il grafo è di prima stesura, `disegna`
+  con ogni piano, la distinta e la pianta dove ci sono) e ne prende le impronte: sha256 degli SVG, dei rilievi, del
+  grafo completo, della distinta e dei tracciati, più la riga di sintesi di `disegna`. Il PDF e il DXF ne sono
+  traduzioni e non si improntano.
+- `tests/banco/impronte.json` le registra; `tests/test_il_banco.py` le confronta a ogni PR (29 prove, 24 s).
+- **Una tavola cambiata non si fa tacere**: se la modifica è voluta, `python scripts/banco.py --registra --uscita
+  <cartella>` riscrive le impronte e lascia le tavole da mostrare al PO nella PR (D-146).
+
+Misure:
+
+| controllo | esito |
+|---|---|
+| determinismo: il banco di `REL-011` su Python 3.13 e su 3.11 con `PYTHONHASHSEED=123` | 24 SVG su 24 identici |
+| `python scripts/banco.py` su 3.13 e su 3.11 con `PYTHONHASHSEED=7` | `28 uguali, 0 cambiati, su 28` tutte e due |
+| la prova sa fallire: `LINE_CLEARANCE_MM` da 0,5 a 1,0 mm (poi rimesso) | `9 failed, 20 passed`, con le uscite cambiate per nome |
+
+## La skill senza rete (punto 4)
+
+Lo ZIP della 1.15.1 in un Python 3.12 pulito, con l'indice di PyPI puntato su una porta chiusa:
+
+| situazione | esito |
+|---|---|
+| senza pydantic | `ambiente` si ferma in 8 s: «Senza pydantic il comando non parte. Serve un ambiente con Python 3.11 o più e la libreria pydantic==2.13.4, oppure la rete per installarla.» `SKILL.md` («Prima di cominciare», punto 1) dice all'agente di riferirlo al progettista |
+| con pydantic, senza ezdxf e pypdfium2 | la tavola esce, **identica** (SVG uguale byte per byte), in PDF e SVG; il DXF manca e lo dice |
+| **il difetto** | ogni comando ritentava l'installazione delle facoltative: `disegna` 8,8 s invece di 1,2 (pip riprova cinque volte) |
+
+La correzione (`skill/scripts/mep.py`): un'installazione facoltativa non riuscita lascia un segno nella cartella
+temporanea e non si ritenta nella stessa sessione (lo dice, con il comando per riprovare); pip con `--timeout 15
+--retries 1`. pydantic, senza il quale il comando non parte, si ritenta sempre. Dopo: `disegna` 1,3 s al primo comando,
+0,85 s ai successivi, SVG identico. Tre prove nuove in `tests/skill/test_lanciatore.py`.
+
+**Che cosa non è misurato**: una rete che non risponde affatto (pacchetti persi). La sandbox rifiuta subito anche un
+indirizzo irraggiungibile; il limite lì è quello di pip, 15 s per due tentativi.
+
+**Che cosa non si fa**: le dipendenze dentro lo ZIP. pydantic ha una parte compilata diversa per ogni versione di
+Python, ezdxf porta numpy; la skill è già usata dal PO su claude.ai, dove la rete verso PyPI c'è, e i progettisti sono
+nella stessa organizzazione. Se un giorno servisse una macchina senza rete, la strada è quella delle ruote (wheel)
+nello ZIP con `pip install --no-index`, dentro il limite dei 200 file.
+
+## Le misure
+
+| comando | esito |
+|---|---|
+| `python -m pytest -q` (3.13) | `2921 passed, 15 skipped, 11 xfailed` (29 del banco e 3 del lanciatore in più) |
+| `python -m ruff check src tests scripts skill/scripts` | `All checks passed!` (la CI ora controlla anche `scripts/` e `skill/scripts/`) |
+| `python -m mypy` | `Success: no issues found in 127 source files` |
+| release 1.15.2 | `scripts/costruisci-skill.py`: 150 file, sha256 `20e90d142813b1dd…`, controlli passati |
