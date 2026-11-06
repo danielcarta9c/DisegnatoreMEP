@@ -802,6 +802,10 @@ def _voci_dei_fluidi(lavoro: _Lavoro) -> None:
 
 
 DATI_DEI_TUBI = "tubi"
+
+DATI_DA_CHIEDERE = frozenset({"gomiti"})
+"""I dati a corpo del blocco `distinta` che, senza risposta, valgono come ipotesi e si
+chiedono (I-288)."""
 """Il dato che manca quando il progettista non ha detto i metri di una rete d'acqua."""
 
 
@@ -916,17 +920,28 @@ def _voci_dei_tubi_d_acqua(lavoro: _Lavoro) -> None:
         for voce in (regola_del_fluido or {}).get("voci", []):
             if voce["calcolo"]["tipo"] != "a_corpo":
                 continue
-            dato = numero(dati.get(str(voce["calcolo"].get("dato", "gomiti"))))
+            nome_del_dato = str(voce["calcolo"].get("dato", "gomiti"))
+            dato = numero(dati.get(nome_del_dato))
             n = dato if dato is not None else float(voce["calcolo"]["n"])
             valori = {"sezione": sezione}
             testo, _ = riempi(str(voce["testo"]), valori)
             sezione_della_voce, fornitura = lavoro.sezione_e_fornitura(voce)
+            # I-288: i gomiti a corpo sono un'ipotesi, che si chiede in chat come i metri:
+            # senza la risposta la voce porta l'ipotesi, e la domanda resta.
+            chiesto = dato is None and nome_del_dato in DATI_DA_CHIEDERE
             lavoro.voci.append(
                 Voce(
                     sezione=sezione_della_voce, testo=testo, um=str(voce["um"]), quantita=n, fornitura=fornitura,
                     regola=f"fluidi/{fluido}/{voce['id']}", fonte=str(voce["fonte_in_parole"]),
                     perche=str(voce["perche"]),
-                    calcolo=f"{in_parole(n)} a corpo" + ("" if dato is not None else " (di regola; il progettista lo cambia)"),
+                    calcolo=f"{in_parole(n)} a corpo" + (" (ipotesi, da confermare dal progettista)" if chiesto else ""),
+                    note="ipotesi da confermare" if chiesto else "",
+                    da_definire=chiesto,
+                    domande=[
+                        f"Quanti gomiti a corpo per l'impianto? L'ipotesi è {in_parole(n)}; si scrive in «gomiti» "
+                        "nel blocco «distinta» del grafo."
+                    ] if chiesto else [],
+                    mancanti=[Mancante(nome_del_dato, IMPIANTO, "", "l'impianto")] if chiesto else [],
                     prezzo=prezzo_della_voce(voce, valori),
                 )
             )

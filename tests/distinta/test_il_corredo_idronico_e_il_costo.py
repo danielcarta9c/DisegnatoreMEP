@@ -216,3 +216,14 @@ def test_completa_conserva_i_dati_della_chat(tmp_path: Path) -> None:
     assert main(["completa", str(prima), "--out", str(dopo)], cartelle_del_repository(ROOT)) == 0
     letto = json.loads(dopo.read_text(encoding="utf-8"))["distinta"]
     assert letto["gomiti"] == 18 and letto["tubi"][0]["metri"] == 30 and letto["tubi"][0]["isolamento"] == "preisolato"
+
+
+def test_i_gomiti_sono_un_ipotesi_che_si_chiede(
+    regole: RegoleDellaDistinta, nomi: tuple[dict[str, str], dict[str, str]]
+) -> None:
+    """I-288: i gomiti a corpo si chiedono in chat come i metri; senza risposta la voce
+    porta l'ipotesi di 20 e resta da confermare."""
+    distinta = componi_la_distinta(_centrale(), regole, *nomi)
+    gomiti = next(v for v in distinta.voci if v.testo.startswith("Gomito 90°"))
+    assert gomiti.quantita == 20 and gomiti.da_definire
+    assert any("Quanti gomiti a corpo" in d for d in distinta.domande)

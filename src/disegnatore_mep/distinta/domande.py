@@ -68,6 +68,9 @@ DATI: dict[str, DatoInParole] = {
         "schema) e l'isolamento (preisolato, o nudo con guaina e il suo spessore)",
         "«tubi»: rete, tubo, metri, isolamento,",
     ),
+    "gomiti": DatoInParole(
+        "I gomiti a corpo dell'impianto (l'ipotesi della distinta è 20, una ventina a lavoro)", "«gomiti»"
+    ),
     "isolamento": DatoInParole(
         "Come si isola il tubo: preisolato, o nudo con guaina e il suo spessore", "«isolamento» del tubo,"
     ),

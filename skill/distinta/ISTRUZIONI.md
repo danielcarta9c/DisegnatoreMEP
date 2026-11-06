@@ -106,7 +106,7 @@ mancano — `--domande` te li elenca —; non li stimi tu.
 |---|---|---|
 | ogni tratto (aria, frigorifero, condensa, elettrico) | `lunghezza_m` | la lunghezza **stimata** del tratto (pianta, sopralluogo); `0` se è un raccordo diretto (plenum sulla macchina, cablaggio di fabbrica). **Non per l'acqua**: vedi sotto |
 | ogni rete d'acqua | blocco `distinta.tubi` | **i tubi d'acqua li dice il progettista nella chat**: per rete, il tubo, i metri e l'isolamento (sotto) |
-| l'impianto | `distinta.gomiti` | i gomiti a corpo; se il progettista non li dice, la distinta ne mette 20 e lo scrive |
+| l'impianto | `distinta.gomiti` | i gomiti a corpo: si **chiedono** come i metri; senza risposta la distinta mette l'ipotesi di 20, e la voce resta da confermare |
 | pompa di calore | `posa` | «staffe a muro» solo se il progettista le chiede; senza, la distinta la mette **a terra** su supporti antivibranti |
 | ogni tubazione | `sezione` | «Ø200», «Ø6,35 (1/4")», «MS 32×3», «3G2,5», «2×0,75 (P1-P2)»: diametro, lati o cavo; sull'acqua il tubo, nella notazione del materiale (I-279), e dove manca vale quello della tavola |
 | mandata e ripresa | `portata_m3h` | per la verifica della velocità e delle griglie di transito |
@@ -152,7 +152,7 @@ una planimetria: le lunghezze dei suoi tratti e le sue pieghe non sono quelle de
 ```
 
 La distinta maggiora i metri del 15%; i collari (uno ogni 1,5 m) e un manicotto di riserva seguono i metri; i gomiti
-sono **a corpo**, 20 se il progettista non ne dice altri. Non stimare tu i metri né l'isolamento: se mancano, la voce è
+sono **a corpo**: chiedili, proponendo l'ipotesi di 20; senza risposta la voce esce con 20 e resta da confermare. Non stimare tu i metri né l'isolamento: se mancano, la voce è
 DA DEFINIRE e `--domande` li chiede. Lo spessore della guaina lo dice il progettista ogni volta.
 
 **La lunghezza di un tratto spezzato basta su una tubazione.** Un tratto è la linea che l'installatore posa in un
