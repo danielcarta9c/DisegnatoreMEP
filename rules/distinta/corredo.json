@@ -821,7 +821,7 @@
     "circuit-breaker-rcbo": {
       "nome": "Interruttore magnetotermico differenziale",
       "passante": true,
-      "fonte": "REL-018 (I-278): specifica tecnica di installazione PdC Shenling Nove C Rev. 01, par. 3.2-3.4 (voce P15); manuale ThermaX R290 6-15 kW, par. 7.4 p. 55 e p. 51",
+      "fonte": "REL-018 (I-278): specifica tecnica di installazione PdC Shenling Nove C Rev. 01, par. 3.2-3.4 (voce P15); manuale ThermaX R290 6-15 kW, par. 7.5 p. 55 e p. 51",
       "fonte_in_parole": "specifica Nove C per la linea della pompa di calore",
       "perche": "La protezione della linea dedicata sta nel quadro, all'uscita della linea: il pezzo è passante, e la linea che lo attraversa è un tratto solo. La voce della protezione della linea (`protezione` del tratto) non si conta su una linea che ha l'interruttore: la protezione è lui.",
       "voci": [

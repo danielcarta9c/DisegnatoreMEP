@@ -294,7 +294,7 @@ def test_i_dati_del_progettista_non_si_sovrascrivono(tmp_path: Path) -> None:
 
 
 def test_la_tabella_dei_dati_shenling() -> None:
-    """La tabella sola (manuale §7.4 p. 55, specifica §3.3, «vale il maggiore»)."""
+    """La tabella sola (manuale §7.5 p. 55, specifica §3.3, «vale il maggiore»)."""
     attesi = {
         (6.0, 1): (16, 4, "3G4", "2P", 20),  # D-234: C20, non C16, sui 16 A del 6 kW
         (9.0, 1): (20.5, 4, "3G4", "2P", 25),
@@ -345,14 +345,14 @@ def test_una_15_kw_protetta_c25_e_un_avviso(tmp_path: Path) -> None:
     """Il caso della commessa: la 15 kW protetta C25."""
     stampa, completo = _completa(_grafo(pdc={"power_kw": 15}, qf={"in_a": 25}), tmp_path)
     assert "Avvisi del manuale del costruttore e della specifica Nove C" in stampa
-    assert "QF-01: In 25 A sulla linea di GT-01, sotto i 30 A del manuale (§7.4 p. 55)" in stampa
+    assert "QF-01: In 25 A sulla linea di GT-01, sotto i 30 A del manuale (§7.5 p. 55)" in stampa
     # Il dato resta quello del progettista: e' un avviso, non una correzione.
     assert _proprieta(completo, "qf-pdc")["in_a"] == 25
 
 
 def test_un_3g4_sulla_12_kw_e_un_avviso(tmp_path: Path) -> None:
     stampa, _ = _completa(_grafo(sezione="3G4"), tmp_path)
-    assert "linea di GT-01: cavo 3G4, 4 mm², sotto i 6 mm² del manuale (§7.4 p. 55)" in stampa
+    assert "linea di GT-01: cavo 3G4, 4 mm², sotto i 6 mm² del manuale (§7.5 p. 55)" in stampa
     # Il 3G6 del caso minimo no.
     stampa, _ = _completa(_grafo(), tmp_path)
     assert "mm² del manuale" not in stampa

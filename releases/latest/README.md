@@ -1,6 +1,6 @@
 # L'ultima release: 1.15.0
 
-`DisegnatoreMEP-v1.15.0.zip` — sha256 `12535c95712eae52…`, 150 file — è `REL-022` (I-288, I-289, D-237) e la prima parte
+`DisegnatoreMEP-v1.15.0.zip` — sha256 `56514abd21c372c9…`, 150 file — è `REL-022` (I-288, I-289, D-237) e la prima parte
 di `REL-023` (I-290 … I-292, D-238, D-239). Si carica come ogni skill personale, dallo ZIP così com'è.
 
 Rispetto alla 1.14.0:

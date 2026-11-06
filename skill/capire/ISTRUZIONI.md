@@ -783,7 +783,7 @@ e **una rete sola** `power_supply` per la linea:
 
   «2P C32 Idn 30 mA tipo A» sono `"poli": "2P"`, `"curva": "C"`, `"in_a": 32`, `"idn_ma": 30`,
   `"tipo_differenziale": "A"`. Se il testo non li dà **non inventarli**: su una Shenling li
-  scrive `completa` dal manuale (§7.4 p. 55) e dalla specifica (§3.3), con la regola «vale il
+  scrive `completa` dal manuale (§7.5 p. 55) e dalla specifica (§3.3), con la regola «vale il
   maggiore», e il **tipo A** dell'ambito domestico (D-237), e lo dice; se il progettista vuole il
   tipo B lo scrivi tu (`"tipo_differenziale": "B"`), e `completa` non lo cambia. Su un'altra
   macchina restano senza, e la distinta li chiede.

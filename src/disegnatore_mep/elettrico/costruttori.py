@@ -3,17 +3,19 @@ I-278).
 
 Le fonti stanno sul OneDrive del PO, non nel repository, e si citano con la pagina:
 
-- **Manuale d'installazione e d'uso ThermaX R290 6-15 kW, §7.4 p. 55**: la corrente massima
+- **Manuale d'installazione e d'uso ThermaX R290 6-15 kW, §7.5 p. 55**: la corrente massima
   e il cablaggio per taglia — 6 kW 16 A e 4 mm²; 9 kW 20,5 A e 4 mm²; 12 e 15 kW monofase
   30 A e 6 mm²; 12 e 15 kW trifase 14 A e 2,5 mm². **Pp. 5 e 51**: l'alimentazione dedicata,
   il sezionamento onnipolare, il differenziale da 30 mA ad alta velocita' compatibile con
   l'inverter.
-- **Manuale del modello HPM-V120W/R3** (12 kW monofase), letto dal PO il 6 novembre 2026
-  (I-293): **p. 10** differenziale con sensibilita' non superiore a 30 mA; **p. 56, §7.1**
-  dispositivo compatibile con l'inverter e resistente ai disturbi ad alta frequenza,
-  differenziale rapido da 30 mA con intervento sotto 0,1 s; **p. 60, §7.5** 30 A e 6 mm².
-  **Il tipo del differenziale (A, F, B) il manuale non lo prescrive**: per questo il tipo
-  domestico e' A (D-237), e il B della specifica resta se il progettista lo scrive.
+- **Lo stesso manuale riletto il 6 novembre 2026** (I-293; il PO cita le pagine del PDF, qui le
+  pagine stampate): **p. 5** un RCD non oltre 30 mA nel cablaggio fisso; **p. 51**
+  alimentazione dedicata, interruttore di terra compatibile con l'inverter (resistente ai
+  disturbi ad alta frequenza), ad alta velocita' da 30 mA (<0,1 s); **p. 55, §7.5** la
+  tabella di correnti e cavi, e «l'interruttore di protezione dalle perdite deve essere
+  installato sull'alimentazione dell'unita'». **Il tipo (A, F, B) non e' scritto**: la nota
+  di p. 55 dice «di tipo 1», che non e' una classe delle norme. Per questo il tipo domestico
+  e' A (D-237), e il B della specifica resta se il progettista lo scrive.
 - **Specifica tecnica di installazione PdC Shenling Nove C Rev. 01, §3.2–3.4**: nel quadro un
   magnetotermico differenziale bipolare, curva C, Idn 30 mA, tipo B, ad alta velocita', con la
   sua targhetta; il sezionatore locale **non** e' la regola (§3.2); la tabella del §3.3 — 9 kW
@@ -76,9 +78,9 @@ class LineaDelManuale:
 
     alimentazione: str
     corrente_max_a: float
-    """La corrente massima del manuale (§7.4 p. 55), in A."""
+    """La corrente massima del manuale (§7.5 p. 55), in A."""
     sezione_mm2: float
-    """La sezione del cablaggio del manuale (§7.4 p. 55), in mm²."""
+    """La sezione del cablaggio del manuale (§7.5 p. 55), in mm²."""
     cavo_minimo: str
     """Il cavo come si scrive sulla tavola: «3G6»."""
     poli: str
@@ -120,17 +122,17 @@ def _trifase(fonte: str) -> LineaDelManuale:
 
 
 SHENLING_THERMAX_R290_LINEA: dict[tuple[float, int], LineaDelManuale] = {
-    (6.0, 1): _monofase(16, 4, "3G4", 20, "proposta dal manuale (§7.4 p. 55) e D-234: la specifica non ha il 6 kW"),
+    (6.0, 1): _monofase(16, 4, "3G4", 20, "proposta dal manuale (§7.5 p. 55) e D-234: la specifica non ha il 6 kW"),
     (9.0, 1): _monofase(20.5, 4, "3G4", 25, "specifica §3.3 (C25/B25, 3G4)"),
     (12.0, 1): _monofase(
         30, 6, "3G6", 32, "specifica §3.3 (C25/B25, 3G4) col manuale (30 A, 6 mm²): vale il maggiore"
     ),
     (15.0, 1): _monofase(30, 6, "3G6", 32, "specifica §3.3 (C32/B40, 3G6)"),
-    (12.0, 3): _trifase("proposta dal manuale (§7.4 p. 55, 14 A, 2,5 mm²): la specifica non ha il trifase"),
-    (15.0, 3): _trifase("proposta dal manuale (§7.4 p. 55, 14 A, 2,5 mm²): la specifica non ha il trifase"),
+    (12.0, 3): _trifase("proposta dal manuale (§7.5 p. 55, 14 A, 2,5 mm²): la specifica non ha il trifase"),
+    (15.0, 3): _trifase("proposta dal manuale (§7.5 p. 55, 14 A, 2,5 mm²): la specifica non ha il trifase"),
 }
 """**La tabella sola dei dati elettrici Shenling ThermaX R290**, per (potenza nominale in
-kW, fasi). La corrente massima e la sezione sono quelle del manuale (§7.4 p. 55); la
+kW, fasi). La corrente massima e la sezione sono quelle del manuale (§7.5 p. 55); la
 protezione e' il magnetotermico differenziale della specifica Nove C (§3.2–3.4: bipolare,
 curva C, Idn 30 mA, tipo B, ad alta velocita'), con la taglia della tabella §3.3 e la
 regola «vale il maggiore»: il 12 kW sale da C25 e 3G4 a **C32 e 3G6**. Il 6 kW e le taglie
@@ -253,7 +255,7 @@ def scrivi_i_dati_del_manuale(
             if _trifase_dichiarata(macchina) and isinstance(potenza, int | float):
                 detto.append(
                     f"{nome(macchina.id)}: alimentazione «{macchina.properties[ALIMENTAZIONE]}» dichiarata, ma il "
-                    f"manuale Shenling (§7.4 p. 55) non ha la {_n(float(potenza))} kW trifase: nessun dato "
+                    f"manuale Shenling (§7.5 p. 55) non ha la {_n(float(potenza))} kW trifase: nessun dato "
                     "elettrico scritto, va chiesto al progettista."
                 )
             continue
@@ -262,7 +264,7 @@ def scrivi_i_dati_del_manuale(
             nuovi.setdefault(macchina.id, {}).update(mancanti)
             scritti = ", ".join(f"{k} {_valore(v)}" for k, v in mancanti.items())
             detto.append(
-                f"{nome(macchina.id)} (Shenling {_n(float(potenza))} kW): scritti {scritti} — manuale §7.4 p. 55"  # type: ignore[arg-type]
+                f"{nome(macchina.id)} (Shenling {_n(float(potenza))} kW): scritti {scritti} — manuale §7.5 p. 55"  # type: ignore[arg-type]
                 + (
                     f"; alimentazione non data, assunta monofase {MONOFASE} (se e' trifase, scrivi "
                     "«alimentazione»: «400 V 3N~» e rilancia)"
@@ -334,7 +336,7 @@ def avvisi_della_linea(
             continue
         potenza = _n(float(macchina.properties["power_kw"]))  # type: ignore[arg-type]
         dichiarata = _numero(macchina.properties.get(CORRENTE_MAX_A))
-        soglia, di_chi = linea.corrente_max_a, f"del manuale (§7.4 p. 55) per la Shenling {potenza} kW"
+        soglia, di_chi = linea.corrente_max_a, f"del manuale (§7.5 p. 55) per la Shenling {potenza} kW"
         if dichiarata is not None and dichiarata > soglia:
             soglia, di_chi = dichiarata, f"dichiarati sulla macchina {nome(macchina.id)}"
         interruttori = [
@@ -354,7 +356,7 @@ def avvisi_della_linea(
             if mm2 is not None and mm2 < linea.sezione_mm2:
                 avvisi.append(
                     f"linea di {nome(macchina.id)}: cavo {sezione}, {_n(mm2)} mm², sotto i {_n(linea.sezione_mm2)} "
-                    f"mm² del manuale (§7.4 p. 55) per la Shenling {potenza} kW: il cavo minimo e' "
+                    f"mm² del manuale (§7.5 p. 55) per la Shenling {potenza} kW: il cavo minimo e' "
                     f"{linea.cavo_minimo}. Va rivisto, o confermato dal progettista."
                 )
         dal_quadro = traccia.origine is not None and "power_source" in _funzioni(catalog, pezzi[traccia.origine])
