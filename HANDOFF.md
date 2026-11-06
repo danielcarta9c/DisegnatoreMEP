@@ -24,7 +24,7 @@ circolatore fra le apparecchiature** (I-292), il listino rev. 05 con i nippli da
   ci va il B si mette quello e amen», la sessione ha consigliato il B); glicole o valvole sopra i 35 kW e come
   alternativa nelle case (il PO non ha deciso: nessuna regola sul glicole); il defangatore e le intercettazioni del
   corredo standard.
-- **I numeri**: il prossimo input è **I-293**, la prossima decisione **D-240**.
+- **I numeri**: il prossimo input è **I-294**, la prossima decisione **D-240**.
 
 ## Com'era il 6 novembre 2026 pomeriggio, con la 1.15.0 prima di REL-023
 

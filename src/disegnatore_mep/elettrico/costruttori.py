@@ -8,6 +8,12 @@ Le fonti stanno sul OneDrive del PO, non nel repository, e si citano con la pagi
   30 A e 6 mm²; 12 e 15 kW trifase 14 A e 2,5 mm². **Pp. 5 e 51**: l'alimentazione dedicata,
   il sezionamento onnipolare, il differenziale da 30 mA ad alta velocita' compatibile con
   l'inverter.
+- **Manuale del modello HPM-V120W/R3** (12 kW monofase), letto dal PO il 6 novembre 2026
+  (I-293): **p. 10** differenziale con sensibilita' non superiore a 30 mA; **p. 56, §7.1**
+  dispositivo compatibile con l'inverter e resistente ai disturbi ad alta frequenza,
+  differenziale rapido da 30 mA con intervento sotto 0,1 s; **p. 60, §7.5** 30 A e 6 mm².
+  **Il tipo del differenziale (A, F, B) il manuale non lo prescrive**: per questo il tipo
+  domestico e' A (D-237), e il B della specifica resta se il progettista lo scrive.
 - **Specifica tecnica di installazione PdC Shenling Nove C Rev. 01, §3.2–3.4**: nel quadro un
   magnetotermico differenziale bipolare, curva C, Idn 30 mA, tipo B, ad alta velocita', con la
   sua targhetta; il sezionatore locale **non** e' la regola (§3.2); la tabella del §3.3 — 9 kW
