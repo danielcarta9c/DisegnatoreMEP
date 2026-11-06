@@ -109,4 +109,5 @@ Il comando della skill li riapre da sé.
   distinta e pianta identiche byte per byte alla 1.15.0. 150 file.
 - **1.15.2** — 6 novembre 2026 (`REL-024`, fase 1): **il banco delle tavole come prova** (`scripts/banco.py`,
   `tests/test_il_banco.py`: 28 casi, a ogni PR) e **la skill senza rete** — un'installazione facoltativa non riuscita
-  non si ritenta a ogni comando, pip con un limite d'attesa. Tavole identiche alla 1.15.1. 150 file.
+  non si ritenta a ogni comando, pip con un limite d'attesa; un accessorio `compreso_in` (filtro a Y, pozzetto compresi
+  con la PdC) non esce più in distinta (I-297). Tavole identiche alla 1.15.1. 150 file.

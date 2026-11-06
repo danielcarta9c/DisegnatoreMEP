@@ -70,7 +70,7 @@
 
 ### Un difetto della distinta, dal progetto reale (I-297)
 
-12. **`compreso_in` vale per ogni pezzo, non solo per le macchine.** Oggi toglie soltanto la riga della sezione A
+12. **FATTO** (1.15.2) — **`compreso_in` vale per ogni pezzo, non solo per le macchine.** Oggi toglie soltanto la riga della sezione A
     (`src/disegnatore_mep/distinta/calcolo.py`, `_apparecchiature`): un accessorio dichiarato compreso nella pompa di
     calore — il filtro a Y, i pozzetti — resta in distinta con il suo corredo. È un'uscita sbagliata su un dato che il
     progettista ha già dato: rientra nel consolidamento. Il resto di I-297 è la 2.1 (`docs/plans/pacchetti/REL-025.md`).

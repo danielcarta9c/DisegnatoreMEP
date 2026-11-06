@@ -1,11 +1,13 @@
 # L'ultima release: 1.15.2
 
-`DisegnatoreMEP-v1.15.2.zip` — sha256 `20e90d142813b1dd…`, 150 file — è la seconda consegna di `REL-024`, la 2.0 di
+`DisegnatoreMEP-v1.15.2.zip` — sha256 `a65051b1430bd08b…`, 150 file — è la seconda consegna di `REL-024`, la 2.0 di
 consolidamento. Si carica come ogni skill personale, dallo ZIP così com'è.
 
 **Senza rete la skill non perde più tempo**: quando una libreria facoltativa (ezdxf per il DXF, pypdfium2 per
 l'anteprima) non si riesce a installare, la skill lo dice una volta e non ritenta a ogni comando; pip non aspetta più
-minuti su una rete che non risponde. Le tavole sono identiche alla 1.15.1, e da questa release lo dice una prova: il
+minuti su una rete che non risponde. **Un accessorio «compreso con la PdC»** (`compreso_in`: il filtro a Y, il
+pozzetto) **non esce più in distinta**: la riga della pompa di calore dice «comprende …» (I-297, dal progetto reale).
+Le tavole sono identiche alla 1.15.1, e da questa release lo dice una prova: il
 banco delle 28 tavole di riferimento gira a ogni modifica.
 
 Prima, la **1.15.1**:

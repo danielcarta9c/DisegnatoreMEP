@@ -26,8 +26,9 @@ la skill per chi non l'ha scritta, release candidate. Nessuna capacità nuova. `
   `tests/banco/impronte.json`, `tests/test_il_banco.py`: 28 casi a ogni PR; una tavola cambiata si registra con
   `--registra` e si mostra al PO) e **la skill senza rete** (un'installazione facoltativa fallita non si ritenta a ogni
   comando; pip con un limite d'attesa). La fase 1 è chiusa.
-- **Il prossimo**: il punto 12 (`compreso_in` per ogni pezzo, un difetto della distinta visto su un progetto reale,
-  I-297), poi la fase 2, sei impianti tipo in camera pulita con Opus e Sonnet, gli esiti agli atti.
+- **Fatto anche, nella 1.15.2**: il punto 12, `compreso_in` per ogni pezzo (un accessorio compreso nella PdC non
+  esce più in distinta; I-297, dal progetto reale).
+- **Il prossimo**: la fase 2, sei impianti tipo in camera pulita con Opus e Sonnet, gli esiti agli atti.
 - **La 2.1 è scritta** (`docs/plans/pacchetti/REL-025.md`, I-297): la derivazione air-split (il PO ha la voce in una
   copia locale), termostato radio, resistenza integrativa, termostato di sicurezza, la distinta a quantità nette, la
   pianta su più piani. Parte mentre i progettisti provano la 2.0-rc.

@@ -129,11 +129,24 @@ Python, ezdxf porta numpy; la skill è già usata dal PO su claude.ai, dove la r
 nella stessa organizzazione. Se un giorno servisse una macchina senza rete, la strada è quella delle ruote (wheel)
 nello ZIP con `pip install --no-index`, dentro il limite dei 200 file.
 
+## Un difetto della distinta dal progetto reale (punto 12, I-297)
+
+«La dicitura “compreso con la PdC” non toglie dalla distinta gli accessori di corredo (filtro a Y, pozzetti)»: vero,
+`compreso_in` toglieva solo la riga della macchina in sezione A (`_apparecchiature`), e il corredo dell'accessorio si
+contava lo stesso. Prova scritta prima della correzione (`tests/distinta/test_il_corredo_idronico_e_il_costo.py`,
+`test_compreso_nella_pompa_di_calore_non_si_compra_due_volte`): rossa con «Filtro a Y 1" FF, maglia 500 µm» ancora in
+distinta; dopo la correzione (`_corredo` salta i pezzi con `compreso_in`) verde, e la riga della pompa di calore dice
+«comprende FY-01 …, comprende SO-01 …». L'accessorio resta sulla tavola e nelle giunzioni.
+
+Il banco l'ha visto: la distinta del T1 cambiava, ma **solo nell'impronta delle regole** (`"impronta"` di
+`distinta.json`, l'hash dei file delle regole, perché la nota di `corredo.json` dice adesso che `compreso_in` vale per
+ogni pezzo). Le voci sono identiche; impronta registrata con `--registra`.
+
 ## Le misure
 
 | comando | esito |
 |---|---|
-| `python -m pytest -q` (3.13) | `2921 passed, 15 skipped, 11 xfailed` (29 del banco e 3 del lanciatore in più) |
+| `python -m pytest -q` (3.13) | `2922 passed, 15 skipped, 11 xfailed` (29 del banco, 3 del lanciatore e 1 di `compreso_in` in più) |
 | `python -m ruff check src tests scripts skill/scripts` | `All checks passed!` (la CI ora controlla anche `scripts/` e `skill/scripts/`) |
 | `python -m mypy` | `Success: no issues found in 127 source files` |
-| release 1.15.2 | `scripts/costruisci-skill.py`: 150 file, sha256 `20e90d142813b1dd…`, controlli passati |
+| release 1.15.2 | `scripts/costruisci-skill.py`: 150 file, sha256 `a65051b1430bd08b…`, controlli passati |
