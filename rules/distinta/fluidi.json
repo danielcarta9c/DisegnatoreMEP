@@ -580,6 +580,18 @@
                 {
                   "se": "\\b5G\\s*6\\b",
                   "codice": "E06"
+                },
+                {
+                  "se": "\\b3G\\s*1[,.]5\\b",
+                  "codice": "E35a"
+                },
+                {
+                  "se": "\\b2\\s*[×xG]\\s*1[,.]5\\b",
+                  "codice": "E35b"
+                },
+                {
+                  "se": "\\b4G\\s*1[,.]5\\b",
+                  "codice": "E35c"
                 }
               ],
               "n": 1.0
@@ -608,6 +620,10 @@
             {
               "per": "protezione",
               "scegli": [
+                {
+                  "se": "(?i)(1P\\+N|2P)\\b.*\\bC\\s*10\\b.*tipo\\s*A\\b",
+                  "codice": "E33"
+                },
                 {
                   "se": "(?i)(1P\\+N|2P)\\b.*\\bC\\s*16\\b.*tipo\\s*A\\b",
                   "codice": "E15a"
@@ -726,6 +742,18 @@
                 {
                   "se": "\\b5G\\s*6\\b",
                   "codice": "E06"
+                },
+                {
+                  "se": "\\b3G\\s*1[,.]5\\b",
+                  "codice": "E35a"
+                },
+                {
+                  "se": "\\b2\\s*[×xG]\\s*1[,.]5\\b",
+                  "codice": "E35b"
+                },
+                {
+                  "se": "\\b4G\\s*1[,.]5\\b",
+                  "codice": "E35c"
                 }
               ],
               "n": 1.0
@@ -763,6 +791,10 @@
                 {
                   "se": "4\\s*[×x]\\s*0[,.]5",
                   "codice": "E09b"
+                },
+                {
+                  "se": "2\\s*[×x]\\s*0[,.]75",
+                  "codice": "E36"
                 }
               ],
               "n": 1.0
@@ -896,22 +928,26 @@
           "perche": "La guaina sul tubo nudo, dello spessore che dice il progettista.",
           "prezzo": [
             {
-              "per": "sezione",
+              "per": "{isolamento} {sezione}",
               "scegli": [
                 {
-                  "se": "20\\s*[×x]",
+                  "se": "(?i)\\b(30|32)\\s*mm\\b.*\\b32\\s*[×x]",
+                  "codice": "I82"
+                },
+                {
+                  "se": "(?i)\\b19\\s*mm\\b.*\\b20\\s*[×x]",
                   "codice": "I56"
                 },
                 {
-                  "se": "26\\s*[×x]",
+                  "se": "(?i)\\b19\\s*mm\\b.*\\b26\\s*[×x]",
                   "codice": "I57"
                 },
                 {
-                  "se": "32\\s*[×x]",
+                  "se": "(?i)\\b19\\s*mm\\b.*\\b32\\s*[×x]",
                   "codice": "I58"
                 },
                 {
-                  "se": "40\\s*[×x]",
+                  "se": "(?i)\\b19\\s*mm\\b.*\\b40\\s*[×x]",
                   "codice": "I59"
                 }
               ],
@@ -919,7 +955,7 @@
             }
           ],
           "se_isolamento": "guaina",
-          "prezzo_nota": "listino: guaina elastomerica sp. 19 mm (I56–I59): per un altro spessore il prezzo vero è diverso"
+          "prezzo_nota": "la guaina si prezza sullo spessore che dice il progettista: 19 mm (I56–I59) o 32 mm sul tubo 32 (I82)"
         },
         {
           "id": "collari",
@@ -957,6 +993,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81b"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I26a"
@@ -999,6 +1039,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81a"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I11"
@@ -1174,22 +1218,26 @@
           "perche": "La guaina sul tubo nudo, dello spessore che dice il progettista.",
           "prezzo": [
             {
-              "per": "sezione",
+              "per": "{isolamento} {sezione}",
               "scegli": [
                 {
-                  "se": "20\\s*[×x]",
+                  "se": "(?i)\\b(30|32)\\s*mm\\b.*\\b32\\s*[×x]",
+                  "codice": "I82"
+                },
+                {
+                  "se": "(?i)\\b19\\s*mm\\b.*\\b20\\s*[×x]",
                   "codice": "I56"
                 },
                 {
-                  "se": "26\\s*[×x]",
+                  "se": "(?i)\\b19\\s*mm\\b.*\\b26\\s*[×x]",
                   "codice": "I57"
                 },
                 {
-                  "se": "32\\s*[×x]",
+                  "se": "(?i)\\b19\\s*mm\\b.*\\b32\\s*[×x]",
                   "codice": "I58"
                 },
                 {
-                  "se": "40\\s*[×x]",
+                  "se": "(?i)\\b19\\s*mm\\b.*\\b40\\s*[×x]",
                   "codice": "I59"
                 }
               ],
@@ -1197,7 +1245,7 @@
             }
           ],
           "se_isolamento": "guaina",
-          "prezzo_nota": "listino: guaina elastomerica sp. 19 mm (I56–I59): per un altro spessore il prezzo vero è diverso"
+          "prezzo_nota": "la guaina si prezza sullo spessore che dice il progettista: 19 mm (I56–I59) o 32 mm sul tubo 32 (I82)"
         },
         {
           "id": "collari",
@@ -1235,6 +1283,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81b"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I26a"
@@ -1365,22 +1417,26 @@
           "perche": "La guaina sul tubo nudo, dello spessore che dice il progettista.",
           "prezzo": [
             {
-              "per": "sezione",
+              "per": "{isolamento} {sezione}",
               "scegli": [
                 {
-                  "se": "20\\s*[×x]",
+                  "se": "(?i)\\b(30|32)\\s*mm\\b.*\\b32\\s*[×x]",
+                  "codice": "I82"
+                },
+                {
+                  "se": "(?i)\\b19\\s*mm\\b.*\\b20\\s*[×x]",
                   "codice": "I56"
                 },
                 {
-                  "se": "26\\s*[×x]",
+                  "se": "(?i)\\b19\\s*mm\\b.*\\b26\\s*[×x]",
                   "codice": "I57"
                 },
                 {
-                  "se": "32\\s*[×x]",
+                  "se": "(?i)\\b19\\s*mm\\b.*\\b32\\s*[×x]",
                   "codice": "I58"
                 },
                 {
-                  "se": "40\\s*[×x]",
+                  "se": "(?i)\\b19\\s*mm\\b.*\\b40\\s*[×x]",
                   "codice": "I59"
                 }
               ],
@@ -1388,7 +1444,7 @@
             }
           ],
           "se_isolamento": "guaina",
-          "prezzo_nota": "listino: guaina elastomerica sp. 19 mm (I56–I59): per un altro spessore il prezzo vero è diverso"
+          "prezzo_nota": "la guaina si prezza sullo spessore che dice il progettista: 19 mm (I56–I59) o 32 mm sul tubo 32 (I82)"
         },
         {
           "id": "collari",
@@ -1426,6 +1482,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81b"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I26a"

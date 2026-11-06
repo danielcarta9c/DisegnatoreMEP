@@ -860,12 +860,16 @@
                 {
                   "se": "^4P C20 A$",
                   "codice": "E18b"
+                },
+                {
+                  "se": "^(1P\\+N|2P) C(16|20|25|32) B$",
+                  "codice": "E31a"
                 }
               ],
               "n": 1.0
             }
           ],
-          "prezzo_nota": "il listino ha solo differenziali di tipo A: il tipo B della pompa di calore va prezzato a parte"
+          "prezzo_nota": "tipo A dal listino Tecnomat; tipo B dal combinato economico (E31a, 85–90 €): il differenziale puro tipo B di marca con il suo magnetotermico costa 270–390 € (E31b + E32)"
         }
       ]
     },
@@ -888,7 +892,13 @@
           "fonte": "D-228 (I-259): disposizione del PO del 04/11/2026",
           "fonte_in_parole": "decisione Nove C sul comando dei circolatori",
           "perche": "Un relè per circolatore, nel quadro, accanto alla protezione della linea del circolatore.",
-          "prezzo": []
+          "prezzo": [
+            {
+              "codice": "E34",
+              "n": 1.0
+            }
+          ],
+          "prezzo_nota": "riferimento online: Finder 22.21 da 20 A, equivalenti più economici"
         }
       ]
     },
@@ -911,7 +921,12 @@
           "fonte": "kit AA-01: lavoro/dimensionamento.py, voce E.13",
           "fonte_in_parole": "regola Nove C per gli apparecchi a parete",
           "perche": "Il termostato si monta su una scatola da incasso.",
-          "prezzo": []
+          "prezzo": [
+            {
+              "codice": "E37",
+              "n": 1.0
+            }
+          ]
         },
         {
           "id": "traccia-per-apparecchio-a-parete",
@@ -948,7 +963,12 @@
           "fonte": "kit AA-01: lavoro/dimensionamento.py, voce E.13",
           "fonte_in_parole": "regola Nove C per gli apparecchi a parete",
           "perche": "Il termostato si monta su una scatola da incasso.",
-          "prezzo": []
+          "prezzo": [
+            {
+              "codice": "E37",
+              "n": 1.0
+            }
+          ]
         },
         {
           "id": "traccia-per-apparecchio-a-parete",
@@ -984,7 +1004,12 @@
           "fonte": "kit AA-01: lavoro/dimensionamento.py, voce E.13",
           "fonte_in_parole": "regola Nove C per gli apparecchi a parete",
           "perche": "Il comando si monta su una scatola da incasso.",
-          "prezzo": []
+          "prezzo": [
+            {
+              "codice": "E37",
+              "n": 1.0
+            }
+          ]
         },
         {
           "id": "traccia-per-apparecchio-a-parete",
@@ -1042,7 +1067,22 @@
           "fonte": "D-233 (I-281): disposizione del PO del 04/11/2026",
           "fonte_in_parole": "decisione Nove C sul tubo scelto dalla velocità",
           "perche": "Una per attacco, sulla mandata e sul ritorno della macchina: maschio dal lato dell'attacco (il giunto), femmina dal lato del tubo.",
-          "prezzo": []
+          "prezzo": [
+            {
+              "per": "{attacco} {tubo}",
+              "scegli": [
+                {
+                  "se": "^1¼\" 1\"$",
+                  "codice": "I78a"
+                },
+                {
+                  "se": "^1\" ¾\"$",
+                  "codice": "I78b"
+                }
+              ],
+              "n": 1.0
+            }
+          ]
         }
       ]
     },
@@ -1069,6 +1109,10 @@
             {
               "per": "pollice",
               "scegli": [
+                {
+                  "se": "^½\"",
+                  "codice": "I75"
+                },
                 {
                   "se": "^¾\"",
                   "codice": "I31"
@@ -1110,6 +1154,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
@@ -1161,6 +1209,10 @@
               "per": "pollice",
               "scegli": [
                 {
+                  "se": "^½\"",
+                  "codice": "I75"
+                },
+                {
                   "se": "^¾\"",
                   "codice": "I31"
                 },
@@ -1201,6 +1253,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
@@ -1252,6 +1308,10 @@
               "per": "pollice",
               "scegli": [
                 {
+                  "se": "^½\"",
+                  "codice": "I75"
+                },
+                {
                   "se": "^¾\"",
                   "codice": "I31"
                 },
@@ -1292,6 +1352,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
@@ -1343,6 +1407,10 @@
               "per": "pollice",
               "scegli": [
                 {
+                  "se": "^½\"",
+                  "codice": "I75"
+                },
+                {
                   "se": "^¾\"",
                   "codice": "I31"
                 },
@@ -1383,6 +1451,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
@@ -1434,6 +1506,10 @@
               "per": "pollice",
               "scegli": [
                 {
+                  "se": "^½\"",
+                  "codice": "I75"
+                },
+                {
                   "se": "^¾\"",
                   "codice": "I31"
                 },
@@ -1474,6 +1550,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
@@ -1525,6 +1605,10 @@
               "per": "pollice",
               "scegli": [
                 {
+                  "se": "^½\"",
+                  "codice": "I75"
+                },
+                {
                   "se": "^¾\"",
                   "codice": "I31"
                 },
@@ -1565,6 +1649,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
@@ -1653,6 +1741,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -1739,6 +1831,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
@@ -1827,6 +1923,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -1914,6 +2014,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -1992,6 +2096,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
@@ -2072,6 +2180,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -2150,6 +2262,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
@@ -2231,6 +2347,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -2309,6 +2429,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
@@ -2389,6 +2513,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -2458,6 +2586,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
@@ -2529,6 +2661,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -2574,7 +2710,23 @@
           "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
           "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
           "perche": "La miscelatrice motorizzata del circuito a bassa temperatura; non è nel listino.",
-          "prezzo": []
+          "prezzo": [
+            {
+              "per": "pollice",
+              "scegli": [
+                {
+                  "se": "^¾\"",
+                  "codice": "I80a"
+                },
+                {
+                  "se": "^1\"",
+                  "codice": "I80b"
+                }
+              ],
+              "n": 1.0
+            }
+          ],
+          "prezzo_nota": "riferimento online: valvola più servomotore 230 V"
         },
         {
           "id": "raccordi-in-linea",
@@ -2592,6 +2744,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
@@ -2663,6 +2819,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -2708,7 +2868,13 @@
           "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
           "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
           "perche": "Il circolatore del ricircolo sanitario; non è nel listino (quello del listino non è per acqua sanitaria).",
-          "prezzo": []
+          "prezzo": [
+            {
+              "codice": "I79",
+              "n": 1.0
+            }
+          ],
+          "prezzo_nota": "riferimento online: Wilo Star-Z, Grundfos Comfort, DAB Evosta SAN"
         },
         {
           "id": "raccordi-in-linea",
@@ -2726,6 +2892,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
@@ -2791,6 +2961,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -2854,6 +3028,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
@@ -2924,6 +3102,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -2993,6 +3175,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -3038,7 +3224,23 @@
           "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
           "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
           "perche": "La valvola antigelo sul tratto esterno; non è nel listino.",
-          "prezzo": []
+          "prezzo": [
+            {
+              "per": "pollice",
+              "scegli": [
+                {
+                  "se": "^1\"",
+                  "codice": "I73a"
+                },
+                {
+                  "se": "^1¼\"",
+                  "codice": "I73b"
+                }
+              ],
+              "n": 1.0
+            }
+          ],
+          "prezzo_nota": "riferimento online: Caleffi 108 da 1\" sui 75–85 €, equivalenti più economici"
         },
         {
           "id": "raccordi-in-linea",
@@ -3056,6 +3258,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
@@ -3102,7 +3308,12 @@
           "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
           "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
           "perche": "Il rubinetto del manometro; non è nel listino.",
-          "prezzo": []
+          "prezzo": [
+            {
+              "codice": "I77",
+              "n": 1.0
+            }
+          ]
         },
         {
           "id": "raccordi-in-linea",
@@ -3120,6 +3331,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
@@ -3401,7 +3616,13 @@
           "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
           "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
           "perche": "Il gruppo di sicurezza sull'acqua fredda del bollitore; non è nel listino.",
-          "prezzo": []
+          "prezzo": [
+            {
+              "codice": "I74",
+              "n": 1.0
+            }
+          ],
+          "prezzo_nota": "riferimento online: Caleffi 526153"
         }
       ]
     },
@@ -3578,6 +3799,14 @@
                 {
                   "almeno": 25,
                   "codice": "I41c"
+                },
+                {
+                  "almeno": 35,
+                  "codice": "I41e"
+                },
+                {
+                  "almeno": 50,
+                  "codice": "I41f"
                 }
               ],
               "n": 1.0
@@ -3655,7 +3884,12 @@
           "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
           "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
           "perche": "La sonda arriva con la macchina o con il regolatore; l'installatore mette il pozzetto, che non è nel listino.",
-          "prezzo": []
+          "prezzo": [
+            {
+              "codice": "I76",
+              "n": 1.0
+            }
+          ]
         }
       ]
     },
@@ -3677,7 +3911,12 @@
           "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
           "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
           "perche": "La sonda arriva con la macchina o con il regolatore; l'installatore mette il pozzetto, che non è nel listino.",
-          "prezzo": []
+          "prezzo": [
+            {
+              "codice": "I76",
+              "n": 1.0
+            }
+          ]
         }
       ]
     },
@@ -3699,7 +3938,12 @@
           "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
           "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
           "perche": "La sonda arriva con la macchina o con il regolatore; l'installatore mette il pozzetto, che non è nel listino.",
-          "prezzo": []
+          "prezzo": [
+            {
+              "codice": "I76",
+              "n": 1.0
+            }
+          ]
         }
       ]
     },
@@ -4594,6 +4838,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -4636,6 +4884,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -4677,6 +4929,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
@@ -4729,6 +4985,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -4771,6 +5031,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -4812,6 +5076,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
@@ -4864,6 +5132,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -4906,6 +5178,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -4947,6 +5223,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
@@ -4999,6 +5279,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -5041,6 +5325,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -5082,6 +5370,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
@@ -5134,6 +5426,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -5176,6 +5472,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -5217,6 +5517,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
@@ -5269,6 +5573,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -5311,6 +5619,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -5352,6 +5664,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
@@ -5404,6 +5720,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -5446,6 +5766,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -5487,6 +5811,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
@@ -5539,6 +5867,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -5581,6 +5913,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -5622,6 +5958,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
@@ -5673,6 +6013,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -5722,6 +6066,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
@@ -5773,6 +6121,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -5822,6 +6174,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
@@ -5873,6 +6229,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -5922,6 +6282,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
@@ -5973,6 +6337,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -6022,6 +6390,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
@@ -6073,6 +6445,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -6122,6 +6498,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
@@ -6173,6 +6553,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -6222,6 +6606,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
@@ -6273,6 +6661,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -6315,6 +6707,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -6356,6 +6752,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
@@ -6407,6 +6807,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -6449,6 +6853,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -6490,6 +6898,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
@@ -6541,6 +6953,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -6583,6 +6999,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -6624,6 +7044,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
@@ -6675,6 +7099,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -6717,6 +7145,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -6758,6 +7190,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
@@ -6809,6 +7245,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -6851,6 +7291,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -6892,6 +7336,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
@@ -6943,6 +7391,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -6985,6 +7437,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -7026,6 +7482,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
@@ -7077,6 +7537,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -7119,6 +7583,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -7160,6 +7628,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
@@ -7211,6 +7683,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -7253,6 +7729,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -7294,6 +7774,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
@@ -7345,6 +7829,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -7387,6 +7875,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -7428,6 +7920,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
@@ -7479,6 +7975,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -7521,6 +8021,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -7562,6 +8066,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
@@ -7613,6 +8121,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -7655,6 +8167,10 @@
               "per": "sezione",
               "scegli": [
                 {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
+                {
                   "se": "20\\s*[×x]",
                   "codice": "I21"
                 },
@@ -7696,6 +8212,10 @@
             {
               "per": "sezione",
               "scegli": [
+                {
+                  "se": "16\\s*[×x]",
+                  "codice": "I81c"
+                },
                 {
                   "se": "20\\s*[×x]",
                   "codice": "I21"

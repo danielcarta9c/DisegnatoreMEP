@@ -1,6 +1,6 @@
 # Listino della minuteria — riferimento interno Nove C
 
-**Revisione 03, 5 novembre 2026.** Riscrive in Markdown il file del PO
+**Revisione 04, 6 novembre 2026.** Riscrive in Markdown il file del PO
 `listino_minuteria_pdc_rev02.xlsx` (2 novembre 2026). Da questa revisione il listino vive qui:
 si aggiorna in questo file, non più nel foglio Excel.
 
@@ -705,21 +705,160 @@ Famiglia: Elettrico - accessori.
 | graffetta a chiodo 12-14 mm | J69 Store | Graffette fermacavo con chiodo 14 mm | 100 pz | 2,49 | inclusa | 2,04 | 0,020 | cad | spedizione +5,50 € | [link](https://www.j69store.com/graffette-ferma-fissa-passa-cavo-14-mm-confezione-da-100-pezzi) |
 | graffetta a chiodo 12-14 mm | Amazon.it | Graffette con chiodo 14 mm | 100 pz | 6,90 | inclusa | 5,66 | 0,057 | cad |  | [link](https://www.amazon.it/GRAFFETTE-CHIODI-FERMA-FISSA-CONFEZIONE/dp/B06ZYGCX45) |
 
+## 2bis. Il riferimento online — 6 novembre 2026
+
+Le voci che la distinta conta e che il listino non aveva, trovate dopo i collaudi della 1.14.0. Come nel §2: i prezzi
+vengono dai riassunti del motore di ricerca, netti IVA esclusa (IVA presunta inclusa dove il negozio non la dice),
+con il link di ogni riscontro; il riferimento è la mediana. I siti con protezione anti-robot (Tecnomat, Leroy Merlin,
+ManoMano, RS) non si aprono dalla sessione: i loro prezzi qui sono quelli che il motore di ricerca riporta.
+
+- **Interruttore tipo B.** Il combinato tipo B economico (E31a) sta sui 85–90 €; il differenziale puro tipo B di
+  marca (E31b) sui 270–390 €, da abbinare a un magnetotermico (E32). Il «B» di molti titoli è la **curva**, non il tipo
+  del differenziale: non vale per la pompa di calore.
+- **Valvola antigelo.** La Caleffi 108 da 1" sta sui 75–85 €; equivalenti Giacomini, BRV o ICMA sui 37–66 €.
+
+### Riepilogo (6 novembre 2026)
+
+| Codice | ID | Voce | Misura | Riscontri | Netto/UM min € | Mediana € | Max € | UM |
+|---|---|---|---|--:|--:|--:|--:|---|
+| I73a | I73 | Valvola antigelo per pompa di calore | 1" | 5 | 62,30 | 77,38 | 84,21 | cad |
+| I73b | I73 | Valvola antigelo per pompa di calore | 1¼" | 4 | 54,92 | 86,95 | 114,66 | cad |
+| I74 | I74 | Gruppo di sicurezza sanitario per bollitore | ¾" | 4 | 25,09 | 44,63 | 49,35 | cad |
+| I75 | I75 | Valvola a sfera FF a passaggio totale | ½" | 4 | 3,24 | 5,80 | 8,84 | cad |
+| I76 | I76 | Pozzetto portasonda in ottone | ½" | 4 | 4,92 | 12,66 | 14,66 | cad |
+| I77 | I77 | Rubinetto portamanometro a tre vie | ½" | 2 | 14,35 | 17,93 | 21,50 | cad |
+| I78a | I78 | Riduzione filettata in ottone M × F | 1¼" × 1" | 2 | 2,30 | 2,64 | 2,98 | cad |
+| I78b | I78 | Riduzione filettata in ottone M × F | 1" × ¾" | 2 | 1,52 | 3,41 | 5,30 | cad |
+| I79 | I79 | Circolatore per ricircolo sanitario | Rp ½" | 6 | 85,40 | 133,35 | 138,75 | cad |
+| I80a | I80 | Valvola miscelatrice a tre vie con servomotore 230 V | ¾" | 2 | 176,24 | 180,17 | 184,10 | cad |
+| I80b | I80 | Valvola miscelatrice a tre vie con servomotore 230 V | 1" | 3 | 179,04 | 181,00 | 223,39 | cad |
+| I41e | I41 | Vaso di espansione per riscaldamento | 35 l | 6 | 53,63 | 68,85 | 89,46 | cad |
+| I41f | I41 | Vaso di espansione per riscaldamento | 50 l | 3 | 80,33 | 89,34 | 90,57 | cad |
+| I81a | I81 | Gomito a pressare multistrato | 16×2 | 2 | 3,25 | 3,47 | 3,69 | cad |
+| I81b | I81 | Manicotto a pressare multistrato | 16×2 | 3 | 2,38 | 2,45 | 2,85 | cad |
+| I81c | I81 | Raccordo diritto a pressare M × multistrato | ½" × 16 | 3 | 2,67 | 6,65 | 11,39 | cad |
+| I82 | I82 | Guaina elastomerica sp. 32 mm | tubo Ø35 | 3 | 7,20 | 7,85 | 7,85 | m |
+| E31a | E31 | Interruttore magnetotermico differenziale tipo B, 1P+N 30 mA | C16–C32 | 2 | 85,30 | 87,73 | 90,16 | cad |
+| E31b | E31 | Differenziale puro tipo B 2P 30 mA (da abbinare a un magnetotermico) | 25–40 A | 4 | 271,67 | 302,64 | 390,66 | cad |
+| E32 | E32 | Interruttore magnetotermico 1P+N 4,5 kA | C20–C32 | 6 | 5,48 | 6,39 | 7,30 | cad |
+| E33 | E33 | Interruttore magnetotermico differenziale 1P+N C10 30 mA tipo A | C10 | 5 | 17,13 | 18,61 | 26,32 | cad |
+| E34 | E34 | Relè modulare su guida DIN, bobina 230 V | contatto 20 A | 4 | 8,79 | 19,45 | 26,30 | cad |
+| E35a | E35 | Cavo FG16OR16 0,6/1 kV | 3G1,5 | 5 | 0,80 | 0,99 | 1,77 | m |
+| E35b | E35 | Cavo FG16OR16 0,6/1 kV | 2×1,5 | 3 | 0,64 | 0,78 | 0,91 | m |
+| E35c | E35 | Cavo FG16OR16 0,6/1 kV | 4G1,5 | 4 | 1,24 | 1,30 | 2,05 | m |
+| E36 | E36 | Cavo schermato per sonde FR2OH2R16 / FROHH2R | 2×0,75 | 4 | 0,65 | 0,78 | 1,49 | m |
+| E37 | E37 | Scatola da incasso 503 | 3 moduli | 4 | 0,25 | 0,26 | 0,26 | cad |
+
+### Il dettaglio (6 novembre 2026)
+
+| Codice | Negozio | Articolo | Netto/UM € | Note | Fonte |
+|---|---|---|--:|---|---|
+| I73a | ManoMano | Caleffi 108601 iStop | 77,38 |  | [link](https://www.manomano.it/p/valvola-antigelo-con-corpo-in-ottone-caleffi-108-1-40239508) |
+| I73a | Leroy Merlin (Maligi Home) | Caleffi 108601 | 72,45 | marketplace | [link](https://www.leroymerlin.it/prodotti/108601-valvola-antigelo-corpo-in-ottone-1-caleffi-83928823.html) |
+| I73a | Amazon.it | Caleffi 108601 | 84,21 | spedizione 8,99 € | [link](https://www.amazon.it/108601-Valvola-antigelo-ottone-CALEFFI/dp/B07GDSNLMX) |
+| I73a | Amazon.it | Caleffi 108601 | 79,86 |  | [link](https://www.amazon.it/Caleffi-108601-anti-gelo-circuiti-aerotermica/dp/B00OXUD9OM) |
+| I73a | ManoMano | Giacomini R148HPY005 | 62,30 | pagina di categoria; IVA non detta | [link](https://www.manomano.it/cat/valvole+giacomini?page=2) |
+| I73b | Rubinetteria Shop | Giacomini R148HPY006 | 65,57 |  | [link](https://www.rubinetteriashop.com/en/heat-pump-system-components/11898-antifreeze-valve-protection-for-heat-pumps-114-gas-connection-giacomini-r148hpy006.html) |
+| I73b | eBay.it | BRV Bonetti 05791 | 54,92 | IVA non detta | [link](https://www.ebay.it/itm/357622672577) |
+| I73b | new-heating.com | Caleffi iStop 108 1¼" | 108,34 | estero | [link](https://new-heating.com/en/caleffi-istop-classic-frost-protection-valve-type.html) |
+| I73b | panpower.eu | Caleffi 108 iStop 1¼" DN32 | 114,66 | estero | [link](https://panpower.eu/en/accessories-for-heat-pumps/7042-caleffi-108-istop-1-14-dn32.html) |
+| I74 | ManoMano | Caleffi 526153, 7 bar | 40,71 |  | [link](https://www.manomano.it/p/5261-gr-sic-boiler-1-inox-ccurva-526161-45800733?model_id=4722815) |
+| I74 | Amazon.it | Caleffi 526153 | 48,55 | spedizione 8,04 € | [link](https://www.amazon.it/526153-sicurezza-scaldacqua-accumulo-CALEFFI/dp/B07GSGK71L) |
+| I74 | Rubinetteria Shop | Caleffi 526153 | 49,35 |  | [link](https://www.rubinetteriashop.com/en/components-for-sanitary-systems/2033-safety-group-for-storage-water-heater-caleffi-526153-526163.html) |
+| I74 | Amazon.it | Thermador GS20C = Caleffi 526151, curvo | 25,09 | spedizione 10,90 € | [link](https://www.amazon.it/Thermador-GS20C-Caleffi-526151-Sicurezza/dp/B009L4J8P4) |
+| I75 | Rubinetteria Shop | Giacomini R850 | 3,24 |  | [link](https://www.rubinetteriashop.com/en/ball-valves/8958-ball-valve-female-female-connections-giacomini-r850.html) |
+| I75 | ManoMano | Bugatti FF farfalla PN50 | 4,27 | pagina di categoria | [link](https://www.manomano.it/cat/valvola+a+sfera+a+passaggio+totale) |
+| I75 | Amazon.it | RB FF farfalla DN15 | 7,34 |  | [link](https://www.amazon.it/VALVOLA-SFERA-PASSAGGIO-TOTALE-FARFALLA/dp/B08XZ4NT99) |
+| I75 | ManoMano | Tiemme Tornado DN15 | 8,84 | pagina di categoria | [link](https://www.manomano.it/cat/valvola+a+sfera+a+passaggio+totale) |
+| I76 | Amazon.it | Best Solar L 120 | 4,92 |  | [link](https://www.amazon.it/Best-Solar-Pozzetto-sonda-Lunghezza/dp/B09SZPBX2W) |
+| I76 | ManoMano | Comisa L 100 | 12,38 | pagina di categoria | [link](https://www.manomano.it/cat/pozzetto+sonda) |
+| I76 | Leroy Merlin | portasonda ottone L 130 | 12,95 |  | [link](https://www.leroymerlin.it/prodotti/portasonda-in-ottone-attacco-1-2-pozzetto-per-termostato-l-130mm-guarnizione-88350554.html) |
+| I76 | Fausto Ricambi | pozzetto ottone ½" | 14,66 | spedizione 7,52 € | [link](https://www.faustoricambi.it/thermometers-pozzetto-ottone-1-2-per-termometro-in-vetro-10-a-120-c-a-bulbo.2.14.305.gp.12909.uw) |
+| I77 | Amazon.it | Giacomini R228IY003 | 21,50 | un solo riscontro esatto | [link](https://www.amazon.it/R228I-Rubinetto-manometro-R228IY003-GIACOMINI/dp/B07Z8DZ78W) |
+| I77 | Amazon.it | Rastelli 424 portamanometro | 14,35 | tre vie non dichiarato | [link](https://www.amazon.it/424-Rubinetto-portamanometro-ottone-RASTELLI/dp/B07NK5QJFC) |
+| I78a | Tecnomat | Banninger esagonale M/F | 2,30 |  | [link](https://www.tecnomat.it/it/riduz-esag-ottone-banninger-m-f-1-1-4x1-10016609/) |
+| I78a | ManoMano | Rain M-F ottone | 2,98 | saldo | [link](https://www.manomano.it/p/riduttore-m-f-ottone-1-14-x-1-34872732) |
+| I78b | Tecnomat | Banninger esagonale M/F | 1,52 |  | [link](https://www.tecnomat.it/it/rriduz-esag-ott-banninger-m-f-1-x3-4-10013658/) |
+| I78b | ManoMano | Wolfpack M 1" × F ¾" | 5,30 | pagina di categoria | [link](https://www.manomano.it/cat/riduttore+maschio+femmina) |
+| I79 | ManoMano | Wilo Star-Z 15 Nova | 138,75 |  | [link](https://www.manomano.it/p/circolatore-domestico-star-z-15-nova-wilo-4132760-6094842) |
+| I79 | Leroy Merlin | Wilo Star-Z 15 Nova | 137,09 |  | [link](https://www.leroymerlin.it/prodotti/star-z-15-nova-wilo-4132760-14397627.html) |
+| I79 | Amazon.it | Grundfos Comfort UP15-14 B PM | 132,80 |  | [link](https://www.amazon.it/Grundfos-97916771-Up-efficienza-circolazione-potabile/dp/B01L4OZ8XO) |
+| I79 | ManoMano | Grundfos Comfort 15-14 B PM | 133,90 |  | [link](https://www.manomano.it/p/circolante-grundfos-simple-acqua-chaudel-sanitario-up15-14-bx-pm-ref-97916772-29023254?model_id=3423221) |
+| I79 | ManoMano | DAB Evosta 2 11/85 SAN R | 85,40 |  | [link](https://www.manomano.it/p/circolatore-dab-evosta-2-1185-san-r-12-60187267-84784383) |
+| I79 | Amazon.it | DAB Evosta 2 11/85 R | 109,84 |  | [link](https://www.amazon.it/dab-pumps-EVOSTA-SAN-circolazione/dp/B083TBGQXP) |
+| I80a | Rubinetteria Shop + ManoMano | Caleffi 610 ¾" + servomotore 637042 | 176,24 | somma di valvola e servomotore | [link](https://www.rubinetteriashop.com/en/mixing-valves/7000-sector-threaded-three-way-mixing-valve-caleffi-610.html) |
+| I80a | Amazon.it | Esbe VRG131 DN20 + ARA661 | 184,10 | somma di valvola e servomotore | [link](https://www.amazon.it/VALVOLA-MISCELATRICE-ROTATIVA-FILETTO-ART-11600800/dp/B01M6ZU10L) |
+| I80b | Leroy Merlin + ManoMano | Caleffi 610 1" + servomotore 637042 | 179,04 | somma | [link](https://www.leroymerlin.it/prodotti/valvola-miscelatrice-a-tre-vie-filettata-a-settore-caleffi-610-1-91565602.html) |
+| I80b | ManoMano + Amazon.it | Esbe VRG131 DN25 + ARA661 | 181,00 | somma | [link](https://www.manomano.it/p/valvola-miscelatrice-miscelatore-esbe-vrg-131-3-4-3-vie-f-12754077) |
+| I80b | Amazon.it | kit Esbe VRG131 DN25 + ARA661 | 223,39 | kit | [link](https://www.amazon.it/VRG131-ARA661-riscaldamento-mixer-metter%C3%B2-Motor/dp/B00JFYKYCG) |
+| I41e | ManoMano | Elbi ERCE 35 | 53,63 | pagina di categoria | [link](https://www.manomano.it/cat/vaso+espansione+35+litri) |
+| I41e | ManoMano | Desivero 35 l | 65,57 |  | [link](https://www.manomano.it/p/vaso-espansione-storm-lt35-senza-basamento-codice-prod-st06548-49280672) |
+| I41e | Amazon.it | Cosmo 35 l | 66,63 |  | [link](https://www.amazon.it/riscaldamento-espansione-35-LTR-vordruck-pressione/dp/B01D1XX3VA) |
+| I41e | ManoMano | Zilmet Cal-Pro 35 | 71,07 | pagina di categoria | [link](https://www.manomano.it/cat/vaso+espansione+35+litri) |
+| I41e | Leroy Merlin | Zilmet Cal-Pro 35 | 81,48 | pagina di marca | [link](https://www.leroymerlin.it/prodotti/stufe-climatizzatori-e-idraulica/impianti-per-carico-acqua-e-gas/valvole-e-accessori-idraulici/zilmet-p.html) |
+| I41e | ManoMano | Caleffi 556035 | 89,46 |  | [link](https://www.manomano.it/p/556035-vaso-despansione-saldato-per-impianti-di-riscaldamento-35-litri-caleffi-6302443) |
+| I41f | Amazon.it | Zilmet Zilflex H 50 | 80,33 |  | [link](https://www.amazon.it/zilflex-50-vaso-espansione-vordruck-50-litri/dp/B00TFCX9CA) |
+| I41f | Amazon.it | Elbi ERCE-50 | 89,34 |  | [link](https://www.amazon.it/Elbi-A102L34-Espansione-Riscaldamento-Erce-50/dp/B00WWGQX2O) |
+| I41f | Leroy Merlin | Zilmet Cal-Pro 50 | 90,57 | pagina di marca | [link](https://www.leroymerlin.it/prodotti/stufe-climatizzatori-e-idraulica/impianti-per-carico-acqua-e-gas/valvole-e-accessori-idraulici/zilmet-p.html) |
+| I81a | Tecnomat | APE pressfit Ø16 | 3,25 |  | [link](https://www.tecnomat.it/it/gomito-pressfit-ape-o16mm-pex-10042067/) |
+| I81a | Amazon.it | gomito a pressare 16×16 | 3,69 |  | [link](https://www.amazon.it/GOMITO-PRESSARE-TUBO-MULTISTRATO-16/dp/B01G3WYU68) |
+| I81b | ManoMano | Noyon & Thiébault Ø16 | 2,38 | pagina di categoria | [link](https://www.manomano.it/cat/raccordi+multistrato+a+pressare+16) |
+| I81b | Tecnomat | APE pressfit 16×16 | 2,45 | pagina di marca | [link](https://www.tecnomat.it/it/marche/index/display/brands/5229/?page=5) |
+| I81b | Amazon.it | Booparts 16-16, 4 pezzi | 2,85 |  | [link](https://www.amazon.it/BOOPARTS-raccordo-multistrato-manicotto-idraulico/dp/B0CNWG3RCW) |
+| I81c | ManoMano | Dakiviva 16 × ½" M | 2,67 |  | [link](https://www.manomano.it/p/raccordo-dritto-maschio-a-pressare-per-multistrato-diametro-16x34-64565700?model_id=67892911) |
+| I81c | Amazon.it | Tiemme 16 × ½" M | 6,65 | versione gas | [link](https://www.amazon.it/Raccordo-Pressare-Maschio-Multistrato-Tiemme/dp/B07TZKLN9N) |
+| I81c | Leroy Merlin | NT Ø16 × M½" | 11,39 |  | [link](https://www.leroymerlin.it/prodotti/raccordo-multistrato-a-pressare-16-maschio-1-2-nt-68628630.html) |
+| I82 | Leroy Merlin (Officina Idraulica) | IT-FLEX C1 EVT035 | 7,85 | pagina di categoria | [link](https://www.leroymerlin.it/prodotti/edilizia/prodotti-per-isolamento/isolamento-termico/guaina-isolante-2-m-p.html) |
+| I82 | ManoMano | IT-FLEX C1 EVT035, tubo da 2 m | 7,85 | 19,16 € il tubo da 2 m | [link](https://www.manomano.it/p/tubo-isolante-guaina-it-flex-c1-spessore-32-mm-o-interno-35-mm-prezzo-al-metro-venduto-tassativamente-in-tubo-da-2-metri-e-multipli-evt035-87432145) |
+| I82 | ManoMano | IT-FLEX C1 EVT035 | 7,20 |  | [link](https://www.manomano.it/p/tubo-isolante-guaina-it-flex-c1-spessore-32-mm-o-interno-35-mm-prezzo-al-metro-venduto-tassativamente-in-tubo-da-2-metri-e-multipli-evt035-87432145) |
+| E31a | Amazon.it | A2ZWORLD RCBO classe B C16 | 90,16 | marca sconosciuta; solo C16 | [link](https://www.amazon.it/A2ZWORLD-Interruttore-Differenziale-Occupa-Moduli/dp/B0DP34LLGT) |
+| E31a | Westbase Direct (UK) | Live Electrical RKB125C-030, C25 tipo B | 85,30 | 72,47 £ IVA esclusa; estero | [link](https://westbasedirect.com/products/live-electrical-rkb125c-030-25a-1p-n-c-curve-6ka-30ma-type-b-bi-directional-rcbo) |
+| E31b | Emmebistore | Siemens 5SV3322-4 2P 25 A | 390,66 |  | [link](https://www.emmebistore.com/interruttori-differenziali-puri-bipolari-e-quadripolari-siemens/interruttore-differenziale-tipo-b-2-poli-25a-30ma-230vac-siemens-5sv33224-4001869548876-56649.html) |
+| E31b | Stock Elettrico | ABB B274802 blocco 2P 25 A per S200 | 309,42 |  | [link](https://www.stockelettrico.it/products/19560-ABB-B274802-Blocco-Differenziale-2P-25A-30mA-Tipo-B/?id=19560) |
+| E31b | Emmebistore | ABB B274802 | 295,86 | prezzo dubbio | [link](https://www.emmebistore.com/blocchi-differenziali-abb/blocco-differenziale-2p-25a-30ma-tipo-b-per-serie-s-200-abb-b274802-8012542748021-59771.html) |
+| E31b | Amazon.it | TURHAN RCCB tipo B 2P 40 A | 271,67 | marca sconosciuta | [link](https://www.amazon.it/Interruttore-differenziale-corrente-63Amp-100mA/dp/B0CSW5VPZK) |
+| E32 | Tecnomat | Schneider 1P+N C20 1M | 5,98 |  | [link](https://www.tecnomat.it/it/int-magn-schneider-1p-n-20a-4-5ka-c-1m-25016596/) |
+| E32 | Tecnomat | Bticino 1P+N C20 1M | 6,80 |  | [link](https://www.tecnomat.it/it/magn-bticino-1p-n-20a-4-5ka-c-1m-25101115/) |
+| E32 | Tecnomat | Schneider 1P+N C25 1M | 5,98 |  | [link](https://www.tecnomat.it/it/int-magn-schneider-1p-n-25a-4-5ka-c-1m-25016575/) |
+| E32 | Leroy Merlin | Bticino FC881C25 | 6,80 |  | [link](https://www.leroymerlin.it/prodotti/interruttore-magnetotermico-bticino-1p-n-25a-4-5ka-1m-230-v-fc881c25-32987185.html) |
+| E32 | Leroy Merlin | Schneider DomA47 C32 1M | 7,30 |  | [link](https://www.leroymerlin.it/prodotti/interruttore-magnetotermico-schneider-32a-1-modulo-82796906.html) |
+| E32 | ManoMano | Chint EB 1P+N 32 A | 5,48 | pagina di categoria | [link](https://www.manomano.it/cat/magnetotermico+chint+32a) |
+| E33 | Bricohome | Chint NB1L1 203333 | 17,13 |  | [link](https://bricohomeferramenta.it/products/interruttore-magnetotermici-differenziali-nb1l1-4-5-ka) |
+| E33 | Amazon.it | Chint 203333 | 17,21 |  | [link](https://www.amazon.it/Chint-Magnetotermici-Differenziali-NB1L-230Vac-10A-30mA/dp/B09BBP1SBY) |
+| E33 | ManoMano | Chint 203333 | 18,81 |  | [link](https://www.manomano.it/p/abb-sace-spa-ds91lc10ac30-ds901l-c10-30ma-ac-interrdiffer45ka-1p-1139998) |
+| E33 | eBay.it | Chint 203333 | 18,61 |  | [link](https://www.ebay.it/itm/406399773512) |
+| E33 | Voltair | Chint NB1L1 C10 tipo A | 26,32 |  | [link](https://www.voltair.it/it/nb1l1-int-mtd-1p-n-10a-30ma-45ka-c-tipo-a-2mod-37505.html) |
+| E34 | RS Italia | Finder 22.21.8.230.4000 | 23,32 | prezzo indicativo | [link](https://it.rs-online.com/web/p/rele-di-potenza/0159789) |
+| E34 | Amazon.it | Finder 22.21.8.230.4000 | 26,30 |  | [link](https://www.amazon.it/stores/Finder/page/5D7311CB-3EF3-406D-9F41-D5803A9D0EBF) |
+| E34 | ManoMano | Finder 22.22.8.230.4000 2NA | 15,57 |  | [link](https://www.manomano.it/p/finder-222282304000-rele-industriale-tensione-nom-230-v-ac-corrente-di-commut-max-20-a-2-na-1-pz-38591627) |
+| E34 | Klinkmann | Chint NCH8-20/11 | 8,79 | estero | [link](https://store.klinkmann.com/?p=7393) |
+| E35a | Stock Elettrico | FG16OR16-3G1.5 al metro | 0,99 |  | [link](https://www.stockelettrico.it/products/15513-Cavo-Elettrico-FG16OR16-3G15-Cavo-CPR-FG16OR16-3G15mm2-con-giallo-verde-AL-METRO/) |
+| E35a | Stock Elettrico | FG16OR16-3G1.5 matassa 100 m | 0,80 |  | [link](https://www.stockelettrico.it/products/15514-Cavo-Elettrico-FG16OR16-3G15M-Cavo-CPR-FG16OR16-3G15mm2-con-giallo-verde-100mt/) |
+| E35a | Tecnomat | FG16(O)R16 3G1,5 matassa 100 m | 0,98 |  | [link](https://www.tecnomat.it/it/cavo-trip-fg16-o-r16-0-6-1kv-3g1-5-100m-10073622/) |
+| E35a | ManoMano | FG16OR16 3G1,5 al metro | 1,19 |  | [link](https://www.manomano.it/p/al-metro-cavo-fg16or16-multipolare-3-conduttori-con-giallo-verde-con-1-5-mmq-di-sezione-fg7-3gx15-fg16or16-3gx15-10925940) |
+| E35a | RS Italia | Prysmian FG16OR16 3G1.5 100 m | 1,77 |  | [link](https://it.rs-online.com/web/p/cavi-di-potenza/2161677) |
+| E35b | Stock Elettrico | FG16OR16 2×1,5 a taglio | 0,64 |  | [link](https://www.stockelettrico.it/products/15507-CAVO-CPR-FG16OR16-2X15-A-TAGLIO/) |
+| E35b | Elettronew | FG16OR16 2×1,5 | 0,78 | pagina di categoria | [link](https://www.elettronew.com/en/prodotti/categoria/fg16or-unipolar-and-multipolar-double-insulation-cables-2037.html) |
+| E35b | ManoMano | FG16OR16 2×1,5 al metro | 0,91 |  | [link](https://www.manomano.it/p/al-metro-cavo-fg16or16-multipolare-fg16-2-conduttori-da-1-5mmq-senza-giallo-verde-fg7-2x15-fg16or16-2x15-10925950) |
+| E35c | Stock Elettrico | FG16OR16-4G1.5 al metro | 1,24 |  | [link](https://www.stockelettrico.it/products/15520-Cavo-Elettrico-FG16OR16-4G15-Cavo-CPR-FG16OR16-4G15mm2-con-giallo-verde-AL-METRO/) |
+| E35c | Elettronew | FG16OR16 4×1,5 | 1,30 |  | [link](https://www.elettronew.com/en/fg16or-unipolar-and-multipolar-double-insulation-cables/double-insulated-flameproof-cable-fg16or16-4x15mmq-06-1-kv-grey-fg16r4x15m-42415.html) |
+| E35c | Emmebistore | FG16OR16 4G1,5 | 1,30 | pagina di categoria | [link](https://www.emmebistore.com/cavi-elettrici-fg16or-fg16om-e-ftg18-4528) |
+| E35c | Leroy Merlin | FG16OR16 4×1,5 | 2,05 | pagina di categoria | [link](https://www.leroymerlin.it/prodotti/elettricita-automazioni-e-fotovoltaico/fili-e-cavi/cavi-elettrici-e-fili/cavi-multipolari/cavo-fg16or16-p.html) |
+| E36 | Stock Elettrico | Specialcavi FR2OH2R16 2×0,75, 100 m | 0,67 |  | [link](https://www.stockelettrico.it/products/15485-Specialcavi-Baldassari-CFZ07502M100-Cavo-Schermato-CPR-CONTROLFLEX-FR2OH2R16-2x075mm2/) |
+| E36 | Emmebistore | FR2OH2R16 2×0,75 al metro | 0,65 | taglio 3,50 € | [link](https://www.emmebistore.com/cavi-schermati/cavo-fror-schermato-antifiamma-2x075-frohh2r-19771.html) |
+| E36 | Elettronew | FROHH2R 2×0,75 | 0,89 | minimo 100 m | [link](https://www.elettronew.com/en/shielded-cables/fror-shielded-flameproof-cable-frohh2r-2x075-sq-mm-33042.html) |
+| E36 | Amazon.it | FR2OHH2R 2×0,75, 10 m | 1,49 |  | [link](https://www.amazon.it/ELETTRO-CAVI-SCHERMATO-ANTIFIAMMA-FLESSIBILE/dp/B07G1BH38J) |
+| E37 | Stock Elettrico | BTicino 503E | 0,25 |  | [link](https://www.stockelettrico.it/products/1432-BTicino-503E-Scatola-da-Incasso-3-Moduli-per-Serie-Civili-Universale/) |
+| E37 | Emmebistore | BTicino 503E | 0,26 |  | [link](https://www.emmebistore.com/bticino-light/scatola-da-incasso-in-resina-3-moduli-serie-civili-bticino-503e-8012199051260-49614.html) |
+| E37 | Tecnomat | BTicino 503, 15 pezzi | 0,26 |  | [link](https://www.tecnomat.it/it/15-scatole-deriv-inc-3m-mod-503-bticino-10041379/) |
+| E37 | Leroy Merlin | BTicino S503EFA, 15 pezzi | 0,26 |  | [link](https://www.leroymerlin.it/prodotti/scatola-da-incasso-3-moduli-s503efa-bticino-15-pezzi-85112878.html) |
+
 ## 3. Ancora da prezzare
 
-**Le voci che la distinta conta e il listino non ha** (dai collaudi della 1.14.0, 5 novembre 2026). Nel costo della
-minuteria escono DA PREZZARE, fuori dal totale; sono le prime da aggiungere al listino:
-
-- **elettrico**: l'interruttore magnetotermico differenziale **tipo B** della pompa di calore (2P C20, C25, C32), la voce
-  più cara della minuteria elettrica; il magnetotermico differenziale 1P+N C10 tipo A; il relè d'appoggio 10 A su guida
-  DIN; i cavi FG16OR16 **3G1,5**, 2×1,5, 4G1,5 e il bus 2×0,75; la scatola 503;
-- **idraulica**: la **valvola antigelo** 1" (due per pompa di calore); il gruppo di sicurezza sanitario; la valvola a
-  sfera ½"; il pozzetto portasonda ½"; il rubinetto portamanometro a tre vie; la riduzione filettata M × F (1¼" × 1");
-  il circolatore per ricircolo sanitario; la miscelatrice a tre vie con servomotore; i vasi oltre i 25 l; raccordi,
-  gomiti e guaina per il multistrato 16×2; la guaina dello spessore della nota della tavola (30 mm da 20 a 39 mm, 40 mm
-  da 40 a 59 mm: nel listino c'è solo il 19 mm, che il costo usa dichiarandolo);
-- **aria e frigorifero**: il plenum di ripresa con filtro, la canalina coprilinee 110×75 con i suoi accessori, le
-  fascette e i sostegni dei flessibili, il manicotto del flessibile, il collare delle linee frigorifere.
+**Le voci che la distinta conta e il listino non ha.** Dopo il §2bis restano: il combinato tipo B di marca nelle taglie
+C20, C25 e C32 (il prezzo pubblico italiano non c'è; c'è il combinato economico, E31a); la guaina sp. 32 per il tubo
+da 28 (si trova solo per il 35); il plenum di ripresa con filtro, la canalina coprilinee 110×75, le fascette, i
+sostegni e il manicotto del flessibile, il collare delle linee frigorifere.
 
 Quello che manca, dopo il §1 e il §2:
 

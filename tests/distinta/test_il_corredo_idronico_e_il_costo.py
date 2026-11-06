@@ -81,7 +81,7 @@ def test_il_listino_si_legge_con_le_voci_del_banco_e_quelle_online(listino: Any)
     assert len(online) >= 60
     assert listino.get("I04").prezzo == pytest.approx(3.64) and listino.get("I04").um == "m"
     assert listino.get("E02").prezzo == pytest.approx(2.28)
-    assert listino.revisione.startswith("03")
+    assert listino.revisione.startswith("04")
 
 
 def test_un_codice_doppio_ferma_il_listino(tmp_path: Path) -> None:
@@ -169,7 +169,7 @@ def test_il_comando_scrive_il_costo_accanto_alla_distinta(tmp_path: Path, capsys
     md = (tmp_path / "d" / "interno" / "costo-minuteria.md").read_text(encoding="utf-8")
     assert "Uso interno Nove C" in md and "Totale prezzato" in md
     dati = json.loads((tmp_path / "d" / "interno" / "costo-minuteria.json").read_text(encoding="utf-8"))
-    assert dati["totale_eur"] > 0 and dati["listino"]["revisione"].startswith("03")
+    assert dati["totale_eur"] > 0 and dati["listino"]["revisione"].startswith("04")
     documento = next((tmp_path / "d").glob("Distinta_*.md")).read_text(encoding="utf-8")
     assert "€" not in documento, "il documento per l'installatore resta senza prezzi"
     consegnati = consegna(tmp_path / "d", tmp_path / "consegna")
