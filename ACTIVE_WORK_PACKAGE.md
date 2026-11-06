@@ -68,6 +68,13 @@
     le correzioni; la **2.0.0** con il tag git, la release su GitHub, `releases/latest/`. Poi la potatura dei rami
     vecchi (una quarantina, già fusi).
 
+### Un difetto della distinta, dal progetto reale (I-297)
+
+12. **`compreso_in` vale per ogni pezzo, non solo per le macchine.** Oggi toglie soltanto la riga della sezione A
+    (`src/disegnatore_mep/distinta/calcolo.py`, `_apparecchiature`): un accessorio dichiarato compreso nella pompa di
+    calore — il filtro a Y, i pozzetti — resta in distinta con il suo corredo. È un'uscita sbagliata su un dato che il
+    progettista ha già dato: rientra nel consolidamento. Il resto di I-297 è la 2.1 (`docs/plans/pacchetti/REL-025.md`).
+
 ## Le decisioni del PO sulla distribuzione (I-296, 6 novembre 2026)
 
 - **Il repository resta pubblico**, con i prezzi e le fatture della commessa PR.BG.017 («no problem»).
@@ -77,7 +84,7 @@
 
 ## Fuori
 
-Nessuna capacità nuova: l'anello revisore → pianificatore (`DRAW-016` punti 2 e 3), l'espansione diretta e il VRV, le
+Nessuna capacità nuova (quelle di I-297 sono la 2.1, `REL-025`): l'anello revisore → pianificatore (`DRAW-016` punti 2 e 3), l'espansione diretta e il VRV, le
 famiglie di `docs/DEFERRED.md` §1, il corredo standard di `REL-023` sono delle 2.x.
 
 ## Criteri di accettazione, per ogni PR
