@@ -6,7 +6,7 @@
 > progettisti che non hanno letto niente di questo repository.
 
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
-**Stato:** **IN CORSO** — fase 1 avviata il 6 novembre 2026. `REL-023` è sospeso (`docs/plans/pacchetti/REL-023.md`).
+**Stato:** **IN CORSO** — fase 1: la CI e mypy fusi con la PR #92, nella 1.15.1 (I-296); restano il banco come prova e la prova senza rete. `REL-023` è sospeso (`docs/plans/pacchetti/REL-023.md`).
 **Base:** `main` dopo la 1.15.0 (PR #91).
 **Approvazione della fusione:** **del PO**, guardando le tavole (D-146, D-147), a ogni PR.
 **Il numero:** le PR intermedie restano 1.x; la **2.0.0** esce solo dalla fase 5, dopo la prova del PO con i progettisti.
@@ -68,18 +68,12 @@
     le correzioni; la **2.0.0** con il tag git, la release su GitHub, `releases/latest/`. Poi la potatura dei rami
     vecchi (una quarantina, già fusi).
 
-## Le decisioni che sono del PO (si chiedono, non si prendono)
+## Le decisioni del PO sulla distribuzione (I-296, 6 novembre 2026)
 
-- **Il repository è pubblico** e porta le fatture dell'installatore della commessa PR.BG.017, il riferimento dei
-  1.700 € e i costi del corredo (`skill/distinta/LISTINO-MINUTERIA.md`). Prima di distribuire: resta pubblico, diventa
-  privato, o i prezzi escono dal repository e dalla skill?
-- **Che cosa vedono i progettisti dei costi**: la distinta con `--costo` (in `interno/`) va a tutti o resta al PO?
-- **Come si distribuisce**: sul piano Team di claude.ai il proprietario dell'organizzazione può fornire la skill a tutti
-  da Impostazioni dell'organizzazione, ed è attiva per tutti; in alternativa un membro la condivide con persone
-  scelte (fonte: centro d'aiuto di claude.ai, «Provision and manage skills for your organization», letto il 6
-  novembre 2026; i nomi dei menu sono cambiati di recente e si verificano sul posto).
-- **La skill `nove-c-report`**, da cui dipende il PDF della distinta: si distribuisce insieme?
-- **Dove arrivano i rilievi dei progettisti** e chi li porta in sessione.
+- **Il repository resta pubblico**, con i prezzi e le fatture della commessa PR.BG.017 («no problem»).
+- **I progettisti vedono i costi** della distinta (`distinta --costo`).
+- **La distribuzione, la skill `nove-c-report` e il canale dei rilievi dei progettisti li cura il PO**: la skill dei
+  report l'hanno già tutti. Per la fase 5 resta da sapere, al momento della rc, chi la prova e dove arrivano i rilievi.
 
 ## Fuori
 

@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-11-06 sera — **la 2.0 di consolidamento** (`REL-024`, I-295): la skill si prepara per i progettisti del PO. `REL-023` è sospeso. La 1.15.0 resta l'ultima release.
+**Aggiornato:** 2026-11-06 sera — **la 2.0 di consolidamento** (`REL-024`, I-295): la skill si prepara per i progettisti del PO. `REL-023` è sospeso. La **1.15.1** (PR #92, I-296) porta la CI e mypy strict verde; tavole identiche alla 1.15.0.
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -18,14 +18,14 @@ skill ai suoi progettisti (I-295). Cinque fasi: messa in sicurezza, prova dell'a
 la skill per chi non l'ha scritta, release candidate. Nessuna capacità nuova. `REL-023` è sospeso
 (`docs/plans/pacchetti/REL-023.md`).
 
-- **Fatto, sul ramo della PR della fase 1**: la CI (`.github/workflows/ci.yml`: pytest su 3.11 e 3.12, ruff, mypy);
-  mypy strict verde (era fermo sugli stub di numpy, sotto c'erano 50 errori); tavole identiche byte per byte a `main`
+- **Fatto, nella 1.15.1** (PR #92, fusa su disposizione del PO, I-296): la CI (`.github/workflows/ci.yml`: pytest su
+  3.11 e 3.12, ruff, mypy; una PR rossa non si fonde); mypy strict verde (era fermo sugli stub di numpy, sotto c'erano
+  50 errori); pypdfium2 fra le dipendenze di sviluppo (la prima CI l'ha trovato); tavole identiche byte per byte
   (`docs/collaudi/REL-024/RAPPORTO.md`, `confronta.sh`).
-- **Il prossimo**: il banco come prova (fase 1, punto 3), la prova senza rete (punto 4).
-- **Da chiedere al PO** (elenco in `ACTIVE_WORK_PACKAGE.md`): repository pubblico con i prezzi e le fatture della
-  commessa PR.BG.017; chi vede i costi; come si distribuisce (fornitura dell'organizzazione su claude.ai);
-  `nove-c-report`; dove arrivano i rilievi dei progettisti.
-- **I numeri**: il prossimo input è **I-296**, la prossima decisione **D-241**.
+- **Il prossimo**: il banco come prova (fase 1, punto 3), la prova senza rete (punto 4); poi la fase 2.
+- **Deciso dal PO** (I-296): repository pubblico con i prezzi; i progettisti vedono i costi; distribuzione,
+  `nove-c-report` e rilievi dei progettisti li cura lui.
+- **I numeri**: il prossimo input è **I-297**, la prossima decisione **D-241**.
 
 ## Com'era il 6 novembre 2026 sera, con la 1.15.0 e REL-023
 

@@ -104,3 +104,6 @@ Il comando della skill li riapre da sé.
   di tipo A; il listino rev. 04 con 27 voci nuove. Con `REL-023` (I-290 … I-292, D-238, D-239): **le giunzioni** —
   un nipplo fra due accessori, un raccordo a pressare fra tubo e accessorio —, **niente valvole antigelo di base**
   nelle case (con la nota sulla tavola), il circolatore fra le apparecchiature, il listino rev. 05 con i nippli. 150 file.
+- **1.15.1** — 6 novembre 2026 (`REL-024`, I-295, I-296): **la prima della 2.0 di consolidamento** — la CI su GitHub
+  Actions (prove su 3.11 e 3.12, ruff, mypy), mypy strict verde, pypdfium2 fra le dipendenze di sviluppo. Tavole,
+  distinta e pianta identiche byte per byte alla 1.15.0. 150 file.

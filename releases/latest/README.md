@@ -1,4 +1,13 @@
-# L'ultima release: 1.15.0
+# L'ultima release: 1.15.1
+
+`DisegnatoreMEP-v1.15.1.zip` — sha256 `732d0714e3dc3918…`, 150 file — è la prima consegna di `REL-024`, la 2.0 di
+consolidamento (I-295, I-296). Si carica come ogni skill personale, dallo ZIP così com'è.
+
+**Per chi disegna non cambia niente**: le tavole, la distinta e la pianta sono identiche byte per byte a quelle della
+1.15.0 (`docs/collaudi/REL-024/RAPPORTO.md`). Cambia quello che sta sotto: il codice passa il controllo dei tipi
+(mypy strict, 50 errori corretti) e ogni modifica passa da una CI con le prove su Python 3.11 e 3.12.
+
+Prima, la **1.15.0**:
 
 `DisegnatoreMEP-v1.15.0.zip` — sha256 `56514abd21c372c9…`, 150 file — è `REL-022` (I-288, I-289, D-237) e la prima parte
 di `REL-023` (I-290 … I-292, D-238, D-239). Si carica come ogni skill personale, dallo ZIP così com'è.
