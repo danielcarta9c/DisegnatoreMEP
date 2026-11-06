@@ -186,8 +186,8 @@ def ordine_di_instradamento(tracciati: list[Tracciato]) -> list[Tracciato]:
     tratta; i tracciati di un fascio di seguito, al posto del primo."""
     gruppi: dict[str, list[Tracciato]] = {}
     for tracciato in tracciati:
-        chiave = f"fascio:{tracciato.fascio}" if tracciato.fascio else f"tratta:{tracciato.tratta}"
-        gruppi.setdefault(chiave, []).append(tracciato)
+        gruppo = f"fascio:{tracciato.fascio}" if tracciato.fascio else f"tratta:{tracciato.tratta}"
+        gruppi.setdefault(gruppo, []).append(tracciato)
 
     def chiave(t: Tracciato) -> tuple[int, tuple[str, int, str]]:
         return ORDINE_DEI_FLUIDI.get(t.fluido, 2), chiave_della_tratta(t.tratta)
@@ -665,6 +665,7 @@ class Instradatore:
                 if guasto is not None:
                     guasto.append(dopo)
                 return False
+            assert nuovo is not None  # rotto, se mancava
             verso = nuovo
         return (verso + 2) % 4 == arrivi[nodi[-1]]
 

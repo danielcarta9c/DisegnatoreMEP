@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import math
 from collections import deque
+from collections.abc import Iterator
 from dataclasses import dataclass, field
 
 from .modello import Lato, Pianta
@@ -254,7 +255,7 @@ def _asse(da: tuple[float, float], a: tuple[float, float]) -> tuple[float, float
 def _nodi_vicini_al_muro(
     griglia: Griglia, da: tuple[float, float], a: tuple[float, float], mezzo: float,
     s_da: float, s_a: float,
-):
+) -> Iterator[tuple[int, float]]:
     """I nodi del rettangolo del muro fra le ascisse `s_da` e `s_a`, con la loro ascissa."""
     ux, uy, _ = _asse(da, a)
     nx, ny = -uy, ux

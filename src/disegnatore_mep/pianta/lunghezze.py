@@ -35,7 +35,7 @@ import math
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from .instrada import Percorso
 from .modello import Maggiorazione, Tracciato
@@ -123,7 +123,7 @@ def leggi_la_regola(percorso: Path) -> dict[str, Any]:
     for chiave in ("aggiunta_m", "fattore", "passo_m"):
         if not isinstance(regola.get(chiave), int | float):
             raise ErroreDellaRegola(f"{percorso}: la regola delle lunghezze non ha il numero «{chiave}»")
-    return dati
+    return cast(dict[str, Any], dati)
 
 
 @dataclass(frozen=True)
@@ -146,7 +146,7 @@ class Regola:
         if self.dichiarata is not None or self.distinta is None:
             m = self.dichiarata or Maggiorazione()
             return {"aggiunta_m": m.aggiunta_m, "fattore": m.fattore, "passo_m": m.arrotondamento_m}
-        return self.distinta["regola"]
+        return cast(Mapping[str, Any], self.distinta["regola"])
 
     def minimo_della_classe(self, fluido: str) -> Minimo | None:
         if self.dichiarata is not None or self.distinta is None:
@@ -164,7 +164,7 @@ class Regola:
         assert self.distinta is not None
         for voce in self.distinta.get("segue", []):
             if voce.get("fluido") == fluido:
-                return voce
+                return cast(Mapping[str, Any], voce)
         return None
 
     def minimi_del_testo(self) -> list[str]:

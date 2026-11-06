@@ -46,9 +46,14 @@ select = ["E", "F", "I", "UP", "B", "SIM"]
 ignore = ["E501"]
 
 [tool.mypy]
-python_version = "3.11"
+# 3.12, non 3.11: numpy arriva con ezdxf e i suoi stub usano la sintassi di Python 3.12
+# (`type X = ...`). Con "3.11" mypy si fermava li', prima di controllare il nostro codice, e
+# per settimane e' sembrato «un problema dell'ambiente» mentre gli errori veri crescevano
+# sotto (REL-024). Il minimo di 3.11 lo tiene la CI, che fa girare le prove anche su 3.11.
+python_version = "3.12"
 strict = true
 plugins = ["pydantic.mypy"]
 packages = ["disegnatore_mep"]
 mypy_path = ["src", "tests/collaudo"]
 explicit_package_bases = true
+

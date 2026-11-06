@@ -44,6 +44,7 @@ import xml.etree.ElementTree as ET
 from collections.abc import Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.registry import SymbolRegistry
@@ -297,10 +298,10 @@ def parte_idraulica(svg: str, comando: IlComando) -> ParteIdraulica:
             tracciati.append(f"linea {colore} {elemento.get('stroke-dasharray', '-')} {punti}")
             continue
         if classe in ("flow-arrow", "crossing-hop"):
-            colore = elemento.get("fill") if classe == "flow-arrow" else elemento.get("stroke")
-            if colore in comando.colori:
+            freccia: str | None = elemento.get("fill") if classe == "flow-arrow" else elemento.get("stroke")
+            if freccia in comando.colori:
                 continue
-            tracciati.append(f"{classe} {colore} {_traslato_d(elemento.get('d', ''), dx, dy)}")
+            tracciati.append(f"{classe} {freccia} {_traslato_d(elemento.get('d', ''), dx, dy)}")
             continue
         if classe == "junction":
             if elemento.get("fill") in comando.colori:
@@ -346,7 +347,7 @@ def pezzi_da_togliere(modello: ProjectModel, catalogo: ComponentRegistry) -> fro
     return solo_comando(modello, catalogo.per_il_progetto(modello))
 
 
-def piano_della_vista_idraulica(piano: dict, togliere: Iterable[str]) -> dict:
+def piano_della_vista_idraulica(piano: dict[str, Any], togliere: Iterable[str]) -> dict[str, Any]:
     """Lo stesso piano, nella vista idraulica: senza i pezzi del solo comando."""
     via = set(togliere)
     return {

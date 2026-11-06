@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-11-06 — **la 1.15.0** (`REL-022` e la prima parte di `REL-023`, I-288 … I-294) è fusa su `main` con la PR #90, approvata dal PO (I-294).
+**Aggiornato:** 2026-11-06 sera — **la 2.0 di consolidamento** (`REL-024`, I-295): la skill si prepara per i progettisti del PO. `REL-023` è sospeso. La 1.15.0 resta l'ultima release.
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -11,7 +11,23 @@
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
 
-## ▶ Da dove riparte la prossima sessione — scritto il 6 novembre 2026 sera, con la 1.15.0 e REL-023
+## ▶ Da dove riparte la prossima sessione — scritto il 6 novembre 2026 sera, con REL-024
+
+**Il pacchetto è `REL-024`, la 2.0** (`ACTIVE_WORK_PACKAGE.md`): il PO la vuole di consolidamento, per distribuire la
+skill ai suoi progettisti (I-295). Cinque fasi: messa in sicurezza, prova dell'agente agli atti, debito di decisioni,
+la skill per chi non l'ha scritta, release candidate. Nessuna capacità nuova. `REL-023` è sospeso
+(`docs/plans/pacchetti/REL-023.md`).
+
+- **Fatto, sul ramo della PR della fase 1**: la CI (`.github/workflows/ci.yml`: pytest su 3.11 e 3.12, ruff, mypy);
+  mypy strict verde (era fermo sugli stub di numpy, sotto c'erano 50 errori); tavole identiche byte per byte a `main`
+  (`docs/collaudi/REL-024/RAPPORTO.md`, `confronta.sh`).
+- **Il prossimo**: il banco come prova (fase 1, punto 3), la prova senza rete (punto 4).
+- **Da chiedere al PO** (elenco in `ACTIVE_WORK_PACKAGE.md`): repository pubblico con i prezzi e le fatture della
+  commessa PR.BG.017; chi vede i costi; come si distribuisce (fornitura dell'organizzazione su claude.ai);
+  `nove-c-report`; dove arrivano i rilievi dei progettisti.
+- **I numeri**: il prossimo input è **I-296**, la prossima decisione **D-241**.
+
+## Com'era il 6 novembre 2026 sera, con la 1.15.0 e REL-023
 
 **Il pacchetto è `REL-023`** (`ACTIVE_WORK_PACKAGE.md`), **in corso**. Fuso su `main` nella 1.15.0 (PR #90, I-294), con
 `REL-022`: **le giunzioni** (un nipplo fra due accessori, un raccordo a pressare fra tubo e accessorio, D-239),

@@ -17,7 +17,7 @@ le linee.
 from __future__ import annotations
 
 import math
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 from types import SimpleNamespace
@@ -768,8 +768,8 @@ def componi(
             for linea in carta[altro.tratta]
         ]
         for punti in carta[percorso.tratta]:
-            for pezzo in _interrotta(punti, sopra):
-                primitive.append(Linea(tuple(pezzo), colore, spessore(tracciato.fluido),
+            for spezzone in _interrotta(punti, sopra):
+                primitive.append(Linea(tuple(spezzone), colore, spessore(tracciato.fluido),
                                        layer_del_fluido(tracciato.fluido), tratto))
 
     # I pezzi. Quelli sovrapposti a un altro dopo di lui: sopra, pieni e col
@@ -805,14 +805,14 @@ def componi(
     # e' disegnato sotto di lui; non il contrario: la sigla dell'altro
     # finirebbe sotto il pezzo pieno, o tagliata dal contorno tratteggiato.
     sotto_la_sigla = {q.sigla: [q.sovrapposto_a] for q in pianta.pezzi if q.sovrapposto_a is not None}
-    for sigla, compagni in sotto_la_sigla.items():
-        ammessi[f"pezzo {sigla}"] = {f"pezzo {c}" for c in compagni}
+    for sigla, sotto_di_lei in sotto_la_sigla.items():
+        ammessi[f"pezzo {sigla}"] = {f"pezzo {c}" for c in sotto_di_lei}
 
     # Le forature.
     for foratura in forature:
-        c = P(*foratura.punto)
-        primitive.append(Cerchio(c, 0.9, "#000000", 0.25, "#ffffff", LAYER_FORATURE))
-        ingombri.metti_rettangolo((c[0] - 0.9, c[1] - 0.9, c[0] + 0.9, c[1] + 0.9))
+        foro = P(*foratura.punto)
+        primitive.append(Cerchio(foro, 0.9, "#000000", 0.25, "#ffffff", LAYER_FORATURE))
+        ingombri.metti_rettangolo((foro[0] - 0.9, foro[1] - 0.9, foro[0] + 0.9, foro[1] + 0.9))
 
     # Le zone dei dettagli, sulla tavola intera: una cornice e il suo nome,
     # prima delle scritte, che non ci vanno sopra.
@@ -924,15 +924,15 @@ def componi(
                               dentro=True, sopra=[carta_dei_pezzi[c] for c in sotto_la_sigla.get(pezzo.sigla, [])])
         scritte.append((f"pezzo {pezzo.sigla}", posata))
     for foratura in forature:
-        c = P(*foratura.punto)
-        if not da_scrivere(f"foratura {foratura.numero}", (c[0], c[1], c[0], c[1])):
+        foro = P(*foratura.punto)
+        if not da_scrivere(f"foratura {foratura.numero}", (foro[0], foro[1], foro[0], foro[1])):
             continue
         muro_del_foro = [
             r for di, r in rettangoli
-            if di == f"muro {foratura.muro}" and r[0] - 1e-6 <= c[0] <= r[2] + 1e-6 and r[1] - 1e-6 <= c[1] <= r[3] + 1e-6
+            if di == f"muro {foratura.muro}" and r[0] - 1e-6 <= foro[0] <= r[2] + 1e-6 and r[1] - 1e-6 <= foro[1] <= r[3] + 1e-6
         ]
         posata = posa_intorno(foratura.numero, CORPO_TRATTE_PT, True,
-                              (c[0] - 0.9, c[1] - 0.9, c[0] + 0.9, c[1] + 0.9), ingombri, sopra=muro_del_foro)
+                              (foro[0] - 0.9, foro[1] - 0.9, foro[0] + 0.9, foro[1] + 0.9), ingombri, sopra=muro_del_foro)
         ammessi[f"foratura {foratura.numero}"] = {f"muro {foratura.muro}"}
         scritte.append((f"foratura {foratura.numero}", posata))
     for stanza in pianta.stanze:
@@ -1055,7 +1055,7 @@ def ritaglia_le_linee(linee: Sequence[Sequence[Punto]], r: Rettangolo) -> list[l
 def _ritaglia_poligono(punti: Sequence[Punto], r: Rettangolo) -> list[Punto]:
     """Sutherland-Hodgman sul rettangolo."""
     x0, y0, x1, y1 = r
-    lati = (
+    lati: tuple[tuple[Callable[[Punto], bool], Callable[[Punto, Punto], Punto]], ...] = (
         (lambda p: p[0] >= x0, lambda a, b: (x0, a[1] + (b[1] - a[1]) * (x0 - a[0]) / (b[0] - a[0]))),
         (lambda p: p[0] <= x1, lambda a, b: (x1, a[1] + (b[1] - a[1]) * (x1 - a[0]) / (b[0] - a[0]))),
         (lambda p: p[1] >= y0, lambda a, b: (a[0] + (b[0] - a[0]) * (y0 - a[1]) / (b[1] - a[1]), y0)),

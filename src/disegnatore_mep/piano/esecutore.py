@@ -447,10 +447,10 @@ def imbocchi_dei_cavi(
 def porte_degli_imbocchi(
     simboli: Sequence[PlacedSymbol],
     imbocchi: dict[str, tuple[SymbolManifest, tuple[str, ...]]],
-) -> list[tuple[Point, str]]:
+) -> list[tuple[Point, PortFace]]:
     """Dove arrivano i cavi sulla tavola: il punto di ogni porta di `imbocchi` sui
     pezzi posati, con la faccia da cui il cavo entra."""
-    punti: list[tuple[Point, str]] = []
+    punti: list[tuple[Point, PortFace]] = []
     for item in simboli:
         if item.component_id not in imbocchi:
             continue

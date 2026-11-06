@@ -35,7 +35,7 @@ from pydantic import BaseModel, Field, ValidationError, model_validator
 
 from disegnatore_mep.model.base import FiniteFloat, StrictModel
 
-VERSIONE = "1.0.0"
+VERSIONE: Literal["1.0.0"] = "1.0.0"
 
 Punto = tuple[FiniteFloat, FiniteFloat]
 """Un punto della pianta, in metri: (x, y)."""
