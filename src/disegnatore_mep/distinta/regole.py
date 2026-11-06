@@ -42,6 +42,8 @@ CALCOLI_DEI_FLUIDI = frozenset(
         "attraversamenti",
         "proprieta",
         "carica_refrigerante",
+        "metri",
+        "a_corpo",
     }
 )
 CALCOLI_DEL_CORREDO = frozenset({"per_pezzo", "per_linea", "per_locale"})

@@ -32,11 +32,13 @@ def _tubo(ident: str, rete: str, a: tuple[str, str], b: tuple[str, str], **dati:
 
 
 def _centrale() -> dict[str, Any]:
-    """Una pompa di calore, una valvola sulla mandata e una sul ritorno, un volano; la
-    mandata e il ritorno all'esterno con la loro lunghezza, i tratti in centrale senza."""
+    """Una pompa di calore, una valvola sulla mandata e una sul ritorno, un volano; i
+    metri del tubo li dice il progettista per la rete, nel blocco «distinta» (I-288):
+    le lunghezze sui tratti del grafo non contano per l'acqua."""
     return {
         "schema_version": "1",
         "metadata": {"project_name": "Prova del costo"},
+        "distinta": {"tubi": [{"rete": "primario", "tubo": "MS 32×3", "metri": 24, "isolamento": "guaina 19 mm"}]},
         "networks": [{"id": "primario", "name": "Circuito della pompa di calore", "domain": "hydronic",
                       "medium": "heating_water"}],
         "components": [
@@ -126,12 +128,16 @@ def test_la_centrale_ha_tubo_valvole_e_raccordi_del_suo_pollice(
     assert sezione_i["Valvola a sfera a passaggio totale 1\" FF, con leva"].quantita == 2
     assert sezione_i["Raccordo diritto a pressare M 1\" × tubo multistrato MS 32×3"].quantita == 4
     assert sezione_i["Tee a pressare tubo multistrato MS 32×3"].quantita == 1
-    # Le valvole sono passanti: GT-01 - VI-01 - DER-01 10 m × 1,15 = 11,5; DER-01 - VOL-01
-    # 1 × 1,15 → 1,5; VOL-01 - VI-02 - GT-01 11 × 1,15 = 12,65 → 13 (l'acqua non aggiunge il
-    # metro per tratto); DER-01 - SF-01 e' uno stacco avvitato sul tee: niente tubo.
+    # I 24 m del progettista × 1,15 = 27,6 → 28 m; le lunghezze dei tratti non contano.
     tubo = sezione_i["Tubo multistrato MS 32×3, nudo"]
-    assert tubo.quantita == pytest.approx(11.5 + 1.5 + 13)
+    assert tubo.quantita == pytest.approx(28)
+    assert sezione_i["Guaina isolante elastomerica per tubo multistrato MS 32×3 (guaina 19 mm)"].quantita == 28
+    assert sezione_i["Gomito 90° a pressare tubo multistrato MS 32×3, a corpo"].quantita == 20
     assert not distinta.voci_della_sezione("X")
+    assert not [t for t in distinta.tratte_in_tabella if t.fluido == "heating_water"]
+    assert not any("quanto e' lungo" in d for d in distinta.domande), "l'acqua non chiede lunghezze di tratto"
+    staffe = [v for v in distinta.voci_della_sezione("S")]
+    assert [v.testo for v in staffe] == ["Basamento a terra per l'unità esterna con supporti antivibranti"]
 
 
 def test_il_costo_e_la_somma_delle_voci_prezzate_e_dice_quelle_da_prezzare(
@@ -143,7 +149,7 @@ def test_il_costo_e_la_somma_delle_voci_prezzate_e_dice_quelle_da_prezzare(
     assert all(r.sezione != "A" for r in costo.righe), "le apparecchiature si comprano a parte"
     assert costo.totale == pytest.approx(sum(r.totale or 0 for r in costo.righe))
     tubo = next(r for r in costo.righe if r.testo == "Tubo multistrato MS 32×3, nudo")
-    assert tubo.totale == pytest.approx(26.0 * listino.get("I04").prezzo)
+    assert tubo.totale == pytest.approx(28.0 * listino.get("I04").prezzo)
     sfiato = next(r for r in costo.righe if r.testo.startswith("Valvola automatica di sfogo aria"))
     assert sfiato.totale == pytest.approx(listino.get("I43a").prezzo) and sfiato.nota
     valvole = next(r for r in costo.righe if r.testo.startswith("Valvola a sfera"))
@@ -170,15 +176,29 @@ def test_il_comando_scrive_il_costo_accanto_alla_distinta(tmp_path: Path, capsys
     assert consegnati and not [p for p in consegnati if p.name.startswith("costo-minuteria")], "il costo non si consegna"
 
 
-def test_un_tratto_in_centrale_senza_lunghezza_vale_un_metro(
+def test_senza_i_tubi_della_chat_la_rete_e_da_definire_e_si_chiede(
     regole: RegoleDellaDistinta, nomi: tuple[dict[str, str], dict[str, str]]
 ) -> None:
     grafo = _centrale()
-    grafo["components"].append({"id": "v3", "definition_id": "valve-isolation", "tag": "VI-03", "properties": {}})
-    grafo["connections"] += [
-        _tubo("x1", "primario", ("tee", "branch"), ("v3", "a"), sezione="MS 32×3"),
-    ]
-    grafo["connections"] = [c for c in grafo["connections"] if c["id"] != "s1"]
-    grafo["components"] = [c for c in grafo["components"] if c["id"] != "sfiato"]
+    del grafo["distinta"]
     distinta = componi_la_distinta(grafo, regole, *nomi)
-    assert any("quotati senza maggiorazione" in a and "1 m" in a for a in distinta.avvisi)
+    voce = next(v for v in distinta.voci if v.testo.startswith("Tubo della rete"))
+    assert voce.quantita is None and voce.da_definire
+    assert any("quanti metri di tubo, di che diametro e come isolato" in d for d in distinta.domande)
+
+
+def test_il_tubo_preisolato_non_ha_guaina_e_le_staffe_solo_se_chieste(
+    regole: RegoleDellaDistinta, nomi: tuple[dict[str, str], dict[str, str]]
+) -> None:
+    grafo = _centrale()
+    grafo["distinta"] = {"tubi": [{"rete": "primario", "tubo": "MS 32×3", "metri": 10, "isolamento": "preisolato"}],
+                         "gomiti": 12}
+    grafo["components"][0]["properties"]["posa"] = "su staffe a muro"
+    distinta = componi_la_distinta(grafo, regole, *nomi)
+    testi = {v.testo: v for v in distinta.voci}
+    assert "Tubo multistrato MS 32×3 preisolato" in testi
+    assert not [t for t in testi if t.startswith("Guaina") or t.endswith(", nudo")]
+    assert testi["Gomito 90° a pressare tubo multistrato MS 32×3, a corpo"].quantita == 12
+    assert [v.testo for v in distinta.voci_della_sezione("S")] == [
+        "Staffe a muro per l'unità esterna, portata 160 kg, con gommini antivibranti (coppia)"
+    ]

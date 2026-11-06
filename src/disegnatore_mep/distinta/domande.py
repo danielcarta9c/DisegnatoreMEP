@@ -15,7 +15,7 @@ domande non si possono scostare dal documento. Qui c'e' soltanto il modo di dirl
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 
-from .calcolo import MARCA_E_MODELLO, PEZZO, REGOLE, TRATTO, Distinta, Mancante
+from .calcolo import IMPIANTO, MARCA_E_MODELLO, PEZZO, REGOLE, TRATTO, Distinta, Mancante
 
 
 @dataclass(frozen=True)
@@ -63,6 +63,14 @@ DATI: dict[str, DatoInParole] = {
         "vaso sanitario la dà il progettista",
         "«volume_l»",
     ),
+    "tubi": DatoInParole(
+        "I tubi d'acqua di ogni rete: il diametro, i metri (dalla pianta o dal sopralluogo: non si ricavano dallo "
+        "schema) e l'isolamento (preisolato, o nudo con guaina e il suo spessore)",
+        "«tubi»: rete, tubo, metri, isolamento,",
+    ),
+    "isolamento": DatoInParole(
+        "Come si isola il tubo: preisolato, o nudo con guaina e il suo spessore", "«isolamento» del tubo,"
+    ),
     "dimensione": DatoInParole("La dimensione della bocchetta (es. «400×200»)", "«dimensione»"),
     "locale": DatoInParole(
         "Il locale che la bocchetta serve (es. «Soggiorno»): le griglie di transito si contano per locale",
@@ -97,7 +105,7 @@ DATI: dict[str, DatoInParole] = {
 """Ogni dato che la distinta legge dal grafo, detto in parole. Un dato che non c'e' si dice
 col suo nome: lo vede la prova delle regole, che ogni dato dei testi qui abbia le sue parole."""
 
-DOVE = {PEZZO: "sul pezzo", TRATTO: "su una tubazione del tratto"}
+DOVE = {PEZZO: "sul pezzo", TRATTO: "su una tubazione del tratto", IMPIANTO: "nel blocco «distinta» del grafo"}
 
 TRATTI_PER_RETE = 4
 """Oltre quanti tratti della stessa rete una domanda li dice per rete, non uno per uno."""

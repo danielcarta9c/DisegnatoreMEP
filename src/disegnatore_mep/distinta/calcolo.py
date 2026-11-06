@@ -57,6 +57,9 @@ FLUIDI_D_ACQUA = frozenset({"heating_water", "cold_water", "domestic_hot_water",
 PEZZO = "pezzo"
 TRATTO = "tratto"
 REGOLE = "regole"
+IMPIANTO = "impianto"
+"""Un dato dell'impianto, che il progettista dice nella chat e l'agente scrive nel blocco
+`distinta` del grafo (REL-022)."""
 
 
 @dataclass(frozen=True)
@@ -223,7 +226,8 @@ class Distinta:
 
     @property
     def tratte_in_tabella(self) -> list[Tratta]:
-        return [tratta for tratta in self.tratte if tratta.num]
+        # REL-022: le linee d'acqua si comprano a metri per rete, non per tratto del disegno.
+        return [tratta for tratta in self.tratte if tratta.num and tratta.fluido not in FLUIDI_D_ACQUA]
 
     def da_a(self, tratta: Tratta) -> str:
         return " - ".join(self.sigle.get(p, p) for p in tratta.pezzi)
@@ -296,6 +300,8 @@ class _Lavoro:
     fornitura: Fornitura
     pollici: Mapping[str, str] = field(default_factory=dict)
     """Il pollice degli accessori in linea sull'acqua (I-279)."""
+    dati_della_distinta: Mapping[str, Any] = field(default_factory=dict)
+    """Il blocco `distinta` del grafo: i dati di cantiere della chat (REL-022)."""
     voci: list[Voce] = field(default_factory=list)
     avvisi: list[str] = field(default_factory=list)
     domande_dei_tratti: list[str] = field(default_factory=list)
@@ -378,32 +384,8 @@ def _minimo_della_classe(regole: RegoleDellaDistinta, fluido: str) -> Minimo | N
     return None
 
 
-def _se_manca(lavoro: _Lavoro, tratta: Tratta) -> float | None:
-    """La lunghezza da quotare assunta per un tratto senza lunghezza (REL-020): solo se
-    la classe del fluido la dice (`se_manca_m`) e nessuno dei capi e' una macchina, un
-    accumulo o un confine della centrale, la cui distanza la sa il progettista."""
-    for classe in lavoro.regole.lunghezze.get("classi", []):
-        if tratta.fluido in classe.get("fluidi", []) and classe.get("se_manca_m"):
-            if any(
-                (pezzo := lavoro.impianto.pezzi.get(capo)) is not None
-                and lavoro.regole.corredo.get(pezzo.voce, {}).get("stacco")
-                for capo in tratta.capi
-            ):
-                # Collaudo T4 di REL-021: la sicurezza, il manometro, lo sfiato si avvitano
-                # sul tee (o sul loro rubinetto): niente tubo.
-                return 0.0
-            for capo in tratta.capi:
-                pezzo = lavoro.impianto.pezzi.get(capo)
-                corredo = lavoro.regole.corredo.get(pezzo.voce) if pezzo else None
-                if corredo is None or corredo.get("apparecchiatura") or corredo.get("confine"):
-                    return None
-            return float(classe["se_manca_m"])
-    return None
-
-
 def _lunghezze(lavoro: _Lavoro) -> None:
     regola = lavoro.regole.lunghezze["regola"]
-    assunti: list[str] = []
     segue = {str(s["fluido"]): s for s in lavoro.regole.lunghezze.get("segue", [])}
 
     def calcola(tratta: Tratta, altri: Sequence[Minimo]) -> None:
@@ -434,16 +416,9 @@ def _lunghezze(lavoro: _Lavoro) -> None:
                 "non e' un numero."
             )
             lavoro.mancanti_dei_tratti.append(lavoro.del_tratto("lunghezza_m", tratta))
-        if tratta.diretta:
-            continue
-        if tratta.lunghezza_m is None and (assunta := _se_manca(lavoro, tratta)) == 0.0:
-            # Uno stacco avvitato: un raccordo diretto, come un tratto con lunghezza 0.
-            tratta.lunghezza_m, tratta.senza_lunghezza = 0.0, ()
-            continue
-        if tratta.lunghezza_m is None and (assunta := _se_manca(lavoro, tratta)) is not None:
-            tratta.da_quotare_m = assunta
-            tratta.calcolo_della_lunghezza = f"assunti {in_parole(assunta)} m (tratto in centrale senza lunghezza)"
-            assunti.append(f"{tratta.num} {in_parole(assunta)} m")
+        if tratta.diretta or tratta.fluido in FLUIDI_D_ACQUA:
+            # REL-022 (I-288): il grafo e' uno spazio di disegno. I metri dei tubi d'acqua
+            # non si leggono sui suoi tratti: li dice il progettista, per rete e diametro.
             continue
         if tratta.lunghezza_m is None:
             lavoro.domande_dei_tratti.append(
@@ -460,11 +435,6 @@ def _lunghezze(lavoro: _Lavoro) -> None:
             )
         if tratta.fluido not in segue:
             calcola(tratta, ())
-    if assunti:
-        lavoro.avvisi.append(
-            f"Tratti in centrale senza lunghezza, quotati senza maggiorazione ({', '.join(assunti)}: regole delle "
-            "lunghezze, `se_manca_m`); se il progettista le sa, le scrive sul tratto."
-        )
     for tratta in lavoro.tratte:
         if tratta.diretta or tratta.lunghezza_m is None or tratta.fluido not in segue:
             continue
@@ -761,6 +731,8 @@ def _voce_del_fluido(
 
 def _voci_dei_fluidi(lavoro: _Lavoro) -> None:
     for fluido, regola_del_fluido in lavoro.regole.fluidi.items():
+        if fluido in FLUIDI_D_ACQUA:
+            continue
         tratte = [t for t in lavoro.tratte if t.fluido == fluido and not t.diretta]
         if not tratte:
             continue
@@ -790,7 +762,7 @@ def _voci_dei_fluidi(lavoro: _Lavoro) -> None:
                 lavoro.voci.extend(_voce_del_fluido(lavoro, fluido, regola_del_fluido, voce, gruppo))
     senza_regola: dict[str, list[Tratta]] = {}
     for tratta in lavoro.tratte:
-        if tratta.fluido not in lavoro.regole.fluidi and not tratta.diretta:
+        if tratta.fluido not in lavoro.regole.fluidi and not tratta.diretta and tratta.fluido not in FLUIDI_D_ACQUA:
             senza_regola.setdefault(tratta.fluido, []).append(tratta)
     for fluido, tratte in senza_regola.items():
         for gruppo in _gruppi(tratte, "sezione"):
@@ -826,6 +798,140 @@ def _voci_dei_fluidi(lavoro: _Lavoro) -> None:
                 )
 
 
+# --- i tubi d'acqua, dai dati della chat (REL-022) --------------------------------
+
+
+DATI_DEI_TUBI = "tubi"
+"""Il dato che manca quando il progettista non ha detto i metri di una rete d'acqua."""
+
+
+def _voci_dei_tubi_d_acqua(lavoro: _Lavoro) -> None:
+    """I tubi d'acqua come li dice il progettista nella chat (REL-022, I-288): per rete,
+    il tubo, i metri e l'isolamento, nel blocco `distinta` del grafo. Non si misurano sui
+    tratti del grafo, che e' uno spazio di disegno. I metri si maggiorano con la regola
+    delle lunghezze dell'acqua; collari e manicotti seguono i metri; i gomiti sono a corpo,
+    sull'impianto, sul tubo con piu' metri. Una rete d'acqua senza i suoi metri fa una
+    voce DA DEFINIRE e una domanda."""
+    dati = lavoro.dati_della_distinta
+    reti_d_acqua = [r for r in lavoro.impianto.reti.values() if r.fluido in FLUIDI_D_ACQUA]
+    usate = {t.rete.id for t in lavoro.tratte if t.fluido in FLUIDI_D_ACQUA}
+    tubi = [t for t in dati.get("tubi") or [] if isinstance(t, Mapping)]
+    regola = lavoro.regole.lunghezze["regola"]
+    aggiunta = next(
+        (float(c["aggiunta_m"]) for c in lavoro.regole.lunghezze.get("classi", []) if "aggiunta_m" in c
+         and FLUIDI_D_ACQUA & set(c.get("fluidi", []))),
+        float(regola["aggiunta_m"]),
+    )
+    della_regola = {**regola, "aggiunta_m": aggiunta}
+    per_rete: dict[str, list[Mapping[str, Any]]] = {}
+    for tubo in tubi:
+        per_rete.setdefault(str(tubo.get("rete")), []).append(tubo)
+    righe: dict[tuple[str, str, str], Voce] = {}
+    principale: tuple[float, str, Mapping[str, Any]] | None = None
+    for rete in reti_d_acqua:
+        if rete.id not in usate:
+            continue
+        regola_del_fluido = lavoro.regole.fluidi.get(rete.fluido)
+        if regola_del_fluido is None:
+            continue
+        dati_della_rete = per_rete.get(rete.id, [])
+        if not dati_della_rete:
+            lavoro.voci.append(
+                Voce(
+                    sezione="I",
+                    testo=f"Tubo della rete «{rete.nome}»: diametro, metri e isolamento {DA_DEFINIRE}",
+                    um="m",
+                    quantita=None,
+                    fornitura=lavoro.fornitura_installatore,
+                    regola=f"fluidi/{rete.fluido}/tubo",
+                    fonte="dato del progettista (I-288)",
+                    perche="I metri dei tubi d'acqua non si ricavano dal grafo: li dice il progettista.",
+                    calcolo="mancano i metri della rete",
+                    da_definire=True,
+                    domande=[
+                        f"Rete «{rete.nome}»: quanti metri di tubo, di che diametro e come isolato (preisolato, o "
+                        "nudo con guaina e il suo spessore)? Si scrivono nel blocco «distinta» del grafo."
+                    ],
+                    mancanti=[Mancante(DATI_DEI_TUBI, IMPIANTO, rete.id, rete.nome)],
+                )
+            )
+            continue
+        for tubo in dati_della_rete:
+            sezione = _dicitura_del_tubo(str(tubo.get("tubo") or ""))
+            metri = numero(tubo.get("metri"))
+            isolamento = str(tubo.get("isolamento") or "")
+            esito = da_quotare(metri or 0.0, della_regola, [])
+            if principale is None or (metri or 0) > principale[0]:
+                principale = (metri or 0.0, sezione, tubo)
+            valori = {"sezione": sezione, "isolamento": isolamento or None, "rete": rete.nome}
+            for voce in regola_del_fluido.get("voci", []):
+                calcolo = voce["calcolo"]
+                tipo = str(calcolo["tipo"])
+                if tipo == "a_corpo":
+                    continue
+                se = voce.get("se_isolamento")
+                if se is not None and not re.search(str(se), isolamento, re.IGNORECASE):
+                    continue
+                tranne = voce.get("tranne_isolamento")
+                if tranne is not None and isolamento and re.search(str(tranne), isolamento, re.IGNORECASE):
+                    continue
+                if tipo == "metri":
+                    quantita, conto = esito.da_quotare, f"{rete.nome}: {esito.calcolo}"
+                elif tipo == "per_metro":
+                    ogni, minimo = float(calcolo["ogni_m"]), int(calcolo.get("minimo", 0))
+                    quantita = float(max(minimo, quante_volte(esito.da_quotare, ogni)))
+                    conto = f"{rete.nome}: {in_parole(esito.da_quotare)} m / {in_parole(ogni)} m, almeno {minimo}"
+                elif tipo == "fisso":
+                    quantita, conto = float(calcolo["n"]), f"{rete.nome}: {in_parole(float(calcolo['n']))} per tubo"
+                else:
+                    raise ValueError(f"fluidi/{rete.fluido}/{voce['id']}: calcolo {tipo!r} sconosciuto per l'acqua")
+                testo, mancanti = riempi(str(voce["testo"]), valori)
+                chiave = (str(voce["sezione"]), testo, str(voce["um"]))
+                riga = righe.get(chiave)
+                if riga is None:
+                    sezione_della_voce, fornitura = lavoro.sezione_e_fornitura(voce)
+                    riga = Voce(
+                        sezione=sezione_della_voce, testo=testo, um=str(voce["um"]), quantita=0.0, fornitura=fornitura,
+                        regola=f"fluidi/{rete.fluido}/{voce['id']}", fonte=str(voce["fonte_in_parole"]),
+                        perche=str(voce["perche"]), calcolo="", prezzo=prezzo_della_voce(voce, valori),
+                    )
+                    righe[chiave] = riga
+                    lavoro.voci.append(riga)
+                riga.quantita = (riga.quantita or 0.0) + quantita
+                riga.calcolo = f"{riga.calcolo} + {conto}" if riga.calcolo else conto
+                if "isolamento" in mancanti:
+                    riga.da_definire = True
+                    domanda = (
+                        f"Rete «{rete.nome}», {sezione}: come si isola (preisolato, o nudo con guaina e il suo "
+                        "spessore)? Si scrive in «isolamento» del tubo, nel blocco «distinta» del grafo."
+                    )
+                    if domanda not in riga.domande:
+                        riga.domande.append(domanda)
+                        riga.mancanti.append(Mancante("isolamento", IMPIANTO, rete.id, rete.nome))
+    if principale is None:
+        return
+    _, sezione, tubo = principale
+    for fluido in sorted(FLUIDI_D_ACQUA):
+        regola_del_fluido = lavoro.regole.fluidi.get(fluido)
+        for voce in (regola_del_fluido or {}).get("voci", []):
+            if voce["calcolo"]["tipo"] != "a_corpo":
+                continue
+            dato = numero(dati.get(str(voce["calcolo"].get("dato", "gomiti"))))
+            n = dato if dato is not None else float(voce["calcolo"]["n"])
+            valori = {"sezione": sezione}
+            testo, _ = riempi(str(voce["testo"]), valori)
+            sezione_della_voce, fornitura = lavoro.sezione_e_fornitura(voce)
+            lavoro.voci.append(
+                Voce(
+                    sezione=sezione_della_voce, testo=testo, um=str(voce["um"]), quantita=n, fornitura=fornitura,
+                    regola=f"fluidi/{fluido}/{voce['id']}", fonte=str(voce["fonte_in_parole"]),
+                    perche=str(voce["perche"]),
+                    calcolo=f"{in_parole(n)} a corpo" + ("" if dato is not None else " (di regola; il progettista lo cambia)"),
+                    prezzo=prezzo_della_voce(voce, valori),
+                )
+            )
+
+
 # --- il corredo dei pezzi --------------------------------------------------------
 
 
@@ -839,7 +945,30 @@ def _sezione_al_pezzo(lavoro: _Lavoro, pezzo: str, fluido: str | None = None) ->
     else:
         tratte = [t for t in tratte if t.fluido in FLUIDI_D_ACQUA] or tratte
     con_la_sezione = [t for t in tratte if t.sezione]
-    return con_la_sezione[0].sezione if con_la_sezione else None
+    if con_la_sezione:
+        return con_la_sezione[0].sezione
+    # REL-022: senza il tubo sul tratto, quello che il progettista ha detto per la rete,
+    # se e' uno solo.
+    for tratta in tratte:
+        della_rete = [
+            str(t.get("tubo")) for t in lavoro.dati_della_distinta.get("tubi") or []
+            if isinstance(t, Mapping) and t.get("rete") == tratta.rete.id and t.get("tubo")
+        ]
+        if len(set(della_rete)) == 1:
+            return _dicitura_del_tubo(della_rete[0])
+    return None
+
+
+def _vale_per_il_pezzo(voce: Mapping[str, Any], pezzo: Pezzo) -> bool:
+    """Una voce del corredo che vale solo se un dato del pezzo dice qualcosa (REL-022):
+    `se_dato` {"posa": "staff|muro"} e `tranne_dato`, espressioni sul testo del dato."""
+    for chiave, deve in (("se_dato", True), ("tranne_dato", False)):
+        for nome, espressione in (voce.get(chiave) or {}).items():
+            valore = str(pezzo.proprieta.get(nome) or "")
+            trovato = bool(valore) and re.search(str(espressione), valore, re.IGNORECASE) is not None
+            if trovato != deve:
+                return False
+    return True
 
 
 def _dicitura_del_tubo(sezione: str) -> str:
@@ -1052,6 +1181,8 @@ def _corredo(lavoro: _Lavoro) -> None:
         elif (pollice := _pollice_del_tubo(valori.get("sezione"))) is not None:
             valori.setdefault("pollice", pollice)
         for voce in corredo.get("voci", []):
+            if not _vale_per_il_pezzo(voce, pezzo):
+                continue
             calcolo = voce["calcolo"]
             n = float(calcolo["n"])
             chi = pezzo.sigla
@@ -1427,6 +1558,7 @@ def componi_la_distinta(
         nomi_dei_fluidi=nomi_dei_fluidi or {},
         fornitura=fornitura or la_fornitura(regole),
         pollici=tubi.pollici,
+        dati_della_distinta=dict(grafo.get("distinta") or {}),
     )
     for tratta in lavoro.tratte:
         if tratta.fluido in FLUIDI_D_ACQUA and tratta.sezioni:
@@ -1439,6 +1571,7 @@ def componi_la_distinta(
     _lunghezze(lavoro)
     _apparecchiature(lavoro)
     _voci_dei_fluidi(lavoro)
+    _voci_dei_tubi_d_acqua(lavoro)
     _corredo(lavoro)
     _attivita(lavoro)
     esiti, aree_di_transito = _verifica(lavoro)

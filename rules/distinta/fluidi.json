@@ -1,7 +1,7 @@
 {
   "id": "fluidi",
   "versione": "1.3.0",
-  "nota": "Che cosa costa a metro e a giunzione, fluido per fluido (il `medium` della rete). Un tratto è la catena di tubazioni di una rete che passa per i pezzi `passante` del corredo (sezionatore, sifone): la sua lunghezza è la somma delle `lunghezza_m` date, maggiorata con `lunghezze.json`. Le voci si contano sui tratti con una lunghezza da quotare; `raggruppa` dice se la voce si somma per sezione (default) o per fluido. Calcoli: `lunghezza` (somma delle L da quotare), `confezioni` (pezzi interi senza giunte in confezioni, con la riserva), `per_tratta` (n per tratto), `passo` (per tratto, L / passo per eccesso + in_piu), `per_metro` (L totale / ogni_m per eccesso, con un minimo), `metri_arrotondati` (L totale × fattore, per eccesso al passo), `fisso` (n per gruppo), `attraversamenti` (fori di parete del tratto: il dato `attraversamenti` del progettista, o quelli assunti dal fluido), `proprieta` (una voce per valore del dato del progettista sul tratto), `carica_refrigerante`. `fornitura` è una scelta dell'offerta (`distinta.json`, `fornitura`). Da REL-020 anche l'acqua di riscaldamento, l'acqua calda e l'acqua fredda sanitaria (sezione I, proposta della sessione da confermare); `prezzo` come nel corredo. Fluidi assenti da questo file: le loro linee escono nella sezione X, DA DEFINIRE.",
+  "nota": "Che cosa costa a metro e a giunzione, fluido per fluido (il `medium` della rete). Un tratto è la catena di tubazioni di una rete che passa per i pezzi `passante` del corredo (sezionatore, sifone): la sua lunghezza è la somma delle `lunghezza_m` date, maggiorata con `lunghezze.json`. Le voci si contano sui tratti con una lunghezza da quotare; `raggruppa` dice se la voce si somma per sezione (default) o per fluido. Calcoli: `lunghezza` (somma delle L da quotare), `confezioni` (pezzi interi senza giunte in confezioni, con la riserva), `per_tratta` (n per tratto), `passo` (per tratto, L / passo per eccesso + in_piu), `per_metro` (L totale / ogni_m per eccesso, con un minimo), `metri_arrotondati` (L totale × fattore, per eccesso al passo), `fisso` (n per gruppo), `attraversamenti` (fori di parete del tratto: il dato `attraversamenti` del progettista, o quelli assunti dal fluido), `proprieta` (una voce per valore del dato del progettista sul tratto), `carica_refrigerante`. `fornitura` è una scelta dell'offerta (`distinta.json`, `fornitura`). Da REL-020 anche l'acqua di riscaldamento, l'acqua calda e l'acqua fredda sanitaria (sezione I). Da REL-022 (I-288) l'acqua non si misura sui tratti del grafo: le sue voci si contano sui tubi che il progettista dice nella chat (blocco `distinta` del grafo: rete, tubo, metri, isolamento) — `metri` (i metri maggiorati), `per_metro`, `fisso` (per tubo), `a_corpo` (una volta per l'impianto, sul tubo con più metri: `n`, o il dato del blocco che `dato` nomina); `se_isolamento` e `tranne_isolamento` sono espressioni sull'isolamento del tubo. `prezzo` come nel corredo. Fluidi assenti da questo file: le loro linee escono nella sezione X, DA DEFINIRE.",
   "fluidi": [
     {
       "fluido": "supply_air",
@@ -797,8 +797,8 @@
       "fluido": "heating_water",
       "materiale": "multistrato",
       "attraversamenti_se_mancano": 0,
-      "fonte_attraversamenti": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-      "fonte_attraversamenti_in_parole": "le tubazioni della centrale stanno nel locale tecnico: i fori li dice il progettista",
+      "fonte_attraversamenti": "REL-022 (I-288): disposizione del PO del 6 novembre 2026 — i metri, l'isolamento e i gomiti dei tubi d'acqua li dà il progettista nella chat; il grafo è uno spazio di disegno",
+      "fonte_attraversamenti_in_parole": "i fori li dice il progettista",
       "voci": [
         {
           "id": "tubo",
@@ -806,11 +806,11 @@
           "testo": "Tubo {sezione}, nudo",
           "um": "m",
           "calcolo": {
-            "tipo": "lunghezza"
+            "tipo": "metri"
           },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "La tubazione a metro, con la lunghezza da quotare; il tubo è quello della tavola (I-279).",
+          "fonte": "REL-022 (I-288): disposizione del PO del 6 novembre 2026 — i metri, l'isolamento e i gomiti dei tubi d'acqua li dà il progettista nella chat; il grafo è uno spazio di disegno",
+          "fonte_in_parole": "disposizione del PO (I-288): i dati di cantiere vengono dalla chat",
+          "perche": "I metri del progettista per la rete, con la maggiorazione delle lunghezze dell'acqua.",
           "prezzo": [
             {
               "per": "sezione",
@@ -842,46 +842,101 @@
               ],
               "n": 1.0
             }
-          ]
+          ],
+          "tranne_isolamento": "preisol"
         },
         {
-          "id": "gomiti",
+          "id": "tubo-preisolato",
           "sezione": "I",
-          "testo": "Gomito 90° a pressare tubo {sezione}",
-          "um": "n",
+          "testo": "Tubo {sezione} preisolato",
+          "um": "m",
           "calcolo": {
-            "tipo": "per_metro",
-            "ogni_m": 3.0,
-            "minimo": 2
+            "tipo": "metri"
           },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Un gomito ogni 3 m di tubo, per eccesso, almeno due per tubo (stima della sessione, da confermare): i tratti corti fra due accessori in centrale non ne hanno.",
+          "fonte": "REL-022 (I-288): disposizione del PO del 6 novembre 2026 — i metri, l'isolamento e i gomiti dei tubi d'acqua li dà il progettista nella chat; il grafo è uno spazio di disegno",
+          "fonte_in_parole": "disposizione del PO (I-288): i dati di cantiere vengono dalla chat",
+          "perche": "Il multistrato già coibentato, se il progettista lo dice (I-288: «spesso usiamo multistrato già coibentati»).",
+          "prezzo": [
+            {
+              "per": "sezione",
+              "scegli": [
+                {
+                  "se": "16\\s*[×x]\\s*2\\b",
+                  "codice": "I07"
+                },
+                {
+                  "se": "20\\s*[×x]\\s*2\\b",
+                  "codice": "I08"
+                },
+                {
+                  "se": "26\\s*[×x]\\s*3\\b",
+                  "codice": "I09"
+                },
+                {
+                  "se": "32\\s*[×x]\\s*3\\b",
+                  "codice": "I10"
+                }
+              ],
+              "n": 1.0
+            }
+          ],
+          "se_isolamento": "preisol",
+          "prezzo_nota": "listino: multistrato rivestito 16–32 (I07–I10); 40 e 50 non ci sono"
+        },
+        {
+          "id": "guaina",
+          "sezione": "I",
+          "testo": "Guaina isolante elastomerica per tubo {sezione} ({isolamento})",
+          "um": "m",
+          "calcolo": {
+            "tipo": "metri"
+          },
+          "fonte": "REL-022 (I-288): disposizione del PO del 6 novembre 2026 — i metri, l'isolamento e i gomiti dei tubi d'acqua li dà il progettista nella chat; il grafo è uno spazio di disegno",
+          "fonte_in_parole": "disposizione del PO (I-288): i dati di cantiere vengono dalla chat",
+          "perche": "La guaina sul tubo nudo, dello spessore che dice il progettista.",
           "prezzo": [
             {
               "per": "sezione",
               "scegli": [
                 {
                   "se": "20\\s*[×x]",
-                  "codice": "I11"
+                  "codice": "I56"
                 },
                 {
                   "se": "26\\s*[×x]",
-                  "codice": "I12"
+                  "codice": "I57"
                 },
                 {
                   "se": "32\\s*[×x]",
-                  "codice": "I13"
+                  "codice": "I58"
                 },
                 {
                   "se": "40\\s*[×x]",
-                  "codice": "I14"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I15"
+                  "codice": "I59"
                 }
               ],
+              "n": 1.0
+            }
+          ],
+          "se_isolamento": "guaina",
+          "prezzo_nota": "listino: guaina elastomerica sp. 19 mm (I56–I59): per un altro spessore il prezzo vero è diverso"
+        },
+        {
+          "id": "collari",
+          "sezione": "I",
+          "testo": "Collare con gommino e tassello per tubo {sezione}",
+          "um": "n",
+          "calcolo": {
+            "tipo": "per_metro",
+            "ogni_m": 1.5,
+            "minimo": 2
+          },
+          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
+          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
+          "perche": "Un collare ogni metro e mezzo dei metri del progettista (stima della sessione, da confermare).",
+          "prezzo": [
+            {
+              "codice": "I63",
               "n": 1.0
             }
           ]
@@ -897,7 +952,7 @@
           },
           "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
           "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Un manicotto di riserva per tubo, per una giunta imprevista (collaudo T1 di REL-021: due erano troppi).",
+          "perche": "Un manicotto di riserva per tubo, per una giunta imprevista.",
           "prezzo": [
             {
               "per": "sezione",
@@ -928,61 +983,47 @@
           ]
         },
         {
-          "id": "collari",
+          "id": "gomiti",
           "sezione": "I",
-          "testo": "Collare con gommino e tassello per tubo {sezione}",
+          "testo": "Gomito 90° a pressare tubo {sezione}, a corpo",
           "um": "n",
           "calcolo": {
-            "tipo": "per_metro",
-            "ogni_m": 1.5,
-            "minimo": 2
+            "tipo": "a_corpo",
+            "n": 20,
+            "dato": "gomiti"
           },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Il multistrato si staffa ogni metro e mezzo circa (stima della sessione, da confermare).",
-          "prezzo": [
-            {
-              "codice": "I63",
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "guaina",
-          "sezione": "I",
-          "testo": "Guaina isolante elastomerica a celle chiuse per tubo {sezione}, spessore della nota (1) della tavola",
-          "um": "m",
-          "calcolo": {
-            "tipo": "lunghezza"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "La tubazione del riscaldamento (e del raffrescamento) si isola tutta: lo spessore è quello della nota (1) della tavola.",
+          "fonte": "REL-022 (I-288): disposizione del PO del 6 novembre 2026 — i metri, l'isolamento e i gomiti dei tubi d'acqua li dà il progettista nella chat; il grafo è uno spazio di disegno",
+          "fonte_in_parole": "disposizione del PO (I-288): i dati di cantiere vengono dalla chat",
+          "perche": "I gomiti non si contano sul disegno, le cui pieghe non sono curve reali: a corpo, una ventina a lavoro (I-288), sul tubo con più metri; il progettista ne dice altri con «gomiti».",
           "prezzo": [
             {
               "per": "sezione",
               "scegli": [
                 {
                   "se": "20\\s*[×x]",
-                  "codice": "I56"
+                  "codice": "I11"
                 },
                 {
                   "se": "26\\s*[×x]",
-                  "codice": "I57"
+                  "codice": "I12"
                 },
                 {
                   "se": "32\\s*[×x]",
-                  "codice": "I58"
+                  "codice": "I13"
                 },
                 {
                   "se": "40\\s*[×x]",
-                  "codice": "I59"
+                  "codice": "I14"
+                },
+                {
+                  "se": "50\\s*[×x]",
+                  "codice": "I15"
                 }
               ],
               "n": 1.0
             }
           ],
-          "prezzo_nota": "listino: guaina elastomerica sp. 19 mm (I56–I59); la nota (1) della tavola chiede 30 mm da 20 a 39 mm e 40 mm da 40 a 59 mm (DPR 412/93): il prezzo vero è più alto"
+          "prezzo_nota": "a corpo, sul tubo principale"
         },
         {
           "id": "nastro-isolante",
@@ -990,13 +1031,13 @@
           "testo": "Nastro adesivo per le giunte dell'isolamento, rotolo 50 m",
           "um": "n",
           "calcolo": {
-            "tipo": "fisso",
+            "tipo": "a_corpo",
             "n": 1,
-            "raggruppa": "fluido"
+            "dato": "-"
           },
           "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
           "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Le giunte della guaina si chiudono col nastro.",
+          "perche": "Le giunte dell'isolamento si chiudono col nastro.",
           "prezzo": [
             {
               "codice": "I61",
@@ -1010,9 +1051,9 @@
           "testo": "Canapa e pasta sigillante per i raccordi filettati",
           "um": "n",
           "calcolo": {
-            "tipo": "fisso",
+            "tipo": "a_corpo",
             "n": 1,
-            "raggruppa": "fluido"
+            "dato": "-"
           },
           "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
           "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
@@ -1034,8 +1075,8 @@
       "fluido": "domestic_hot_water",
       "materiale": "multistrato",
       "attraversamenti_se_mancano": 0,
-      "fonte_attraversamenti": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-      "fonte_attraversamenti_in_parole": "le tubazioni della centrale stanno nel locale tecnico: i fori li dice il progettista",
+      "fonte_attraversamenti": "REL-022 (I-288): disposizione del PO del 6 novembre 2026 — i metri, l'isolamento e i gomiti dei tubi d'acqua li dà il progettista nella chat; il grafo è uno spazio di disegno",
+      "fonte_attraversamenti_in_parole": "i fori li dice il progettista",
       "voci": [
         {
           "id": "tubo",
@@ -1043,11 +1084,11 @@
           "testo": "Tubo {sezione}, nudo",
           "um": "m",
           "calcolo": {
-            "tipo": "lunghezza"
+            "tipo": "metri"
           },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "La tubazione a metro, con la lunghezza da quotare; il tubo è quello della tavola (I-279).",
+          "fonte": "REL-022 (I-288): disposizione del PO del 6 novembre 2026 — i metri, l'isolamento e i gomiti dei tubi d'acqua li dà il progettista nella chat; il grafo è uno spazio di disegno",
+          "fonte_in_parole": "disposizione del PO (I-288): i dati di cantiere vengono dalla chat",
+          "perche": "I metri del progettista per la rete, con la maggiorazione delle lunghezze dell'acqua.",
           "prezzo": [
             {
               "per": "sezione",
@@ -1079,46 +1120,101 @@
               ],
               "n": 1.0
             }
-          ]
+          ],
+          "tranne_isolamento": "preisol"
         },
         {
-          "id": "gomiti",
+          "id": "tubo-preisolato",
           "sezione": "I",
-          "testo": "Gomito 90° a pressare tubo {sezione}",
-          "um": "n",
+          "testo": "Tubo {sezione} preisolato",
+          "um": "m",
           "calcolo": {
-            "tipo": "per_metro",
-            "ogni_m": 3.0,
-            "minimo": 2
+            "tipo": "metri"
           },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Un gomito ogni 3 m di tubo, per eccesso, almeno due per tubo (stima della sessione, da confermare): i tratti corti fra due accessori in centrale non ne hanno.",
+          "fonte": "REL-022 (I-288): disposizione del PO del 6 novembre 2026 — i metri, l'isolamento e i gomiti dei tubi d'acqua li dà il progettista nella chat; il grafo è uno spazio di disegno",
+          "fonte_in_parole": "disposizione del PO (I-288): i dati di cantiere vengono dalla chat",
+          "perche": "Il multistrato già coibentato, se il progettista lo dice (I-288: «spesso usiamo multistrato già coibentati»).",
+          "prezzo": [
+            {
+              "per": "sezione",
+              "scegli": [
+                {
+                  "se": "16\\s*[×x]\\s*2\\b",
+                  "codice": "I07"
+                },
+                {
+                  "se": "20\\s*[×x]\\s*2\\b",
+                  "codice": "I08"
+                },
+                {
+                  "se": "26\\s*[×x]\\s*3\\b",
+                  "codice": "I09"
+                },
+                {
+                  "se": "32\\s*[×x]\\s*3\\b",
+                  "codice": "I10"
+                }
+              ],
+              "n": 1.0
+            }
+          ],
+          "se_isolamento": "preisol",
+          "prezzo_nota": "listino: multistrato rivestito 16–32 (I07–I10); 40 e 50 non ci sono"
+        },
+        {
+          "id": "guaina",
+          "sezione": "I",
+          "testo": "Guaina isolante elastomerica per tubo {sezione} ({isolamento})",
+          "um": "m",
+          "calcolo": {
+            "tipo": "metri"
+          },
+          "fonte": "REL-022 (I-288): disposizione del PO del 6 novembre 2026 — i metri, l'isolamento e i gomiti dei tubi d'acqua li dà il progettista nella chat; il grafo è uno spazio di disegno",
+          "fonte_in_parole": "disposizione del PO (I-288): i dati di cantiere vengono dalla chat",
+          "perche": "La guaina sul tubo nudo, dello spessore che dice il progettista.",
           "prezzo": [
             {
               "per": "sezione",
               "scegli": [
                 {
                   "se": "20\\s*[×x]",
-                  "codice": "I11"
+                  "codice": "I56"
                 },
                 {
                   "se": "26\\s*[×x]",
-                  "codice": "I12"
+                  "codice": "I57"
                 },
                 {
                   "se": "32\\s*[×x]",
-                  "codice": "I13"
+                  "codice": "I58"
                 },
                 {
                   "se": "40\\s*[×x]",
-                  "codice": "I14"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I15"
+                  "codice": "I59"
                 }
               ],
+              "n": 1.0
+            }
+          ],
+          "se_isolamento": "guaina",
+          "prezzo_nota": "listino: guaina elastomerica sp. 19 mm (I56–I59): per un altro spessore il prezzo vero è diverso"
+        },
+        {
+          "id": "collari",
+          "sezione": "I",
+          "testo": "Collare con gommino e tassello per tubo {sezione}",
+          "um": "n",
+          "calcolo": {
+            "tipo": "per_metro",
+            "ogni_m": 1.5,
+            "minimo": 2
+          },
+          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
+          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
+          "perche": "Un collare ogni metro e mezzo dei metri del progettista (stima della sessione, da confermare).",
+          "prezzo": [
+            {
+              "codice": "I63",
               "n": 1.0
             }
           ]
@@ -1134,7 +1230,7 @@
           },
           "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
           "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Un manicotto di riserva per tubo, per una giunta imprevista (collaudo T1 di REL-021: due erano troppi).",
+          "perche": "Un manicotto di riserva per tubo, per una giunta imprevista.",
           "prezzo": [
             {
               "per": "sezione",
@@ -1163,63 +1259,6 @@
               "n": 1.0
             }
           ]
-        },
-        {
-          "id": "collari",
-          "sezione": "I",
-          "testo": "Collare con gommino e tassello per tubo {sezione}",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_metro",
-            "ogni_m": 1.5,
-            "minimo": 2
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Il multistrato si staffa ogni metro e mezzo circa (stima della sessione, da confermare).",
-          "prezzo": [
-            {
-              "codice": "I63",
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "guaina",
-          "sezione": "I",
-          "testo": "Guaina isolante elastomerica a celle chiuse per tubo {sezione}, spessore della nota (1) della tavola",
-          "um": "m",
-          "calcolo": {
-            "tipo": "lunghezza"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "L'acqua calda sanitaria si isola come il riscaldamento.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I56"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I57"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I58"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I59"
-                }
-              ],
-              "n": 1.0
-            }
-          ],
-          "prezzo_nota": "listino: guaina elastomerica sp. 19 mm (I56–I59); la nota (1) della tavola chiede 30 mm da 20 a 39 mm e 40 mm da 40 a 59 mm (DPR 412/93): il prezzo vero è più alto"
         }
       ]
     },
@@ -1227,8 +1266,8 @@
       "fluido": "cold_water",
       "materiale": "multistrato",
       "attraversamenti_se_mancano": 0,
-      "fonte_attraversamenti": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-      "fonte_attraversamenti_in_parole": "le tubazioni della centrale stanno nel locale tecnico: i fori li dice il progettista",
+      "fonte_attraversamenti": "REL-022 (I-288): disposizione del PO del 6 novembre 2026 — i metri, l'isolamento e i gomiti dei tubi d'acqua li dà il progettista nella chat; il grafo è uno spazio di disegno",
+      "fonte_attraversamenti_in_parole": "i fori li dice il progettista",
       "voci": [
         {
           "id": "tubo",
@@ -1236,11 +1275,11 @@
           "testo": "Tubo {sezione}, nudo",
           "um": "m",
           "calcolo": {
-            "tipo": "lunghezza"
+            "tipo": "metri"
           },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "La tubazione a metro, con la lunghezza da quotare; il tubo è quello della tavola (I-279).",
+          "fonte": "REL-022 (I-288): disposizione del PO del 6 novembre 2026 — i metri, l'isolamento e i gomiti dei tubi d'acqua li dà il progettista nella chat; il grafo è uno spazio di disegno",
+          "fonte_in_parole": "disposizione del PO (I-288): i dati di cantiere vengono dalla chat",
+          "perche": "I metri del progettista per la rete, con la maggiorazione delle lunghezze dell'acqua.",
           "prezzo": [
             {
               "per": "sezione",
@@ -1272,46 +1311,101 @@
               ],
               "n": 1.0
             }
-          ]
+          ],
+          "tranne_isolamento": "preisol"
         },
         {
-          "id": "gomiti",
+          "id": "tubo-preisolato",
           "sezione": "I",
-          "testo": "Gomito 90° a pressare tubo {sezione}",
-          "um": "n",
+          "testo": "Tubo {sezione} preisolato",
+          "um": "m",
           "calcolo": {
-            "tipo": "per_metro",
-            "ogni_m": 3.0,
-            "minimo": 2
+            "tipo": "metri"
           },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Un gomito ogni 3 m di tubo, per eccesso, almeno due per tubo (stima della sessione, da confermare): i tratti corti fra due accessori in centrale non ne hanno.",
+          "fonte": "REL-022 (I-288): disposizione del PO del 6 novembre 2026 — i metri, l'isolamento e i gomiti dei tubi d'acqua li dà il progettista nella chat; il grafo è uno spazio di disegno",
+          "fonte_in_parole": "disposizione del PO (I-288): i dati di cantiere vengono dalla chat",
+          "perche": "Il multistrato già coibentato, se il progettista lo dice (I-288: «spesso usiamo multistrato già coibentati»).",
+          "prezzo": [
+            {
+              "per": "sezione",
+              "scegli": [
+                {
+                  "se": "16\\s*[×x]\\s*2\\b",
+                  "codice": "I07"
+                },
+                {
+                  "se": "20\\s*[×x]\\s*2\\b",
+                  "codice": "I08"
+                },
+                {
+                  "se": "26\\s*[×x]\\s*3\\b",
+                  "codice": "I09"
+                },
+                {
+                  "se": "32\\s*[×x]\\s*3\\b",
+                  "codice": "I10"
+                }
+              ],
+              "n": 1.0
+            }
+          ],
+          "se_isolamento": "preisol",
+          "prezzo_nota": "listino: multistrato rivestito 16–32 (I07–I10); 40 e 50 non ci sono"
+        },
+        {
+          "id": "guaina",
+          "sezione": "I",
+          "testo": "Guaina isolante elastomerica per tubo {sezione} ({isolamento})",
+          "um": "m",
+          "calcolo": {
+            "tipo": "metri"
+          },
+          "fonte": "REL-022 (I-288): disposizione del PO del 6 novembre 2026 — i metri, l'isolamento e i gomiti dei tubi d'acqua li dà il progettista nella chat; il grafo è uno spazio di disegno",
+          "fonte_in_parole": "disposizione del PO (I-288): i dati di cantiere vengono dalla chat",
+          "perche": "La guaina sul tubo nudo, dello spessore che dice il progettista.",
           "prezzo": [
             {
               "per": "sezione",
               "scegli": [
                 {
                   "se": "20\\s*[×x]",
-                  "codice": "I11"
+                  "codice": "I56"
                 },
                 {
                   "se": "26\\s*[×x]",
-                  "codice": "I12"
+                  "codice": "I57"
                 },
                 {
                   "se": "32\\s*[×x]",
-                  "codice": "I13"
+                  "codice": "I58"
                 },
                 {
                   "se": "40\\s*[×x]",
-                  "codice": "I14"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I15"
+                  "codice": "I59"
                 }
               ],
+              "n": 1.0
+            }
+          ],
+          "se_isolamento": "guaina",
+          "prezzo_nota": "listino: guaina elastomerica sp. 19 mm (I56–I59): per un altro spessore il prezzo vero è diverso"
+        },
+        {
+          "id": "collari",
+          "sezione": "I",
+          "testo": "Collare con gommino e tassello per tubo {sezione}",
+          "um": "n",
+          "calcolo": {
+            "tipo": "per_metro",
+            "ogni_m": 1.5,
+            "minimo": 2
+          },
+          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
+          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
+          "perche": "Un collare ogni metro e mezzo dei metri del progettista (stima della sessione, da confermare).",
+          "prezzo": [
+            {
+              "codice": "I63",
               "n": 1.0
             }
           ]
@@ -1327,7 +1421,7 @@
           },
           "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
           "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Un manicotto di riserva per tubo, per una giunta imprevista (collaudo T1 di REL-021: due erano troppi).",
+          "perche": "Un manicotto di riserva per tubo, per una giunta imprevista.",
           "prezzo": [
             {
               "per": "sezione",
@@ -1356,63 +1450,6 @@
               "n": 1.0
             }
           ]
-        },
-        {
-          "id": "collari",
-          "sezione": "I",
-          "testo": "Collare con gommino e tassello per tubo {sezione}",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_metro",
-            "ogni_m": 1.5,
-            "minimo": 2
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Il multistrato si staffa ogni metro e mezzo circa (stima della sessione, da confermare).",
-          "prezzo": [
-            {
-              "codice": "I63",
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "guaina",
-          "sezione": "I",
-          "testo": "Guaina isolante elastomerica a celle chiuse per tubo {sezione}, spessore della nota (1) della tavola",
-          "um": "m",
-          "calcolo": {
-            "tipo": "lunghezza"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "L'acqua fredda si isola contro la condensa.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I56"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I57"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I58"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I59"
-                }
-              ],
-              "n": 1.0
-            }
-          ],
-          "prezzo_nota": "listino: guaina elastomerica sp. 19 mm (I56–I59); la nota (1) della tavola chiede 30 mm da 20 a 39 mm e 40 mm da 40 a 59 mm (DPR 412/93): il prezzo vero è più alto"
         }
       ]
     }

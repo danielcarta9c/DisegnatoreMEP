@@ -298,6 +298,34 @@
       "title": "ConnectionModel",
       "type": "object"
     },
+    "DatiDellaDistinta": {
+      "additionalProperties": false,
+      "description": "I dati di cantiere della distinta che il grafo non sa (REL-022, I-288): li dice\nil progettista nella chat, e l'agente li scrive qui. `completa` li conserva.",
+      "properties": {
+        "tubi": {
+          "items": {
+            "$ref": "#/$defs/TuboDellaDistinta"
+          },
+          "title": "Tubi",
+          "type": "array"
+        },
+        "gomiti": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Gomiti"
+        }
+      },
+      "title": "DatiDellaDistinta",
+      "type": "object"
+    },
     "Domain": {
       "enum": [
         "hydronic",
@@ -764,6 +792,47 @@
       ],
       "title": "SubsystemModel",
       "type": "object"
+    },
+    "TuboDellaDistinta": {
+      "additionalProperties": false,
+      "description": "Quanti metri di un tubo d'acqua compra l'impianto, su una rete (REL-022, I-288).\n\nIl grafo e' uno spazio di disegno, non una planimetria: le lunghezze dei tubi\nd'acqua non si ricavano dal grafo e non si stimano. Le dice il progettista, nella\nchat in cui la skill lavora, per rete e per diametro; l'agente le scrive qui.",
+      "properties": {
+        "rete": {
+          "pattern": "^[a-z][a-z0-9_-]*$",
+          "title": "Rete",
+          "type": "string"
+        },
+        "tubo": {
+          "minLength": 1,
+          "title": "Tubo",
+          "type": "string"
+        },
+        "metri": {
+          "exclusiveMinimum": 0,
+          "title": "Metri",
+          "type": "number"
+        },
+        "isolamento": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Isolamento"
+        }
+      },
+      "required": [
+        "rete",
+        "tubo",
+        "metri"
+      ],
+      "title": "TuboDellaDistinta",
+      "type": "object"
     }
   },
   "additionalProperties": false,
@@ -792,6 +861,17 @@
       "anyOf": [
         {
           "$ref": "#/$defs/RichiestaDeiDiametri"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "distinta": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DatiDellaDistinta"
         },
         {
           "type": "null"

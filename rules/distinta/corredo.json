@@ -1,7 +1,7 @@
 {
   "id": "corredo",
   "versione": "1.6.0",
-  "nota": "Il corredo di posa di ogni voce del catalogo, per id di voce (`definition_id` del pezzo). Il catalogo non si tocca: il corredo sta qui. `apparecchiatura`: il pezzo è una macchina fornita da Nove C e va nella sezione A, una riga per marca e modello (un pezzo con la proprietà `compreso_in` è nella fornitura di un altro e non ha riga sua). `fornitura`: chi la fornisce, una scelta dell'offerta di `distinta.json` («opere_edili», «bocchette_e_griglie») o «committente»; senza, l'installatore. `per_locale` conta una volta per locale servito (il dato `locale` del pezzo, o la sua etichetta), e niente per un locale con `varco`. `passante`: il pezzo sta in mezzo a una linea (sezionatore, interruttore, relè, termostato a contatto, sifone), e il tratto lo attraversa. `voci`: il materiale e le opere che il pezzo porta con sé; `calcolo` è `per_pezzo` (n per pezzo) o `per_linea` (n per ogni tratto di quel fluido che arriva al pezzo). Nei testi, `{proprieta}` è un dato del progettista sul pezzo (o la `sezione` del tratto che gli arriva): se manca, il testo dice DA DEFINIRE e la distinta fa la domanda. Copre l'aria-aria e l'elettrico del kit AA-01 e, da REL-020, l'idronico (sezione I: proposta della sessione sul listino del PO, da confermare). Nei testi idronici `{pollice}` è il pollice del tubo su cui sta il pezzo e `{sezione}` il tubo del tratto («multistrato MS 32×3»): li dà il calcolo dei diametri, o il progettista con la `sezione` del tratto. Un pezzo `stacco` (sicurezza, manometro, sfiato, scarico, sonda) si avvita sul tee o sul suo rubinetto: il tratto fino a lui, senza lunghezza, non ha tubo. Un pezzo `confine` (terminali, rete esistente, utenze) chiude la centrale: i tratti fino a lui vogliono la lunghezza del progettista. `prezzo` (REL-021) dice con quali codici del listino della minuteria si prezza la voce: un codice, o una scelta per il valore di un dato (`per`: `pollice`, `sezione`, `volume_l`, …) con le sue espressioni (`scegli`), per `n` unità del listino a unità della voce; una voce senza `prezzo`, o senza una scelta che vale, nel costo è DA PREZZARE. La riduzione all'attacco della macchina (D-233, REL-017) è nella sezione I con il suo testo, perché i due pollici li sa il pezzo.",
+  "nota": "Il corredo di posa di ogni voce del catalogo, per id di voce (`definition_id` del pezzo). Il catalogo non si tocca: il corredo sta qui. `apparecchiatura`: il pezzo è una macchina fornita da Nove C e va nella sezione A, una riga per marca e modello (un pezzo con la proprietà `compreso_in` è nella fornitura di un altro e non ha riga sua). `fornitura`: chi la fornisce, una scelta dell'offerta di `distinta.json` («opere_edili», «bocchette_e_griglie») o «committente»; senza, l'installatore. `per_locale` conta una volta per locale servito (il dato `locale` del pezzo, o la sua etichetta), e niente per un locale con `varco`. `passante`: il pezzo sta in mezzo a una linea (sezionatore, interruttore, relè, termostato a contatto, sifone), e il tratto lo attraversa. `voci`: il materiale e le opere che il pezzo porta con sé; `calcolo` è `per_pezzo` (n per pezzo) o `per_linea` (n per ogni tratto di quel fluido che arriva al pezzo). Nei testi, `{proprieta}` è un dato del progettista sul pezzo (o la `sezione` del tratto che gli arriva): se manca, il testo dice DA DEFINIRE e la distinta fa la domanda. Copre l'aria-aria e l'elettrico del kit AA-01 e, da REL-020, l'idronico (sezione I: proposta della sessione sul listino del PO, da confermare). Nei testi idronici `{pollice}` è il pollice del tubo su cui sta il pezzo e `{sezione}` il tubo del tratto («multistrato MS 32×3»): li dà il calcolo dei diametri, o il progettista con la `sezione` del tratto. Un pezzo `stacco` (sicurezza, manometro, sfiato, scarico, sonda) si avvita sul tee o sul suo rubinetto: il tratto fino a lui, senza lunghezza, non ha tubo. Un pezzo `confine` (terminali, rete esistente, utenze) chiude la centrale: i tratti fino a lui vogliono la lunghezza del progettista. `prezzo` (REL-021) dice con quali codici del listino della minuteria si prezza la voce: un codice, o una scelta per il valore di un dato (`per`: `pollice`, `sezione`, `volume_l`, …) con le sue espressioni (`scegli`), per `n` unità del listino a unità della voce; una voce senza `prezzo`, o senza una scelta che vale, nel costo è DA PREZZARE. La riduzione all'attacco della macchina (D-233, REL-017) è nella sezione I con il suo testo, perché i due pollici li sa il pezzo. `se_dato` e `tranne_dato` (REL-022) fanno valere una voce solo se un dato del pezzo dice qualcosa: le staffe della pompa di calore se la sua «posa» dice staffe, il basamento a terra altrimenti.",
   "voci": {
     "split-outdoor-unit": {
       "nome": "Unità esterna split a pompa di calore",
@@ -3145,8 +3145,7 @@
             }
           ]
         }
-      ],
-      "stacco": true
+      ]
     },
     "air-vent": {
       "nome": "Valvola di sfogo aria con rubinetto",
@@ -3174,8 +3173,7 @@
           ],
           "prezzo_nota": "listino: sola valvola di sfogo (I43a), senza rubinetto"
         }
-      ],
-      "stacco": true
+      ]
     },
     "air-vent-plain": {
       "nome": "Valvola di sfogo aria",
@@ -3202,8 +3200,7 @@
             }
           ]
         }
-      ],
-      "stacco": true
+      ]
     },
     "air-vent-solar": {
       "nome": "Valvola di sfogo aria solare",
@@ -3225,8 +3222,7 @@
           "perche": "Lo sfiato del circuito solare; non è nel listino.",
           "prezzo": []
         }
-      ],
-      "stacco": true
+      ]
     },
     "pressure-gauge": {
       "nome": "Manometro",
@@ -3254,8 +3250,7 @@
           ],
           "prezzo_nota": "listino: manometro 0-12 bar (I44)"
         }
-      ],
-      "stacco": true
+      ]
     },
     "pressure-gauge-solar": {
       "nome": "Manometro solare",
@@ -3283,8 +3278,7 @@
           ],
           "prezzo_nota": "listino: manometro 0-12 bar (I44)"
         }
-      ],
-      "stacco": true
+      ]
     },
     "thermometer": {
       "nome": "Termometro",
@@ -3311,8 +3305,7 @@
             }
           ]
         }
-      ],
-      "stacco": true
+      ]
     },
     "thermometer-solar": {
       "nome": "Termometro solare",
@@ -3339,8 +3332,7 @@
             }
           ]
         }
-      ],
-      "stacco": true
+      ]
     },
     "valve-safety": {
       "nome": "Valvola di sicurezza",
@@ -3367,8 +3359,7 @@
             }
           ]
         }
-      ],
-      "stacco": true
+      ]
     },
     "valve-safety-solar": {
       "nome": "Valvola di sicurezza solare",
@@ -3390,8 +3381,7 @@
           "perche": "La sicurezza del circuito solare; non è nel listino.",
           "prezzo": []
         }
-      ],
-      "stacco": true
+      ]
     },
     "dhw-safety-group": {
       "nome": "Gruppo di sicurezza sanitario",
@@ -3440,8 +3430,7 @@
             }
           ]
         }
-      ],
-      "stacco": true
+      ]
     },
     "drain-connection-cold": {
       "nome": "Attacco di scarico sull'acqua fredda",
@@ -3468,8 +3457,7 @@
             }
           ]
         }
-      ],
-      "stacco": true
+      ]
     },
     "drain-connection-dhw": {
       "nome": "Attacco di scarico sanitario",
@@ -3496,8 +3484,7 @@
             }
           ]
         }
-      ],
-      "stacco": true
+      ]
     },
     "drain-connection-solar": {
       "nome": "Attacco di carico e scarico solare",
@@ -3524,8 +3511,7 @@
             }
           ]
         }
-      ],
-      "stacco": true
+      ]
     },
     "filling-unit": {
       "nome": "Gruppo di riempimento con disconnettore",
@@ -3671,8 +3657,7 @@
           "perche": "La sonda arriva con la macchina o con il regolatore; l'installatore mette il pozzetto, che non è nel listino.",
           "prezzo": []
         }
-      ],
-      "stacco": true
+      ]
     },
     "temperature-probe-dhw": {
       "nome": "Sonda di temperatura sanitaria",
@@ -3694,8 +3679,7 @@
           "perche": "La sonda arriva con la macchina o con il regolatore; l'installatore mette il pozzetto, che non è nel listino.",
           "prezzo": []
         }
-      ],
-      "stacco": true
+      ]
     },
     "temperature-probe-solar": {
       "nome": "Sonda di temperatura solare",
@@ -3717,8 +3701,7 @@
           "perche": "La sonda arriva con la macchina o con il regolatore; l'installatore mette il pozzetto, che non è nel listino.",
           "prezzo": []
         }
-      ],
-      "stacco": true
+      ]
     },
     "tee-branch": {
       "nome": "Raccordo a T",
@@ -4316,6 +4299,29 @@
       "perche": "La pompa di calore la compra Nove C a parte: la distinta conta gli attacchi, le staffe e il trattamento dell'acqua. Sugli attacchi della macchina si avvitano il giunto antivibrante e la riduzione: il raccordo al tubo lo porta il giunto (collaudo T1 di REL-021).",
       "voci": [
         {
+          "id": "basamento-pdc",
+          "sezione": "S",
+          "testo": "Basamento a terra per l'unità esterna con supporti antivibranti",
+          "um": "n",
+          "calcolo": {
+            "tipo": "per_pezzo",
+            "n": 1
+          },
+          "tranne_dato": {
+            "posa": "staff|muro|parete"
+          },
+          "fonte": "REL-022 (I-288): disposizione del PO del 6 novembre 2026 — i metri, l'isolamento e i gomiti dei tubi d'acqua li dà il progettista nella chat; il grafo è uno spazio di disegno",
+          "fonte_in_parole": "disposizione del PO (I-288): i dati di cantiere vengono dalla chat",
+          "perche": "Di regola la pompa di calore si posa a terra (I-288), su supporti antivibranti; le staffe solo se il progettista le chiede.",
+          "prezzo": [
+            {
+              "codice": "I71a",
+              "n": 4
+            }
+          ],
+          "prezzo_nota": "listino: quattro gomme antivibranti 100×100 (I71a); il basamento in opera costa di più"
+        },
+        {
           "id": "staffe-pdc",
           "sezione": "S",
           "testo": "Staffe a muro per l'unità esterna, portata 160 kg, con gommini antivibranti (coppia)",
@@ -4324,15 +4330,18 @@
             "tipo": "per_pezzo",
             "n": 1
           },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "L'unità esterna su staffe a muro; il basamento a terra è la variante V.",
+          "fonte": "REL-022 (I-288): disposizione del PO del 6 novembre 2026 — i metri, l'isolamento e i gomiti dei tubi d'acqua li dà il progettista nella chat; il grafo è uno spazio di disegno",
+          "fonte_in_parole": "disposizione del PO (I-288): i dati di cantiere vengono dalla chat",
+          "perche": "Le staffe a muro solo se il progettista le chiede («posa» della pompa di calore: staffe, a muro); di solito va a terra (I-288).",
           "prezzo": [
             {
               "codice": "I72b",
               "n": 1.0
             }
-          ]
+          ],
+          "se_dato": {
+            "posa": "staff|muro|parete"
+          }
         },
         {
           "id": "pulitore",
@@ -4382,6 +4391,29 @@
       "perche": "La pompa di calore la compra Nove C a parte: la distinta conta gli attacchi, le staffe e il trattamento dell'acqua. Sugli attacchi della macchina si avvitano il giunto antivibrante e la riduzione: il raccordo al tubo lo porta il giunto (collaudo T1 di REL-021).",
       "voci": [
         {
+          "id": "basamento-pdc",
+          "sezione": "S",
+          "testo": "Basamento a terra per l'unità esterna con supporti antivibranti",
+          "um": "n",
+          "calcolo": {
+            "tipo": "per_pezzo",
+            "n": 1
+          },
+          "tranne_dato": {
+            "posa": "staff|muro|parete"
+          },
+          "fonte": "REL-022 (I-288): disposizione del PO del 6 novembre 2026 — i metri, l'isolamento e i gomiti dei tubi d'acqua li dà il progettista nella chat; il grafo è uno spazio di disegno",
+          "fonte_in_parole": "disposizione del PO (I-288): i dati di cantiere vengono dalla chat",
+          "perche": "Di regola la pompa di calore si posa a terra (I-288), su supporti antivibranti; le staffe solo se il progettista le chiede.",
+          "prezzo": [
+            {
+              "codice": "I71a",
+              "n": 4
+            }
+          ],
+          "prezzo_nota": "listino: quattro gomme antivibranti 100×100 (I71a); il basamento in opera costa di più"
+        },
+        {
           "id": "staffe-pdc",
           "sezione": "S",
           "testo": "Staffe a muro per l'unità esterna, portata 160 kg, con gommini antivibranti (coppia)",
@@ -4390,15 +4422,18 @@
             "tipo": "per_pezzo",
             "n": 1
           },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "L'unità esterna su staffe a muro; il basamento a terra è la variante V.",
+          "fonte": "REL-022 (I-288): disposizione del PO del 6 novembre 2026 — i metri, l'isolamento e i gomiti dei tubi d'acqua li dà il progettista nella chat; il grafo è uno spazio di disegno",
+          "fonte_in_parole": "disposizione del PO (I-288): i dati di cantiere vengono dalla chat",
+          "perche": "Le staffe a muro solo se il progettista le chiede («posa» della pompa di calore: staffe, a muro); di solito va a terra (I-288).",
           "prezzo": [
             {
               "codice": "I72b",
               "n": 1.0
             }
-          ]
+          ],
+          "se_dato": {
+            "posa": "staff|muro|parete"
+          }
         },
         {
           "id": "pulitore",
@@ -6216,7 +6251,6 @@
     },
     "underfloor-panel": {
       "nome": "Pannello radiante",
-      "confine": true,
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Un confine della centrale: i terminali e la rete esistono o sono di altri; la distinta conta il raccordo alla tubazione che arriva.",
@@ -6351,7 +6385,6 @@
     },
     "radiator": {
       "nome": "Radiatore",
-      "confine": true,
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Un confine della centrale: i terminali e la rete esistono o sono di altri; la distinta conta il raccordo alla tubazione che arriva.",
@@ -6486,7 +6519,6 @@
     },
     "fan-coil": {
       "nome": "Ventilconvettore",
-      "confine": true,
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Un confine della centrale: i terminali e la rete esistono o sono di altri; la distinta conta il raccordo alla tubazione che arriva.",
@@ -6621,7 +6653,6 @@
     },
     "fan-coil-ducted": {
       "nome": "Ventilconvettore canalizzato",
-      "confine": true,
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Un confine della centrale: i terminali e la rete esistono o sono di altri; la distinta conta il raccordo alla tubazione che arriva.",
@@ -6756,7 +6787,6 @@
     },
     "ahu-coil": {
       "nome": "Batteria di trattamento aria",
-      "confine": true,
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Un confine della centrale: i terminali e la rete esistono o sono di altri; la distinta conta il raccordo alla tubazione che arriva.",
@@ -6891,7 +6921,6 @@
     },
     "existing-plant-inlet": {
       "nome": "Da impianto esistente",
-      "confine": true,
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Un confine della centrale: i terminali e la rete esistono o sono di altri; la distinta conta il raccordo alla tubazione che arriva.",
@@ -7026,7 +7055,6 @@
     },
     "existing-plant-outlet": {
       "nome": "Verso impianto esistente",
-      "confine": true,
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Un confine della centrale: i terminali e la rete esistono o sono di altri; la distinta conta il raccordo alla tubazione che arriva.",
@@ -7161,7 +7189,6 @@
     },
     "capped-connection": {
       "nome": "Attacco predisposto",
-      "confine": true,
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Un confine della centrale: i terminali e la rete esistono o sono di altri; la distinta conta il raccordo alla tubazione che arriva.",
@@ -7296,7 +7323,6 @@
     },
     "cold-water-inlet": {
       "nome": "Alimentazione acqua fredda",
-      "confine": true,
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Un confine della centrale: i terminali e la rete esistono o sono di altri; la distinta conta il raccordo alla tubazione che arriva.",
@@ -7431,7 +7457,6 @@
     },
     "dhw-draw-off": {
       "nome": "Utenze sanitarie",
-      "confine": true,
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Un confine della centrale: i terminali e la rete esistono o sono di altri; la distinta conta il raccordo alla tubazione che arriva.",
@@ -7566,7 +7591,6 @@
     },
     "dhw-recirculation-inlet": {
       "nome": "Ricircolo sanitario dalle utenze",
-      "confine": true,
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Un confine della centrale: i terminali e la rete esistono o sono di altri; la distinta conta il raccordo alla tubazione che arriva.",

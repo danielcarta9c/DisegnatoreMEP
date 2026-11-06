@@ -139,7 +139,10 @@ lancia anche `completa` (passo 3): i punti aperti che trova sono domande dello s
   parole i dati senza i quali le voci escono «DA DEFINIRE» — marca e modello, refrigerante e
   precarica, bocchette, attacco della condensa, protezioni, portate… —, a quali pezzi mancano e in
   che campo del grafo va la risposta. Le porti **in questo stesso messaggio** (se non sai ancora se
-  la vuole, sotto «se vuoi la distinta, mi servono anche:»), non dopo il primo lancio.
+  la vuole, sotto «se vuoi la distinta, mi servono anche:»), non dopo il primo lancio. **Per
+  l'acqua** chiedi sempre i metri di tubo per rete e diametro, l'isolamento (preisolato, o nudo con
+  guaina e spessore), i gomiti a corpo (di regola 20) e la posa della pompa di calore (a terra, o
+  staffe se le vuole): lo schema è uno spazio di disegno, e non li dà (`riferimenti/distinta.md`).
 
 Il messaggio porta:
 

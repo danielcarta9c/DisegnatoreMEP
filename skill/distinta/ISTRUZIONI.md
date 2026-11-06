@@ -104,7 +104,10 @@ mancano — `--domande` te li elenca —; non li stimi tu.
 
 | dove | dato | che cos'è |
 |---|---|---|
-| ogni tratto | `lunghezza_m` | la lunghezza **stimata** del tratto (pianta, sopralluogo); `0` se è un raccordo diretto (plenum sulla macchina, cablaggio di fabbrica) |
+| ogni tratto (aria, frigorifero, condensa, elettrico) | `lunghezza_m` | la lunghezza **stimata** del tratto (pianta, sopralluogo); `0` se è un raccordo diretto (plenum sulla macchina, cablaggio di fabbrica). **Non per l'acqua**: vedi sotto |
+| ogni rete d'acqua | blocco `distinta.tubi` | **i tubi d'acqua li dice il progettista nella chat**: per rete, il tubo, i metri e l'isolamento (sotto) |
+| l'impianto | `distinta.gomiti` | i gomiti a corpo; se il progettista non li dice, la distinta ne mette 20 e lo scrive |
+| pompa di calore | `posa` | «staffe a muro» solo se il progettista le chiede; senza, la distinta la mette **a terra** su supporti antivibranti |
 | ogni tubazione | `sezione` | «Ø200», «Ø6,35 (1/4")», «MS 32×3», «3G2,5», «2×0,75 (P1-P2)»: diametro, lati o cavo; sull'acqua il tubo, nella notazione del materiale (I-279), e dove manca vale quello della tavola |
 | mandata e ripresa | `portata_m3h` | per la verifica della velocità e delle griglie di transito |
 | ogni tubazione | `attraversamenti` | quante pareti interne passa; se manca, la distinta ne assume uno per l'aria, la condensa e la linea del gas, e lo dice |
@@ -126,16 +129,31 @@ distinta li legge in tutti e due i posti.
 accessori in linea — valvole, filtri, giunti, la deviatrice — portano il pollice del tubo su cui stanno (MS 32×3 →
 1"), dalla tabella di equivalenza del produttore.
 
-**L'idronico ha il suo corredo** (REL-020, sezione I, proposta da confermare dal PO). La pompa di calore, gli
-accumuli e il bollitore sono apparecchiature (sezione A, si comprano a parte): la distinta conta i raccordi ai loro
-attacchi, le staffe e il trattamento dell'acqua. Ogni accessorio in linea porta sé stesso, del pollice del tubo, e due
-raccordi a pressare (tre per i pezzi a tre vie); ogni derivazione un tee; ogni linea d'acqua il tubo, i gomiti, i
-collari, i manicotti di riserva e la guaina. Le valvole, i filtri, i giunti e i circolatori **non spezzano il tratto**:
-la linea dalla pompa di calore al volano è un tratto solo, con una lunghezza sola. I **tratti corti in centrale**, fra
-due accessori, senza lunghezza valgono **1 m** e la distinta lo dice; gli stacchi di servizio (sicurezza,
-manometro, sfiato, scarico, sonda) si avvitano sul tee e non hanno tubo; un tratto che arriva a
-una macchina, a un accumulo o a un confine (terminali, utenze, rete esistente) la lunghezza la vuole dal
-progettista. L'acqua non aggiunge il metro per tratto della maggiorazione: resta il 15%.
+**L'idronico ha il suo corredo** (REL-020, sezione I). La pompa di calore, gli accumuli e il bollitore sono
+apparecchiature (sezione A, si comprano a parte): la distinta conta i raccordi ai loro attacchi e il trattamento
+dell'acqua; la pompa di calore va a terra, su staffe solo se il progettista le chiede. Ogni accessorio in linea porta
+sé stesso, del pollice del tubo, e i suoi raccordi a pressare; ogni derivazione un tee. **Dal grafo si contano solo i
+pezzi** (valvole, tee, attacchi): sono pezzi veri.
+
+**I tubi d'acqua si chiedono nella chat, non si misurano sul grafo** (I-288). Il grafo è uno spazio di disegno, non
+una planimetria: le lunghezze dei suoi tratti e le sue pieghe non sono quelle del cantiere. Chiedi al progettista,
+**per ogni rete d'acqua**, il tubo, i metri (dalla pianta o dal sopralluogo) e l'isolamento — multistrato
+**preisolato**, o **nudo con guaina** e il suo spessore —, e scrivili nel blocco `distinta` in testa al grafo, che
+`completa` conserva:
+
+```json
+"distinta": {
+  "tubi": [
+    {"rete": "primario", "tubo": "MS 32×3", "metri": 30, "isolamento": "preisolato"},
+    {"rete": "secondario", "tubo": "MS 26×3", "metri": 12, "isolamento": "guaina 19 mm"}
+  ],
+  "gomiti": 20
+}
+```
+
+La distinta maggiora i metri del 15%; i collari (uno ogni 1,5 m) e un manicotto di riserva seguono i metri; i gomiti
+sono **a corpo**, 20 se il progettista non ne dice altri. Non stimare tu i metri né l'isolamento: se mancano, la voce è
+DA DEFINIRE e `--domande` li chiede. Lo spessore della guaina lo dice il progettista ogni volta.
 
 **La lunghezza di un tratto spezzato basta su una tubazione.** Un tratto è la linea che l'installatore posa in un
 pezzo, da macchina a macchina: il sezionatore sulla linea dell'unità esterna e il sifone sullo scarico della condensa
