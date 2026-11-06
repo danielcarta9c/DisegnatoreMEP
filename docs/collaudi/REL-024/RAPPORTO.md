@@ -75,3 +75,78 @@ girare le prove in parallelo.
 
 Il banco come prova (punto 3: `confronta.sh` è il primo passo, ma è ancora uno strumento di sessione) e la prova
 senza rete (punto 4).
+
+---
+
+# Fase 1, seconda parte: il banco come prova e la skill senza rete
+
+**6 novembre 2026**, dopo la 1.15.1 (PR #92).
+
+## Le tavole
+
+**Nessuna tavola cambia**, e da qui lo dice una prova. Il banco nuovo: 28 casi, i 24 di `REL-011` più il T1 di
+`REL-023` con la sua distinta, la villetta di `REL-015` (idraulica ed elettrico), l'aria-aria di `REL-012` fase 2 e il
+collaudo T3 di `REL-012` con la sua pianta. `python scripts/banco.py` → `28 uguali, 0 cambiati, su 28`.
+
+## Il banco come prova (punto 3)
+
+- `scripts/banco.py` rifà ogni caso dal codice del repository (`completa` se il grafo è di prima stesura, `disegna`
+  con ogni piano, la distinta e la pianta dove ci sono) e ne prende le impronte: sha256 degli SVG, dei rilievi, del
+  grafo completo, della distinta e dei tracciati, più la riga di sintesi di `disegna`. Il PDF e il DXF ne sono
+  traduzioni e non si improntano.
+- `tests/banco/impronte.json` le registra; `tests/test_il_banco.py` le confronta a ogni PR (29 prove, 24 s).
+- **Una tavola cambiata non si fa tacere**: se la modifica è voluta, `python scripts/banco.py --registra --uscita
+  <cartella>` riscrive le impronte e lascia le tavole da mostrare al PO nella PR (D-146).
+
+Misure:
+
+| controllo | esito |
+|---|---|
+| determinismo: il banco di `REL-011` su Python 3.13 e su 3.11 con `PYTHONHASHSEED=123` | 24 SVG su 24 identici |
+| `python scripts/banco.py` su 3.13 e su 3.11 con `PYTHONHASHSEED=7` | `28 uguali, 0 cambiati, su 28` tutte e due |
+| la prova sa fallire: `LINE_CLEARANCE_MM` da 0,5 a 1,0 mm (poi rimesso) | `9 failed, 20 passed`, con le uscite cambiate per nome |
+
+## La skill senza rete (punto 4)
+
+Lo ZIP della 1.15.1 in un Python 3.12 pulito, con l'indice di PyPI puntato su una porta chiusa:
+
+| situazione | esito |
+|---|---|
+| senza pydantic | `ambiente` si ferma in 8 s: «Senza pydantic il comando non parte. Serve un ambiente con Python 3.11 o più e la libreria pydantic==2.13.4, oppure la rete per installarla.» `SKILL.md` («Prima di cominciare», punto 1) dice all'agente di riferirlo al progettista |
+| con pydantic, senza ezdxf e pypdfium2 | la tavola esce, **identica** (SVG uguale byte per byte), in PDF e SVG; il DXF manca e lo dice |
+| **il difetto** | ogni comando ritentava l'installazione delle facoltative: `disegna` 8,8 s invece di 1,2 (pip riprova cinque volte) |
+
+La correzione (`skill/scripts/mep.py`): un'installazione facoltativa non riuscita lascia un segno nella cartella
+temporanea e non si ritenta nella stessa sessione (lo dice, con il comando per riprovare); pip con `--timeout 15
+--retries 1`. pydantic, senza il quale il comando non parte, si ritenta sempre. Dopo: `disegna` 1,3 s al primo comando,
+0,85 s ai successivi, SVG identico. Tre prove nuove in `tests/skill/test_lanciatore.py`.
+
+**Che cosa non è misurato**: una rete che non risponde affatto (pacchetti persi). La sandbox rifiuta subito anche un
+indirizzo irraggiungibile; il limite lì è quello di pip, 15 s per due tentativi.
+
+**Che cosa non si fa**: le dipendenze dentro lo ZIP. pydantic ha una parte compilata diversa per ogni versione di
+Python, ezdxf porta numpy; la skill è già usata dal PO su claude.ai, dove la rete verso PyPI c'è, e i progettisti sono
+nella stessa organizzazione. Se un giorno servisse una macchina senza rete, la strada è quella delle ruote (wheel)
+nello ZIP con `pip install --no-index`, dentro il limite dei 200 file.
+
+## Un difetto della distinta dal progetto reale (punto 12, I-297)
+
+«La dicitura “compreso con la PdC” non toglie dalla distinta gli accessori di corredo (filtro a Y, pozzetti)»: vero,
+`compreso_in` toglieva solo la riga della macchina in sezione A (`_apparecchiature`), e il corredo dell'accessorio si
+contava lo stesso. Prova scritta prima della correzione (`tests/distinta/test_il_corredo_idronico_e_il_costo.py`,
+`test_compreso_nella_pompa_di_calore_non_si_compra_due_volte`): rossa con «Filtro a Y 1" FF, maglia 500 µm» ancora in
+distinta; dopo la correzione (`_corredo` salta i pezzi con `compreso_in`) verde, e la riga della pompa di calore dice
+«comprende FY-01 …, comprende SO-01 …». L'accessorio resta sulla tavola e nelle giunzioni.
+
+Il banco l'ha visto: la distinta del T1 cambiava, ma **solo nell'impronta delle regole** (`"impronta"` di
+`distinta.json`, l'hash dei file delle regole, perché la nota di `corredo.json` dice adesso che `compreso_in` vale per
+ogni pezzo). Le voci sono identiche; impronta registrata con `--registra`.
+
+## Le misure
+
+| comando | esito |
+|---|---|
+| `python -m pytest -q` (3.13) | `2922 passed, 15 skipped, 11 xfailed` (29 del banco, 3 del lanciatore e 1 di `compreso_in` in più) |
+| `python -m ruff check src tests scripts skill/scripts` | `All checks passed!` (la CI ora controlla anche `scripts/` e `skill/scripts/`) |
+| `python -m mypy` | `Success: no issues found in 127 source files` |
+| release 1.15.2 | `scripts/costruisci-skill.py`: 150 file, sha256 `a65051b1430bd08b…`, controlli passati |

@@ -6,7 +6,7 @@
 > progettisti che non hanno letto niente di questo repository.
 
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
-**Stato:** **IN CORSO** — fase 1: la CI e mypy fusi con la PR #92, nella 1.15.1 (I-296); restano il banco come prova e la prova senza rete. `REL-023` è sospeso (`docs/plans/pacchetti/REL-023.md`).
+**Stato:** **IN CORSO** — **fase 1 chiusa** sul ramo della PR della 1.15.2: la CI e mypy (1.15.1, PR #92), il banco come prova e la skill senza rete (`docs/collaudi/REL-024/RAPPORTO.md`). Il prossimo: la fase 2.
 **Base:** `main` dopo la 1.15.0 (PR #91).
 **Approvazione della fusione:** **del PO**, guardando le tavole (D-146, D-147), a ogni PR.
 **Il numero:** le PR intermedie restano 1.x; la **2.0.0** esce solo dalla fase 5, dopo la prova del PO con i progettisti.
@@ -68,6 +68,13 @@
     le correzioni; la **2.0.0** con il tag git, la release su GitHub, `releases/latest/`. Poi la potatura dei rami
     vecchi (una quarantina, già fusi).
 
+### Un difetto della distinta, dal progetto reale (I-297)
+
+12. **FATTO** (1.15.2) — **`compreso_in` vale per ogni pezzo, non solo per le macchine.** Oggi toglie soltanto la riga della sezione A
+    (`src/disegnatore_mep/distinta/calcolo.py`, `_apparecchiature`): un accessorio dichiarato compreso nella pompa di
+    calore — il filtro a Y, i pozzetti — resta in distinta con il suo corredo. È un'uscita sbagliata su un dato che il
+    progettista ha già dato: rientra nel consolidamento. Il resto di I-297 è la 2.1 (`docs/plans/pacchetti/REL-025.md`).
+
 ## Le decisioni del PO sulla distribuzione (I-296, 6 novembre 2026)
 
 - **Il repository resta pubblico**, con i prezzi e le fatture della commessa PR.BG.017 («no problem»).
@@ -77,7 +84,7 @@
 
 ## Fuori
 
-Nessuna capacità nuova: l'anello revisore → pianificatore (`DRAW-016` punti 2 e 3), l'espansione diretta e il VRV, le
+Nessuna capacità nuova (quelle di I-297 sono la 2.1, `REL-025`): l'anello revisore → pianificatore (`DRAW-016` punti 2 e 3), l'espansione diretta e il VRV, le
 famiglie di `docs/DEFERRED.md` §1, il corredo standard di `REL-023` sono delle 2.x.
 
 ## Criteri di accettazione, per ogni PR

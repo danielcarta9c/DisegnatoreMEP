@@ -16,10 +16,12 @@ Ha bisogno di una libreria sola che la libreria standard non ha, pydantic: se
 l'ambiente non ce l'ha, il comando prova a installarla, e se non ci riesce lo dice.
 """
 
+import contextlib
 import importlib.util
 import os
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 QUI = Path(__file__).resolve().parent
@@ -44,17 +46,39 @@ ATTESA_PIP_S = 180
 """Quanto si aspetta l'installazione: pydantic e le sue tre dipendenze sono pochi
 megabyte, e tre minuti bastano anche su una rete lenta."""
 
+PIP_SENZA_ATTESE = ("--timeout", "15", "--retries", "1")
+"""Una rete che non risponde non deve tenere fermo il comando per minuti: pip, di suo,
+riprova cinque volte (REL-024, la prova senza rete)."""
 
-def _installa(modulo: str, pacchetto: str, perche: str) -> bool:
+
+def _segno_del_tentativo(pacchetto: str) -> Path:
+    """Il segno di un'installazione facoltativa non riuscita in questa macchina: senza rete
+    la skill ritentava a ogni comando, e ogni comando perdeva otto secondi o piu' per niente
+    (REL-024, la prova senza rete). Sta nella cartella temporanea, che finisce con la sessione."""
+    return Path(tempfile.gettempdir()) / f"disegnatore-mep-non-installato-{pacchetto.replace('=', '-')}"
+
+
+def _installa(modulo: str, pacchetto: str, perche: str, ricorda: bool = False) -> bool:
+    segno = _segno_del_tentativo(pacchetto)
+    if ricorda and segno.exists():
+        print(
+            f"Manca la libreria {modulo}, {perche}; l'installazione non e' riuscita poco fa, e non "
+            f"riprovo (per riprovare: rm {segno}).",
+            file=sys.stderr,
+        )
+        return False
     print(f"Manca la libreria {modulo}, {perche}: provo a installare {pacchetto}.", file=sys.stderr)
     riuscita = _pip(pacchetto)
     if riuscita:
         print(f"Installata: {pacchetto}.", file=sys.stderr)
+    elif ricorda:
+        with contextlib.suppress(OSError):
+            segno.touch()
     return riuscita and importlib.util.find_spec(modulo) is not None
 
 
 def _pip(pacchetto: str) -> bool:
-    comando = [sys.executable, "-m", "pip", "install", "--quiet", pacchetto]
+    comando = [sys.executable, "-m", "pip", "install", "--quiet", *PIP_SENZA_ATTESE, pacchetto]
     for tentativo in (comando, [*comando, "--break-system-packages"]):
         try:
             esito = subprocess.run(tentativo, capture_output=True, text=True, timeout=ATTESA_PIP_S)
@@ -103,7 +127,7 @@ def main() -> int:
     senza = any(a in ("-h", "--help") for a in sys.argv[1:]) or os.environ.get("MEP_SENZA_INSTALLAZIONI")
     for modulo, pacchetto in ({} if senza else FACOLTATIVE.get(comando_chiesto, {})).items():
         if importlib.util.find_spec(modulo) is None:
-            _installa(modulo, pacchetto, "senza la quale il comando fa meno")
+            _installa(modulo, pacchetto, "senza la quale il comando fa meno", ricorda=True)
 
     from disegnatore_mep.skill import cartelle_della_skill
     from disegnatore_mep.skill import main as comando

@@ -120,7 +120,7 @@ mancano — `--domande` te li elenca —; non li stimi tu.
 | bocchette | `dimensione` | «400×200» |
 | bocchette | `locale` | il locale che la bocchetta serve: «Soggiorno». Le griglie di transito si contano **per locale**, non per bocchetta: due bocchette nello stesso locale ne vogliono una. Se manca, la distinta legge il locale dall'`etichetta` (senza le parentesi); se manca anche quella, è una domanda |
 | bocchette | `varco` | il locale ha un varco aperto verso la ripresa (un arco, una porta senza battente): «varco 1,5 m». Quel locale non vuole la griglia di transito; la verifica scrive l'area minima che il varco deve avere |
-| un pezzo nel kit di un altro | `compreso_in` | l'id del pezzo che lo comprende (la centrale nel kit del plenum) |
+| un pezzo nel kit di un altro | `compreso_in` | l'id o la sigla del pezzo che lo comprende (la centrale nel kit del plenum; il filtro a Y o il pozzetto «compreso con la PdC»): non si compra, e la riga della macchina dice «comprende …» |
 
 I campi del tratto (`sezione`, `lunghezza_m`, `scritta`) si scrivono sulla tubazione o nelle sue `properties`: la
 distinta li legge in tutti e due i posti.

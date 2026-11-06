@@ -1184,6 +1184,11 @@ def _corredo(lavoro: _Lavoro) -> None:
             riga.mancanti.append(lavoro.del_pezzo("locale", pezzo))
 
     for pezzo in lavoro.impianto.pezzi.values():
+        if pezzo.proprieta.get("compreso_in"):
+            # I-297: un pezzo nella fornitura di un altro (il filtro a Y, il pozzetto «compreso con
+            # la PdC») non si compra: lo dice la riga della macchina in sezione A («comprende …»).
+            # Resta sulla tavola e nelle giunzioni, che lo collegano lo stesso.
+            continue
         corredo = lavoro.regole.corredo.get(pezzo.voce)
         if corredo is None:
             # Un accessorio in linea sull'acqua porta il pollice del suo tubo (I-279).

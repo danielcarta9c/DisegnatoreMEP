@@ -233,3 +233,38 @@ def test_i_gomiti_sono_un_ipotesi_che_si_chiede(
     gomiti = next(v for v in distinta.voci if v.testo.startswith("Gomito 90°"))
     assert gomiti.quantita == 20 and gomiti.da_definire
     assert any("Quanti gomiti a corpo" in d for d in distinta.domande)
+
+
+def _con_filtro_e_pozzetto(compreso: bool) -> dict[str, Any]:
+    """La centrale con un filtro a Y sul ritorno e una sonda nel suo pozzetto; con
+    `compreso`, tutti e due nella fornitura della pompa di calore."""
+    grafo = _centrale()
+    dato = {"compreso_in": "GT-01"} if compreso else {}
+    grafo["components"] += [
+        {"id": "fy", "definition_id": "strainer", "tag": "FY-01", "properties": dict(dato)},
+        {"id": "so", "definition_id": "temperature-probe", "tag": "SO-01", "properties": dict(dato)},
+    ]
+    grafo["connections"] = [c for c in grafo["connections"] if c["id"] != "r2"] + [
+        _tubo("r2", "primario", ("v2", "b"), ("fy", "a"), sezione="MS 32×3"),
+        _tubo("r3", "primario", ("fy", "b"), ("pdc", "water_return"), lunghezza_m=10, sezione="MS 32×3"),
+    ]
+    return grafo
+
+
+def test_compreso_nella_pompa_di_calore_non_si_compra_due_volte(
+    regole: RegoleDellaDistinta, nomi: tuple[dict[str, str], dict[str, str]]
+) -> None:
+    """I-297, dal progetto reale: «la dicitura “compreso con la PdC” non toglie dalla distinta
+    gli accessori di corredo (filtro a Y, pozzetti)». `compreso_in` toglieva solo la riga della
+    macchina in sezione A; un accessorio compreso resta nella sua tavola e nelle giunzioni,
+    ma non si compra: lo dice la riga della pompa di calore («comprende …»)."""
+    senza = componi_la_distinta(_con_filtro_e_pozzetto(False), regole, *nomi)
+    con = componi_la_distinta(_con_filtro_e_pozzetto(True), regole, *nomi)
+
+    def contributi(distinta: Any, sigla: str) -> list[str]:
+        return [v.testo for v in distinta.voci if any(chi == sigla for chi, _ in v.contributi)]
+
+    assert contributi(senza, "FY-01") and contributi(senza, "SO-01"), "il caso non prova niente"
+    assert contributi(con, "FY-01") == [] and contributi(con, "SO-01") == []
+    pdc = next(v for v in con.voci_della_sezione("A") if "GT-01" in v.note)
+    assert "comprende FY-01" in pdc.note and "comprende SO-01" in pdc.note

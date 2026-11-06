@@ -54,3 +54,44 @@ def test_un_altro_rifiuto_si_dice_senza_ritentare(
     assert lanciatore._pip("pydantic==2.13.4") is False
     assert len(chiamate) == 1
     assert "Could not find a version" in capsys.readouterr().err
+
+
+# REL-024, la prova senza rete: senza PyPI la skill ritentava l'installazione delle librerie
+# facoltative a ogni comando, perdendo ogni volta otto secondi o piu' (pip riprova cinque
+# volte). Un tentativo fallito si ricorda per la sessione, e pip ha un limite di attesa.
+
+
+def test_pip_non_aspetta_minuti_su_una_rete_che_non_risponde(
+    lanciatore: ModuleType, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    chiamate: list[list[str]] = []
+    monkeypatch.setattr(lanciatore.subprocess, "run", _finto_pip([(0, "")], chiamate))
+    lanciatore._pip("ezdxf==1.4.4")
+    comando = chiamate[0]
+    assert comando[comando.index("--retries") + 1] == "1"
+    assert int(comando[comando.index("--timeout") + 1]) <= 15
+
+
+def test_una_facoltativa_che_non_si_installa_non_si_ritenta_a_ogni_comando(
+    lanciatore: ModuleType, monkeypatch: pytest.MonkeyPatch, tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    monkeypatch.setattr(lanciatore.tempfile, "gettempdir", lambda: str(tmp_path))
+    tentativi: list[str] = []
+    monkeypatch.setattr(lanciatore, "_pip", lambda pacchetto: tentativi.append(pacchetto) or False)
+    for _ in range(3):
+        assert lanciatore._installa("ezdxf", "ezdxf==1.4.4", "senza la quale il comando fa meno", ricorda=True) is False
+    assert tentativi == ["ezdxf==1.4.4"]
+    assert "non riprovo" in capsys.readouterr().err
+
+
+def test_pydantic_si_ritenta_sempre(
+    lanciatore: ModuleType, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """Senza pydantic il comando non parte: ogni volta vale la pena di riprovare."""
+    monkeypatch.setattr(lanciatore.tempfile, "gettempdir", lambda: str(tmp_path))
+    tentativi: list[str] = []
+    monkeypatch.setattr(lanciatore, "_pip", lambda pacchetto: tentativi.append(pacchetto) or False)
+    for _ in range(2):
+        lanciatore._installa("pydantic", "pydantic==2.13.4", "che il motore usa")
+    assert tentativi == ["pydantic==2.13.4", "pydantic==2.13.4"]

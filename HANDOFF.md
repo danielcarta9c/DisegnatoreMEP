@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-11-06 sera — **la 2.0 di consolidamento** (`REL-024`, I-295): la skill si prepara per i progettisti del PO. `REL-023` è sospeso. La **1.15.1** (PR #92, I-296) porta la CI e mypy strict verde; tavole identiche alla 1.15.0.
+**Aggiornato:** 2026-11-06 sera — **la 2.0 di consolidamento** (`REL-024`, I-295): la skill si prepara per i progettisti del PO. `REL-023` è sospeso. La **1.15.2** chiude la fase 1: il banco delle tavole come prova e la skill senza rete; tavole identiche alla 1.15.0.
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -22,10 +22,19 @@ la skill per chi non l'ha scritta, release candidate. Nessuna capacità nuova. `
   3.11 e 3.12, ruff, mypy; una PR rossa non si fonde); mypy strict verde (era fermo sugli stub di numpy, sotto c'erano
   50 errori); pypdfium2 fra le dipendenze di sviluppo (la prima CI l'ha trovato); tavole identiche byte per byte
   (`docs/collaudi/REL-024/RAPPORTO.md`, `confronta.sh`).
-- **Il prossimo**: il banco come prova (fase 1, punto 3), la prova senza rete (punto 4); poi la fase 2.
+- **Fatto, nella 1.15.2** (PR della fase 1, seconda parte): **il banco come prova** (`scripts/banco.py`,
+  `tests/banco/impronte.json`, `tests/test_il_banco.py`: 28 casi a ogni PR; una tavola cambiata si registra con
+  `--registra` e si mostra al PO) e **la skill senza rete** (un'installazione facoltativa fallita non si ritenta a ogni
+  comando; pip con un limite d'attesa). La fase 1 è chiusa.
+- **Fatto anche, nella 1.15.2**: il punto 12, `compreso_in` per ogni pezzo (un accessorio compreso nella PdC non
+  esce più in distinta; I-297, dal progetto reale).
+- **Il prossimo**: la fase 2, sei impianti tipo in camera pulita con Opus e Sonnet, gli esiti agli atti.
+- **La 2.1 è scritta** (`docs/plans/pacchetti/REL-025.md`, I-297): la derivazione air-split (il PO ha la voce in una
+  copia locale), termostato radio, resistenza integrativa, termostato di sicurezza, la distinta a quantità nette, la
+  pianta su più piani. Parte mentre i progettisti provano la 2.0-rc.
 - **Deciso dal PO** (I-296): repository pubblico con i prezzi; i progettisti vedono i costi; distribuzione,
   `nove-c-report` e rilievi dei progettisti li cura lui.
-- **I numeri**: il prossimo input è **I-297**, la prossima decisione **D-241**.
+- **I numeri**: il prossimo input è **I-298**, la prossima decisione **D-241**.
 
 ## Com'era il 6 novembre 2026 sera, con la 1.15.0 e REL-023
 
