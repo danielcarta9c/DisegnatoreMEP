@@ -599,7 +599,7 @@ attacchi, e non sta in linea.
 sulla linea della macchina, **all'uscita del quadro**: è nel quadro, e la tavola lo disegna
 stretto all'uscita da cui la linea parte, prima del cavo. **Non va nel piano**: lo posa il motore,
 con la sigla (QF-01) accanto, e sta solo sulla tavola dell'elettrico, in tabella («2P C32 · Idn 30
-mA tipo B») e in legenda. La scritta del cavo — «3G6 · L 15 m» — resta sulla linea, sul tratto
+mA tipo A») e in legenda. La scritta del cavo — «3G6 · L 15 m» — resta sulla linea, sul tratto
 verso la macchina. Tu dai al motore una linea su cui stia: se l'uscita del quadro guarda la
 macchina con un tratto dritto di almeno **due centimetri** (il segno è largo un centimetro),
 l'interruttore ci sta sopra e si legge come l'uscita della linea; se il cavo gira subito, il

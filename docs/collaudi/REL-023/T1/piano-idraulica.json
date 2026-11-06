@@ -1,0 +1,141 @@
+{
+ "formato": "A3",
+ "vista": "idraulica",
+ "note": [
+  "PdC e volano allo stesso y=60: mandata a 65 e ritorno a 80 rette (D-159, B1).",
+  "Deviatrice sulla mandata, terza via in basso verso il serpentino del bollitore; il ritorno del serpentino risale alla confluenza accanto alla discesa (B1, B11).",
+  "Vaso, riempimento e manometro appesi in giu' dal ritorno (A4, B10). Bollitore sotto il volano, AF da sinistra con i suoi appesi in giu'.",
+  "REL-023: bollitore e i suoi pezzi 10 mm a destra, perche' la discesa dalla terza via della deviatrice arrivi dritta alla valvola del serpentino (rilievo del PO del 6 novembre 2026, B1)."
+ ],
+ "pezzi": {
+  "pdc": {
+   "x": 0,
+   "y": 60,
+   "regola": "D-159 quota della porta"
+  },
+  "tee-valve-safety-pdc-water-supply": {
+   "x": 75,
+   "y": 62.5,
+   "regola": "B8 sulla quota della mandata, dopo giunto e riduzione"
+  },
+  "valve-safety-pdc-water-supply": {
+   "x": 75,
+   "y": 52.5,
+   "regola": "A4 addosso al suo raccordo"
+  },
+  "deviatrice": {
+   "x": 170,
+   "y": 60,
+   "rotazione": 0,
+   "regola": "D-168 terza via in basso verso il bollitore"
+  },
+  "volano": {
+   "x": 205,
+   "y": 60,
+   "regola": "D-159 stesso y della PdC"
+  },
+  "air-vent-volano-primary-out": {
+   "x": 215,
+   "y": 52.5,
+   "regola": "I-212 sul cielo del volano"
+  },
+  "drain-connection-volano-primary-in": {
+   "x": 215,
+   "y": 105,
+   "regola": "A4 sotto il volano"
+  },
+  "sonda-volano": {
+   "x": 187.5,
+   "y": 87.5,
+   "regola": "A4 sull'attacco sonda"
+  },
+  "tee-expansion-connection-pdc-water-return": {
+   "x": 95,
+   "y": 77.5,
+   "regola": "ordine della catena del ritorno"
+  },
+  "expansion-connection-pdc-water-return": {
+   "x": 95,
+   "y": 97.5,
+   "rotazione": 0,
+   "regola": "A4 appeso in giu'"
+  },
+  "tee-filling-unit-pdc-water-return-b": {
+   "x": 107.5,
+   "y": 77.5
+  },
+  "filling-unit-pdc-water-return": {
+   "x": 107.5,
+   "y": 90,
+   "rotazione": 180,
+   "regola": "D-168 uscita verso il ritorno"
+  },
+  "inlet-filling-unit-pdc-water-return": {
+   "x": 107.5,
+   "y": 110
+  },
+  "tee-pressure-gauge-pdc-water-return": {
+   "x": 120,
+   "y": 77.5
+  },
+  "pressure-gauge-pdc-water-return": {
+   "x": 120,
+   "y": 97.5,
+   "rotazione": 180
+  },
+  "confluenza-ritorno": {
+   "x": 160,
+   "y": 77.5,
+   "regola": "fra gli organi del ritorno e il volano; riceve il serpentino da sotto"
+  },
+  "bollitore": {
+   "x": 195,
+   "y": 140,
+   "regola": "A1 accumuli; sotto il volano"
+  },
+  "sonda-acs": {
+   "x": 230,
+   "y": 157.5
+  },
+  "mixing-valve-thermostatic-bollitore-dhw-out": {
+   "x": 245,
+   "y": 125,
+   "rotazione": 0,
+   "regola": "D-175 AF dalla terza via in basso"
+  },
+  "inlet-mixing-valve-thermostatic-bollitore-dhw-out": {
+   "x": 245,
+   "y": 152.5
+  },
+  "utenze": {
+   "x": 270,
+   "y": 127.5
+  },
+  "tee-expansion-connection-dhw-bollitore-cold-in": {
+   "x": 167.5,
+   "y": 175
+  },
+  "expansion-connection-dhw-bollitore-cold-in": {
+   "x": 167.5,
+   "y": 195,
+   "rotazione": 0
+  },
+  "tee-drain-connection-cold-bollitore-cold-in": {
+   "x": 137.5,
+   "y": 175
+  },
+  "drain-connection-cold-bollitore-cold-in": {
+   "x": 137.5,
+   "y": 187.5
+  },
+  "acquedotto": {
+   "x": 112.5,
+   "y": 175
+  },
+  "pavimento": {
+   "x": 280,
+   "y": 62.5,
+   "regola": "D-167 attacchi a sinistra; coppia del secondario sulle quote del volano"
+  }
+ }
+}

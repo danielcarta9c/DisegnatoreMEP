@@ -1,16 +1,11 @@
-Le regole hanno aggiunto 15 accessori; con i raccordi e i confini che li reggono, il grafo passa da 5 a 23 pezzi (+18).
+Le regole hanno aggiunto 13 accessori; con i raccordi e i confini che li reggono, il grafo passa da 5 a 21 pezzi (+16).
 
-Necessarie (7)
+Necessarie (5)
   - Giunto antivibrante — 2 pezzi
       su pdc.water_supply, rete primario — flexible-joint-pdc-water-supply
       su pdc.water_return, rete primario — flexible-joint-pdc-water-return
     perche': Una macchina con un compressore e un ventilatore vibra, e con i tubi rigidi la vibrazione arriva nelle tubazioni e da li' nell'edificio: ronzio nelle stanze, raccordi che col tempo si allentano o perdono. Un tratto flessibile sulla mandata e uno sul ritorno, attaccati alla macchina, la fermano li'. E' il primo pezzo dopo la macchina: tutto il resto — la valvola di sicurezza, il ritegno, i rubinetti, il filtro — viene dopo, e il giunto non chiude niente, quindi la sicurezza resta collegata alla macchina. Gomma o flessibile inox si sceglie in distinta: sullo schema il segno e' lo stesso.
     fonte: Specifica tecnica di installazione Nove C, Rev. 01 del 27 ottobre 2026, par. 2.4: «Giunti antivibranti flessibili (acciaio inox) su mandata e ritorno della PdC» e par. 4.2: «giunti antivibranti sempre presenti» (documento Nove C, non nel repository); D-222, approvata dal PO il 4 novembre 2026 (I-251) · regola: absorb-vibration-at-the-machine@1.0.0
-  - Valvola antigelo — 2 pezzi
-      su pdc.water_supply, rete primario — valve-antifreeze-pdc-water-supply
-      su pdc.water_return, rete primario — valve-antifreeze-pdc-water-return
-    perche': Una pompa di calore sta fuori, e d'inverno l'acqua nei tubi esterni e nella macchina puo' gelare. La macchina ha una sua protezione antigelo, ma senza corrente non funziona: una notte di gelo e un'interruzione di corrente rompono lo scambiatore. Le valvole antigelo si aprono da sole, senza corrente, quando l'acqua sta per gelare, e scaricano il tratto esterno; poi l'impianto si rabbocca dal gruppo di riempimento. Ne va una sulla mandata e una sul ritorno di ogni pompa di calore, sul tratto esterno, dopo il giunto. Nello schema stanno vicino alla macchina; in cantiere vanno nel punto piu' basso del tratto esterno, con lo scarico libero (la nota di posa lo dice). Con il glicole dichiarato non servono.
-    fonte: Manuale Shenling ThermaX R290 6-15 kW, par. 6.4: la protezione antigelo della macchina non si attiva senza corrente (letto il 3 novembre 2026, non nel repository); specifica tecnica di installazione Nove C Rev. 01, par. 1.6: glicole oppure altra soluzione approvata dalla DL; D-230, approvata dal PO il 4 novembre 2026 (I-260, I-263) · regola: drain-the-outdoor-run-before-it-freezes@1.0.0
   - Vaso di espansione — 1 pezzo
       su pdc.water_return, rete primario — expansion-connection-pdc-water-return
     perche': L'acqua scaldata aumenta di volume, e in un volume chiuso quell'aumento diventa pressione. Il vaso e' lo spazio che quel volume in piu' trova invece della rottura, e ne basta uno per circuito perche' la pressione e' la stessa dappertutto. Sta sul ritorno generale, a monte della prima ripartizione verso chi scalda: e' il punto piu' freddo — la membrana dura di piu' dove l'acqua e' meno calda — ed e' il tratto che serve tutti i generatori insieme, cosi' con due in parallelo il vaso non finisce sul ramo di uno solo. La riserva sanitaria ha il proprio vaso sulla propria alimentazione: e' un'altra regola. Sul ritorno sta dalla parte delle macchine rispetto al defangatore, oltre il filtro di ciascuna (D-218): il vaso non si separa mai dalle macchine per una valvola che non sia loro, e vaso, gruppo di riempimento e manometro stanno insieme.
@@ -55,7 +50,7 @@ Punti aperti — accessori che servirebbero e che non si possono proporre
 
 Dati elettrici scritti dal manuale Shenling e dalla specifica Nove C (informazione)
   - GT-01 (Shenling 12 kW): scritti alimentazione «230 V 1~», corrente_max_a 30, cavo_minimo «3G6» — manuale §7.4 p. 55; alimentazione non data, assunta monofase 230 V 1~ (se e' trifase, scrivi «alimentazione»: «400 V 3N~» e rilancia).
-  - QF-01 sulla linea di GT-01: scritti poli «2P», curva «C», in_a 32, idn_ma 30, tipo_differenziale «B», alta_velocita si' — specifica §3.3 (C25/B25, 3G4) col manuale (30 A, 6 mm²): vale il maggiore; specifica §3.2 (bipolare, curva C, Idn 30 mA, tipo B, alta velocita').
+  - QF-01 sulla linea di GT-01: scritti poli «2P», curva «C», in_a 32, idn_ma 30, tipo_differenziale «A», alta_velocita si' — specifica §3.3 (C25/B25, 3G4) col manuale (30 A, 6 mm²): vale il maggiore; specifica §3.2 (bipolare, curva C, Idn 30 mA, tipo B, alta velocita').
 
 Grafo completo: docs/collaudi/REL-018/protezione/grafo-completo.json
 

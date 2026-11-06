@@ -592,17 +592,16 @@ def test_le_catene_di_ritorno_delle_due_macchine_sono_congruenti(index: int) -> 
         length = abs(end[0] - start[0]) + abs(end[1] - start[1])
         axis = ((end[0] - start[0]) / length, (end[1] - start[1]) / length)
         chain = chains.chain_of(generator)
-        # Dal 4 novembre 2026 i primi pezzi dalla porta sono il giunto antivibrante (D-222) e
-        # la valvola antigelo (D-230); poi, come prima, il filtro e la valvola che chiude.
-        assert [chains.definitions[item].id for item in chain[:2]] == [
-            "flexible-joint", "valve-antifreeze"
-        ], (generator, chain)
+        # Dal 4 novembre 2026 il primo pezzo dalla porta e' il giunto antivibrante (D-222);
+        # la valvola antigelo (D-230) dal 6 novembre nelle case non c'e' di base (D-238).
+        # Poi, come prima, il filtro e la valvola che chiude.
+        assert [chains.definitions[item].id for item in chain[:1]] == ["flexible-joint"], (generator, chain)
         assert [
             "filtration" in chains.definitions[item].functions for item in chain
-        ] == [False, False, True, False], (generator, chain)
+        ] == [False, True, False], (generator, chain)
         assert CLOSING_FUNCTIONS & set(chains.definitions[chain[-1]].functions)
-        # Sul primo rettilineo, prima della curva, nell'ordine porta -> giunto -> antigelo ->
-        # filtro -> valvola.
+        # Sul primo rettilineo, prima della curva, nell'ordine porta -> giunto -> filtro ->
+        # valvola.
         found: list[float] = []
         for item in chain:
             symbol = chains.placed[item]

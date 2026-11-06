@@ -313,9 +313,10 @@ def test_la_distinta_dal_comando(tmp_path: Path) -> None:
         ROOT / "naming", cartella_dei_simboli=ROOT / "assets" / "symbols",
     )
     testo = next((tmp_path / "distinta").glob("Distinta_*.md")).read_text(encoding="utf-8")
-    # Da REL-020 l'acqua ha il suo corredo: il tubo della tavola e il pollice degli accessori
-    # stanno nelle voci della sezione I, non piu' nella X.
-    assert "Tubo multistrato MS 32×3, nudo" in testo
+    # Da REL-020 l'acqua ha il suo corredo, e gli accessori portano il pollice del tubo della
+    # tavola; da REL-022 (I-288) i metri del tubo li dice il progettista nella chat: senza, la
+    # rete e' DA DEFINIRE.
+    assert "Tubo della rete «" in testo and "metri e isolamento DA DEFINIRE" in testo
     assert 'Valvola deviatrice a tre vie 1" con attuatore 230 V' in testo
     assert 'Filtro a Y 1" FF' in testo
 

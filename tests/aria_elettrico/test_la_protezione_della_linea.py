@@ -223,7 +223,7 @@ def test_completa_scrive_i_dati_del_manuale_e_lo_dice(tmp_path: Path) -> None:
         "curva": "C",
         "in_a": 32,
         "idn_ma": 30,
-        "tipo_differenziale": "B",
+        "tipo_differenziale": "A",
         "alta_velocita": True,
     }
     assert "Dati elettrici scritti dal manuale Shenling e dalla specifica Nove C (informazione)" in stampa
@@ -244,7 +244,8 @@ def test_la_tavola_dell_elettrico_esce_pulita_con_qf_in_tabella_e_in_legenda() -
     righe = {riga.codice: riga for riga in foglio.tabella.righe}
     assert set(righe) == {"GT-01", "QE-01", "QF-01"}
     assert righe["QF-01"].descrizione == "Interruttore magnetotermico differenziale"
-    assert righe["QF-01"].caratteristiche == "2P C32 · Idn 30 mA tipo B"
+    # D-237 (I-289): in ambito domestico il differenziale e' di tipo A.
+    assert righe["QF-01"].caratteristiche == "2P C32 · Idn 30 mA tipo A"
     # I dati elettrici della macchina, dal manuale (I-277 riempita da REL-018).
     assert righe["GT-01"].caratteristiche == "230 V 1~ · 30 A · 3G6"
     assert (VOCE, "Interruttore magnetotermico differenziale") in {(v.symbol_id, v.name) for v in foglio.legend}
@@ -293,7 +294,7 @@ def test_i_dati_del_progettista_non_si_sovrascrivono(tmp_path: Path) -> None:
 
 
 def test_la_tabella_dei_dati_shenling() -> None:
-    """La tabella sola (manuale §7.4 p. 55, specifica §3.3, «vale il maggiore»)."""
+    """La tabella sola (manuale §7.5 p. 55, specifica §3.3, «vale il maggiore»)."""
     attesi = {
         (6.0, 1): (16, 4, "3G4", "2P", 20),  # D-234: C20, non C16, sui 16 A del 6 kW
         (9.0, 1): (20.5, 4, "3G4", "2P", 25),
@@ -308,7 +309,7 @@ def test_la_tabella_dei_dati_shenling() -> None:
         assert (linea.corrente_max_a, linea.sezione_mm2, linea.cavo_minimo, linea.poli, linea.in_a) == (
             corrente, sezione, cavo, poli, nominale,
         ), chiave
-        assert (linea.curva, linea.idn_ma, linea.tipo_differenziale, linea.alta_velocita) == ("C", 30, "B", True)
+        assert (linea.curva, linea.idn_ma, linea.tipo_differenziale, linea.alta_velocita) == ("C", 30, "A", True)
         assert linea.in_a >= linea.corrente_max_a, chiave
     assert "vale il maggiore" in SHENLING_THERMAX_R290_LINEA[(12.0, 1)].fonte
     assert "proposta dal manuale" in SHENLING_THERMAX_R290_LINEA[(6.0, 1)].fonte
@@ -344,14 +345,14 @@ def test_una_15_kw_protetta_c25_e_un_avviso(tmp_path: Path) -> None:
     """Il caso della commessa: la 15 kW protetta C25."""
     stampa, completo = _completa(_grafo(pdc={"power_kw": 15}, qf={"in_a": 25}), tmp_path)
     assert "Avvisi del manuale del costruttore e della specifica Nove C" in stampa
-    assert "QF-01: In 25 A sulla linea di GT-01, sotto i 30 A del manuale (§7.4 p. 55)" in stampa
+    assert "QF-01: In 25 A sulla linea di GT-01, sotto i 30 A del manuale (§7.5 p. 55)" in stampa
     # Il dato resta quello del progettista: e' un avviso, non una correzione.
     assert _proprieta(completo, "qf-pdc")["in_a"] == 25
 
 
 def test_un_3g4_sulla_12_kw_e_un_avviso(tmp_path: Path) -> None:
     stampa, _ = _completa(_grafo(sezione="3G4"), tmp_path)
-    assert "linea di GT-01: cavo 3G4, 4 mm², sotto i 6 mm² del manuale (§7.4 p. 55)" in stampa
+    assert "linea di GT-01: cavo 3G4, 4 mm², sotto i 6 mm² del manuale (§7.5 p. 55)" in stampa
     # Il 3G6 del caso minimo no.
     stampa, _ = _completa(_grafo(), tmp_path)
     assert "mm² del manuale" not in stampa
@@ -384,7 +385,7 @@ def test_la_distinta_ha_la_voce_dell_interruttore_e_non_la_protezione_della_line
     grafo = json.loads((CASO / "grafo-completo.json").read_text(encoding="utf-8"))
     distinta = _distinta(grafo)
     voce = next(v for v in distinta.voci if v.regola == f"corredo/{VOCE}/interruttore")
-    assert voce.testo == "Interruttore magnetotermico differenziale 2P C32 Idn 30 mA tipo B"
+    assert voce.testo == "Interruttore magnetotermico differenziale 2P C32 Idn 30 mA tipo A"
     assert (voce.quantita, voce.sezione, voce.da_definire) == (1, "E", False)
     # La linea con l'interruttore non chiede anche la `protezione` del tratto.
     assert not any(v.regola.endswith("/protezione-della-linea") for v in distinta.voci)

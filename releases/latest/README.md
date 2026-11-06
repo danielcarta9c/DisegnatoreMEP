@@ -1,4 +1,29 @@
-# L'ultima release: 1.14.0
+# L'ultima release: 1.15.0
+
+`DisegnatoreMEP-v1.15.0.zip` — sha256 `56514abd21c372c9…`, 150 file — è `REL-022` (I-288, I-289, D-237) e la prima parte
+di `REL-023` (I-290 … I-292, D-238, D-239). Si carica come ogni skill personale, dallo ZIP così com'è.
+
+Rispetto alla 1.14.0:
+- **i tubi d'acqua dalla chat**: l'agente chiede al progettista, per rete, il tubo, i metri e l'isolamento (preisolato,
+  o nudo con guaina e spessore) e li scrive nel blocco `distinta` del grafo, che `completa` non cancella; il grafo non
+  dà più lunghezze per l'acqua;
+- **i gomiti a corpo** come ipotesi (20) che si chiede in chat;
+- **la pompa di calore a terra** su supporti antivibranti; le staffe solo se il progettista le chiede;
+- **il differenziale di tipo A** in ambito domestico sulla linea della pompa di calore (il tipo B se il progettista lo
+  scrive);
+- **il listino rev. 04**: 27 voci nuove, dall'interruttore tipo B alle valvole antigelo, dai cavi 3G1,5 al circolatore
+  sanitario; **rev. 05**: i nippli, dalle fatture dell'installatore;
+- **le giunzioni**: un nipplo fra due accessori che si toccano, un raccordo a pressare fra tubo e accessorio, il tee dal
+  grafo; ogni tratto fra due pezzi che non sono tee ha almeno un tubo; il tratto esterno dopo il giunto della pompa di
+  calore;
+- **niente valvole antigelo di base** nelle case: si chiedono per una seconda casa, una zona fredda, un tratto esterno
+  lungo; senza, la nota 2 della tavola dice di tenere la pompa di calore alimentata d'inverno;
+- **il circolatore** fra le apparecchiature (sezione A): Nove C lo compra a parte.
+
+La PdC 12 kW con la 3 vie, con i metri di una commessa vera, esce a 1.425 € di materiale
+(`docs/collaudi/REL-023/RAPPORTO.md`).
+
+Prima, la **1.14.0**:
 
 `DisegnatoreMEP-v1.14.0.zip` — sha256 `af0c5451bf57de42…`, 150 file — è `REL-019`, `REL-020` e `REL-021` (I-284 …
 I-287, D-235, D-236): **la distinta della parte idronica e il costo della minuteria**. Si carica come ogni skill

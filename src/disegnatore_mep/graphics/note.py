@@ -128,6 +128,13 @@ NOTA_ANTIGELO = (
 """(2) Dove va davvero la valvola antigelo (D-230): esce se sulla tavola c'e' un pezzo
 che fa la protezione antigelo."""
 
+NOTA_PDC_ALIMENTATA = (
+    "Antigelo: la pompa di calore resta alimentata d'inverno; la sua protezione antigelo "
+    "funziona solo con la corrente."
+)
+"""(2) Senza valvole antigelo e senza glicole (I-290): esce con una pompa di calore che
+sta fuori, al posto della nota delle valvole."""
+
 NOTA_SFIATI_E_SCARICHI = (
     "Valvole di sfogo aria automatiche in tutti i punti alti e rubinetti di scarico in "
     "tutti i punti bassi del circuito."
@@ -214,6 +221,8 @@ def note_di_posa(
     generate: list[tuple[SoggettoDellaNota, str]] = [("isolamento", nota_dell_isolamento(tubi, anche_altri))]
     if any("frost_protection" in voce.functions for voce in voci):
         generate.append(("antigelo", NOTA_ANTIGELO))
+    elif modello.antigelo != "glicole" and any("vibrates" in voce.trait_set for voce in generatori):
+        generate.append(("antigelo", NOTA_PDC_ALIMENTATA))
     if generatori:
         generate.append(("sfiati", NOTA_SFIATI_E_SCARICHI))
     if sull_acqua("expansion"):
@@ -359,6 +368,7 @@ __all__ = [
     "IN_CASCATA",
     "MASSIMO_DELLE_NOTE",
     "NOTA_ANTIGELO",
+    "NOTA_PDC_ALIMENTATA",
     "NOTA_ISOLAMENTO",
     "nota_dell_isolamento",
     "spessore_dell_isolante_mm",

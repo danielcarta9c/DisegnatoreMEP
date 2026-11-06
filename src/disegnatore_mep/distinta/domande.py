@@ -15,7 +15,7 @@ domande non si possono scostare dal documento. Qui c'e' soltanto il modo di dirl
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 
-from .calcolo import MARCA_E_MODELLO, PEZZO, REGOLE, TRATTO, Distinta, Mancante
+from .calcolo import IMPIANTO, MARCA_E_MODELLO, PEZZO, REGOLE, TRATTO, Distinta, Mancante
 
 
 @dataclass(frozen=True)
@@ -58,10 +58,25 @@ DATI: dict[str, DatoInParole] = {
     "pollice": DatoInParole(
         "Il pollice del tubo su cui sta il pezzo (es. «1\"»): lo danno i diametri del tubo", "«sezione» del tratto"
     ),
+    "pollice_b": DatoInParole(
+        "Il pollice del secondo pezzo di un nipplo ridotto (es. «¾\"»): lo danno i diametri del tubo",
+        "«sezione» del tratto",
+    ),
     "volume_l": DatoInParole(
         "La taglia del vaso d'espansione, in litri: per il vaso dell'impianto la scrive il comando vaso, per il "
         "vaso sanitario la dà il progettista",
         "«volume_l»",
+    ),
+    "tubi": DatoInParole(
+        "I tubi d'acqua di ogni rete: il diametro, i metri (dalla pianta o dal sopralluogo: non si ricavano dallo "
+        "schema) e l'isolamento (preisolato, o nudo con guaina e il suo spessore)",
+        "«tubi»: rete, tubo, metri, isolamento,",
+    ),
+    "gomiti": DatoInParole(
+        "I gomiti a corpo dell'impianto (l'ipotesi della distinta è 20, una ventina a lavoro)", "«gomiti»"
+    ),
+    "isolamento": DatoInParole(
+        "Come si isola il tubo: preisolato, o nudo con guaina e il suo spessore", "«isolamento» del tubo,"
     ),
     "dimensione": DatoInParole("La dimensione della bocchetta (es. «400×200»)", "«dimensione»"),
     "locale": DatoInParole(
@@ -97,7 +112,7 @@ DATI: dict[str, DatoInParole] = {
 """Ogni dato che la distinta legge dal grafo, detto in parole. Un dato che non c'e' si dice
 col suo nome: lo vede la prova delle regole, che ogni dato dei testi qui abbia le sue parole."""
 
-DOVE = {PEZZO: "sul pezzo", TRATTO: "su una tubazione del tratto"}
+DOVE = {PEZZO: "sul pezzo", TRATTO: "su una tubazione del tratto", IMPIANTO: "nel blocco «distinta» del grafo"}
 
 TRATTI_PER_RETE = 4
 """Oltre quanti tratti della stessa rete una domanda li dice per rete, non uno per uno."""

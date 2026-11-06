@@ -1,41 +1,23 @@
-# REL-020 e REL-021 — La distinta idronica, e la distinta prezzata col listino
+# REL-023 — Il corredo standard: una 12 kW sui 1.700 € di materiale
 
-> **Scritto il 5 novembre 2026**, dopo `REL-019` (il listino della minuteria nella skill). Il PO: «Mentre gli agenti
-> completano il listino puoi partire con rel-019 finito questo passa direttamente a rel-020 così correli tutto il
-> corredo mep, idronico elettrico areaulico e espansione diretta. Al termine fai più test diversi anche con sub agenti
-> freschi e verifica se i prezzi ti tornano realistici (esempio una pdc da 12 kw con sistema a 3 vie completata noi
-> abbiamo come capex di minuteria tubi e elettrici sui 1700€, esclusi volani termici bollitori e pdc che li compro a
-> parte). Poi fai merge e rilascia skill rev nuova da installare» (I-287).
+> **Scritto il 6 novembre 2026**, dopo `REL-022` (la 1.15.0). Il PO: «Dobbiamo fare dopo un lavoro di ottimizzazione
+> e pensare ad un corredo standard per cui su una 12 kw stiamo sui 1700 di materiale. Mettiamolo come prox task una
+> volta finito quello che stiamo facendo» (I-289).
 
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
-**Stato:** **CONSEGNATO** (5 novembre 2026) — la 1.14.0, fusa su disposizione del PO (I-287). **Il pacchetto
-successivo non è scelto**: si chiede al PO (le candidate sono in `HANDOFF.md` e in `docs/collaudi/REL-021/RAPPORTO.md`).
-**Base:** `main` dopo la PR #87 (la 1.12.1), con `REL-019` (PR #88) sotto.
-**Ramo:** `claude/distinta-idronica-prezzata`.
+**Stato:** **IN CORSO** — i punti 2 (le giunzioni, I-291) e una parte dell'1 (antigelo di base senza valvole, I-290; il circolatore fuori dalla minuteria, I-292) sono su `main` nella 1.15.0 (PR #90, approvata dal PO, I-294); il differenziale è chiuso da D-240. Restano 1 (defangatore, intercettazioni; glicole o valvole quando il PO decide), 3 e 4.
+**Base:** `main` dopo la 1.15.0.
 
-## REL-020 — il corredo idronico della distinta (D-236, proposta della sessione)
+## Il punto di partenza (misurato, `docs/collaudi/REL-022/RAPPORTO.md`)
 
-- La sezione **I** «Circuito idraulico»: ogni voce idronica del catalogo ha il suo corredo (tutte tranne collettore
-  solare, regolatore d'impianto e sonda esterna, che restano in X). Pompa di calore, accumuli e bollitori sono
-  apparecchiature (A); gli accessori in linea portano sé stessi del pollice del tubo e i raccordi a pressare; le
-  derivazioni un tee; gli stacchi di servizio si avvitano sul tee; i terminali e la rete esistente sono confini.
-- Le linee d'acqua (riscaldamento, acqua calda e fredda sanitaria): tubo, gomiti (uno ogni 3 m), collari (uno ogni
-  1,5 m), un manicotto di riserva, guaina; nastro e sigillanti una volta.
-- Le valvole, i filtri, i giunti e i circolatori sono passanti: la linea da macchina a macchina è un tratto solo. I
-  tratti corti in centrale senza lunghezza valgono 1 m (`se_manca_m`), con un avviso; l'acqua non aggiunge il metro
-  per tratto della maggiorazione.
-- Le domande dei tubi d'acqua si dicono per rete, quando i tratti sono tanti.
+La 12 kW con la 3 vie del collaudo T1 costa **1.929 €** a listino, il 13% sopra il riferimento. Le voci più pesanti:
+33 raccordi a pressare M 1" × MS 32 (212 €), 43 m di MS 32 preisolato (170 €), 2 valvole antigelo (155 €), 20 gomiti
+MS 32 (149 €), il defangatore magnetico 1" (105 €), la deviatrice (93 €), il circolatore (92 €).
 
-## REL-021 — la distinta prezzata (D-236)
+## Che cosa si fa (da concordare col PO prima di scrivere le regole)
 
-- Ogni voce di materiale delle regole (idronico, elettrico, aria, frigorifero, condensa) ha il suo `prezzo`: un codice
-  del listino, o la scelta sul valore di un dato (pollice, tubo, sezione del cavo, taglia del vaso, protezione).
-- `mep.py distinta … --costo` scrive `interno/costo-minuteria.md` e `.json`: il costo a listino del materiale, escluse
-  apparecchiature, opere e attività; le voci DA PREZZARE fuori dal totale, ciascuna col suo perché. `consegna` non
-  copia il costo. Il documento per l'installatore resta senza prezzi (D-235).
-
-## Le misure alla consegna
-
-- Suite intera, ruff, costruzione della skill e `tests/test_le_release.py`: in `HANDOFF.md`.
-- I collaudi con quattro agenti freschi e il confronto col riferimento del PO: `docs/collaudi/REL-021/RAPPORTO.md`.
-- Le tavole non cambiano: il pacchetto non tocca il disegno.
+1. **Il corredo standard di una centrale domestica**: quali accessori Nove C mette davvero (antigelo o glicole, un
+   defangatore di quale fascia, quante intercettazioni), con il PO, su una sua distinta d'acquisto reale.
+2. **I raccordi** — **FATTO** (D-239): un nipplo fra due accessori, un raccordo a pressare fra tubo e accessorio, i tee dal grafo, i gomiti a corpo o dal contesto del progetto. Collaudo in `docs/collaudi/REL-023/RAPPORTO.md`: il T1 coi metri di una commessa vera fa 1.425 €.
+3. **Le scelte del listino** di fascia giusta per Nove C (marche, prezzi d'acquisto invece che al banco).
+4. **La prova**: la 12 kW con la 3 vie sui 1.700 € di materiale, e le altre taglie in proporzione.

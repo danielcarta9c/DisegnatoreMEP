@@ -1,7 +1,7 @@
 {
   "id": "corredo",
-  "versione": "1.6.0",
-  "nota": "Il corredo di posa di ogni voce del catalogo, per id di voce (`definition_id` del pezzo). Il catalogo non si tocca: il corredo sta qui. `apparecchiatura`: il pezzo è una macchina fornita da Nove C e va nella sezione A, una riga per marca e modello (un pezzo con la proprietà `compreso_in` è nella fornitura di un altro e non ha riga sua). `fornitura`: chi la fornisce, una scelta dell'offerta di `distinta.json` («opere_edili», «bocchette_e_griglie») o «committente»; senza, l'installatore. `per_locale` conta una volta per locale servito (il dato `locale` del pezzo, o la sua etichetta), e niente per un locale con `varco`. `passante`: il pezzo sta in mezzo a una linea (sezionatore, interruttore, relè, termostato a contatto, sifone), e il tratto lo attraversa. `voci`: il materiale e le opere che il pezzo porta con sé; `calcolo` è `per_pezzo` (n per pezzo) o `per_linea` (n per ogni tratto di quel fluido che arriva al pezzo). Nei testi, `{proprieta}` è un dato del progettista sul pezzo (o la `sezione` del tratto che gli arriva): se manca, il testo dice DA DEFINIRE e la distinta fa la domanda. Copre l'aria-aria e l'elettrico del kit AA-01 e, da REL-020, l'idronico (sezione I: proposta della sessione sul listino del PO, da confermare). Nei testi idronici `{pollice}` è il pollice del tubo su cui sta il pezzo e `{sezione}` il tubo del tratto («multistrato MS 32×3»): li dà il calcolo dei diametri, o il progettista con la `sezione` del tratto. Un pezzo `stacco` (sicurezza, manometro, sfiato, scarico, sonda) si avvita sul tee o sul suo rubinetto: il tratto fino a lui, senza lunghezza, non ha tubo. Un pezzo `confine` (terminali, rete esistente, utenze) chiude la centrale: i tratti fino a lui vogliono la lunghezza del progettista. `prezzo` (REL-021) dice con quali codici del listino della minuteria si prezza la voce: un codice, o una scelta per il valore di un dato (`per`: `pollice`, `sezione`, `volume_l`, …) con le sue espressioni (`scegli`), per `n` unità del listino a unità della voce; una voce senza `prezzo`, o senza una scelta che vale, nel costo è DA PREZZARE. La riduzione all'attacco della macchina (D-233, REL-017) è nella sezione I con il suo testo, perché i due pollici li sa il pezzo.",
+  "versione": "1.7.0",
+  "nota": "Il corredo di posa di ogni voce del catalogo, per id di voce (`definition_id` del pezzo). Il catalogo non si tocca: il corredo sta qui. `apparecchiatura`: il pezzo è una macchina fornita da Nove C e va nella sezione A, una riga per marca e modello (un pezzo con la proprietà `compreso_in` è nella fornitura di un altro e non ha riga sua). `fornitura`: chi la fornisce, una scelta dell'offerta di `distinta.json` («opere_edili», «bocchette_e_griglie») o «committente»; senza, l'installatore. `per_locale` conta una volta per locale servito (il dato `locale` del pezzo, o la sua etichetta), e niente per un locale con `varco`. `passante`: il pezzo sta in mezzo a una linea (sezionatore, interruttore, relè, termostato a contatto, sifone), e il tratto lo attraversa. `voci`: il materiale e le opere che il pezzo porta con sé; `calcolo` è `per_pezzo` (n per pezzo) o `per_linea` (n per ogni tratto di quel fluido che arriva al pezzo). I raccordi e i nippli dell'acqua non sono nel corredo dei pezzi: li conta il blocco `giunzioni` (REL-023). Nei testi, `{proprieta}` è un dato del progettista sul pezzo (o la `sezione` del tratto che gli arriva): se manca, il testo dice DA DEFINIRE e la distinta fa la domanda. Copre l'aria-aria e l'elettrico del kit AA-01 e, da REL-020, l'idronico (sezione I: proposta della sessione sul listino del PO, da confermare). Nei testi idronici `{pollice}` è il pollice del tubo su cui sta il pezzo e `{sezione}` il tubo del tratto («multistrato MS 32×3»): li dà il calcolo dei diametri, o il progettista con la `sezione` del tratto. Un pezzo `stacco` (sicurezza, manometro, sfiato, scarico, sonda) si avvita sul tee o sul suo rubinetto: il tratto fino a lui, senza lunghezza, non ha tubo. Un pezzo `confine` (terminali, rete esistente, utenze) chiude la centrale: i tratti fino a lui vogliono la lunghezza del progettista. `prezzo` (REL-021) dice con quali codici del listino della minuteria si prezza la voce: un codice, o una scelta per il valore di un dato (`per`: `pollice`, `sezione`, `volume_l`, …) con le sue espressioni (`scegli`), per `n` unità del listino a unità della voce; una voce senza `prezzo`, o senza una scelta che vale, nel costo è DA PREZZARE. La riduzione all'attacco della macchina (D-233, REL-017) è nella sezione I con il suo testo, perché i due pollici li sa il pezzo. `se_dato` e `tranne_dato` (REL-022) fanno valere una voce solo se un dato del pezzo dice qualcosa: le staffe della pompa di calore se la sua «posa» dice staffe, il basamento a terra altrimenti.",
   "voci": {
     "split-outdoor-unit": {
       "nome": "Unità esterna split a pompa di calore",
@@ -821,7 +821,7 @@
     "circuit-breaker-rcbo": {
       "nome": "Interruttore magnetotermico differenziale",
       "passante": true,
-      "fonte": "REL-018 (I-278): specifica tecnica di installazione PdC Shenling Nove C Rev. 01, par. 3.2-3.4 (voce P15); manuale ThermaX R290 6-15 kW, par. 7.4 p. 55 e p. 51",
+      "fonte": "REL-018 (I-278): specifica tecnica di installazione PdC Shenling Nove C Rev. 01, par. 3.2-3.4 (voce P15); manuale ThermaX R290 6-15 kW, par. 7.5 p. 55 e p. 51",
       "fonte_in_parole": "specifica Nove C per la linea della pompa di calore",
       "perche": "La protezione della linea dedicata sta nel quadro, all'uscita della linea: il pezzo è passante, e la linea che lo attraversa è un tratto solo. La voce della protezione della linea (`protezione` del tratto) non si conta su una linea che ha l'interruttore: la protezione è lui.",
       "voci": [
@@ -860,12 +860,16 @@
                 {
                   "se": "^4P C20 A$",
                   "codice": "E18b"
+                },
+                {
+                  "se": "^(1P\\+N|2P) C(16|20|25|32) B$",
+                  "codice": "E31a"
                 }
               ],
               "n": 1.0
             }
           ],
-          "prezzo_nota": "il listino ha solo differenziali di tipo A: il tipo B della pompa di calore va prezzato a parte"
+          "prezzo_nota": "tipo A dal listino Tecnomat; tipo B dal combinato economico (E31a, 85–90 €): il differenziale puro tipo B di marca con il suo magnetotermico costa 270–390 € (E31b + E32)"
         }
       ]
     },
@@ -888,7 +892,13 @@
           "fonte": "D-228 (I-259): disposizione del PO del 04/11/2026",
           "fonte_in_parole": "decisione Nove C sul comando dei circolatori",
           "perche": "Un relè per circolatore, nel quadro, accanto alla protezione della linea del circolatore.",
-          "prezzo": []
+          "prezzo": [
+            {
+              "codice": "E34",
+              "n": 1.0
+            }
+          ],
+          "prezzo_nota": "riferimento online: Finder 22.21 da 20 A, equivalenti più economici"
         }
       ]
     },
@@ -911,7 +921,12 @@
           "fonte": "kit AA-01: lavoro/dimensionamento.py, voce E.13",
           "fonte_in_parole": "regola Nove C per gli apparecchi a parete",
           "perche": "Il termostato si monta su una scatola da incasso.",
-          "prezzo": []
+          "prezzo": [
+            {
+              "codice": "E37",
+              "n": 1.0
+            }
+          ]
         },
         {
           "id": "traccia-per-apparecchio-a-parete",
@@ -948,7 +963,12 @@
           "fonte": "kit AA-01: lavoro/dimensionamento.py, voce E.13",
           "fonte_in_parole": "regola Nove C per gli apparecchi a parete",
           "perche": "Il termostato si monta su una scatola da incasso.",
-          "prezzo": []
+          "prezzo": [
+            {
+              "codice": "E37",
+              "n": 1.0
+            }
+          ]
         },
         {
           "id": "traccia-per-apparecchio-a-parete",
@@ -984,7 +1004,12 @@
           "fonte": "kit AA-01: lavoro/dimensionamento.py, voce E.13",
           "fonte_in_parole": "regola Nove C per gli apparecchi a parete",
           "perche": "Il comando si monta su una scatola da incasso.",
-          "prezzo": []
+          "prezzo": [
+            {
+              "codice": "E37",
+              "n": 1.0
+            }
+          ]
         },
         {
           "id": "traccia-per-apparecchio-a-parete",
@@ -1042,7 +1067,22 @@
           "fonte": "D-233 (I-281): disposizione del PO del 04/11/2026",
           "fonte_in_parole": "decisione Nove C sul tubo scelto dalla velocità",
           "perche": "Una per attacco, sulla mandata e sul ritorno della macchina: maschio dal lato dell'attacco (il giunto), femmina dal lato del tubo.",
-          "prezzo": []
+          "prezzo": [
+            {
+              "per": "{attacco} {tubo}",
+              "scegli": [
+                {
+                  "se": "^1¼\" 1\"$",
+                  "codice": "I78a"
+                },
+                {
+                  "se": "^1\" ¾\"$",
+                  "codice": "I78b"
+                }
+              ],
+              "n": 1.0
+            }
+          ]
         }
       ]
     },
@@ -1070,6 +1110,10 @@
               "per": "pollice",
               "scegli": [
                 {
+                  "se": "^½\"",
+                  "codice": "I75"
+                },
+                {
                   "se": "^¾\"",
                   "codice": "I31"
                 },
@@ -1088,47 +1132,6 @@
                 {
                   "se": "^2\"",
                   "codice": "I35"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "raccordi-in-linea",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M {pollice} × tubo {sezione}",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_pezzo",
-            "n": 2
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni attacco filettato in linea sul multistrato vuole un raccordo a pressare: due per un pezzo a due vie.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
                 }
               ],
               "n": 1.0
@@ -1161,6 +1164,10 @@
               "per": "pollice",
               "scegli": [
                 {
+                  "se": "^½\"",
+                  "codice": "I75"
+                },
+                {
                   "se": "^¾\"",
                   "codice": "I31"
                 },
@@ -1179,47 +1186,6 @@
                 {
                   "se": "^2\"",
                   "codice": "I35"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "raccordi-in-linea",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M {pollice} × tubo {sezione}",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_pezzo",
-            "n": 2
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni attacco filettato in linea sul multistrato vuole un raccordo a pressare: due per un pezzo a due vie.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
                 }
               ],
               "n": 1.0
@@ -1252,6 +1218,10 @@
               "per": "pollice",
               "scegli": [
                 {
+                  "se": "^½\"",
+                  "codice": "I75"
+                },
+                {
                   "se": "^¾\"",
                   "codice": "I31"
                 },
@@ -1270,47 +1240,6 @@
                 {
                   "se": "^2\"",
                   "codice": "I35"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "raccordi-in-linea",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M {pollice} × tubo {sezione}",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_pezzo",
-            "n": 2
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni attacco filettato in linea sul multistrato vuole un raccordo a pressare: due per un pezzo a due vie.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
                 }
               ],
               "n": 1.0
@@ -1343,6 +1272,10 @@
               "per": "pollice",
               "scegli": [
                 {
+                  "se": "^½\"",
+                  "codice": "I75"
+                },
+                {
                   "se": "^¾\"",
                   "codice": "I31"
                 },
@@ -1361,47 +1294,6 @@
                 {
                   "se": "^2\"",
                   "codice": "I35"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "raccordi-in-linea",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M {pollice} × tubo {sezione}",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_pezzo",
-            "n": 2
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni attacco filettato in linea sul multistrato vuole un raccordo a pressare: due per un pezzo a due vie.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
                 }
               ],
               "n": 1.0
@@ -1434,6 +1326,10 @@
               "per": "pollice",
               "scegli": [
                 {
+                  "se": "^½\"",
+                  "codice": "I75"
+                },
+                {
                   "se": "^¾\"",
                   "codice": "I31"
                 },
@@ -1452,47 +1348,6 @@
                 {
                   "se": "^2\"",
                   "codice": "I35"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "raccordi-in-linea",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M {pollice} × tubo {sezione}",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_pezzo",
-            "n": 2
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni attacco filettato in linea sul multistrato vuole un raccordo a pressare: due per un pezzo a due vie.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
                 }
               ],
               "n": 1.0
@@ -1525,6 +1380,10 @@
               "per": "pollice",
               "scegli": [
                 {
+                  "se": "^½\"",
+                  "codice": "I75"
+                },
+                {
                   "se": "^¾\"",
                   "codice": "I31"
                 },
@@ -1543,47 +1402,6 @@
                 {
                   "se": "^2\"",
                   "codice": "I35"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "raccordi-in-linea",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M {pollice} × tubo {sezione}",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_pezzo",
-            "n": 2
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni attacco filettato in linea sul multistrato vuole un raccordo a pressare: due per un pezzo a due vie.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
                 }
               ],
               "n": 1.0
@@ -1635,47 +1453,6 @@
               "n": 1.0
             }
           ]
-        },
-        {
-          "id": "raccordi-in-linea",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M {pollice} × tubo {sezione}",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_pezzo",
-            "n": 2
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni attacco filettato in linea sul multistrato vuole un raccordo a pressare: due per un pezzo a due vie.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
         }
       ]
     },
@@ -1717,47 +1494,6 @@
                 {
                   "se": "^1½\"",
                   "codice": "I36d"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "raccordi-in-linea",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M {pollice} × tubo {sezione}",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_pezzo",
-            "n": 2
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni attacco filettato in linea sul multistrato vuole un raccordo a pressare: due per un pezzo a due vie.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
                 }
               ],
               "n": 1.0
@@ -1809,47 +1545,6 @@
               "n": 1.0
             }
           ]
-        },
-        {
-          "id": "raccordi-in-linea",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M {pollice} × tubo {sezione}",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_pezzo",
-            "n": 2
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni attacco filettato in linea sul multistrato vuole un raccordo a pressare: due per un pezzo a due vie.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
         }
       ]
     },
@@ -1896,47 +1591,6 @@
               "n": 1.0
             }
           ]
-        },
-        {
-          "id": "raccordi-in-linea",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M {pollice} × tubo {sezione}",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_pezzo",
-            "n": 2
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni attacco filettato in linea sul multistrato vuole un raccordo a pressare: due per un pezzo a due vie.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
         }
       ]
     },
@@ -1970,47 +1624,6 @@
                 {
                   "se": "^1\"",
                   "codice": "I37b"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "raccordi-in-linea",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M {pollice} × tubo {sezione}",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_pezzo",
-            "n": 2
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni attacco filettato in linea sul multistrato vuole un raccordo a pressare: due per un pezzo a due vie.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
                 }
               ],
               "n": 1.0
@@ -2054,47 +1667,6 @@
               "n": 1.0
             }
           ]
-        },
-        {
-          "id": "raccordi-in-linea",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M {pollice} × tubo {sezione}",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_pezzo",
-            "n": 2
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni attacco filettato in linea sul multistrato vuole un raccordo a pressare: due per un pezzo a due vie.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
         }
       ]
     },
@@ -2128,47 +1700,6 @@
                 {
                   "se": "^1\"",
                   "codice": "I38b"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "raccordi-in-linea",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M {pollice} × tubo {sezione}",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_pezzo",
-            "n": 2
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni attacco filettato in linea sul multistrato vuole un raccordo a pressare: due per un pezzo a due vie.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
                 }
               ],
               "n": 1.0
@@ -2213,47 +1744,6 @@
             }
           ],
           "prezzo_nota": "prezzo dal riferimento online (mediana), non da un rilievo al banco"
-        },
-        {
-          "id": "raccordi-in-linea",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M {pollice} × tubo {sezione}",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_pezzo",
-            "n": 2
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni attacco filettato in linea sul multistrato vuole un raccordo a pressare: due per un pezzo a due vie.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
         }
       ]
     },
@@ -2287,47 +1777,6 @@
                 {
                   "se": "^1¼\"",
                   "codice": "I49a"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "raccordi-in-linea",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, dopo il giunto e la riduzione",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_pezzo",
-            "n": 1
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Il giunto si avvita sull'attacco della macchina (la riduzione sul giunto, se c'è): verso il tubo, un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
                 }
               ],
               "n": 1.0
@@ -2371,47 +1820,6 @@
               "n": 1.0
             }
           ]
-        },
-        {
-          "id": "raccordi-in-linea",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M {pollice} × tubo {sezione}",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_pezzo",
-            "n": 3
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni attacco filettato in linea sul multistrato vuole un raccordo a pressare: due per un pezzo a due vie.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
         }
       ]
     },
@@ -2441,47 +1849,6 @@
             }
           ],
           "prezzo_nota": "listino: deviatrice 1\" con attuatore (I51), qualunque pollice"
-        },
-        {
-          "id": "raccordi-in-linea",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M {pollice} × tubo {sezione}",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_pezzo",
-            "n": 3
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni attacco filettato in linea sul multistrato vuole un raccordo a pressare: due per un pezzo a due vie.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
         }
       ]
     },
@@ -2511,47 +1878,6 @@
             }
           ],
           "prezzo_nota": "listino: deviatrice 1\" con attuatore (I51), qualunque pollice"
-        },
-        {
-          "id": "raccordi-in-linea",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M {pollice} × tubo {sezione}",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_pezzo",
-            "n": 3
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni attacco filettato in linea sul multistrato vuole un raccordo a pressare: due per un pezzo a due vie.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
         }
       ]
     },
@@ -2574,248 +1900,52 @@
           "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
           "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
           "perche": "La miscelatrice motorizzata del circuito a bassa temperatura; non è nel listino.",
-          "prezzo": []
-        },
-        {
-          "id": "raccordi-in-linea",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M {pollice} × tubo {sezione}",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_pezzo",
-            "n": 3
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni attacco filettato in linea sul multistrato vuole un raccordo a pressare: due per un pezzo a due vie.",
           "prezzo": [
             {
-              "per": "sezione",
+              "per": "pollice",
               "scegli": [
                 {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
+                  "se": "^¾\"",
+                  "codice": "I80a"
                 },
                 {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
+                  "se": "^1\"",
+                  "codice": "I80b"
                 }
               ],
               "n": 1.0
             }
-          ]
+          ],
+          "prezzo_nota": "riferimento online: valvola più servomotore 230 V"
         }
       ]
     },
     "pump-circulator": {
       "nome": "Pompa di circolazione",
       "passante": true,
-      "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-      "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-      "perche": "Il circolatore del circuito secondario; il listino ha un circolatore 25-6.",
-      "voci": [
-        {
-          "id": "pezzo",
-          "sezione": "I",
-          "testo": "Circolatore elettronico {pollice}, con bocchettoni",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_pezzo",
-            "n": 1
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Il circolatore del circuito secondario; il listino ha un circolatore 25-6.",
-          "prezzo": [
-            {
-              "codice": "I50",
-              "n": 1.0
-            }
-          ],
-          "prezzo_nota": "listino: circolatore 25-6 (I50), da verificare sulla prevalenza"
-        },
-        {
-          "id": "raccordi-in-linea",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M {pollice} × tubo {sezione}",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_pezzo",
-            "n": 2
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni attacco filettato in linea sul multistrato vuole un raccordo a pressare: due per un pezzo a due vie.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        }
-      ]
+      "fonte": "REL-023 (I-292): disposizione del PO del 6 novembre 2026",
+      "fonte_in_parole": "disposizione del PO (I-292)",
+      "perche": "Il circolatore lo compra Nove C a parte, come la pompa di calore e gli accumuli (il PO: «Circolatore i due serbatoi e la pdc le compro io a parte»): va nella sezione A, e i suoi bocchettoni si avvitano con i nippli delle giunzioni.",
+      "voci": [],
+      "apparecchiatura": true
     },
     "pump-circulator-dhw": {
       "nome": "Pompa di ricircolo sanitario",
       "passante": true,
-      "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-      "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-      "perche": "Il circolatore del ricircolo sanitario; non è nel listino (quello del listino non è per acqua sanitaria).",
-      "voci": [
-        {
-          "id": "pezzo",
-          "sezione": "I",
-          "testo": "Circolatore per ricircolo sanitario {pollice}, corpo in bronzo o inox",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_pezzo",
-            "n": 1
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Il circolatore del ricircolo sanitario; non è nel listino (quello del listino non è per acqua sanitaria).",
-          "prezzo": []
-        },
-        {
-          "id": "raccordi-in-linea",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M {pollice} × tubo {sezione}",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_pezzo",
-            "n": 2
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni attacco filettato in linea sul multistrato vuole un raccordo a pressare: due per un pezzo a due vie.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        }
-      ]
+      "fonte": "REL-023 (I-292): disposizione del PO del 6 novembre 2026",
+      "fonte_in_parole": "disposizione del PO (I-292)",
+      "perche": "Il circolatore lo compra Nove C a parte, come la pompa di calore e gli accumuli (il PO: «Circolatore i due serbatoi e la pdc le compro io a parte»): va nella sezione A, e i suoi bocchettoni si avvitano con i nippli delle giunzioni.",
+      "voci": [],
+      "apparecchiatura": true
     },
     "pump-circulator-solar": {
       "nome": "Pompa di circolazione solare",
       "passante": true,
-      "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-      "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-      "perche": "Il circolatore del circuito solare; non è nel listino.",
-      "voci": [
-        {
-          "id": "pezzo",
-          "sezione": "I",
-          "testo": "Circolatore solare {pollice}",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_pezzo",
-            "n": 1
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Il circolatore del circuito solare; non è nel listino.",
-          "prezzo": []
-        },
-        {
-          "id": "raccordi-in-linea",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M {pollice} × tubo {sezione}",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_pezzo",
-            "n": 2
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni attacco filettato in linea sul multistrato vuole un raccordo a pressare: due per un pezzo a due vie.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        }
-      ]
+      "fonte": "REL-023 (I-292): disposizione del PO del 6 novembre 2026",
+      "fonte_in_parole": "disposizione del PO (I-292)",
+      "perche": "Il circolatore lo compra Nove C a parte, come la pompa di calore e gli accumuli (il PO: «Circolatore i due serbatoi e la pdc le compro io a parte»): va nella sezione A, e i suoi bocchettoni si avvitano con i nippli delle giunzioni.",
+      "voci": [],
+      "apparecchiatura": true
     },
     "heat-meter": {
       "nome": "Contatore di calore",
@@ -2837,47 +1967,6 @@
           "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
           "perche": "Il contatore di calore in linea; non è nel listino.",
           "prezzo": []
-        },
-        {
-          "id": "raccordi-in-linea",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M {pollice} × tubo {sezione}",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_pezzo",
-            "n": 2
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni attacco filettato in linea sul multistrato vuole un raccordo a pressare: due per un pezzo a due vie.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
         }
       ]
     },
@@ -2903,47 +1992,6 @@
           "prezzo": [
             {
               "codice": "I48",
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "raccordi-in-linea",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M {pollice} × tubo {sezione}",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_pezzo",
-            "n": 2
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni attacco filettato in linea sul multistrato vuole un raccordo a pressare: due per un pezzo a due vie.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
               "n": 1.0
             }
           ]
@@ -2975,47 +2023,6 @@
               "n": 1.0
             }
           ]
-        },
-        {
-          "id": "raccordi-in-linea",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M {pollice} × tubo {sezione}",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_pezzo",
-            "n": 2
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni attacco filettato in linea sul multistrato vuole un raccordo a pressare: due per un pezzo a due vie.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
         }
       ]
     },
@@ -3038,48 +2045,23 @@
           "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
           "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
           "perche": "La valvola antigelo sul tratto esterno; non è nel listino.",
-          "prezzo": []
-        },
-        {
-          "id": "raccordi-in-linea",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M {pollice} × tubo {sezione}",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_pezzo",
-            "n": 2
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni attacco filettato in linea sul multistrato vuole un raccordo a pressare: due per un pezzo a due vie.",
           "prezzo": [
             {
-              "per": "sezione",
+              "per": "pollice",
               "scegli": [
                 {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
+                  "se": "^1\"",
+                  "codice": "I73a"
                 },
                 {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
+                  "se": "^1¼\"",
+                  "codice": "I73b"
                 }
               ],
               "n": 1.0
             }
-          ]
+          ],
+          "prezzo_nota": "riferimento online: Caleffi 108 da 1\" sui 75–85 €, equivalenti più economici"
         }
       ]
     },
@@ -3102,51 +2084,14 @@
           "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
           "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
           "perche": "Il rubinetto del manometro; non è nel listino.",
-          "prezzo": []
-        },
-        {
-          "id": "raccordi-in-linea",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M {pollice} × tubo {sezione}",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_pezzo",
-            "n": 1
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni attacco filettato in linea sul multistrato vuole un raccordo a pressare: due per un pezzo a due vie.",
           "prezzo": [
             {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
+              "codice": "I77",
               "n": 1.0
             }
           ]
         }
-      ],
-      "stacco": true
+      ]
     },
     "air-vent": {
       "nome": "Valvola di sfogo aria con rubinetto",
@@ -3174,8 +2119,7 @@
           ],
           "prezzo_nota": "listino: sola valvola di sfogo (I43a), senza rubinetto"
         }
-      ],
-      "stacco": true
+      ]
     },
     "air-vent-plain": {
       "nome": "Valvola di sfogo aria",
@@ -3202,8 +2146,7 @@
             }
           ]
         }
-      ],
-      "stacco": true
+      ]
     },
     "air-vent-solar": {
       "nome": "Valvola di sfogo aria solare",
@@ -3225,8 +2168,7 @@
           "perche": "Lo sfiato del circuito solare; non è nel listino.",
           "prezzo": []
         }
-      ],
-      "stacco": true
+      ]
     },
     "pressure-gauge": {
       "nome": "Manometro",
@@ -3254,8 +2196,7 @@
           ],
           "prezzo_nota": "listino: manometro 0-12 bar (I44)"
         }
-      ],
-      "stacco": true
+      ]
     },
     "pressure-gauge-solar": {
       "nome": "Manometro solare",
@@ -3283,8 +2224,7 @@
           ],
           "prezzo_nota": "listino: manometro 0-12 bar (I44)"
         }
-      ],
-      "stacco": true
+      ]
     },
     "thermometer": {
       "nome": "Termometro",
@@ -3311,8 +2251,7 @@
             }
           ]
         }
-      ],
-      "stacco": true
+      ]
     },
     "thermometer-solar": {
       "nome": "Termometro solare",
@@ -3339,8 +2278,7 @@
             }
           ]
         }
-      ],
-      "stacco": true
+      ]
     },
     "valve-safety": {
       "nome": "Valvola di sicurezza",
@@ -3367,8 +2305,7 @@
             }
           ]
         }
-      ],
-      "stacco": true
+      ]
     },
     "valve-safety-solar": {
       "nome": "Valvola di sicurezza solare",
@@ -3390,8 +2327,7 @@
           "perche": "La sicurezza del circuito solare; non è nel listino.",
           "prezzo": []
         }
-      ],
-      "stacco": true
+      ]
     },
     "dhw-safety-group": {
       "nome": "Gruppo di sicurezza sanitario",
@@ -3411,7 +2347,13 @@
           "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
           "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
           "perche": "Il gruppo di sicurezza sull'acqua fredda del bollitore; non è nel listino.",
-          "prezzo": []
+          "prezzo": [
+            {
+              "codice": "I74",
+              "n": 1.0
+            }
+          ],
+          "prezzo_nota": "riferimento online: Caleffi 526153"
         }
       ]
     },
@@ -3440,8 +2382,7 @@
             }
           ]
         }
-      ],
-      "stacco": true
+      ]
     },
     "drain-connection-cold": {
       "nome": "Attacco di scarico sull'acqua fredda",
@@ -3468,8 +2409,7 @@
             }
           ]
         }
-      ],
-      "stacco": true
+      ]
     },
     "drain-connection-dhw": {
       "nome": "Attacco di scarico sanitario",
@@ -3496,8 +2436,7 @@
             }
           ]
         }
-      ],
-      "stacco": true
+      ]
     },
     "drain-connection-solar": {
       "nome": "Attacco di carico e scarico solare",
@@ -3524,8 +2463,7 @@
             }
           ]
         }
-      ],
-      "stacco": true
+      ]
     },
     "filling-unit": {
       "nome": "Gruppo di riempimento con disconnettore",
@@ -3592,6 +2530,14 @@
                 {
                   "almeno": 25,
                   "codice": "I41c"
+                },
+                {
+                  "almeno": 35,
+                  "codice": "I41e"
+                },
+                {
+                  "almeno": 50,
+                  "codice": "I41f"
                 }
               ],
               "n": 1.0
@@ -3669,10 +2615,14 @@
           "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
           "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
           "perche": "La sonda arriva con la macchina o con il regolatore; l'installatore mette il pozzetto, che non è nel listino.",
-          "prezzo": []
+          "prezzo": [
+            {
+              "codice": "I76",
+              "n": 1.0
+            }
+          ]
         }
-      ],
-      "stacco": true
+      ]
     },
     "temperature-probe-dhw": {
       "nome": "Sonda di temperatura sanitaria",
@@ -3692,10 +2642,14 @@
           "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
           "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
           "perche": "La sonda arriva con la macchina o con il regolatore; l'installatore mette il pozzetto, che non è nel listino.",
-          "prezzo": []
+          "prezzo": [
+            {
+              "codice": "I76",
+              "n": 1.0
+            }
+          ]
         }
-      ],
-      "stacco": true
+      ]
     },
     "temperature-probe-solar": {
       "nome": "Sonda di temperatura solare",
@@ -3715,10 +2669,14 @@
           "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
           "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
           "perche": "La sonda arriva con la macchina o con il regolatore; l'installatore mette il pozzetto, che non è nel listino.",
-          "prezzo": []
+          "prezzo": [
+            {
+              "codice": "I76",
+              "n": 1.0
+            }
+          ]
         }
-      ],
-      "stacco": true
+      ]
     },
     "tee-branch": {
       "nome": "Raccordo a T",
@@ -4316,6 +3274,29 @@
       "perche": "La pompa di calore la compra Nove C a parte: la distinta conta gli attacchi, le staffe e il trattamento dell'acqua. Sugli attacchi della macchina si avvitano il giunto antivibrante e la riduzione: il raccordo al tubo lo porta il giunto (collaudo T1 di REL-021).",
       "voci": [
         {
+          "id": "basamento-pdc",
+          "sezione": "S",
+          "testo": "Basamento a terra per l'unità esterna con supporti antivibranti",
+          "um": "n",
+          "calcolo": {
+            "tipo": "per_pezzo",
+            "n": 1
+          },
+          "tranne_dato": {
+            "posa": "staff|muro|parete"
+          },
+          "fonte": "REL-022 (I-288): disposizione del PO del 6 novembre 2026 — i metri, l'isolamento e i gomiti dei tubi d'acqua li dà il progettista nella chat; il grafo è uno spazio di disegno",
+          "fonte_in_parole": "disposizione del PO (I-288): i dati di cantiere vengono dalla chat",
+          "perche": "Di regola la pompa di calore si posa a terra (I-288), su supporti antivibranti; le staffe solo se il progettista le chiede.",
+          "prezzo": [
+            {
+              "codice": "I71a",
+              "n": 4
+            }
+          ],
+          "prezzo_nota": "listino: quattro gomme antivibranti 100×100 (I71a); il basamento in opera costa di più"
+        },
+        {
           "id": "staffe-pdc",
           "sezione": "S",
           "testo": "Staffe a muro per l'unità esterna, portata 160 kg, con gommini antivibranti (coppia)",
@@ -4324,15 +3305,18 @@
             "tipo": "per_pezzo",
             "n": 1
           },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "L'unità esterna su staffe a muro; il basamento a terra è la variante V.",
+          "fonte": "REL-022 (I-288): disposizione del PO del 6 novembre 2026 — i metri, l'isolamento e i gomiti dei tubi d'acqua li dà il progettista nella chat; il grafo è uno spazio di disegno",
+          "fonte_in_parole": "disposizione del PO (I-288): i dati di cantiere vengono dalla chat",
+          "perche": "Le staffe a muro solo se il progettista le chiede («posa» della pompa di calore: staffe, a muro); di solito va a terra (I-288).",
           "prezzo": [
             {
               "codice": "I72b",
               "n": 1.0
             }
-          ]
+          ],
+          "se_dato": {
+            "posa": "staff|muro|parete"
+          }
         },
         {
           "id": "pulitore",
@@ -4382,6 +3366,29 @@
       "perche": "La pompa di calore la compra Nove C a parte: la distinta conta gli attacchi, le staffe e il trattamento dell'acqua. Sugli attacchi della macchina si avvitano il giunto antivibrante e la riduzione: il raccordo al tubo lo porta il giunto (collaudo T1 di REL-021).",
       "voci": [
         {
+          "id": "basamento-pdc",
+          "sezione": "S",
+          "testo": "Basamento a terra per l'unità esterna con supporti antivibranti",
+          "um": "n",
+          "calcolo": {
+            "tipo": "per_pezzo",
+            "n": 1
+          },
+          "tranne_dato": {
+            "posa": "staff|muro|parete"
+          },
+          "fonte": "REL-022 (I-288): disposizione del PO del 6 novembre 2026 — i metri, l'isolamento e i gomiti dei tubi d'acqua li dà il progettista nella chat; il grafo è uno spazio di disegno",
+          "fonte_in_parole": "disposizione del PO (I-288): i dati di cantiere vengono dalla chat",
+          "perche": "Di regola la pompa di calore si posa a terra (I-288), su supporti antivibranti; le staffe solo se il progettista le chiede.",
+          "prezzo": [
+            {
+              "codice": "I71a",
+              "n": 4
+            }
+          ],
+          "prezzo_nota": "listino: quattro gomme antivibranti 100×100 (I71a); il basamento in opera costa di più"
+        },
+        {
           "id": "staffe-pdc",
           "sezione": "S",
           "testo": "Staffe a muro per l'unità esterna, portata 160 kg, con gommini antivibranti (coppia)",
@@ -4390,15 +3397,18 @@
             "tipo": "per_pezzo",
             "n": 1
           },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "L'unità esterna su staffe a muro; il basamento a terra è la variante V.",
+          "fonte": "REL-022 (I-288): disposizione del PO del 6 novembre 2026 — i metri, l'isolamento e i gomiti dei tubi d'acqua li dà il progettista nella chat; il grafo è uno spazio di disegno",
+          "fonte_in_parole": "disposizione del PO (I-288): i dati di cantiere vengono dalla chat",
+          "perche": "Le staffe a muro solo se il progettista le chiede («posa» della pompa di calore: staffe, a muro); di solito va a terra (I-288).",
           "prezzo": [
             {
               "codice": "I72b",
               "n": 1.0
             }
-          ]
+          ],
+          "se_dato": {
+            "posa": "staff|muro|parete"
+          }
         },
         {
           "id": "pulitore",
@@ -4540,134 +3550,7 @@
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Accumuli e scambiatori li compra Nove C a parte: la distinta conta i raccordi agli attacchi.",
-      "voci": [
-        {
-          "id": "attacco-heating_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "heating_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "attacco-cold_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "cold_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "attacco-domestic_hot_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "domestic_hot_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        }
-      ]
+      "voci": []
     },
     "buffer-four-port": {
       "nome": "Volano termico a quattro attacchi",
@@ -4675,134 +3558,7 @@
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Accumuli e scambiatori li compra Nove C a parte: la distinta conta i raccordi agli attacchi.",
-      "voci": [
-        {
-          "id": "attacco-heating_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "heating_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "attacco-cold_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "cold_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "attacco-domestic_hot_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "domestic_hot_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        }
-      ]
+      "voci": []
     },
     "buffer-six-port": {
       "nome": "Volano termico a sei attacchi",
@@ -4810,134 +3566,7 @@
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Accumuli e scambiatori li compra Nove C a parte: la distinta conta i raccordi agli attacchi.",
-      "voci": [
-        {
-          "id": "attacco-heating_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "heating_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "attacco-cold_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "cold_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "attacco-domestic_hot_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "domestic_hot_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        }
-      ]
+      "voci": []
     },
     "buffer-combined": {
       "nome": "Accumulo combinato",
@@ -4945,134 +3574,7 @@
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Accumuli e scambiatori li compra Nove C a parte: la distinta conta i raccordi agli attacchi.",
-      "voci": [
-        {
-          "id": "attacco-heating_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "heating_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "attacco-cold_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "cold_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "attacco-domestic_hot_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "domestic_hot_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        }
-      ]
+      "voci": []
     },
     "dhw-cylinder": {
       "nome": "Bollitore ACS",
@@ -5080,134 +3582,7 @@
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Accumuli e scambiatori li compra Nove C a parte: la distinta conta i raccordi agli attacchi.",
-      "voci": [
-        {
-          "id": "attacco-heating_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "heating_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "attacco-cold_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "cold_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "attacco-domestic_hot_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "domestic_hot_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        }
-      ]
+      "voci": []
     },
     "dhw-cylinder-twin-coil": {
       "nome": "Bollitore ACS a due serpentini",
@@ -5215,134 +3590,7 @@
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Accumuli e scambiatori li compra Nove C a parte: la distinta conta i raccordi agli attacchi.",
-      "voci": [
-        {
-          "id": "attacco-heating_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "heating_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "attacco-cold_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "cold_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "attacco-domestic_hot_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "domestic_hot_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        }
-      ]
+      "voci": []
     },
     "dhw-heat-pump": {
       "nome": "Boiler in pompa di calore",
@@ -5350,134 +3598,7 @@
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Accumuli e scambiatori li compra Nove C a parte: la distinta conta i raccordi agli attacchi.",
-      "voci": [
-        {
-          "id": "attacco-heating_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "heating_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "attacco-cold_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "cold_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "attacco-domestic_hot_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "domestic_hot_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        }
-      ]
+      "voci": []
     },
     "plate-heat-exchanger": {
       "nome": "Scambiatore a piastre",
@@ -5485,2219 +3606,378 @@
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Accumuli e scambiatori li compra Nove C a parte: la distinta conta i raccordi agli attacchi.",
-      "voci": [
-        {
-          "id": "attacco-heating_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "heating_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "attacco-cold_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "cold_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "attacco-domestic_hot_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "domestic_hot_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        }
-      ]
+      "voci": []
     },
     "zone-manifold": {
       "nome": "Collettore di zona",
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Il collettore lo fornisce chi fa l'impianto a pavimento, con le sue vie: la distinta della centrale conta i raccordi alle sue tubazioni.",
-      "voci": [
-        {
-          "id": "attacco-heating_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "heating_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        }
-      ]
+      "voci": []
     },
     "zone-manifold-pair": {
       "nome": "Collettore di zona con ritorno",
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Il collettore lo fornisce chi fa l'impianto a pavimento, con le sue vie: la distinta della centrale conta i raccordi alle sue tubazioni.",
-      "voci": [
-        {
-          "id": "attacco-heating_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "heating_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        }
-      ]
+      "voci": []
     },
     "zone-manifold-pair-3": {
       "nome": "Collettore di zona con ritorno",
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Il collettore lo fornisce chi fa l'impianto a pavimento, con le sue vie: la distinta della centrale conta i raccordi alle sue tubazioni.",
-      "voci": [
-        {
-          "id": "attacco-heating_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "heating_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        }
-      ]
+      "voci": []
     },
     "zone-manifold-pair-4": {
       "nome": "Collettore di zona con ritorno",
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Il collettore lo fornisce chi fa l'impianto a pavimento, con le sue vie: la distinta della centrale conta i raccordi alle sue tubazioni.",
-      "voci": [
-        {
-          "id": "attacco-heating_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "heating_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        }
-      ]
+      "voci": []
     },
     "zone-manifold-pair-5": {
       "nome": "Collettore di zona con ritorno",
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Il collettore lo fornisce chi fa l'impianto a pavimento, con le sue vie: la distinta della centrale conta i raccordi alle sue tubazioni.",
-      "voci": [
-        {
-          "id": "attacco-heating_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "heating_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        }
-      ]
+      "voci": []
     },
     "zone-manifold-pair-6": {
       "nome": "Collettore di zona con ritorno",
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Il collettore lo fornisce chi fa l'impianto a pavimento, con le sue vie: la distinta della centrale conta i raccordi alle sue tubazioni.",
-      "voci": [
-        {
-          "id": "attacco-heating_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "heating_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        }
-      ]
+      "voci": []
     },
     "zone-manifold-pair-7": {
       "nome": "Collettore di zona con ritorno",
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Il collettore lo fornisce chi fa l'impianto a pavimento, con le sue vie: la distinta della centrale conta i raccordi alle sue tubazioni.",
-      "voci": [
-        {
-          "id": "attacco-heating_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "heating_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        }
-      ]
+      "voci": []
     },
     "zone-manifold-pair-8": {
       "nome": "Collettore di zona con ritorno",
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Il collettore lo fornisce chi fa l'impianto a pavimento, con le sue vie: la distinta della centrale conta i raccordi alle sue tubazioni.",
-      "voci": [
-        {
-          "id": "attacco-heating_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "heating_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        }
-      ]
+      "voci": []
     },
     "zone-manifold-pair-9": {
       "nome": "Collettore di zona con ritorno",
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Il collettore lo fornisce chi fa l'impianto a pavimento, con le sue vie: la distinta della centrale conta i raccordi alle sue tubazioni.",
-      "voci": [
-        {
-          "id": "attacco-heating_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "heating_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        }
-      ]
+      "voci": []
     },
     "zone-manifold-pair-10": {
       "nome": "Collettore di zona con ritorno",
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Il collettore lo fornisce chi fa l'impianto a pavimento, con le sue vie: la distinta della centrale conta i raccordi alle sue tubazioni.",
-      "voci": [
-        {
-          "id": "attacco-heating_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "heating_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        }
-      ]
+      "voci": []
     },
     "zone-manifold-pair-11": {
       "nome": "Collettore di zona con ritorno",
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Il collettore lo fornisce chi fa l'impianto a pavimento, con le sue vie: la distinta della centrale conta i raccordi alle sue tubazioni.",
-      "voci": [
-        {
-          "id": "attacco-heating_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "heating_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        }
-      ]
+      "voci": []
     },
     "zone-manifold-pair-12": {
       "nome": "Collettore di zona con ritorno",
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Il collettore lo fornisce chi fa l'impianto a pavimento, con le sue vie: la distinta della centrale conta i raccordi alle sue tubazioni.",
-      "voci": [
-        {
-          "id": "attacco-heating_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "heating_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        }
-      ]
+      "voci": []
     },
     "underfloor-panel": {
       "nome": "Pannello radiante",
-      "confine": true,
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Un confine della centrale: i terminali e la rete esistono o sono di altri; la distinta conta il raccordo alla tubazione che arriva.",
-      "voci": [
-        {
-          "id": "attacco-heating_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "heating_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "attacco-cold_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "cold_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "attacco-domestic_hot_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "domestic_hot_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        }
-      ]
+      "voci": []
     },
     "radiator": {
       "nome": "Radiatore",
-      "confine": true,
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Un confine della centrale: i terminali e la rete esistono o sono di altri; la distinta conta il raccordo alla tubazione che arriva.",
-      "voci": [
-        {
-          "id": "attacco-heating_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "heating_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "attacco-cold_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "cold_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "attacco-domestic_hot_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "domestic_hot_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        }
-      ]
+      "voci": []
     },
     "fan-coil": {
       "nome": "Ventilconvettore",
-      "confine": true,
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Un confine della centrale: i terminali e la rete esistono o sono di altri; la distinta conta il raccordo alla tubazione che arriva.",
-      "voci": [
-        {
-          "id": "attacco-heating_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "heating_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "attacco-cold_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "cold_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "attacco-domestic_hot_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "domestic_hot_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        }
-      ]
+      "voci": []
     },
     "fan-coil-ducted": {
       "nome": "Ventilconvettore canalizzato",
-      "confine": true,
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Un confine della centrale: i terminali e la rete esistono o sono di altri; la distinta conta il raccordo alla tubazione che arriva.",
-      "voci": [
-        {
-          "id": "attacco-heating_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "heating_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "attacco-cold_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "cold_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "attacco-domestic_hot_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "domestic_hot_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        }
-      ]
+      "voci": []
     },
     "ahu-coil": {
       "nome": "Batteria di trattamento aria",
-      "confine": true,
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Un confine della centrale: i terminali e la rete esistono o sono di altri; la distinta conta il raccordo alla tubazione che arriva.",
-      "voci": [
-        {
-          "id": "attacco-heating_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "heating_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "attacco-cold_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "cold_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "attacco-domestic_hot_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "domestic_hot_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        }
-      ]
+      "voci": []
     },
     "existing-plant-inlet": {
       "nome": "Da impianto esistente",
-      "confine": true,
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Un confine della centrale: i terminali e la rete esistono o sono di altri; la distinta conta il raccordo alla tubazione che arriva.",
-      "voci": [
-        {
-          "id": "attacco-heating_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "heating_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "attacco-cold_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "cold_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "attacco-domestic_hot_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "domestic_hot_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        }
-      ]
+      "voci": []
     },
     "existing-plant-outlet": {
       "nome": "Verso impianto esistente",
-      "confine": true,
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Un confine della centrale: i terminali e la rete esistono o sono di altri; la distinta conta il raccordo alla tubazione che arriva.",
-      "voci": [
-        {
-          "id": "attacco-heating_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "heating_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "attacco-cold_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "cold_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "attacco-domestic_hot_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "domestic_hot_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        }
-      ]
+      "voci": []
     },
     "capped-connection": {
       "nome": "Attacco predisposto",
-      "confine": true,
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Un confine della centrale: i terminali e la rete esistono o sono di altri; la distinta conta il raccordo alla tubazione che arriva.",
-      "voci": [
-        {
-          "id": "attacco-heating_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "heating_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "attacco-cold_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "cold_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "attacco-domestic_hot_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "domestic_hot_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        }
-      ]
+      "voci": []
     },
     "cold-water-inlet": {
       "nome": "Alimentazione acqua fredda",
-      "confine": true,
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Un confine della centrale: i terminali e la rete esistono o sono di altri; la distinta conta il raccordo alla tubazione che arriva.",
-      "voci": [
-        {
-          "id": "attacco-heating_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "heating_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "attacco-cold_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "cold_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "attacco-domestic_hot_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "domestic_hot_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        }
-      ]
+      "voci": []
     },
     "dhw-draw-off": {
       "nome": "Utenze sanitarie",
-      "confine": true,
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Un confine della centrale: i terminali e la rete esistono o sono di altri; la distinta conta il raccordo alla tubazione che arriva.",
-      "voci": [
-        {
-          "id": "attacco-heating_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "heating_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "attacco-cold_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "cold_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "attacco-domestic_hot_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "domestic_hot_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        }
-      ]
+      "voci": []
     },
     "dhw-recirculation-inlet": {
       "nome": "Ricircolo sanitario dalle utenze",
-      "confine": true,
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Un confine della centrale: i terminali e la rete esistono o sono di altri; la distinta conta il raccordo alla tubazione che arriva.",
-      "voci": [
-        {
-          "id": "attacco-heating_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "heating_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "attacco-cold_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "cold_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        },
-        {
-          "id": "attacco-domestic_hot_water",
-          "sezione": "I",
-          "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
-          "um": "n",
-          "calcolo": {
-            "tipo": "per_linea",
-            "n": 1,
-            "fluido": "domestic_hot_water"
-          },
-          "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
-          "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
-          "perche": "Ogni tubazione d'acqua che arriva a un attacco filettato (macchina, accumulo, collettore, terminale) finisce con un raccordo a pressare.",
-          "prezzo": [
-            {
-              "per": "sezione",
-              "scegli": [
-                {
-                  "se": "20\\s*[×x]",
-                  "codice": "I21"
-                },
-                {
-                  "se": "26\\s*[×x]",
-                  "codice": "I22"
-                },
-                {
-                  "se": "32\\s*[×x]",
-                  "codice": "I23"
-                },
-                {
-                  "se": "40\\s*[×x]",
-                  "codice": "I24"
-                },
-                {
-                  "se": "50\\s*[×x]",
-                  "codice": "I25"
-                }
-              ],
-              "n": 1.0
-            }
-          ]
-        }
-      ]
+      "voci": []
     }
+  },
+  "giunzioni": {
+    "nota": "Le giunzioni dell'acqua (REL-023, I-291) si contano sulle tubazioni del grafo, dai due pezzi che ciascuna collega: fra due pezzi filettati che si toccano (accessori, o un accessorio sull'attacco di un accumulo) un **nipplo**, ridotto se i pollici sono diversi; fra un pezzo filettato e il tubo un **raccordo diritto a pressare**, uno per capo; un tee a pressare prende il tubo da sé. Un `adattatore` (la riduzione M × F) si avvita senza nipplo; un pezzo `sull_attacco` (il giunto antivibrante, col suo bocchettone) si avvita sull'attacco della macchina senza nipplo; uno `stacco` (sfiato, manometro, sicurezza, scarico, vaso, sonda) si avvita sul tee o sul suo rubinetto e non porta giunzioni. Un `confine` (terminale, rete esistente, acquedotto, utenze) vuole il tubo. **Ogni tratto fra due pezzi che non sono tee ha almeno un tubo**: se le sue giunzioni sono tutte nippli, la prima fra due accessori diventa un tubo (due raccordi). Una tubazione con `tubo: true` (il tratto esterno della pompa di calore, un accessorio lontano dal suo vicino, dal contesto del progetto) ha il tubo in mezzo. **Il tratto esterno** di una macchina che sta fuori (`macchine_esterne`): dall'attacco si passano i pezzi che stanno sulla macchina (`alla_macchina`: giunto, riduzione, valvola antigelo), e la tubazione dopo è il tubo fino alla centrale.",
+    "fonte": "REL-023 (I-291): regola del PO del 6 novembre 2026 sulle giunzioni; prezzi dei nippli dalle fatture Bricoman dell'installatore (listino §2ter)",
+    "fonte_in_parole": "regola del PO sulle giunzioni (I-291)",
+    "perche": "Il PO: «I nippli vanno tra due accessori minori i raccordi a pressare tra tubo e accessorio e tra tubo e tubo. Le curve una ventina o le stima agente in contesto di progetto le tee invece le conta dal grafo.»",
+    "adattatori": [
+      "pipe-reducer"
+    ],
+    "sull_attacco": [
+      "flexible-joint"
+    ],
+    "stacchi": [
+      "air-vent",
+      "air-vent-plain",
+      "air-vent-solar",
+      "pressure-gauge",
+      "pressure-gauge-solar",
+      "thermometer",
+      "thermometer-solar",
+      "valve-safety",
+      "valve-safety-solar",
+      "drain-connection",
+      "drain-connection-cold",
+      "drain-connection-dhw",
+      "drain-connection-solar",
+      "expansion-connection",
+      "expansion-connection-dhw",
+      "expansion-connection-solar",
+      "temperature-probe",
+      "temperature-probe-dhw",
+      "temperature-probe-solar"
+    ],
+    "confini": [
+      "zone-manifold",
+      "zone-manifold-pair",
+      "zone-manifold-pair-3",
+      "zone-manifold-pair-4",
+      "zone-manifold-pair-5",
+      "zone-manifold-pair-6",
+      "zone-manifold-pair-7",
+      "zone-manifold-pair-8",
+      "zone-manifold-pair-9",
+      "zone-manifold-pair-10",
+      "zone-manifold-pair-11",
+      "zone-manifold-pair-12",
+      "underfloor-panel",
+      "radiator",
+      "fan-coil",
+      "fan-coil-ducted",
+      "ahu-coil",
+      "existing-plant-inlet",
+      "existing-plant-outlet",
+      "capped-connection",
+      "cold-water-inlet",
+      "dhw-draw-off",
+      "dhw-recirculation-inlet"
+    ],
+    "voci": {
+      "nipplo": {
+        "id": "nipplo",
+        "sezione": "I",
+        "testo": "Nipplo {pollice} M × M",
+        "um": "n",
+        "fonte": "REL-023 (I-291): regola del PO del 6 novembre 2026 sulle giunzioni; prezzi dei nippli dalle fatture Bricoman dell'installatore (listino §2ter)",
+        "fonte_in_parole": "regola del PO sulle giunzioni (I-291)",
+        "perche": "Due pezzi filettati che si toccano si avvitano con un nipplo.",
+        "prezzo": [
+          {
+            "per": "pollice",
+            "scegli": [
+              {
+                "se": "^½\"",
+                "codice": "I83a"
+              },
+              {
+                "se": "^¾\"",
+                "codice": "I83b"
+              },
+              {
+                "se": "^1\"",
+                "codice": "I83c"
+              },
+              {
+                "se": "^1¼\"",
+                "codice": "I29c"
+              }
+            ],
+            "n": 1.0
+          }
+        ]
+      },
+      "nipplo_ridotto": {
+        "id": "nipplo-ridotto",
+        "sezione": "I",
+        "testo": "Nipplo ridotto {pollice} × {pollice_b} M × M",
+        "um": "n",
+        "fonte": "REL-023 (I-291): regola del PO del 6 novembre 2026 sulle giunzioni; prezzi dei nippli dalle fatture Bricoman dell'installatore (listino §2ter)",
+        "fonte_in_parole": "regola del PO sulle giunzioni (I-291)",
+        "perche": "Fra due pezzi filettati di pollice diverso il nipplo è ridotto.",
+        "prezzo": [
+          {
+            "per": "{pollice} × {pollice_b}",
+            "scegli": [
+              {
+                "se": "^1\" × ¾\"",
+                "codice": "I83d"
+              },
+              {
+                "se": "^1¼\" × 1\"",
+                "codice": "I78a"
+              }
+            ],
+            "n": 1.0
+          }
+        ],
+        "prezzo_nota": "1¼\" × 1\": la riduzione M × F del listino (I78a), il nipplo ridotto non è nel listino"
+      },
+      "raccordo": {
+        "id": "raccordo",
+        "sezione": "I",
+        "testo": "Raccordo diritto a pressare M {pollice} × tubo {sezione}",
+        "um": "n",
+        "fonte": "REL-023 (I-291): regola del PO del 6 novembre 2026 sulle giunzioni; prezzi dei nippli dalle fatture Bricoman dell'installatore (listino §2ter)",
+        "fonte_in_parole": "regola del PO sulle giunzioni (I-291)",
+        "perche": "Dove un pezzo filettato incontra il tubo multistrato, un raccordo a pressare.",
+        "prezzo": [
+          {
+            "per": "sezione",
+            "scegli": [
+              {
+                "se": "16\\s*[×x]",
+                "codice": "I81c"
+              },
+              {
+                "se": "20\\s*[×x]",
+                "codice": "I21"
+              },
+              {
+                "se": "26\\s*[×x]",
+                "codice": "I22"
+              },
+              {
+                "se": "32\\s*[×x]",
+                "codice": "I23"
+              },
+              {
+                "se": "40\\s*[×x]",
+                "codice": "I24"
+              },
+              {
+                "se": "50\\s*[×x]",
+                "codice": "I25"
+              }
+            ],
+            "n": 1.0
+          }
+        ]
+      },
+      "raccordo_all_attacco": {
+        "id": "raccordo-all-attacco",
+        "sezione": "I",
+        "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
+        "um": "n",
+        "fonte": "REL-023 (I-291): regola del PO del 6 novembre 2026 sulle giunzioni; prezzi dei nippli dalle fatture Bricoman dell'installatore (listino §2ter)",
+        "fonte_in_parole": "regola del PO sulle giunzioni (I-291)",
+        "perche": "Il tubo che arriva a un attacco filettato (macchina, accumulo, collettore, terminale, rete esistente) finisce con un raccordo a pressare.",
+        "prezzo": [
+          {
+            "per": "sezione",
+            "scegli": [
+              {
+                "se": "16\\s*[×x]",
+                "codice": "I81c"
+              },
+              {
+                "se": "20\\s*[×x]",
+                "codice": "I21"
+              },
+              {
+                "se": "26\\s*[×x]",
+                "codice": "I22"
+              },
+              {
+                "se": "32\\s*[×x]",
+                "codice": "I23"
+              },
+              {
+                "se": "40\\s*[×x]",
+                "codice": "I24"
+              },
+              {
+                "se": "50\\s*[×x]",
+                "codice": "I25"
+              }
+            ],
+            "n": 1.0
+          }
+        ]
+      }
+    },
+    "macchine_esterne": [
+      "heat-pump-air-water",
+      "heat-pump-air-water-large"
+    ],
+    "alla_macchina": [
+      "flexible-joint",
+      "pipe-reducer",
+      "valve-antifreeze"
+    ]
   }
 }

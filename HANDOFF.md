@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-11-05 — **la 1.14.0 è su `main`** (`REL-019` … `REL-021`, I-287). Il pacchetto successivo si chiede al PO.
+**Aggiornato:** 2026-11-06 — **la 1.15.0** (`REL-022` e la prima parte di `REL-023`, I-288 … I-294) è fusa su `main` con la PR #90, approvata dal PO (I-294).
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -11,7 +11,38 @@
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
 
-## ▶ Da dove riparte la prossima sessione — scritto il 5 novembre 2026, dopo la fusione della 1.14.0
+## ▶ Da dove riparte la prossima sessione — scritto il 6 novembre 2026 sera, con la 1.15.0 e REL-023
+
+**Il pacchetto è `REL-023`** (`ACTIVE_WORK_PACKAGE.md`), **in corso**. Fuso su `main` nella 1.15.0 (PR #90, I-294), con
+`REL-022`: **le giunzioni** (un nipplo fra due accessori, un raccordo a pressare fra tubo e accessorio, D-239),
+**niente valvole antigelo di base nelle case** con la nota sulla tavola (D-238, supera D-230 nelle case), **il
+circolatore fra le apparecchiature** (I-292), il listino rev. 05 con i nippli dalle fatture dell'installatore.
+
+- **Le misure**: il T1 coi metri della commessa PR.BG.017 a 1.425 € (`docs/collaudi/REL-023/RAPPORTO.md`); la posa
+  automatica dell'impianto di prova 2 marcata rossa (`SECONDO_APERTO`): è solo l'inventario dal D-151.
+- **Il differenziale** (D-240): sempre sulla linea della PdC, 30 mA rapido compatibile con l'inverter, tipo A di base;
+  il manuale non prescrive il tipo. La specifica Nove C Rev. 01 §3.2 (tipo B) la allinea il PO.
+- **Aperti col PO**: glicole o valvole sopra i 35 kW e come alternativa nelle case (il PO non ha deciso: nessuna regola
+  sul glicole); il defangatore e le intercettazioni del corredo standard; la coppia del secondario che cambia
+  interasse fra volano e collettore (attacchi di passo diverso).
+- **I numeri**: il prossimo input è **I-295**, la prossima decisione **D-241**.
+
+## Com'era il 6 novembre 2026 pomeriggio, con la 1.15.0 prima di REL-023
+
+
+**Il pacchetto è `REL-023`** (`ACTIVE_WORK_PACKAGE.md`), **da avviare**: il corredo standard, una 12 kW sui 1.700 € di
+materiale (I-289). `REL-022` è la 1.15.0: le quantità di cantiere dalla chat, il tipo A, il listino rev. 04 (D-237).
+
+- **Le misure**: suite verde (numeri nella PR della 1.15.0); ZIP 150 file; la tavola dell'elettrico di riferimento
+  con QF-01 «tipo A»; la 12 kW con la 3 vie a 1.929 € (`docs/collaudi/REL-022/RAPPORTO.md`).
+- **L'ambiente della sessione**: «disegnatoremep», personale, apre 20 siti di rivenditori; Tecnomat, Leroy Merlin,
+  ManoMano, RS ed Elettronew hanno una protezione anti-robot, che non si aggira.
+- **Aperti, da chiedere al PO**: il ritegno sul ricircolo sanitario e il gruppo di riempimento negli impianti di solo
+  riscaldamento (contenuto MEP); i prezzi del canalizzato ancora DA PREZZARE (canalina 110×75, plenum di ripresa,
+  fascette e sostegni dei flessibili); il resto del rapporto di `REL-021`.
+- **I numeri**: il prossimo input è **I-290**, la prossima decisione **D-238**.
+
+## Com'era il 5 novembre 2026, dopo la fusione della 1.14.0
 
 **Nessun pacchetto attivo**: `REL-019`, `REL-020` e `REL-021` sono consegnati nella 1.14.0, fusa su disposizione del
 PO (I-287). Il prossimo lo sceglie il PO.

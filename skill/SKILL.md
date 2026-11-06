@@ -7,7 +7,7 @@ compatibility: Richiede l'esecuzione del codice (claude.ai, Claude Cowork o Clau
 
 # Disegnatore MEP
 
-**Versione 1.14.0** — 5 novembre 2026.
+**Versione 1.15.0** — 6 novembre 2026.
 
 Il progettista ha già deciso e dimensionato l'impianto, e te lo descrive a parole. Tu ne fai la
 **tavola dello schema funzionale**: la leggi, chiedi quello che manca, la fai approvare, la componi e
@@ -121,8 +121,10 @@ lancia anche `completa` (passo 3): i punti aperti che trova sono domande dello s
   posa escono solo nell'esecutivo (D-224);
 - **marca, modello e potenza delle pompe di calore**: con le Shenling `completa` controlla il
   manuale — attacchi, portata, volano — e lo dice negli «avvisi del manuale»;
-- **l'antigelo**, sopra i 35 kW: glicole o valvole (`"antigelo"` nel grafo). Nelle case le valvole
-  le mettono le regole; se il progettista dichiara il glicole, niente valvole;
+- **l'antigelo**: sopra i 35 kW glicole o valvole (`"antigelo"` nel grafo). Nelle case di base
+  niente valvole: la pompa di calore si protegge da sé finché ha corrente, e la tavola lo dice in
+  nota. Chiedi se la casa resta vuota d'inverno (seconda casa), se la zona è fredda o il tratto
+  esterno lungo: se sì, `"antigelo": "valvole"`;
 - **i dati del vaso**, se vuole il vaso dimensionato: il contenuto d'acqua di tutto il circuito che
   il vaso vede (se non lo sa, lo stimi dai terminali e dici che è una stima), la temperatura
   massima di mandata, il dislivello fra il vaso e il punto più alto dell'impianto;
@@ -139,7 +141,10 @@ lancia anche `completa` (passo 3): i punti aperti che trova sono domande dello s
   parole i dati senza i quali le voci escono «DA DEFINIRE» — marca e modello, refrigerante e
   precarica, bocchette, attacco della condensa, protezioni, portate… —, a quali pezzi mancano e in
   che campo del grafo va la risposta. Le porti **in questo stesso messaggio** (se non sai ancora se
-  la vuole, sotto «se vuoi la distinta, mi servono anche:»), non dopo il primo lancio.
+  la vuole, sotto «se vuoi la distinta, mi servono anche:»), non dopo il primo lancio. **Per
+  l'acqua** chiedi sempre i metri di tubo per rete e diametro, l'isolamento (preisolato, o nudo con
+  guaina e spessore), i gomiti a corpo (di regola 20) e la posa della pompa di calore (a terra, o
+  staffe se le vuole): lo schema è uno spazio di disegno, e non li dà (`riferimenti/distinta.md`).
 
 Il messaggio porta:
 

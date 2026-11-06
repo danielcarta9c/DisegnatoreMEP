@@ -245,8 +245,10 @@ Regole di forma:
   note in tutto: oltre, escono le prime cinque e `valida` lo dice; nel definitivo non
   escono, e `valida` lo dice (I-271).
 - **`antigelo`**: come si protegge dal gelo il tratto esterno delle pompe di calore,
-  `"glicole"` o `"valvole"`, **solo se il testo lo dice**. Senza, nelle case le regole
-  mettono le valvole antigelo e sopra i 35 kW `completa` lo chiede (D-230).
+  `"glicole"` o `"valvole"`, **solo se il testo lo dice**. Senza, nelle case le regole non
+  mettono valvole e la tavola dice di tenere la pompa di calore alimentata d'inverno (I-290);
+  le valvole si dichiarano per una seconda casa, una zona fredda, un tratto esterno lungo.
+  Sopra i 35 kW `completa` lo chiede (D-230).
 - **I dati che il vaso vuole** — il contenuto d'acqua dell'impianto, la temperatura
   massima, il dislivello fra il vaso e il punto più alto — non vanno nel grafo: li dai al
   comando `vaso` dopo `completa`. Se il testo li dice, tienili per quel momento.
@@ -752,7 +754,8 @@ progettista: la disegni solo se il testo la dice.
 **La protezione della linea della pompa di calore** (REL-018, I-278). La linea che dal quadro
 alimenta una pompa di calore aria-acqua ha **sempre** il suo interruttore magnetotermico
 differenziale nel quadro (specifica tecnica di installazione PdC Shenling Nove C Rev. 01, §3.2:
-bipolare, curva C, Idn 30 mA, tipo B, ad alta velocità): un pezzo `circuit-breaker-rcbo`
+bipolare, curva C, Idn 30 mA, ad alta velocità; **in ambito domestico di tipo A**, D-237: il tipo B della
+specifica solo se il progettista lo chiede): un pezzo `circuit-breaker-rcbo`
 («Interruttore magnetotermico differenziale», sigla QF-nn), **in serie** all'uscita del quadro,
 e **una rete sola** `power_supply` per la linea:
 
@@ -778,10 +781,12 @@ e **una rete sola** `power_supply` per la linea:
   sul C32, il «B40» della specifica §3.3), e lo dice la descrizione del progettista, non un dato
   in più (D-234).
 
-  «2P C32 Idn 30 mA tipo B» sono `"poli": "2P"`, `"curva": "C"`, `"in_a": 32`, `"idn_ma": 30`,
-  `"tipo_differenziale": "B"`. Se il testo non li dà **non inventarli**: su una Shenling li
-  scrive `completa` dal manuale (§7.4 p. 55) e dalla specifica (§3.3), con la regola «vale il
-  maggiore», e lo dice; su un'altra macchina restano senza, e la distinta li chiede.
+  «2P C32 Idn 30 mA tipo A» sono `"poli": "2P"`, `"curva": "C"`, `"in_a": 32`, `"idn_ma": 30`,
+  `"tipo_differenziale": "A"`. Se il testo non li dà **non inventarli**: su una Shenling li
+  scrive `completa` dal manuale (§7.5 p. 55) e dalla specifica (§3.3), con la regola «vale il
+  maggiore», e il **tipo A** dell'ambito domestico (D-237), e lo dice; se il progettista vuole il
+  tipo B lo scrivi tu (`"tipo_differenziale": "B"`), e `completa` non lo cambia. Su un'altra
+  macchina restano senza, e la distinta li chiede.
 
 **Il sezionatore locale, di regola, no** (specifica §3.2): la linea della pompa di calore ha
 l'interruttore nel quadro e basta. Il sezionatore `isolator-switch` accanto alla macchina lo

@@ -491,6 +491,34 @@ class RichiestaDeiDiametri(StrictModel):
         return self
 
 
+class TuboDellaDistinta(StrictModel):
+    """Quanti metri di un tubo d'acqua compra l'impianto, su una rete (REL-022, I-288).
+
+    Il grafo e' uno spazio di disegno, non una planimetria: le lunghezze dei tubi
+    d'acqua non si ricavano dal grafo e non si stimano. Le dice il progettista, nella
+    chat in cui la skill lavora, per rete e per diametro; l'agente le scrive qui."""
+
+    rete: str = Field(pattern=ID_PATTERN)
+    """La rete, per identificativo come il grafo la scrive."""
+    tubo: str = Field(min_length=1)
+    """Il tubo nella notazione del suo materiale: «MS 32×3»."""
+    metri: float = Field(gt=0)
+    """I metri del progettista, dalla pianta o dal sopralluogo."""
+    isolamento: str | None = Field(default=None, min_length=1)
+    """Come si isola: «preisolato», «guaina 19 mm», «nudo». Lo dice il progettista:
+    senza, la distinta lo chiede."""
+
+
+class DatiDellaDistinta(StrictModel):
+    """I dati di cantiere della distinta che il grafo non sa (REL-022, I-288): li dice
+    il progettista nella chat, e l'agente li scrive qui. `completa` li conserva."""
+
+    tubi: list[TuboDellaDistinta] = Field(default_factory=list)
+    """I metri dei tubi d'acqua, per rete e per diametro."""
+    gomiti: int | None = Field(default=None, ge=0)
+    """I gomiti a corpo dell'impianto; senza, quelli di regola (una ventina)."""
+
+
 class ProjectModel(StrictModel):
     schema_version: str = Field(pattern=r"^\d+\.\d+\.\d+$", default=SCHEMA_VERSION)
     metadata: ProjectMetadata
@@ -505,6 +533,9 @@ class ProjectModel(StrictModel):
     """La richiesta dei diametri delle tubazioni, se il progettista l'ha fatta
     (REL-007). Facoltativa e additiva come `plant_regime`: assente vuol dire che
     il DN non si calcola, e un documento scritto prima non cambia di un byte."""
+    distinta: DatiDellaDistinta | None = None
+    """I dati di cantiere della distinta, dalla chat (REL-022, I-288): i metri dei tubi
+    d'acqua, l'isolamento, i gomiti a corpo. Facoltativo e additivo come `diametri`."""
     subsystems: list[SubsystemModel] = Field(default_factory=list)
     networks: list[NetworkModel] = Field(default_factory=list)
     components: list[ComponentInstance] = Field(default_factory=list)
@@ -519,7 +550,8 @@ class ProjectModel(StrictModel):
     """Come si protegge dal gelo il tratto esterno delle pompe di calore (REL-011,
     D-230): con il **glicole** nell'acqua, o con le **valvole antigelo** che scaricano il
     tratto esterno. Lo dichiara il progettista. Assente: nelle case (fino a 35 kW) le
-    regole mettono le valvole, nelle centrali grandi chiedono. Assente non si scrive."""
+    regole non mettono valvole (I-290) e la tavola dice di tenere la pompa di calore
+    alimentata d'inverno; nelle centrali grandi chiedono. Assente non si scrive."""
     materiale_tubazioni: MaterialeDelleTubazioni | None = None
     """Il materiale delle tubazioni (I-279): **multistrato**, **acciaio** o **rame**. Il
     calcolo dei diametri sceglie il tubo commerciale di questo materiale e la tavola lo
@@ -613,6 +645,8 @@ class ProjectModel(StrictModel):
         dati: dict[str, Any] = handler(self)
         if dati.get("diametri") is None:
             dati.pop("diametri", None)
+        if dati.get("distinta") is None:
+            dati.pop("distinta", None)
         if not dati.get("accessori_tolti"):
             dati.pop("accessori_tolti", None)
         if dati.get("antigelo") is None:

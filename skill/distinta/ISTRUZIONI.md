@@ -104,12 +104,15 @@ mancano — `--domande` te li elenca —; non li stimi tu.
 
 | dove | dato | che cos'è |
 |---|---|---|
-| ogni tratto | `lunghezza_m` | la lunghezza **stimata** del tratto (pianta, sopralluogo); `0` se è un raccordo diretto (plenum sulla macchina, cablaggio di fabbrica) |
+| ogni tratto (aria, frigorifero, condensa, elettrico) | `lunghezza_m` | la lunghezza **stimata** del tratto (pianta, sopralluogo); `0` se è un raccordo diretto (plenum sulla macchina, cablaggio di fabbrica). **Non per l'acqua**: vedi sotto |
+| ogni rete d'acqua | blocco `distinta.tubi` | **i tubi d'acqua li dice il progettista nella chat**: per rete, il tubo, i metri e l'isolamento (sotto) |
+| l'impianto | `distinta.gomiti` | i gomiti a corpo: si **chiedono** come i metri; senza risposta la distinta mette l'ipotesi di 20, e la voce resta da confermare |
+| pompa di calore | `posa` | «staffe a muro» solo se il progettista le chiede; senza, la distinta la mette **a terra** su supporti antivibranti |
 | ogni tubazione | `sezione` | «Ø200», «Ø6,35 (1/4")», «MS 32×3», «3G2,5», «2×0,75 (P1-P2)»: diametro, lati o cavo; sull'acqua il tubo, nella notazione del materiale (I-279), e dove manca vale quello della tavola |
 | mandata e ripresa | `portata_m3h` | per la verifica della velocità e delle griglie di transito |
 | ogni tubazione | `attraversamenti` | quante pareti interne passa; se manca, la distinta ne assume uno per l'aria, la condensa e la linea del gas, e lo dice |
 | linee di alimentazione | `protezione` | il dispositivo nel quadro, dalla targa della macchina: «Magnetotermico-differenziale 1P+N C16, Idn 30 mA, tipo A o F, 6 kA»; non serve su una linea che ha il pezzo `circuit-breaker-rcbo`, che ha la sua voce |
-| interruttore della linea | `poli`, `curva`, `in_a`, `idn_ma`, `tipo_differenziale` | «Interruttore magnetotermico differenziale 2P C32 Idn 30 mA tipo B» (REL-018); su una Shenling li scrive `completa` |
+| interruttore della linea | `poli`, `curva`, `in_a`, `idn_ma`, `tipo_differenziale` | «Interruttore magnetotermico differenziale 2P C32 Idn 30 mA tipo A» (REL-018, D-237: tipo A in ambito domestico); su una Shenling li scrive `completa` |
 | un tratto incerto | `lunghezza_minima_m` | un minimo del progettista (il quadro da trovare in sopralluogo) |
 | macchine | `marca`, `modello` | come per la tabella delle apparecchiature (D-190) |
 | unità esterna | `refrigerante`, `precarica_fino_a_m`, `carica_aggiuntiva_g_m`, `lunghezza_max_m` | dalla scheda della macchina |
@@ -126,16 +129,51 @@ distinta li legge in tutti e due i posti.
 accessori in linea — valvole, filtri, giunti, la deviatrice — portano il pollice del tubo su cui stanno (MS 32×3 →
 1"), dalla tabella di equivalenza del produttore.
 
-**L'idronico ha il suo corredo** (REL-020, sezione I, proposta da confermare dal PO). La pompa di calore, gli
-accumuli e il bollitore sono apparecchiature (sezione A, si comprano a parte): la distinta conta i raccordi ai loro
-attacchi, le staffe e il trattamento dell'acqua. Ogni accessorio in linea porta sé stesso, del pollice del tubo, e due
-raccordi a pressare (tre per i pezzi a tre vie); ogni derivazione un tee; ogni linea d'acqua il tubo, i gomiti, i
-collari, i manicotti di riserva e la guaina. Le valvole, i filtri, i giunti e i circolatori **non spezzano il tratto**:
-la linea dalla pompa di calore al volano è un tratto solo, con una lunghezza sola. I **tratti corti in centrale**, fra
-due accessori, senza lunghezza valgono **1 m** e la distinta lo dice; gli stacchi di servizio (sicurezza,
-manometro, sfiato, scarico, sonda) si avvitano sul tee e non hanno tubo; un tratto che arriva a
-una macchina, a un accumulo o a un confine (terminali, utenze, rete esistente) la lunghezza la vuole dal
-progettista. L'acqua non aggiunge il metro per tratto della maggiorazione: resta il 15%.
+**L'idronico ha il suo corredo** (REL-020, sezione I). La pompa di calore, gli accumuli, il bollitore e il
+circolatore sono apparecchiature (sezione A, Nove C le compra a parte); la pompa di calore va a terra, su staffe solo
+se il progettista le chiede. Ogni accessorio in linea porta sé stesso, del pollice del tubo; ogni derivazione un tee.
+**Dal grafo si contano solo i pezzi** (valvole, tee, attacchi): sono pezzi veri.
+
+**Le giunzioni si contano sulle tubazioni** (REL-023, I-291), dai due pezzi che ciascuna collega:
+
+- fra **due pezzi filettati che si toccano** (sfera e defangatore, sfera e circolatore, la sfera sull'attacco del
+  volano) un **nipplo**, ridotto se i pollici sono diversi;
+- fra **un pezzo filettato e il tubo** un **raccordo diritto a pressare**, uno per capo; il **tee a pressare** prende
+  il tubo da sé; il tubo che arriva a un attacco (macchina, accumulo, collettore, terminale, rete esistente) finisce
+  con un raccordo all'attacco;
+- la riduzione M × F si avvita senza nipplo, e il giunto antivibrante sull'attacco della pompa di calore col suo
+  bocchettone; sfiati, manometri, sicurezze, scarichi, vasi e sonde si avvitano sul tee o sul loro rubinetto;
+- **ogni tratto fra due pezzi che non sono tee ha almeno un tubo** (la deviatrice e la sfera del volano non si
+  toccano): se le sue giunzioni sarebbero tutte nippli, la prima fra due accessori diventa un tubo;
+- **il tratto esterno**: dalla pompa di calore si passano il giunto, la riduzione e la valvola antigelo, e la
+  tubazione dopo è il tubo fino alla centrale.
+
+Dove il **contesto del progetto** dice che fra due accessori c'è un tubo che la regola non vede (un accessorio lontano
+dal suo vicino), scrivi `"tubo": true` nelle `properties` di quella tubazione. Se un accumulo ha gli attacchi di un
+pollice diverso dalle valvole, scrivi il suo `attacco` (es. `"1¼\""`): la giunzione diventa un nipplo ridotto.
+
+**I tubi d'acqua si chiedono nella chat, non si misurano sul grafo** (I-288). Il grafo è uno spazio di disegno, non
+una planimetria: le lunghezze dei suoi tratti e le sue pieghe non sono quelle del cantiere. Chiedi al progettista,
+**per ogni rete d'acqua**, il tubo, i metri (dalla pianta o dal sopralluogo) e l'isolamento — multistrato
+**preisolato**, o **nudo con guaina** e il suo spessore —, e scrivili nel blocco `distinta` in testa al grafo, che
+`completa` conserva:
+
+```json
+"distinta": {
+  "tubi": [
+    {"rete": "primario", "tubo": "MS 32×3", "metri": 30, "isolamento": "preisolato"},
+    {"rete": "secondario", "tubo": "MS 26×3", "metri": 12, "isolamento": "guaina 19 mm"}
+  ],
+  "gomiti": 20
+}
+```
+
+La distinta maggiora i metri del 15%; i collari (uno ogni 1,5 m) e un manicotto di riserva seguono i metri; i gomiti
+sono **a corpo**: chiedili, proponendo l'ipotesi di 20, o stimali dal contesto del progetto (la pianta, il percorso
+descritto), mai dalle pieghe dello schema; senza risposta la voce esce con 20 e resta da confermare. I metri vengono
+dal contesto del progetto — la pianta quotata, il sopralluogo, le distanze che il progettista dice —, **mai dallo
+schema**: se il contesto non li dà, non stimarli, la voce è DA DEFINIRE e `--domande` li chiede. Lo spessore della
+guaina lo dice il progettista ogni volta.
 
 **La lunghezza di un tratto spezzato basta su una tubazione.** Un tratto è la linea che l'installatore posa in un
 pezzo, da macchina a macchina: il sezionatore sulla linea dell'unità esterna e il sifone sullo scarico della condensa
