@@ -48,7 +48,13 @@ Dopo: `python -m mypy` → `Success: no issues found in 127 source files`.
   controlla i limiti del caricamento su claude.ai);
 - **controlli** su 3.12: `ruff check src tests`, `mypy`.
 
-La prima esecuzione è quella della PR di questo lavoro.
+**La prima esecuzione (PR #92) ha trovato subito una dipendenza nascosta.** Due prove della pianta
+(`tests/pianta/test_tavola.py`, `tests/pianta/test_collaudo_t1.py`) si aspettano l'anteprima PNG, che la fa
+pypdfium2 o, in mancanza, `pdftoppm`. Le dipendenze di sviluppo non avevano né l'uno né l'altro: le prove passavano
+solo dove `pdftoppm` era installato per caso, come nell'ambiente delle sessioni. Riprodotto in locale con un `PATH`
+senza `pdftoppm` (2 failed), corretto aggiungendo `pypdfium2==5.13.0` alle dipendenze `dev` (la stessa versione che la
+skill installa da sé, `skill/scripts/mep.py`), e riverificato: 2 passed, e la suite intera su 3.11 con il `PATH`
+ridotto all'osso `2889 passed, 15 skipped, 11 xfailed`.
 
 ## Le misure
 

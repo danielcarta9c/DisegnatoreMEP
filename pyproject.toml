@@ -19,6 +19,10 @@ dxf = [
 ]
 dev = [
   "ezdxf==1.4.4",
+  # L'anteprima PNG (stessa versione che la skill installa da se', scripts/mep.py): senza,
+  # le prove della pianta che si aspettano il PNG passavano solo dove c'era pdftoppm.
+  # L'ha trovato la prima esecuzione della CI (REL-024).
+  "pypdfium2==5.13.0",
   "mypy==2.3.0",
   "pytest==9.1.1",
   "ruff==0.15.22",
