@@ -58,6 +58,10 @@ DATI: dict[str, DatoInParole] = {
     "pollice": DatoInParole(
         "Il pollice del tubo su cui sta il pezzo (es. «1\"»): lo danno i diametri del tubo", "«sezione» del tratto"
     ),
+    "pollice_b": DatoInParole(
+        "Il pollice del secondo pezzo di un nipplo ridotto (es. «¾\"»): lo danno i diametri del tubo",
+        "«sezione» del tratto",
+    ),
     "volume_l": DatoInParole(
         "La taglia del vaso d'espansione, in litri: per il vaso dell'impianto la scrive il comando vaso, per il "
         "vaso sanitario la dà il progettista",

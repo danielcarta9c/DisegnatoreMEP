@@ -121,8 +121,10 @@ lancia anche `completa` (passo 3): i punti aperti che trova sono domande dello s
   posa escono solo nell'esecutivo (D-224);
 - **marca, modello e potenza delle pompe di calore**: con le Shenling `completa` controlla il
   manuale — attacchi, portata, volano — e lo dice negli «avvisi del manuale»;
-- **l'antigelo**, sopra i 35 kW: glicole o valvole (`"antigelo"` nel grafo). Nelle case le valvole
-  le mettono le regole; se il progettista dichiara il glicole, niente valvole;
+- **l'antigelo**: sopra i 35 kW glicole o valvole (`"antigelo"` nel grafo). Nelle case di base
+  niente valvole: la pompa di calore si protegge da sé finché ha corrente, e la tavola lo dice in
+  nota. Chiedi se la casa resta vuota d'inverno (seconda casa), se la zona è fredda o il tratto
+  esterno lungo: se sì, `"antigelo": "valvole"`;
 - **i dati del vaso**, se vuole il vaso dimensionato: il contenuto d'acqua di tutto il circuito che
   il vaso vede (se non lo sa, lo stimi dai terminali e dici che è una stima), la temperatura
   massima di mandata, il dislivello fra il vaso e il punto più alto dell'impianto;

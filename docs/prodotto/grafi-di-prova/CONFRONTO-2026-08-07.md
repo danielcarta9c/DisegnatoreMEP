@@ -101,7 +101,7 @@ scrivere le regole:
 
 ## Impianto per impianto
 
-**1 — Due pompe di calore e accumulo combinato: da 59 a 53 pezzi.**
+**1 — Due pompe di calore e accumulo combinato: da 59 a 49 pezzi.**
 Escono i due separatori d'aria, i due termometri e una delle due sicurezze; il
 defangatore passa da tre a uno, sul ritorno generale prima della ripartizione verso le
 due macchine; i filtri a Y restano due, uno per macchina, e il circolatore perde il suo;
@@ -109,16 +109,16 @@ entra lo sfogo aria sull'attacco dedicato dell'accumulo, e la sicurezza supersti
 sull'accumulo. Vaso, riempimento e manometro stanno adesso sul tratto comune, non più
 sul ramo della prima macchina.
 
-**2 — Pompa di calore con deviatrice e bollitore: da 58 a 47 pezzi.**
+**2 — Pompa di calore con deviatrice e bollitore: da 58 a 45 pezzi.**
 Escono separatore, termometro e il defangatore doppio; entra lo sfogo sul volano; la
 sicurezza sta sul volano. Lo scarico del bollitore si sposta dall'uscita calda
 all'ingresso dell'acqua fredda.
 
-**3 — Pompa di calore diretta su pavimento: da 55 a 45 pezzi.**
+**3 — Pompa di calore diretta su pavimento: da 55 a 43 pezzi.**
 Stesse uscite del regime piccolo (separatore, termometro), sfogo e sicurezza sul volano
 in linea, e lo scarico del boiler sull'ingresso freddo.
 
-**4 — Ibrido pompa di calore e caldaia: da 68 a 52 pezzi.**
+**4 — Ibrido pompa di calore e caldaia: da 68 a 50 pezzi.**
 Il ritorno generale è il tratto fra il volume tecnico e il punto in cui il ritorno si
 divide verso le due macchine: lì stanno vaso, riempimento, manometro e l'unico
 defangatore. Ogni generatore tiene il suo filtro a Y; sfogo e sicurezza sul volano;
@@ -153,8 +153,9 @@ il 5 — sopra i 35 kW — come si protegge dal gelo il tratto esterno (dal 4 no
 D-230).
 
 *Dal 4 novembre 2026 (REL-011) i conteggi qui sopra crescono*: ogni pompa di calore ha i
-suoi due giunti antivibranti (D-222) e, nelle centrali fino a 35 kW, le due valvole antigelo
-(D-230); i generatori in parallelo il loro ritegno (D-217).
+suoi due giunti antivibranti (D-222); i generatori in parallelo il loro ritegno (D-217). Le due
+valvole antigelo per pompa di calore delle centrali fino a 35 kW (D-230) dal 6 novembre 2026 non ci
+sono più di base (D-238): si mettono se il progettista le dichiara.
 
 *Fino al 24 settembre* l'ibrido (impianto 4) chiedeva della **sicurezza**; da D-182 ogni
 generatore ha la sua, e la domanda non c'è più. Com'era: Dal 9 settembre 2026 (DRAW-006) la

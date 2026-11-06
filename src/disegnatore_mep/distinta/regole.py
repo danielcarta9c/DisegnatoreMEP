@@ -24,7 +24,7 @@ import hashlib
 import json
 import re
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -47,6 +47,8 @@ CALCOLI_DEI_FLUIDI = frozenset(
     }
 )
 CALCOLI_DEL_CORREDO = frozenset({"per_pezzo", "per_linea", "per_locale"})
+GENERI_DELLE_GIUNZIONI = ("adattatori", "sull_attacco", "stacchi", "confini", "macchine_esterne", "alla_macchina")
+VOCI_DELLE_GIUNZIONI = ("nipplo", "nipplo_ridotto", "raccordo", "raccordo_all_attacco")
 CONDIZIONI = frozenset({"sempre", "voci", "fluidi"})
 
 
@@ -159,6 +161,10 @@ class RegoleDellaDistinta:
     impronta: str
     """Le prime sedici cifre dello sha256 delle regole lette: dice quali regole hanno
     fatto una distinta."""
+    giunzioni: Mapping[str, Any] = field(default_factory=dict)
+    """Le giunzioni dell'acqua (REL-023, I-291): il blocco `giunzioni` di `corredo.json`,
+    con i generi dei pezzi e le quattro voci (nipplo, nipplo ridotto, raccordo, raccordo
+    all'attacco)."""
 
     @property
     def lettere(self) -> tuple[str, ...]:
@@ -326,6 +332,20 @@ def controlla(letti: Mapping[str, Any]) -> list[str]:
                 voce, f"corredo.json, {ident}/{voce.get('id')}", lettere, CALCOLI_DEL_CORREDO, difetti, fisse
             )
 
+    giunzioni = letti["corredo"].get("giunzioni")
+    if giunzioni is not None:
+        _ha_fonte_e_perche(giunzioni, "corredo.json, giunzioni", difetti)
+        for genere in GENERI_DELLE_GIUNZIONI:
+            elenco = giunzioni.get(genere, [])
+            if not isinstance(elenco, list) or not all(isinstance(x, str) for x in elenco):
+                difetti.append(f"corredo.json, giunzioni: «{genere}» e' una lista di voci di catalogo")
+        for chiave in VOCI_DELLE_GIUNZIONI:
+            voce = (giunzioni.get("voci") or {}).get(chiave)
+            if not isinstance(voce, dict):
+                difetti.append(f"corredo.json, giunzioni: manca la voce «{chiave}»")
+                continue
+            _controlla_la_voce(voce, f"corredo.json, giunzioni/{chiave}", lettere, frozenset(), difetti, fisse)
+
     for voce in letti["attivita"].get("voci", []):
         dove = f"attivita.json, {voce.get('id')}"
         _controlla_la_voce(voce, dove, lettere, frozenset(), difetti, fisse)
@@ -359,6 +379,7 @@ def carica_regole(percorso: Path) -> RegoleDellaDistinta:
         verifica=letti["verifica"],
         versioni={n: str(letti[n].get("versione", "?")) for n in FILE_DELLE_REGOLE},
         impronta=impronta,
+        giunzioni=dict(letti["corredo"].get("giunzioni") or {}),
     )
 
 

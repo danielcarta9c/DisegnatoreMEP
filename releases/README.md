@@ -101,4 +101,6 @@ Il comando della skill li riapre da sé.
 - **1.15.0** — 6 novembre 2026 (`REL-022`, I-288, I-289, D-237): **la distinta dal contesto della chat** — i metri,
   l'isolamento e i gomiti dei tubi d'acqua li dice il progettista nella chat (blocco `distinta` del grafo, che `completa`
   conserva), non si misurano sul grafo; la pompa di calore a terra, su staffe solo se chieste; il differenziale domestico
-  di tipo A; il listino rev. 04 con 27 voci nuove. 150 file.
+  di tipo A; il listino rev. 04 con 27 voci nuove. Con `REL-023` (I-290 … I-292, D-238, D-239): **le giunzioni** —
+  un nipplo fra due accessori, un raccordo a pressare fra tubo e accessorio —, **niente valvole antigelo di base**
+  nelle case (con la nota sulla tavola), il circolatore fra le apparecchiature, il listino rev. 05 con i nippli. 150 file.

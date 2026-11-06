@@ -550,7 +550,8 @@ class ProjectModel(StrictModel):
     """Come si protegge dal gelo il tratto esterno delle pompe di calore (REL-011,
     D-230): con il **glicole** nell'acqua, o con le **valvole antigelo** che scaricano il
     tratto esterno. Lo dichiara il progettista. Assente: nelle case (fino a 35 kW) le
-    regole mettono le valvole, nelle centrali grandi chiedono. Assente non si scrive."""
+    regole non mettono valvole (I-290) e la tavola dice di tenere la pompa di calore
+    alimentata d'inverno; nelle centrali grandi chiedono. Assente non si scrive."""
     materiale_tubazioni: MaterialeDelleTubazioni | None = None
     """Il materiale delle tubazioni (I-279): **multistrato**, **acciaio** o **rame**. Il
     calcolo dei diametri sceglie il tubo commerciale di questo materiale e la tavola lo

@@ -245,8 +245,10 @@ Regole di forma:
   note in tutto: oltre, escono le prime cinque e `valida` lo dice; nel definitivo non
   escono, e `valida` lo dice (I-271).
 - **`antigelo`**: come si protegge dal gelo il tratto esterno delle pompe di calore,
-  `"glicole"` o `"valvole"`, **solo se il testo lo dice**. Senza, nelle case le regole
-  mettono le valvole antigelo e sopra i 35 kW `completa` lo chiede (D-230).
+  `"glicole"` o `"valvole"`, **solo se il testo lo dice**. Senza, nelle case le regole non
+  mettono valvole e la tavola dice di tenere la pompa di calore alimentata d'inverno (I-290);
+  le valvole si dichiarano per una seconda casa, una zona fredda, un tratto esterno lungo.
+  Sopra i 35 kW `completa` lo chiede (D-230).
 - **I dati che il vaso vuole** — il contenuto d'acqua dell'impianto, la temperatura
   massima, il dislivello fra il vaso e il punto più alto — non vanno nel grafo: li dai al
   comando `vaso` dopo `completa`. Se il testo li dice, tienili per quel momento.

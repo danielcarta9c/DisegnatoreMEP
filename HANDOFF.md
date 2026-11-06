@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-11-06 — **la 1.15.0** (`REL-022`, I-288, I-289) è sul ramo `claude/distinta-dal-contesto`; il pacchetto successivo è `REL-023`.
+**Aggiornato:** 2026-11-06 — **la 1.15.0** (`REL-022` e la prima parte di `REL-023`, I-288 … I-292) è sul ramo `claude/distinta-dal-contesto`, PR #90, in attesa del sì del PO.
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -11,7 +11,23 @@
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
 
-## ▶ Da dove riparte la prossima sessione — scritto il 6 novembre 2026, con la 1.15.0
+## ▶ Da dove riparte la prossima sessione — scritto il 6 novembre 2026 sera, con la 1.15.0 e REL-023
+
+**Il pacchetto è `REL-023`** (`ACTIVE_WORK_PACKAGE.md`), **in corso**. Sul ramo della 1.15.0 (PR #90), con
+`REL-022`: **le giunzioni** (un nipplo fra due accessori, un raccordo a pressare fra tubo e accessorio, D-239),
+**niente valvole antigelo di base nelle case** con la nota sulla tavola (D-238, supera D-230 nelle case), **il
+circolatore fra le apparecchiature** (I-292), il listino rev. 05 con i nippli dalle fatture dell'installatore.
+
+- **Le misure**: il T1 coi metri della commessa PR.BG.017 a 1.425 € (`docs/collaudi/REL-023/RAPPORTO.md`); la posa
+  automatica dell'impianto di prova 2 marcata rossa (`SECONDO_APERTO`): è solo l'inventario dal D-151.
+- **Aperti col PO**: il tipo del differenziale (A di oggi, oppure il B della specifica a ~90–100 €: il PO ha detto «se
+  ci va il B si mette quello e amen», la sessione ha consigliato il B); glicole o valvole sopra i 35 kW e come
+  alternativa nelle case (il PO non ha deciso: nessuna regola sul glicole); il defangatore e le intercettazioni del
+  corredo standard.
+- **I numeri**: il prossimo input è **I-293**, la prossima decisione **D-240**.
+
+## Com'era il 6 novembre 2026 pomeriggio, con la 1.15.0 prima di REL-023
+
 
 **Il pacchetto è `REL-023`** (`ACTIVE_WORK_PACKAGE.md`), **da avviare**: il corredo standard, una 12 kW sui 1.700 € di
 materiale (I-289). `REL-022` è la 1.15.0: le quantità di cantiere dalla chat, il tipo A, il listino rev. 04 (D-237).

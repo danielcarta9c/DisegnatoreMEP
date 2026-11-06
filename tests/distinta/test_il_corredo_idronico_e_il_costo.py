@@ -74,14 +74,16 @@ def test_ogni_voce_idronica_del_catalogo_ha_il_suo_corredo(regole: RegoleDellaDi
 
 
 def test_il_listino_si_legge_con_le_voci_del_banco_e_quelle_online(listino: Any) -> None:
-    """Le 150 righe del rilievo al banco (§1) e i codici del riepilogo online (§2)."""
+    """Le 150 righe del rilievo al banco (§1), i 4 nippli delle fatture dell'installatore
+    (§2ter, REL-023) e i codici del riepilogo online (§2)."""
     del_banco = [v for v in listino.voci.values() if v.fonte.startswith("rilievo al banco")]
     online = [v for v in listino.voci.values() if v.fonte.startswith("riferimento online")]
-    assert len(del_banco) == 150
+    assert len(del_banco) == 154
+    assert listino.get("I83c").prezzo == pytest.approx(2.13) and "Bricoman" in listino.get("I83c").fonte
     assert len(online) >= 60
     assert listino.get("I04").prezzo == pytest.approx(3.64) and listino.get("I04").um == "m"
     assert listino.get("E02").prezzo == pytest.approx(2.28)
-    assert listino.revisione.startswith("04")
+    assert listino.revisione.startswith("05")
 
 
 def test_un_codice_doppio_ferma_il_listino(tmp_path: Path) -> None:
@@ -126,7 +128,11 @@ def test_la_centrale_ha_tubo_valvole_e_raccordi_del_suo_pollice(
     distinta = componi_la_distinta(_centrale(), regole, *nomi)
     sezione_i = {v.testo: v for v in distinta.voci_della_sezione("I")}
     assert sezione_i["Valvola a sfera a passaggio totale 1\" FF, con leva"].quantita == 2
-    assert sezione_i["Raccordo diritto a pressare M 1\" × tubo multistrato MS 32×3"].quantita == 4
+    # REL-023 (I-291): VI-01 ha il tubo da tutte e due le parti (il tratto esterno e il tee),
+    # VI-02 dal lato della macchina; sull'attacco del volano VI-02 si avvita con un nipplo.
+    assert sezione_i["Raccordo diritto a pressare M 1\" × tubo multistrato MS 32×3"].quantita == 3
+    assert sezione_i["Nipplo 1\" M × M"].quantita == 1
+    assert sezione_i["Raccordo diritto a pressare M × tubo multistrato MS 32×3, all'attacco"].quantita == 3
     assert sezione_i["Tee a pressare tubo multistrato MS 32×3"].quantita == 1
     # I 24 m del progettista × 1,15 = 27,6 → 28 m; le lunghezze dei tratti non contano.
     tubo = sezione_i["Tubo multistrato MS 32×3, nudo"]
@@ -169,7 +175,7 @@ def test_il_comando_scrive_il_costo_accanto_alla_distinta(tmp_path: Path, capsys
     md = (tmp_path / "d" / "interno" / "costo-minuteria.md").read_text(encoding="utf-8")
     assert "Uso interno Nove C" in md and "Totale prezzato" in md
     dati = json.loads((tmp_path / "d" / "interno" / "costo-minuteria.json").read_text(encoding="utf-8"))
-    assert dati["totale_eur"] > 0 and dati["listino"]["revisione"].startswith("04")
+    assert dati["totale_eur"] > 0 and dati["listino"]["revisione"].startswith("05")
     documento = next((tmp_path / "d").glob("Distinta_*.md")).read_text(encoding="utf-8")
     assert "€" not in documento, "il documento per l'installatore resta senza prezzi"
     consegnati = consegna(tmp_path / "d", tmp_path / "consegna")

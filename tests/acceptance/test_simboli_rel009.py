@@ -95,9 +95,9 @@ def test_il_giunto_antivibrante_sta_attaccato_alla_macchina(tmp_path: Path) -> N
     }
     assert vicini == {("pdc", "giunto-mandata"), ("giunto-ritorno", "pdc")}
     # Oltre il giunto la fila si conta dalla macchina: il filtro della pompa di calore
-    # le sta vicino come senza giunto. Dal 4 novembre 2026 (D-230) fra giunto e filtro c'e'
-    # la valvola antigelo, che in una casa fino a 35 kW senza glicole sta subito dopo il
-    # giunto: il filtro e' il primo organo dopo di lei.
+    # le sta vicino come senza giunto. Dal 4 novembre 2026 (D-230) fra giunto e filtro c'era
+    # la valvola antigelo; dal 6 novembre (D-238) nelle case non c'e' di base, e il filtro
+    # e' il primo organo dopo il giunto.
     def oltre(pezzo: str, da_non_contare: str) -> set[str]:
         return {
             ref["component_id"]
@@ -106,5 +106,4 @@ def test_il_giunto_antivibrante_sta_attaccato_alla_macchina(tmp_path: Path) -> N
             if altro["component_id"] == pezzo and ref["component_id"] != da_non_contare
         }
 
-    assert oltre("giunto-ritorno", "pdc") == {"valve-antifreeze-pdc-water-return"}
-    assert oltre("valve-antifreeze-pdc-water-return", "giunto-ritorno") == {"strainer-pdc-water-return"}
+    assert oltre("giunto-ritorno", "pdc") == {"strainer-pdc-water-return"}

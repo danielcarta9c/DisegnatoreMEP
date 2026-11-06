@@ -90,6 +90,16 @@ QUINTO_APERTO = (
     "con un estremo solo sanno dove stare."
 )
 
+SECONDO_APERTO = (
+    "APERTO dal 6 novembre 2026 (REL-023), marcata rossa apposta. Senza le valvole "
+    "antigelo di base (D-238) la posa automatica dell'impianto 2 mette la confluenza dei "
+    "ritorni a x 135, a sinistra del bollitore (150): la catena del ritorno si e' accorciata "
+    "di un pezzo e la colonna della confluenza non segue piu'. La posa automatica dal 20 "
+    "settembre 2026 (D-151) e' solo l'inventario dei simboli: le coordinate della tavola "
+    "le scrive il piano, e la tavola dell'impianto non cambia. Torna verde con lo stesso "
+    "lavoro che chiude il quinto."
+)
+
 
 @pytest.mark.parametrize(
     "name",
@@ -99,6 +109,8 @@ QUINTO_APERTO = (
             marks=(
                 pytest.mark.xfail(strict=True, reason=QUINTO_APERTO)
                 if item == "prova-5-cascata-tre-pdc.json"
+                else pytest.mark.xfail(strict=True, reason=SECONDO_APERTO)
+                if item == "prova-2-pdc-deviatrice-acs.json"
                 else ()
             ),
         )

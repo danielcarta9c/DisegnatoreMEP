@@ -129,11 +129,28 @@ distinta li legge in tutti e due i posti.
 accessori in linea — valvole, filtri, giunti, la deviatrice — portano il pollice del tubo su cui stanno (MS 32×3 →
 1"), dalla tabella di equivalenza del produttore.
 
-**L'idronico ha il suo corredo** (REL-020, sezione I). La pompa di calore, gli accumuli e il bollitore sono
-apparecchiature (sezione A, si comprano a parte): la distinta conta i raccordi ai loro attacchi e il trattamento
-dell'acqua; la pompa di calore va a terra, su staffe solo se il progettista le chiede. Ogni accessorio in linea porta
-sé stesso, del pollice del tubo, e i suoi raccordi a pressare; ogni derivazione un tee. **Dal grafo si contano solo i
-pezzi** (valvole, tee, attacchi): sono pezzi veri.
+**L'idronico ha il suo corredo** (REL-020, sezione I). La pompa di calore, gli accumuli, il bollitore e il
+circolatore sono apparecchiature (sezione A, Nove C le compra a parte); la pompa di calore va a terra, su staffe solo
+se il progettista le chiede. Ogni accessorio in linea porta sé stesso, del pollice del tubo; ogni derivazione un tee.
+**Dal grafo si contano solo i pezzi** (valvole, tee, attacchi): sono pezzi veri.
+
+**Le giunzioni si contano sulle tubazioni** (REL-023, I-291), dai due pezzi che ciascuna collega:
+
+- fra **due pezzi filettati che si toccano** (sfera e defangatore, sfera e circolatore, la sfera sull'attacco del
+  volano) un **nipplo**, ridotto se i pollici sono diversi;
+- fra **un pezzo filettato e il tubo** un **raccordo diritto a pressare**, uno per capo; il **tee a pressare** prende
+  il tubo da sé; il tubo che arriva a un attacco (macchina, accumulo, collettore, terminale, rete esistente) finisce
+  con un raccordo all'attacco;
+- la riduzione M × F si avvita senza nipplo, e il giunto antivibrante sull'attacco della pompa di calore col suo
+  bocchettone; sfiati, manometri, sicurezze, scarichi, vasi e sonde si avvitano sul tee o sul loro rubinetto;
+- **ogni tratto fra due pezzi che non sono tee ha almeno un tubo** (la deviatrice e la sfera del volano non si
+  toccano): se le sue giunzioni sarebbero tutte nippli, la prima fra due accessori diventa un tubo;
+- **il tratto esterno**: dalla pompa di calore si passano il giunto, la riduzione e la valvola antigelo, e la
+  tubazione dopo è il tubo fino alla centrale.
+
+Dove il **contesto del progetto** dice che fra due accessori c'è un tubo che la regola non vede (un accessorio lontano
+dal suo vicino), scrivi `"tubo": true` nelle `properties` di quella tubazione. Se un accumulo ha gli attacchi di un
+pollice diverso dalle valvole, scrivi il suo `attacco` (es. `"1¼\""`): la giunzione diventa un nipplo ridotto.
 
 **I tubi d'acqua si chiedono nella chat, non si misurano sul grafo** (I-288). Il grafo è uno spazio di disegno, non
 una planimetria: le lunghezze dei suoi tratti e le sue pieghe non sono quelle del cantiere. Chiedi al progettista,
@@ -152,8 +169,11 @@ una planimetria: le lunghezze dei suoi tratti e le sue pieghe non sono quelle de
 ```
 
 La distinta maggiora i metri del 15%; i collari (uno ogni 1,5 m) e un manicotto di riserva seguono i metri; i gomiti
-sono **a corpo**: chiedili, proponendo l'ipotesi di 20; senza risposta la voce esce con 20 e resta da confermare. Non stimare tu i metri né l'isolamento: se mancano, la voce è
-DA DEFINIRE e `--domande` li chiede. Lo spessore della guaina lo dice il progettista ogni volta.
+sono **a corpo**: chiedili, proponendo l'ipotesi di 20, o stimali dal contesto del progetto (la pianta, il percorso
+descritto), mai dalle pieghe dello schema; senza risposta la voce esce con 20 e resta da confermare. I metri vengono
+dal contesto del progetto — la pianta quotata, il sopralluogo, le distanze che il progettista dice —, **mai dallo
+schema**: se il contesto non li dà, non stimarli, la voce è DA DEFINIRE e `--domande` li chiede. Lo spessore della
+guaina lo dice il progettista ogni volta.
 
 **La lunghezza di un tratto spezzato basta su una tubazione.** Un tratto è la linea che l'installatore posa in un
 pezzo, da macchina a macchina: il sezionatore sulla linea dell'unità esterna e il sifone sullo scarico della condensa

@@ -90,7 +90,7 @@ def test_sulla_dodici_due_riduzioni_subito_dopo_i_giunti(dodici: tuple[dict[str,
     _tubo_fra(grafo, (RITORNO, "a"), (GIUNTO_RITORNO, "a"))
     _tubo_fra(grafo, (GIUNTO_RITORNO, "b"), ("pdc", "water_return"))
     oltre = [t for t in grafo["connections"] if t["endpoint_b"] == {"component_id": RITORNO, "port_id": "b"}]
-    assert len(oltre) == 1 and oltre[0]["endpoint_a"]["component_id"] == "valve-antifreeze-pdc-water-return"
+    assert len(oltre) == 1 and oltre[0]["endpoint_a"]["component_id"] == "strainer-pdc-water-return"
 
 
 def test_completa_dice_la_riduzione_aggiunta(dodici: tuple[dict[str, Any], str, Path]) -> None:
@@ -149,7 +149,7 @@ def test_sulla_tavola_la_riduzione_e_in_legenda_e_non_in_tabella(
     }
     for giunto, riduzione, dopo in (
         (GIUNTO_MANDATA, MANDATA, "tee-valve-safety-pdc-water-supply"),
-        (GIUNTO_RITORNO, RITORNO, "valve-antifreeze-pdc-water-return"),
+        (GIUNTO_RITORNO, RITORNO, "strainer-pdc-water-return"),
     ):
         assert x[giunto] + 5.0 < x[riduzione] and x[riduzione] + 5.0 < x[dopo], (x[giunto], x[riduzione], x[dopo])
 

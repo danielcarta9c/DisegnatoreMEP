@@ -1,6 +1,6 @@
 # Listino della minuteria — riferimento interno Nove C
 
-**Revisione 04, 6 novembre 2026.** Riscrive in Markdown il file del PO
+**Revisione 05, 6 novembre 2026.** Riscrive in Markdown il file del PO
 `listino_minuteria_pdc_rev02.xlsx` (2 novembre 2026). Da questa revisione il listino vive qui:
 si aggiorna in questo file, non più nel foglio Excel.
 
@@ -852,6 +852,20 @@ ManoMano, RS) non si aprono dalla sessione: i loro prezzi qui sono quelli che il
 | E37 | Emmebistore | BTicino 503E | 0,26 |  | [link](https://www.emmebistore.com/bticino-light/scatola-da-incasso-in-resina-3-moduli-serie-civili-bticino-503e-8012199051260-49614.html) |
 | E37 | Tecnomat | BTicino 503, 15 pezzi | 0,26 |  | [link](https://www.tecnomat.it/it/15-scatole-deriv-inc-3m-mod-503-bticino-10041379/) |
 | E37 | Leroy Merlin | BTicino S503EFA, 15 pezzi | 0,26 |  | [link](https://www.leroymerlin.it/prodotti/scatola-da-incasso-3-moduli-s503efa-bticino-15-pezzi-85112878.html) |
+
+## 2ter. I prezzi d'acquisto dell'installatore — 28 ottobre 2026
+
+**Fatture Bricoman all'installatore della commessa PR.BG.017** (27 ottobre – 2 novembre 2026), lette dalla
+cartella della commessa il 6 novembre 2026. Sono prezzi netti pagati al banco da un professionista, quindi
+affidabili come prezzo; le quantità di quella commessa non sono un riferimento (il PO: «non mi fido tantissimo»).
+I nippli entrano con la regola delle giunzioni (`REL-023`): un nipplo fra due pezzi filettati che si toccano.
+
+| ID | Voce | Articolo | Codice | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
+|---|---|---|---|---|---|--:|--:|---|---|
+| I83a | Nipplo in ottone | NIPPLE OTTONE CROMATO 1/2'' | 5054826528304 | Bricoman | 1 pz | 1,02 | 1,02 | cad |  |
+| I83b | Nipplo in ottone | NIPPLE OTTONE CROMATO 3/4'' | 5054826528403 | Bricoman | 1 pz | 1,52 | 1,52 | cad |  |
+| I83c | Nipplo in ottone | NIPPLE OTTONE GIALLO BANNINGER M1'' | 5052740322701 | Bricoman | 1 pz | 2,13 | 2,13 | cad | in ghisa (280, 1") 1,15 € |
+| I83d | Nipplo ridotto in ottone | NIPPLE OTT.GIALLO RID.BANNINGER 1x3/4'' | 5052740310104 | Bricoman | 1 pz | 2,21 | 2,21 | cad | in ghisa (245, 1"×¾") 1,41 € |
 
 ## 3. Ancora da prezzare
 
