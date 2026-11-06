@@ -568,14 +568,19 @@ non funziona, e una notte di gelo rompe lo scambiatore.
 tratto esterno, dopo il giunto. Nello schema sta vicino alla macchina; in cantiere va nel
 punto più basso del tratto esterno, con lo scarico libero (lo dice la nota di posa).
 
-**Quante volte.** Due per pompa di calore, nelle centrali fino a 35 kW, se il progettista non
-dichiara il glicole.
+**Quante volte.** Due per pompa di calore, nelle centrali fino a 35 kW, **solo se il
+progettista le dichiara** (`"antigelo": "valvole"`): una seconda casa o una casa vuota
+d'inverno, una zona fredda, un tratto esterno lungo — le domande della chat. **Di base non ci
+sono** (dal 6 novembre 2026, D-238): la pompa di calore si protegge da sé finché ha corrente,
+e la nota 2 della tavola dice di tenerla alimentata d'inverno.
 
 **Come sappiamo che c'è già.** Se il progettista l'ha già scritta su quell'attacco, o se
 dichiara il glicole.
 
-**Da dove viene.** Dal manuale Shenling (protezione antigelo senza corrente) e dalla
-specifica Nove C (glicole oppure altra soluzione approvata dalla Direzione Lavori).
+**Da dove viene.** Dal manuale Shenling (protezione antigelo senza corrente), dalla
+specifica Nove C (glicole oppure altra soluzione approvata dalla Direzione Lavori), dalla tua
+decisione del 4 novembre 2026 (D-230) e da quella del 6 novembre (D-238), che nelle case
+toglie le valvole di base.
 
 ## 22 · Valvola antigelo nelle centrali grandi
 

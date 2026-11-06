@@ -1,6 +1,19 @@
 # PROJECT STATE — Disegnatore MEP
 
-**Aggiornato:** 2026-10-25 (la **1.5.0**, il revisore esterno — `REL-010`, PR #79, I-216 … I-223, D-212: la tavola la può guardare un altro agente Claude che non conosce l'impianto, se il progettista lo sceglie alla domanda del passo 2; la soglia del PO in Rivedere; il pannello e il giunto di D-211, PR #78. Il pacchetto attivo è `REL-011`, le regole del corredo contro il manuale Shenling). Prima: (la **1.4.0**, la tavola del caso reale rifatta — I-201 … I-206, D-206 … D-209: prima le autostrade, il collettore che si raccorda dritto, i colori della distribuzione, le pompe in parallelo con lo stesso verso, e il disegna sul caso da 107 a 3,4 secondi con le stesse tavole). Prima: la **1.3.0**, la tavola del costruito — I-191 … I-199, D-201 … D-205: il progettista toglie, sposta e colloca gli accessori, dichiara il bordo della singola macchina e l'esistente, e il catalogo ha le voci del costruito; il pacchetto attivo è `REL-009`, in attesa del PO: il caso lo rifà lui nella sessione di lavoro, I-200). Prima: la 1.2.2, la prima che si carica su claude.ai — PR #71, D-200 —, la 1.2.1 — PR #70, D-199 —, la pulizia del solutore — PR #68, D-197 —, `REL-005` chiuso con la release 1.2.0 — D-198
+**Aggiornato:** 2026-11-06 — **la 1.15.0** su `main` (PR #90, I-288 … I-294, D-237 … D-240): la distinta prende
+dalla chat i metri, l'isolamento e i gomiti dei tubi d'acqua; nippli fra accessori e raccordi a pressare fra tubo e
+accessorio; niente valvole antigelo di base nelle case, con la nota sulla tavola; il circolatore fra le apparecchiature;
+il differenziale sempre sulla linea della pompa di calore, tipo A di base; il listino della minuteria rev. 05. Il
+pacchetto attivo è `REL-023`, il corredo standard (una 12 kW sui 1.700 € di materiale). Fra la 1.5.0 e la 1.15.0
+questo file non è stato aggiornato: la storia di quelle release è in `releases/README.md`, le decisioni in
+`docs/DECISION_LOG.md` (D-213 … D-240), lo stato operativo in `HANDOFF.md`.
+**Ingresso breve:** `HANDOFF.md` · **Architettura del disegno:**
+`docs/ARCHITETTURA-DEL-PIANO.md` · **Regole:** `docs/regole-del-piano.md`
+**Fonte operativa:** `ACTIVE_WORK_PACKAGE.md` (`REL-023`; la 1.15.0 su `main`, PR #90) · **Dossier di stato:** `docs/pm/STATO-PM.md`
+**Release corrente:** **1.15.0** (`releases/latest/`, 150 file, sha256 `56514abd21c372c9…`); le precedenti in
+`releases/archive/`. Il numero di versione Python è lo stesso.
+
+Com'era il 25 ottobre 2026 (la **1.5.0**, il revisore esterno — `REL-010`, PR #79, I-216 … I-223, D-212: la tavola la può guardare un altro agente Claude che non conosce l'impianto, se il progettista lo sceglie alla domanda del passo 2; la soglia del PO in Rivedere; il pannello e il giunto di D-211, PR #78. Il pacchetto attivo è `REL-011`, le regole del corredo contro il manuale Shenling). Prima: (la **1.4.0**, la tavola del caso reale rifatta — I-201 … I-206, D-206 … D-209: prima le autostrade, il collettore che si raccorda dritto, i colori della distribuzione, le pompe in parallelo con lo stesso verso, e il disegna sul caso da 107 a 3,4 secondi con le stesse tavole). Prima: la **1.3.0**, la tavola del costruito — I-191 … I-199, D-201 … D-205: il progettista toglie, sposta e colloca gli accessori, dichiara il bordo della singola macchina e l'esistente, e il catalogo ha le voci del costruito; il pacchetto attivo è `REL-009`, in attesa del PO: il caso lo rifà lui nella sessione di lavoro, I-200). Prima: la 1.2.2, la prima che si carica su claude.ai — PR #71, D-200 —, la 1.2.1 — PR #70, D-199 —, la pulizia del solutore — PR #68, D-197 —, `REL-005` chiuso con la release 1.2.0 — D-198
 **Ingresso breve:** `HANDOFF.md` · **Architettura del disegno:**
 `docs/ARCHITETTURA-DEL-PIANO.md` · **Regole:** `docs/regole-del-piano.md`
 **Fonte operativa:** `ACTIVE_WORK_PACKAGE.md` (`REL-011`; la 1.8.1 su `main`, PR #84) · **Dossier di stato:** `docs/pm/STATO-PM.md`
