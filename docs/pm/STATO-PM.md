@@ -1,6 +1,6 @@
 # STATO PM — il dossier di stato della sessione
 
-**Aggiornato:** 2026-10-25 (**la 1.5.0** — `REL-010`, il revisore esterno, PR #79, fusa col sì del PO, I-223, D-212. Il pacchetto attivo è `REL-011`). Il §2 del 24 settembre resta sotto, come storia. Il §2 del 24 settembre resta sotto, come storia.
+**Aggiornato:** 2026-11-06 (**la 1.15.0** su `main`, PR #90, fusa col sì del PO, I-294; D-237 … D-240. Il pacchetto attivo è `REL-023`, il corredo standard. Fra il 25 ottobre e il 6 novembre questo file non è stato aggiornato: lo stato di quelle sessioni è in `HANDOFF.md`, le release in `releases/README.md`). Prima: 2026-10-25, la 1.5.0 (`REL-010`, PR #79, I-223, D-212). Il §2 del 24 settembre resta sotto, come storia.
 **A chi serve:** alla sessione che subentra. Leggi questo e sei operativo: non ti serve un
 prompt lungo, e chi te lo dà ti sta raccontando qualcosa che dovrebbe stare qui.
 **Regola di questo file:** ogni sessione lo aggiorna prima di chiudere. Un file di stato
@@ -50,7 +50,18 @@ Le sigle servono a noi per ritrovare la riga e restano di qua. La versione buona
 domanda detta guardando il disegno — sta in `2026-09-15-triage-input-aperti.md` §11, ed è il
 modello da riusare.
 
-## 2. Dove siamo, al 3 ottobre 2026
+## 2. Dove siamo, al 6 novembre 2026
+
+- **Su `main` la 1.15.0** (PR #90): la distinta dal contesto della chat (D-237), le giunzioni e il circolatore fra le
+  apparecchiature (D-239), niente valvole antigelo di base nelle case (D-238, supera D-230 nelle case), il differenziale
+  sempre sulla linea della pompa di calore e tipo A di base (D-240). Collaudi in `docs/collaudi/REL-022/` e `REL-023/`.
+- **Il pacchetto attivo** è `REL-023` (`ACTIVE_WORK_PACKAGE.md`): restano il defangatore e le intercettazioni del
+  corredo standard, glicole o valvole (il PO non ha deciso), le scelte di fascia del listino, la prova sulle taglie.
+- **Aperti col PO**: la specifica Nove C Rev. 01 §3.2 chiede ancora il tipo B, da allineare; la coppia del secondario
+  che cambia interasse fra volano e collettore sulle tavole; i prezzi del canalizzato.
+- **Il lavoro di una sessione esiste quando è su `main`**: all'avvio si guardano le PR aperte.
+
+## 2-ter. Com'era al 3 ottobre 2026
 
 | | |
 |---|---|
