@@ -1,4 +1,17 @@
-# L'ultima release: 1.15.2
+# L'ultima release: 2.0.0
+
+`DisegnatoreMEP-v2.0.0.zip` — sha256 `193f7194d2385472…`, 150 file — è **la versione da dare ai progettisti** (I-295,
+I-299). Si carica come ogni skill personale, dallo ZIP così com'è; il nome della skill su claude.ai è
+`disegnatore-mep`, qualunque sia il nome del file.
+
+**È la 1.15.2 con il numero della 2.0**: tavole, distinta e pianta sono le stesse, byte per byte. Rispetto alla 1.15
+la 2.0 porta il consolidamento fatto fin qui: ogni modifica passa da una CI con le prove su Python 3.11 e 3.12, il
+controllo dei tipi e il confronto automatico di 28 tavole di riferimento; la skill senza rete non perde tempo a
+ritentare; un accessorio «compreso con la PdC» non esce più in distinta. Il resto del consolidamento (la prova su sei
+impianti tipo, la guida per il progettista) esce nelle 2.0.x; le funzioni nuove chieste dal progetto reale (I-297)
+nella 2.1.
+
+Prima, la **1.15.2**:
 
 `DisegnatoreMEP-v1.15.2.zip` — sha256 `a65051b1430bd08b…`, 150 file — è la seconda consegna di `REL-024`, la 2.0 di
 consolidamento. Si carica come ogni skill personale, dallo ZIP così com'è.

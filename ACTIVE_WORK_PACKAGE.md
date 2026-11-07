@@ -6,10 +6,10 @@
 > progettisti che non hanno letto niente di questo repository.
 
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
-**Stato:** **IN CORSO** — **fase 1 chiusa** sul ramo della PR della 1.15.2: la CI e mypy (1.15.1, PR #92), il banco come prova e la skill senza rete (`docs/collaudi/REL-024/RAPPORTO.md`). Il prossimo: la fase 2.
+**Stato:** **IN CORSO** — la **2.0.0** è uscita il 7 novembre 2026 per i progettisti (I-299): è la 1.15.2 con il numero della 2.0. La fase 1 è chiusa; le fasi 2, 3 e 4 escono nelle 2.0.x, e la fase 5 diventa la raccolta dei rilievi dei progettisti sulla 2.0.0.
 **Base:** `main` dopo la 1.15.0 (PR #91).
 **Approvazione della fusione:** **del PO**, guardando le tavole (D-146, D-147), a ogni PR.
-**Il numero:** le PR intermedie restano 1.x; la **2.0.0** esce solo dalla fase 5, dopo la prova del PO con i progettisti.
+**Il numero:** la **2.0.0** è uscita prima del previsto, su richiesta del PO (I-299: «dammi la 2.0 da dare ai progettisti»); quello che resta del consolidamento esce nelle 2.0.x, le funzioni nuove di I-297 nella 2.1 (`REL-025`). La convenzione resta di tre cifre.
 
 ## Il punto di partenza (misurato il 6 novembre 2026 su `main`, la 1.15.0)
 

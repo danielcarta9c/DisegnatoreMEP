@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-11-06 sera — **la 2.0 di consolidamento** (`REL-024`, I-295): la skill si prepara per i progettisti del PO. `REL-023` è sospeso. La **1.15.2** chiude la fase 1: il banco delle tavole come prova e la skill senza rete; tavole identiche alla 1.15.0.
+**Aggiornato:** 2026-11-06 sera — **la 2.0 di consolidamento** (`REL-024`, I-295): la skill si prepara per i progettisti del PO. `REL-023` è sospeso. La **2.0.0** è uscita per i progettisti (I-299): la 1.15.2 con il numero della 2.0, tavole identiche alla 1.15.0.
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -28,13 +28,17 @@ la skill per chi non l'ha scritta, release candidate. Nessuna capacità nuova. `
   comando; pip con un limite d'attesa). La fase 1 è chiusa.
 - **Fatto anche, nella 1.15.2**: il punto 12, `compreso_in` per ogni pezzo (un accessorio compreso nella PdC non
   esce più in distinta; I-297, dal progetto reale).
-- **Il prossimo**: la fase 2, sei impianti tipo in camera pulita con Opus e Sonnet, gli esiti agli atti.
+- **La 2.0.0** (7 novembre 2026, I-299): il PO l'ha chiesta per darla ai progettisti; è la 1.15.2 con il numero della
+  2.0. Il resto del consolidamento esce nelle 2.0.x.
+- **Il prossimo**: la fase 2, sei impianti tipo in camera pulita con Opus e Sonnet, gli esiti agli atti (2.0.x); la
+  2.1 (`REL-025`). La derivazione air-split non viene da un file del PO: l'aveva aggiunta in una sua copia la sessione
+  che ha usato la skill sul progetto reale; la voce si scrive da capo sul simbolo che c'è già.
 - **La 2.1 è scritta** (`docs/plans/pacchetti/REL-025.md`, I-297): la derivazione air-split (il PO ha la voce in una
   copia locale), termostato radio, resistenza integrativa, termostato di sicurezza, la distinta a quantità nette, la
   pianta su più piani. Parte mentre i progettisti provano la 2.0-rc.
 - **Deciso dal PO** (I-296): repository pubblico con i prezzi; i progettisti vedono i costi; distribuzione,
   `nove-c-report` e rilievi dei progettisti li cura lui.
-- **I numeri**: il prossimo input è **I-298**, la prossima decisione **D-241**.
+- **I numeri**: il prossimo input è **I-300**, la prossima decisione **D-241**.
 
 ## Com'era il 6 novembre 2026 sera, con la 1.15.0 e REL-023
 
