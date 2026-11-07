@@ -111,3 +111,5 @@ Il comando della skill li riapre da sé.
   `tests/test_il_banco.py`: 28 casi, a ogni PR) e **la skill senza rete** — un'installazione facoltativa non riuscita
   non si ritenta a ogni comando, pip con un limite d'attesa; un accessorio `compreso_in` (filtro a Y, pozzetto compresi
   con la PdC) non esce più in distinta (I-297). Tavole identiche alla 1.15.1. 150 file.
+- **2.0.0** — 7 novembre 2026 (`REL-024`, I-299): **la versione da dare ai progettisti** — la 1.15.2 con il numero della
+  2.0, tavole identiche. Il consolidamento che resta esce nelle 2.0.x, le funzioni nuove di I-297 nella 2.1. 150 file.
