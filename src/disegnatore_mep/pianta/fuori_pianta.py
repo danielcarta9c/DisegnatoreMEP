@@ -95,7 +95,7 @@ COSTO_MURO = 2.0
 COSTO_ACCANTO = 3.0
 """Ogni millimetro di richiamo che corre accanto a una linea (a meno di `ACCANTO_MM`) o
 dentro un muro: si confonde con lei."""
-ACCANTO_MM = 3.0
+ACCANTO_MM = 4.0
 COSTO_SOPRA = 20.0
 """Ogni millimetro di richiamo che corre sopra una linea: non si legge piu' nessuno dei due."""
 COSTO_OSTACOLO = 1000.0
@@ -393,12 +393,21 @@ def _costo(
                     costo += COSTO_OSTACOLO
             elif tipo == "r":
                 rettangolo = ingombri.rettangoli[numero]
-                if rettangolo in sotto or not _sovrapposti(riquadro, rettangolo):
+                if rettangolo in sotto:
                     continue
                 if numero in ingombri.muri:
+                    # Passato di traverso, un muro costa poco; costeggiato (dentro, o a meno
+                    # di `ACCANTO_MM`), il richiamo si confonde col muro.
                     spessore = min(rettangolo[2] - rettangolo[0], rettangolo[3] - rettangolo[1])
-                    costo += COSTO_MURO + COSTO_ACCANTO * max(0.0, _dentro_per(riquadro, rettangolo) - spessore - 0.5)
-                else:
+                    intorno = (rettangolo[0] - ACCANTO_MM, rettangolo[1] - ACCANTO_MM,
+                               rettangolo[2] + ACCANTO_MM, rettangolo[3] + ACCANTO_MM)
+                    if _sovrapposti(riquadro, intorno):
+                        lungo = _dentro_per(riquadro, intorno) - spessore - 2 * ACCANTO_MM - 0.5
+                        costo += COSTO_ACCANTO * max(0.0, lungo)
+                    if _sovrapposti(riquadro, rettangolo):
+                        dentro = _dentro_per(riquadro, rettangolo) - spessore - 0.5
+                        costo += COSTO_MURO + COSTO_SOPRA * max(0.0, dentro)
+                elif _sovrapposti(riquadro, rettangolo):
                     costo += COSTO_OSTACOLO
             else:
                 linea = ingombri.segmenti[numero]
