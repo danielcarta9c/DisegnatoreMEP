@@ -19,6 +19,7 @@ CASI = {
     "collaudo": ESEMPI / "casi" / "collaudo-t1.json",
     "collaudo-t3": ESEMPI / "casi" / "collaudo-t3.json",
     "sagome": ESEMPI / "casi" / "sagome-muri.json",
+    "fitta": ESEMPI / "casi" / "centrale-fitta.json",
 }
 """`collaudo` e' la pianta del collaudo indipendente REL-012 (t1): una planimetria
 inventata, data a parole, con le lunghezze del progettista sui tracciati.
@@ -26,7 +27,10 @@ inventata, data a parole, con le lunghezze del progettista sui tracciati.
 testo: la centrale sopra il plenum, la ripresa sotto la UI, il terrazzo solo davanti
 al soggiorno; si disegna con la distinta e il grafo del collaudo accanto. `sagome` e' il
 caso anonimo di REL-026 (B-2): un appartamento a L con muri di spessori diversi, il
-retino sulle `sagome_muri` e un riquadro di dettaglio sull'angolo della tramezza a L."""
+retino sulle `sagome_muri` e un riquadro di dettaglio sull'angolo della tramezza a L.
+`fitta` e' il caso anonimo di REL-026 (C-1, C-2): la centrale in un locale tecnico
+piccolo, le scritte che non ci stanno e vanno fuori dalla pianta, mandata e ritorno dei
+ventilconvettori con una scritta sola quando corrono insieme."""
 
 CONFRONTI = {
     "collaudo-t3": (
