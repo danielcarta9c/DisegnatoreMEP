@@ -310,9 +310,96 @@ def pezzi_dei_muri(pianta: Pianta) -> list[tuple[Muro, float, float]]:
     return out
 
 
+def _angoli_del_tratto(muro: Muro, s0: float, s1: float, P: Callable[[float, float], Punto]) -> tuple[Punto, ...]:
+    """I quattro angoli, sulla carta, del tratto pieno di un muro da s0 a s1 dell'asse."""
+    h = muro.spessore / 2
+    return tuple(P(*_sull_asse(muro, s, d)) for s, d in ((s0, -h), (s1, -h), (s1, h), (s0, h)))
+
+
+# --- la base: muri e aperture ----------------------------------------------------------
+#
+# Il disegno della planimetria sotto l'impianto. Sta in due funzioni perche' cambiera'
+# (REL-026, C-3): la base standard — muri grigio chiaro, finestre celesti, porte a tratto
+# fine — si scrivera' qui, senza toccare la composizione.
+
+COLORE_DELLE_SAGOME = COLORE_MURI["perimetrale"]
+"""Il retino delle `sagome_muri`: una sagoma non dice il tipo del muro, e prende il grigio
+del muro perimetrale, quello della copia di BD.RM.260."""
+
+
+def retino_dei_muri(pianta: Pianta, P: Callable[[float, float], Punto], velo: float) -> list[Primitiva]:
+    """Il retino dei muri: sulle `sagome_muri`, se la pianta le da' (BD.RM.260: con il
+    disegno di base sotto, i rettangoli asse-spessore si sovrapponevano negli angoli e
+    sporgevano alle estremita'); se no un rettangolo per ogni tratto pieno di muro,
+    aperture tolte."""
+    if pianta.sagome_muri:
+        return [
+            Area(tuple(P(*q) for q in sagoma), COLORE_DELLE_SAGOME, LAYER_MURI, velo)
+            for sagoma in pianta.sagome_muri
+        ]
+    return [
+        Area(_angoli_del_tratto(muro, s0, s1, P), COLORE_MURI[muro.tipo], LAYER_MURI, velo)
+        for muro, s0, s1 in pezzi_dei_muri(pianta)
+    ]
+
+
+def disegno_delle_aperture(
+    pianta: Pianta, P: Callable[[float, float], Punto], k: float,
+) -> tuple[list[Primitiva], list[tuple[str, Segmento]]]:
+    """Porte, finestre e fori sulla carta; e, per le scritte, i tratti che non devono
+    toccare (le tre linee della finestra, l'anta e l'arco della porta come otto corde)."""
+    primitive: list[Primitiva] = []
+    tratti: list[tuple[str, Segmento]] = []
+    muri = {m.id: m for m in pianta.muri}
+    for apertura in pianta.aperture:
+        muro = muri[apertura.muro]
+        ux, uy, _ = _asse(muro)
+        centro = (apertura.centro[0] - muro.da[0]) * ux + (apertura.centro[1] - muro.da[1]) * uy
+        s0, s1 = centro - apertura.larghezza / 2, centro + apertura.larghezza / 2
+        h = muro.spessore / 2
+        if apertura.tipo == "finestra":
+            for d in (-h, 0.0, h):
+                a, b = P(*_sull_asse(muro, s0, d)), P(*_sull_asse(muro, s1, d))
+                primitive.append(Linea((a, b), COLORE_APERTURE, 0.18, LAYER_APERTURE))
+                tratti.append((f"finestra {apertura.id}", (a[0], a[1], b[0], b[1], 0.09)))
+        elif apertura.tipo == "foro":
+            angoli = _angoli_del_tratto(muro, s0, s1, P)
+            primitive.append(Linea((*angoli, angoli[0]), COLORE_APERTURE, 0.18, LAYER_APERTURE, "1 0.6"))
+        elif apertura.tipo == "porta":
+            verso = {"sopra": (0.0, -1.0), "sotto": (0.0, 1.0), "sinistra": (-1.0, 0.0), "destra": (1.0, 0.0)}
+            normale = (-uy, ux)
+            segno = 1.0
+            if apertura.apre_verso is not None:
+                v = verso[apertura.apre_verso]
+                segno = 1.0 if normale[0] * v[0] + normale[1] * v[1] >= 0 else -1.0
+            cerniera = _sull_asse(muro, s0, segno * h)
+            anta = _sull_asse(muro, s0, segno * (h + apertura.larghezza))
+            stipite = _sull_asse(muro, s1, segno * h)
+            primitive.append(Linea((P(*cerniera), P(*anta)), COLORE_APERTURE, 0.18, LAYER_APERTURE))
+            a_cerniera = math.atan2(anta[1] - cerniera[1], anta[0] - cerniera[0])
+            a_stipite = math.atan2(stipite[1] - cerniera[1], stipite[0] - cerniera[0])
+            orario = (a_stipite - a_cerniera) % (2 * math.pi) < math.pi
+            primitive.append(Arco(P(*cerniera), apertura.larghezza * k, P(*anta), P(*stipite), orario,
+                                  COLORE_APERTURE, 0.18, LAYER_APERTURE))
+            centro_arco = P(*cerniera)
+            raggio = apertura.larghezza * k
+            passo_angolo = ((a_stipite - a_cerniera + math.pi) % (2 * math.pi) - math.pi) / 8
+            corde = [
+                (centro_arco[0] + raggio * math.cos(a_cerniera + i * passo_angolo),
+                 centro_arco[1] + raggio * math.sin(a_cerniera + i * passo_angolo))
+                for i in range(9)
+            ]
+            for a, b in [(P(*cerniera), P(*anta)), *zip(corde, corde[1:], strict=False)]:
+                tratti.append((f"porta {apertura.id}", (a[0], a[1], b[0], b[1], 0.09)))
+    return primitive, tratti
+
+
 def estensione(pianta: Pianta, percorsi: Sequence[Percorso]) -> tuple[float, float, float, float]:
     xs: list[float] = []
     ys: list[float] = []
+    for sagoma in pianta.sagome_muri:
+        xs += [p[0] for p in sagoma]
+        ys += [p[1] for p in sagoma]
     for muro in pianta.muri:
         _, _, lunghezza = _asse(muro)
         h = muro.spessore / 2
@@ -687,63 +774,23 @@ def componi(
         angoli_z = ((a[0], a[1]), (b[0], a[1]), (b[0], b[1]), (a[0], b[1]), (a[0], a[1]))
         primitive.append(Linea(angoli_z, COLORE_ZONE_ESTERNE, 0.25, LAYER_STANZE, TRATTO_ZONE_ESTERNE))
 
-    # I muri.
+    # I muri: il retino (sulle sagome vere, se la pianta le da'), poi gli ingombri,
+    # che per le scritte e i controlli restano i rettangoli asse-spessore dei muri,
+    # come per l'instradamento.
+    primitive += retino_dei_muri(pianta, P, velo)
     for muro, s0, s1 in pezzi_dei_muri(pianta):
-        h = muro.spessore / 2
-        angoli = tuple(P(*_sull_asse(muro, s, d)) for s, d in ((s0, -h), (s1, -h), (s1, h), (s0, h)))
-        primitive.append(Area(angoli, COLORE_MURI[muro.tipo], LAYER_MURI, velo))
+        angoli = _angoli_del_tratto(muro, s0, s1, P)
         r = (min(p[0] for p in angoli), min(p[1] for p in angoli),
              max(p[0] for p in angoli), max(p[1] for p in angoli))
         ingombri.metti_rettangolo(r, muro=True)
         rettangoli.append((f"muro {muro.id}", r))
 
-    # Le aperture.
-    muri = {m.id: m for m in pianta.muri}
-    for apertura in pianta.aperture:
-        muro = muri[apertura.muro]
-        ux, uy, _ = _asse(muro)
-        centro = (apertura.centro[0] - muro.da[0]) * ux + (apertura.centro[1] - muro.da[1]) * uy
-        s0, s1 = centro - apertura.larghezza / 2, centro + apertura.larghezza / 2
-        h = muro.spessore / 2
-        if apertura.tipo == "finestra":
-            for d in (-h, 0.0, h):
-                a, b = P(*_sull_asse(muro, s0, d)), P(*_sull_asse(muro, s1, d))
-                primitive.append(Linea((a, b), COLORE_APERTURE, 0.18, LAYER_APERTURE))
-                segmento = (a[0], a[1], b[0], b[1], 0.09)
-                ingombri.metti_segmento(segmento)
-                linee.append((f"finestra {apertura.id}", segmento))
-        elif apertura.tipo == "foro":
-            angoli = tuple(P(*_sull_asse(muro, s, d)) for s, d in ((s0, -h), (s1, -h), (s1, h), (s0, h)))
-            primitive.append(Linea((*angoli, angoli[0]), COLORE_APERTURE, 0.18, LAYER_APERTURE, "1 0.6"))
-        elif apertura.tipo == "porta":
-            verso = {"sopra": (0.0, -1.0), "sotto": (0.0, 1.0), "sinistra": (-1.0, 0.0), "destra": (1.0, 0.0)}
-            normale = (-uy, ux)
-            segno = 1.0
-            if apertura.apre_verso is not None:
-                v = verso[apertura.apre_verso]
-                segno = 1.0 if normale[0] * v[0] + normale[1] * v[1] >= 0 else -1.0
-            cerniera = _sull_asse(muro, s0, segno * h)
-            anta = _sull_asse(muro, s0, segno * (h + apertura.larghezza))
-            stipite = _sull_asse(muro, s1, segno * h)
-            primitive.append(Linea((P(*cerniera), P(*anta)), COLORE_APERTURE, 0.18, LAYER_APERTURE))
-            a_cerniera = math.atan2(anta[1] - cerniera[1], anta[0] - cerniera[0])
-            a_stipite = math.atan2(stipite[1] - cerniera[1], stipite[0] - cerniera[0])
-            orario = (a_stipite - a_cerniera) % (2 * math.pi) < math.pi
-            primitive.append(Arco(P(*cerniera), apertura.larghezza * k, P(*anta), P(*stipite), orario,
-                                  COLORE_APERTURE, 0.18, LAYER_APERTURE))
-            # Anta e arco, per le scritte: l'arco come otto corde.
-            centro_arco = P(*cerniera)
-            raggio = apertura.larghezza * k
-            passo_angolo = ((a_stipite - a_cerniera + math.pi) % (2 * math.pi) - math.pi) / 8
-            corde = [
-                (centro_arco[0] + raggio * math.cos(a_cerniera + i * passo_angolo),
-                 centro_arco[1] + raggio * math.sin(a_cerniera + i * passo_angolo))
-                for i in range(9)
-            ]
-            for a, b in [(P(*cerniera), P(*anta)), *zip(corde, corde[1:], strict=False)]:
-                segmento = (a[0], a[1], b[0], b[1], 0.09)
-                ingombri.metti_segmento(segmento)
-                linee.append((f"porta {apertura.id}", segmento))
+    # Le aperture: il disegno, e i tratti che le scritte non devono toccare.
+    disegno, tratti_delle_aperture = disegno_delle_aperture(pianta, P, k)
+    primitive += disegno
+    for di, segmento in tratti_delle_aperture:
+        ingombri.metti_segmento(segmento)
+        linee.append((di, segmento))
 
     # I tracciati: sotto quelli instradati dopo, interrotti dove passa sopra uno di prima.
     tracciati = {t.tratta: t for t in pianta.tracciati}

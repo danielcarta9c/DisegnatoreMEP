@@ -18,12 +18,15 @@ CASI = {
     "muro": ESEMPI / "casi" / "muro-senza-aperture.json",
     "collaudo": ESEMPI / "casi" / "collaudo-t1.json",
     "collaudo-t3": ESEMPI / "casi" / "collaudo-t3.json",
+    "sagome": ESEMPI / "casi" / "sagome-muri.json",
 }
 """`collaudo` e' la pianta del collaudo indipendente REL-012 (t1): una planimetria
 inventata, data a parole, con le lunghezze del progettista sui tracciati.
 `collaudo-t3` e' quella del terzo collaudo (sulla 1.6.0), con le posizioni vere del
 testo: la centrale sopra il plenum, la ripresa sotto la UI, il terrazzo solo davanti
-al soggiorno; si disegna con la distinta e il grafo del collaudo accanto."""
+al soggiorno; si disegna con la distinta e il grafo del collaudo accanto. `sagome` e' il
+caso anonimo di REL-026 (B-2): un appartamento a L con muri di spessori diversi, il
+retino sulle `sagome_muri` e un riquadro di dettaglio sull'angolo della tramezza a L."""
 
 CONFRONTI = {
     "collaudo-t3": (
