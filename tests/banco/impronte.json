@@ -15,11 +15,8 @@
   },
   "collaudo-t3-rel012": {
    "sintesi-1": "Formato A2 · tratte 18 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 4 · sormonti 0 · avvisi e regole: DRAWING_TOUCHES_THE_BORDER x1, SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x1, TAG_OMITTED x1",
-   "pianta/pianta-dettaglio-A.svg": "89313787e6d111084d9f33e1c669b71dec3d0ed4b292c1b7fac78aaae131b4d3",
-   "pianta/pianta-dettaglio-B.svg": "5b9aeee2e205dfd608c5bb7c8f63d84d50f4b5c7493c8d84882ae4b3c29fdd95",
-   "pianta/pianta-dettaglio-C.svg": "34efa1f83c34433c7791fef7ddae18bf9f5ce35aa049a659bc4e5711c616d760",
-   "pianta/pianta.svg": "b5320f2a03ebff22e2fdd6f2ba359f2ca568412c612878931bbb36efd62fc949",
-   "pianta/pianta.tracciati.json": "ee2111ab6f366fb53101bca715c6f4e373ed3cddcf10222eab0fb27d82e3394d",
+   "pianta/pianta.svg": "47b0c0e08f09e92f4159df77a195e90d3568f1969dcaeba3648b7756d583f439",
+   "pianta/pianta.tracciati.json": "8d9367caca969991a18f4ce1752cacbcc8373766479901e8d6cc5e71917c36ac",
    "tavola/canalizzato-appartamento-secondo-piano-t1-rilievi.md": "b3dbcb324b6e90ebc42d19086682d340741d5cba886b056ba5cab2f3a0c38ff5",
    "tavola/canalizzato-appartamento-secondo-piano-t1.svg": "fa3404f87f22574f28023489ed5b1110c67c521189284e0f0881bf3fae0e39b8"
   },
