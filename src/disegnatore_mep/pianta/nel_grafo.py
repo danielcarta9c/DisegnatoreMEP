@@ -18,8 +18,12 @@ forature accese (B-3) —, mai la connettivita' ne' altri campi (`docs/ARCHITETT
 PIANO.md` §2). L'unita' e' la **tratta**: se il progettista ha dato la lunghezza di una
 tratta — nella pianta o su una qualunque delle sue tubazioni del grafo —, la tratta e'
 sua, e la pianta non scrive niente sulle sue tubazioni (la segnala, se misura altro); se
-no, ogni tubazione della tratta riceve la misura del suo tronco. Una tratta non
-instradata, o che il grafo non ha, non si scrive.
+no, la misura della tratta intera va sulla **prima** delle sue tubazioni, e le altre
+restano senza lunghezza: una tratta, una lunghezza, come la scrive il progettista e come
+`completa` la tiene quando spezza una tubazione (la prima meta' la tiene). Con una misura
+per tronco lo schema scriveva due lunghezze sulla stessa tratta — «3G4 · L 10,19 m» e
+«3G4 · L 0,44 m» fra quadro, sezionatore e unita' esterna: visto sulla tavola del
+collaudo. Una tratta non instradata, o che il grafo non ha, non si scrive.
 
 **Il file** si riscrive solo se qualcosa cambia, e nello stile in cui era: rientro,
 separatori, caratteri accentati, ordine delle chiavi; un campo nuovo va al suo posto
@@ -245,26 +249,14 @@ class Aggiornamento:
         return righe
 
 
-def misure_dei_tronchi(linee: Sequence[Sequence[tuple[float, float]]], misurata: float) -> list[float]:
-    """La misura di ogni tronco, al millimetro, che sommate fanno la misura della tratta:
-    l'ultimo prende il resto, cosi' la distinta somma lo stesso numero che la pianta quota."""
-    parti = [
-        round(sum(abs(b[0] - a[0]) + abs(b[1] - a[1]) for a, b in zip(linea, linea[1:], strict=False)), 3)
-        for linea in linee
-    ]
-    if parti:
-        parti[-1] = round(misurata - sum(parti[:-1]), 3)
-    return parti
-
-
 @dataclass(frozen=True)
 class Tratta:
     """Quello che la pianta sa di una tratta, per scriverla nel grafo."""
 
     tratta: str
     tubazioni: tuple[str, ...]
-    """Le tubazioni del grafo, nell'ordine dei tronchi; vuota se il grafo non l'ha."""
-    tronchi_m: tuple[float, ...]
+    """Le tubazioni del grafo, nell'ordine dei tronchi (da `da` ad `a`); vuota se il grafo
+    non l'ha."""
     misurata_m: float
     data_nella_pianta_m: float | None
     """La lunghezza che la pianta dichiara sul tracciato (del progettista)."""
@@ -309,25 +301,31 @@ def _le_lunghezze(esito: Aggiornamento, tratta: Tratta, delle: list[dict[str, An
             data, dove = tratta.data_nella_pianta_m, "pianta"
         esito.del_progettista.append(Lasciata(tratta.tratta, data, tratta.misurata_m, dove))
         return
+    # Qui nessuna tubazione ha la lunghezza del progettista: o non ce l'ha, o e' della pianta.
     prima_di = [numero(lunghezza_della_tubazione(t)) for t in delle]
     prima = None if all(v is None for v in prima_di) else round(sum(v or 0.0 for v in prima_di), 3)
-    cambiata = any(
-        v is None or abs(v - nuova) > TOLLERANZA_M for v, nuova in zip(prima_di, tratta.tronchi_m, strict=True)
-    )
+    prima_tubazione, altre = delle[0], [t for t in delle[1:] if provenienza(t) == "pianta"]
+    cambiata = prima_di[0] is None or abs(prima_di[0] - tratta.misurata_m) > TOLLERANZA_M or bool(altre)
     if not cambiata:
         esito.allineate.append(tratta.tratta)
         return
-    for tubazione, nuova in zip(delle, tratta.tronchi_m, strict=True):
-        if "lunghezza_m" not in tubazione and "lunghezza_m" in (tubazione.get("properties") or {}):
-            _metti(tubazione["properties"], "lunghezza_m", nuova)
-        else:
-            _metti(tubazione, "lunghezza_m", nuova)
-        proprieta = tubazione.get("properties")
-        if not isinstance(proprieta, dict):
-            proprieta = {}
-            _metti(tubazione, "properties", proprieta)
-        _metti(proprieta, LUNGHEZZA_DALLA_PIANTA, nuova)
-    esito.lunghezze.append(Cambio(tratta.tratta, tratta.tubazioni, prima, tratta.misurata_m))
+    nuova = tratta.misurata_m
+    if "lunghezza_m" not in prima_tubazione and "lunghezza_m" in (prima_tubazione.get("properties") or {}):
+        _metti(prima_tubazione["properties"], "lunghezza_m", nuova)
+    else:
+        _metti(prima_tubazione, "lunghezza_m", nuova)
+    proprieta = prima_tubazione.get("properties")
+    if not isinstance(proprieta, dict):
+        proprieta = {}
+        _metti(prima_tubazione, "properties", proprieta)
+    _metti(proprieta, LUNGHEZZA_DALLA_PIANTA, nuova)
+    # Una lunghezza della pianta rimasta su un'altra tubazione della tratta si toglie: la
+    # tratta ne ha una sola, e la distinta le sommerebbe.
+    for altra in altre:
+        altra.pop("lunghezza_m", None)
+        (altra.get("properties") or {}).pop("lunghezza_m", None)
+        (altra.get("properties") or {}).pop(LUNGHEZZA_DALLA_PIANTA, None)
+    esito.lunghezze.append(Cambio(tratta.tratta, (str(prima_tubazione.get("id")),), prima, nuova))
 
 
 def _gli_attraversamenti(esito: Aggiornamento, tratta: Tratta, prima_tubazione: dict[str, Any]) -> None:

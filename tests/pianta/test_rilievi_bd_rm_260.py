@@ -25,11 +25,8 @@ import pytest
 from disegnatore_mep.model.project import ProjectModel
 from disegnatore_mep.pianta.comando import Esito, disegna_la_pianta, riassunto
 from disegnatore_mep.pianta.modello import ErroreDellaPianta, Fluido, carica_pianta
-from disegnatore_mep.pianta.nel_grafo import (
-    misure_dei_tronchi,
-    provenienza,
-    provenienza_della_tratta,
-)
+from disegnatore_mep.pianta.nel_grafo import Tratta as TrattaNelGrafo
+from disegnatore_mep.pianta.nel_grafo import aggiorna, provenienza, provenienza_della_tratta
 from disegnatore_mep.pianta.scritte import misura
 from disegnatore_mep.pianta.tavola import (
     COLONNE_DELLE_TRATTE,
@@ -280,21 +277,23 @@ def primo_giro(tmp_path_factory: pytest.TempPathFactory) -> dict[str, Any]:
 
 def test_1_la_pianta_scrive_nel_grafo_le_lunghezze_misurate(primo_giro: dict[str, Any]) -> None:
     """Le nove tubazioni senza lunghezza ricevono la misura della pianta, col segno della
-    provenienza; la tratta con un organo in linea (T10) riceve una misura per tronco."""
+    provenienza. La tratta con un organo in linea (T10, quadro – sezionatore – unita'
+    esterna) ha una lunghezza sola, sulla prima tubazione, come la scrive il progettista:
+    con una misura per tronco lo schema scriveva due lunghezze sulla stessa tratta."""
     assert primo_giro["codice"] == 0
     per_tratta = {t["tratta"]: t for t in primo_giro["dati"]["tratte"]}
     tubazioni = _tubazioni(primo_giro["grafo"])
-    for tratta, tubazione in (("T01", "ramo-matrimoniale"), ("T12", "bus-matrimoniale"), ("T16", "cavo-comando-filo")):
+    for tratta, tubazione in (("T01", "ramo-matrimoniale"), ("T12", "bus-matrimoniale"), ("T16", "cavo-comando-filo"),
+                              ("T10", "alim-quadro-sezionatore")):
         misura = per_tratta[tratta]["lunghezza_misurata_m"]
         assert tubazioni[tubazione]["lunghezza_m"] == misura
         assert tubazioni[tubazione]["properties"]["lunghezza_dalla_pianta_m"] == misura
-    t10 = tubazioni["alim-quadro-sezionatore"]["lunghezza_m"] + tubazioni["alim-sezionatore-ue"]["lunghezza_m"]
-    assert t10 == pytest.approx(per_tratta["T10"]["lunghezza_misurata_m"], abs=1e-9)
-    assert tubazioni["alim-sezionatore-ue"]["properties"]["lunghezza_dalla_pianta_m"] > 0
+    assert "lunghezza_m" not in tubazioni["alim-sezionatore-ue"]
+    assert tubazioni["alim-sezionatore-ue"]["properties"] == {}
     cambiate = {c["tratta"]: c for c in primo_giro["dati"]["grafo"]["lunghezze_cambiate"]}
     assert set(cambiate) == {"T01", "T02", "T03", "T04", "T10", "T12", "T13", "T14", "T16"}
     assert cambiate["T01"]["prima_m"] is None and cambiate["T01"]["dopo_m"] == per_tratta["T01"]["lunghezza_misurata_m"]
-    assert cambiate["T10"]["tubazioni"] == ["alim-quadro-sezionatore", "alim-sezionatore-ue"]
+    assert cambiate["T10"]["tubazioni"] == ["alim-quadro-sezionatore"]
     assert primo_giro["dati"]["grafo"]["scritto"] is True
     assert "scritte le lunghezze di 9 tratte" in primo_giro["console"]
     assert "  - T01: — → " in primo_giro["console"]
@@ -306,7 +305,7 @@ def test_1_solo_le_lunghezze_mai_la_connettivita(primo_giro: dict[str, Any]) -> 
 
     prima, dopo = json.loads(primo_giro["prima"]), json.loads(primo_giro["dopo"])
     for tubazione in dopo["connections"]:
-        if tubazione["id"] in MISURATE or tubazione["id"] == "alim-sezionatore-ue":
+        if tubazione["id"] in MISURATE:
             tubazione.pop("lunghezza_m")
             tubazione["properties"].pop("lunghezza_dalla_pianta_m")
     assert dopo == prima
@@ -392,8 +391,14 @@ def test_3_schema_e_distinta_rifatti_portano_i_numeri_nuovi(primo_giro: dict[str
         assert distinta[tratta]["lunghezza_dalla_pianta"] is True
     assert "lunghezza_dalla_pianta" not in distinta["T07"]
     svg = next((tmp_path / "tavola").glob("*.svg")).read_text(encoding="utf-8")
-    misura = str(pianta["T01"]["lunghezza_misurata_m"]).rstrip("0").rstrip(".").replace(".", ",")
-    assert f"L {misura} m" in svg
+
+    def in_parole(valore: float) -> str:
+        return f"{valore:.3f}".rstrip("0").rstrip(".").replace(".", ",")
+
+    assert f"L {in_parole(pianta['T01']['lunghezza_misurata_m'])} m" in svg
+    # Quadro – sezionatore – unita' esterna: una tratta, una scritta (visto sulla tavola).
+    assert svg.count("3G4 · L ") == 1
+    assert f"3G4 · L {in_parole(pianta['T10']['lunghezza_misurata_m'])} m" in svg
 
 
 def test_3_con_la_sola_distinta_la_misura_non_e_l_prog(primo_giro: dict[str, Any], tmp_path: Path) -> None:
@@ -471,11 +476,21 @@ def test_a_forature_spente_gli_attraversamenti_non_si_scrivono(primo_giro: dict[
     assert all("attraversamenti" not in t["properties"] for t in _tubazioni(primo_giro["grafo"]).values())
 
 
-def test_le_misure_dei_tronchi_sommano_la_misura() -> None:
-
-    linee = (((0.0, 0.0), (1.2345, 0.0)), ((1.2345, 0.0), (1.2345, 2.0004)))
-    parti = misure_dei_tronchi(linee, 3.235)
-    assert parti == [1.234, 2.001] and sum(parti) == pytest.approx(3.235)
+def test_una_tratta_ha_una_lunghezza_sola(tmp_path: Path) -> None:
+    """La misura va sulla prima tubazione; una misura della pianta rimasta sull'altra si
+    toglie (la distinta le sommerebbe), una tubazione senza lunghezza resta com'e'."""
+    grafo = tmp_path / "grafo.json"
+    grafo.write_text(json.dumps({"connections": [
+        {"id": "a", "properties": {}},
+        {"id": "b", "lunghezza_m": 0.4, "properties": {"lunghezza_dalla_pianta_m": 0.4}},
+        {"id": "c", "properties": {"sezione": "3G4"}},
+    ]}, indent=2) + "\n", encoding="utf-8")
+    esito = aggiorna(grafo, [TrattaNelGrafo("T10", ("a", "b", "c"), 10.63, None, True)], sola_lettura=False)
+    esito.scrivi(grafo)
+    a, b, c = json.loads(grafo.read_text(encoding="utf-8"))["connections"]
+    assert a == {"id": "a", "properties": {"lunghezza_dalla_pianta_m": 10.63}, "lunghezza_m": 10.63}
+    assert b == {"id": "b", "properties": {}} and c == {"id": "c", "properties": {"sezione": "3G4"}}
+    assert [(x.tratta, x.tubazioni, x.prima, x.dopo) for x in esito.lunghezze] == [("T10", ("a",), 0.4, 10.63)]
 
 
 def test_la_provenienza_di_una_lunghezza() -> None:

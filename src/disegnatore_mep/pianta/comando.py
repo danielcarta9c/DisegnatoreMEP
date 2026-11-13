@@ -43,7 +43,7 @@ from .griglia import Griglia, costruisci_la_griglia
 from .instrada import Percorso, chiave_della_tratta, instrada_tutto
 from .lunghezze import Lunghezza, Regola, la_regola, lunghezze, metri
 from .modello import Dettaglio, Foglio, Pianta, Tracciato, carica_pianta
-from .nel_grafo import Aggiornamento, aggiorna, misure_dei_tronchi
+from .nel_grafo import Aggiornamento, aggiorna
 from .nel_grafo import Tratta as TrattaNelGrafo
 from .scritte import RICHIAMO_MASSIMO_MM
 from .tavola import Foratura, Tavola, componi, estensione, scrivi_dxf, scrivi_svg
@@ -349,7 +349,7 @@ def tratte_per_il_grafo(
     dichiarate: dict[str, float | None], dei_pezzi: list[tuple[str, str]],
 ) -> list[TrattaNelGrafo]:
     """Quello che la pianta sa di ogni tratta, per scriverlo nel grafo: le tubazioni che il
-    confronto le ha trovato, la misura di ogni tronco, la lunghezza che la pianta dichiara
+    confronto le ha trovato, la misura della tratta, la lunghezza che la pianta dichiara
     (del progettista) e, a forature accese, le pareti interne forate."""
     per_tratta = {lu.tratta: lu for lu in lunghe}
     pareti = attraversamenti_per_tratta(pianta, percorsi, dei_pezzi)[0] if pianta.forature else {}
@@ -358,7 +358,6 @@ def tratte_per_il_grafo(
         TrattaNelGrafo(
             tratta=t.tratta,
             tubazioni=tuple(confronto.tubazioni.get(t.tratta, ())),
-            tronchi_m=tuple(misure_dei_tronchi(p.linee, per_tratta[t.tratta].misurata_m)),
             misurata_m=per_tratta[t.tratta].misurata_m,
             data_nella_pianta_m=dichiarate.get(t.tratta),
             instradata=not p.ceduto,

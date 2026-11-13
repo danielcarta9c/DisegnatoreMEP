@@ -148,9 +148,10 @@ numeri possono non coincidere.
 ### Le lunghezze nel grafo: `--grafo` le scrive
 
 Con `--grafo`, dopo aver disegnato, **il comando scrive nel grafo le lunghezze che ha misurato**:
-non le ricopi a mano. Su ogni tubazione della tratta mette la misura del suo tronco in
-`lunghezza_m`, e accanto, fra le `properties`, `lunghezza_dalla_pianta_m` con lo stesso numero:
-è il segno che quella lunghezza l'ha scritta la pianta. In console e in `.tracciati.json` (`grafo`)
+non le ricopi a mano. Mette la misura della tratta in `lunghezza_m` della sua prima tubazione
+(una tratta, una lunghezza: con un organo in linea, sul tronco che parte da `da`), e accanto, fra
+le `properties`, `lunghezza_dalla_pianta_m` con lo stesso numero: è il segno che quella lunghezza
+l'ha scritta la pianta. In console e in `.tracciati.json` (`grafo`)
 c'è l'elenco di che cosa è cambiato — tratta, prima, dopo —; rilanciata senza cambi, la pianta non
 riscrive niente e lo dice. Poi **rifai schema e distinta** dal grafo: leggono i numeri nuovi, e la
 distinta quota lo stesso numero della pianta.
