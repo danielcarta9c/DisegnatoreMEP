@@ -29,7 +29,7 @@ import json
 import math
 from collections.abc import Sequence
 from pathlib import Path
-from typing import Literal, cast, get_args
+from typing import Annotated, Literal, cast, get_args
 
 from pydantic import BaseModel, Field, ValidationError, model_validator
 
@@ -39,6 +39,9 @@ VERSIONE: Literal["1.0.0"] = "1.0.0"
 
 Punto = tuple[FiniteFloat, FiniteFloat]
 """Un punto della pianta, in metri: (x, y)."""
+
+Sagoma = Annotated[list[Punto], Field(min_length=3)]
+"""Il contorno vero di un muro, in metri: un poligono, almeno tre punti."""
 
 Quota = Literal["controsoffitto", "traccia", "pavimento", "a_vista"]
 """Dove corre un tracciato. `controsoffitto` paga i tratti fuori dal
@@ -356,6 +359,13 @@ class Pianta(StrictModel):
     zone_esterne: list[ZonaEsterna] = Field(default_factory=list)
     """Dove fuori dall'edificio le linee possono correre (vedi `ZonaEsterna`)."""
     sfondo: Sfondo | None = None
+    sagome_muri: list[Sagoma] = Field(default_factory=list)
+    """Facoltativo: i contorni veri dei muri, in metri, presi dal disegno di base
+    (BD.RM.260, REL-026 B-2). Se ci sono, il retino dei muri si disegna su queste
+    sagome e non sui rettangoli asse-spessore di `muri`, che con un disegno sotto si
+    sovrapponevano negli angoli e sporgevano alle estremita'. I `muri` restano: sono
+    loro che l'instradatore conosce, per i passaggi e gli ingombri. Porte e finestre
+    sono buchi delle sagome: la sagoma si ferma dove comincia l'apertura."""
     pezzi: list[Pezzo] = Field(default_factory=list)
     tracciati: list[Tracciato] = Field(default_factory=list)
     maggiorazione: Maggiorazione | None = None
@@ -367,6 +377,13 @@ class Pianta(StrictModel):
     dettagli: list[Dettaglio] | None = None
     """I riquadri di dettaglio. Se manca, la tavola ne fa uno da se' dove le
     scritte non trovano posto a 1:50, e lo dice; `[]` li spegne."""
+    forature: bool = False
+    """Le forature sulla tavola: **spente di base** (REL-026, B-3; LEGGIMI B1 di
+    BD.RM.260: «in una tavola MEP non servono»). Spente, la tavola non numera F1,
+    F2…, non ne fa l'elenco e i tracciati non le portano alla distinta; `true` le
+    accende su richiesta del progettista, e tutto torna com'era. Il costo della
+    foratura nell'instradamento (`parametri.foratura_m`) vale sempre: e' la scelta
+    del percorso, non una scritta."""
     note: list[str] = Field(default_factory=list)
 
     @model_validator(mode="before")
@@ -556,6 +573,7 @@ corregge prima guardando un oggetto giusto che leggendo lo schema."""
 ATTESI: dict[str, str] = {
     "rettangolo": "[x0, y0, x1, y1] in metri, con x0 < x1 e y0 < y1",
     "poligono": "[[x, y], [x, y], …] in metri, almeno tre punti",
+    "sagome_muri": "[[[x, y], [x, y], [x, y], …], …]: un poligono per muro, in metri, almeno tre punti",
     "da": "la sigla di un pezzo («UI-01»), o {\"pezzo\": \"UI-01\", \"lato\": \"sotto\"}",
     "a": "la sigla di un pezzo («UE-01»), o {\"pezzo\": \"UE-01\", \"lato\": \"sopra\"}",
     "centro": "[x, y] in metri, sull'asse del muro",

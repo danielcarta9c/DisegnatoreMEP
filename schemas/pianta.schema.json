@@ -912,6 +912,27 @@
       ],
       "default": null
     },
+    "sagome_muri": {
+      "items": {
+        "items": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "type": "array"
+        },
+        "minItems": 3,
+        "type": "array"
+      },
+      "title": "Sagome Muri",
+      "type": "array"
+    },
     "pezzi": {
       "items": {
         "$ref": "#/$defs/Pezzo"
@@ -954,6 +975,11 @@
       ],
       "default": null,
       "title": "Dettagli"
+    },
+    "forature": {
+      "default": false,
+      "title": "Forature",
+      "type": "boolean"
     },
     "note": {
       "items": {

@@ -27,9 +27,11 @@ python3 scripts/mep.py pianta <pianta.json> --out <cartella> --distinta <distint
 `--distinta` (il `distinta.json` che scrive il comando `distinta`) e `--grafo` (il grafo completo dello
 schema) sono facoltativi, ma **passali tutte le volte che li hai**: il comando controlla con loro sigle,
 numeri di tratta e lunghezze (§3), e prende dalla distinta la lunghezza dei tracciati che non ce l'hanno.
+**Con `--grafo` il comando scrive nel grafo le lunghezze che ha misurato** (§4, «Le lunghezze nel
+grafo»); `--grafo-in-sola-lettura` lo lascia com'è e fa solo il confronto.
 
 Esce, col nome del JSON: `.pdf`, `.svg`, `.dxf` (con il logo accanto), `.png` (l'anteprima: guardala),
-`.tracciati.json` (percorsi, lunghezze, forature, rilievi, avvisi) e, se c'è un riquadro di
+`.tracciati.json` (percorsi, lunghezze, rilievi, avvisi) e, se c'è un riquadro di
 dettaglio, le stesse tavole `<nome>-dettaglio-A…`. Uscita `0` fatto, `2` fatto ma con un rilievo
 che ferma la consegna, `1` il JSON non regge (il messaggio dice dove, il campo atteso e un esempio
 dell'oggetto giusto).
@@ -50,8 +52,10 @@ tracciato abbia nella distinta una tratta con lo stesso numero, gli stessi capi 
 stessi organi in linea) e la stessa lunghezza data, che ogni tratta della distinta sia in pianta, e
 che ogni pezzo con l'`id` del grafo abbia la sigla che lo schema gli dà. La nota dice allora
 «Controllati con la distinta e il grafo: concordano», oppure «ci sono discordanze». Ogni discordanza
-è un avviso, sulla tavola e in console; **un numero di tratta che nella distinta collega pezzi
-diversi ferma la consegna** (uscita `2`). Senza i due file la nota dice «Non controllati dal
+è un avviso: **per esteso in console e in `.tracciati.json`** (`confronto`), **riassunta sulla
+tavola** — quante, di che tipo, dove leggere il resto —, così il formato del foglio lo decide il
+disegno e non l'elenco; **un numero di tratta che nella distinta collega pezzi diversi ferma la
+consegna** (uscita `2`). Senza i due file la nota dice «Non controllati dal
 comando», ed è vero. Se lo schema non dà la sigla a un pezzo, o la distinta non numera una tratta,
 non inventarli: chiedi, o fai rigenerare lo schema e la distinta.
 
@@ -69,9 +73,11 @@ destra, **y verso il basso** — come leggi un'immagine.
 | `velette` | rettangoli di controsoffitto fuori dalle stanze che ce l'hanno: `id` e `rettangolo` `[x0, y0, x1, y1]` | **non** un `poligono`: un rettangolo. Esempio sotto |
 | `zone_esterne` | dove **fuori dall'edificio** le linee possono correre: `id`, `nome` (si scrive sulla tavola), `rettangolo`, `costo` (1 come in casa; 2-3 se fuori le vuole corte) | il terrazzo, il balcone, la facciata attrezzata: **solo quelli che il progettista dice**. Fuori dalle zone l'esterno non è una strada (§4bis) |
 | `sfondo` | facoltativo: un **JPEG** con `px_per_m` e `origine_px` (il pixel del punto 0,0) | quando hai solo il catastale. **I muri principali si dichiarano lo stesso**: l'instradatore non legge l'immagine |
+| `sagome_muri` | facoltativo: i **contorni veri** dei muri, un poligono per muro `[[x, y], …]` in metri (almeno tre punti; una L è un poligono solo) | dal disegno di base, quando i rettangoli asse-spessore non combaciano con i muri disegnati (angoli che si sovrappongono, estremità che sporgono). Se ci sono, **il retino dei muri si disegna sulle sagome**, anche nei riquadri di dettaglio e nel DXF; i `muri` restano e servono all'instradatore. Porte e finestre sono **buchi** della sagoma: fermala dove comincia l'apertura. Un muro ad anello va in più pezzi |
 | `pezzi` | `sigla`, `tipo` (l'**id della voce di catalogo**: `return-air-terminal`, non l'id del simbolo `return-grille`), `x`/`y` (il **centro**), `larghezza` (lungo x), `profondita` (lungo y); facoltativi `id` (l'id del grafo), `sovrapposto_a` e `sta`, `ingombro_da_confermare` | le sigle dello schema funzionale. Bocchette e griglie a parete **a cavallo del muro**: il loro foro è il pezzo. Due pezzi uno sopra l'altro: §4ter |
 | `tracciati` | `tratta` (T01…), `da`/`a` (sigla o id, o `{pezzo, lato}`), `passa_per`, `fluido`, `dimensione`, `quota`, `fascio`, `lunghezza_m`, `lunghezza_minima_m` | i numeri e le lunghezze della tabella delle tratte. `lato` (sopra, sotto, sinistra, destra) solo dove l'attacco c'è davvero: le uscite di un plenum |
 | `dettagli` | facoltativo: i riquadri a scala maggiore, `{id, rettangolo, scala}` | di regola **non lo scrivi**: li fa la tavola dove serve (§6) |
+| `forature` | facoltativo, `false` di base: `true` accende le forature sulla tavola (F1, F2…, l'elenco) e nei dati per la distinta | **solo se il progettista le chiede**: in una tavola MEP di regola non servono |
 
 ```json
 "velette": [{"id": "veletta-soggiorno", "rettangolo": [0.30, 4.95, 2.30, 5.45]}]
@@ -135,11 +141,30 @@ Se supera la lunghezza data di oltre il 15 % (`parametri.scarto_della_misura`), 
 negli avvisi e la colonna lo segna con `!`: o il percorso è sbagliato, o il dato; chiedi.
 
 Se il progettista **non** ha dato la lunghezza, la scritta dice la misura col `°` («L 3,4 m°») e la
-tavola quota la misura, segnata anche lei con `°`; in
-`.tracciati.json` trovi `lunghezza_misurata_m`: **riportala nel grafo** (o chiedila), così la
-distinta quota lo stesso numero. Non scrivere `maggiorazione` nella pianta: la regola è quella
-della distinta; se il progettista ne dà un'altra, la tavola la usa e avvisa che i numeri possono
-non coincidere.
+tavola quota la misura, segnata anche lei con `°`. Non scrivere `maggiorazione` nella pianta: la
+regola è quella della distinta; se il progettista ne dà un'altra, la tavola la usa e avvisa che i
+numeri possono non coincidere.
+
+### Le lunghezze nel grafo: `--grafo` le scrive
+
+Con `--grafo`, dopo aver disegnato, **il comando scrive nel grafo le lunghezze che ha misurato**:
+non le ricopi a mano. Mette la misura della tratta in `lunghezza_m` della sua prima tubazione
+(una tratta, una lunghezza: con un organo in linea, sul tronco che parte da `da`), e accanto, fra
+le `properties`, `lunghezza_dalla_pianta_m` con lo stesso numero: è il segno che quella lunghezza
+l'ha scritta la pianta. In console e in `.tracciati.json` (`grafo`)
+c'è l'elenco di che cosa è cambiato — tratta, prima, dopo —; rilanciata senza cambi, la pianta non
+riscrive niente e lo dice. Poi **rifai schema e distinta** dal grafo: leggono i numeri nuovi, e la
+distinta quota lo stesso numero della pianta.
+
+**Le lunghezze del progettista restano.** Una tratta è del progettista se la sua lunghezza c'è nella
+pianta (`lunghezza_m` sul tracciato) o nel grafo senza il segno della pianta — anche un grafo di
+prima, che il segno non lo ha: allora la pianta non scrive niente su quella tratta, e la console
+dice dove misura altro. Se il progettista corregge a mano una lunghezza scritta dalla pianta, la
+correzione resta (il numero non è più quello del segno). Se invece vuole che una sua lunghezza la
+misuri la pianta, toglila dal grafo. **Si scrivono solo le lunghezze** — e gli `attraversamenti`, a
+forature accese —: mai i collegamenti né altri campi. Se rilanci `completa`, il grafo completo si
+rifà: rilancia anche la pianta con `--grafo`. `--grafo-in-sola-lettura` fa solo il confronto, e la
+console dice che cosa cambierebbe.
 
 ### Organi in linea: `passa_per`
 
@@ -158,16 +183,21 @@ Un **`fascio`** è fatto di tracciati fra **gli stessi due pezzi** (liquido, gas
 unità): corrono paralleli a passo fisso e hanno una scritta sola. Non dichiarare fascio cavi che
 vanno in posti diversi — i bus a stella dalla centrale non sono un fascio.
 
-### Le forature, per la distinta: `attraversamenti`
+### Le forature: spente di base, `"forature": true` su richiesta
 
-`.tracciati.json` dice per ogni tratta `attraversamenti_di_parete`: le pareti **interne** che la
-tratta fora (fuori da un'apertura che lascia passare la sua quota) più il foro del pezzo a parete
-che è un suo capo (la bocchetta nella tramezza); i fori nel muro perimetrale stanno a parte
-(`fori_nel_perimetrale`), perché quello dell'unità esterna la distinta lo conta già con la sua
-posa. Li trovi tutti insieme in `per_il_grafo.attraversamenti`. **Riportali nel grafo**, fra le
-`properties` di una tubazione della tratta, come `attraversamenti`, e rifai la distinta: così conta
-le forature della pianta invece di assumerne una per ramo. Le linee frigo forano insieme: la
-distinta le conta sulla linea del gas.
+**Di base la tavola non dice le forature**: niente F1, F2…, niente elenco, niente dato per la
+distinta. In una tavola MEP non servono. L'instradatore le paga lo stesso — un muro si fora solo
+se non c'è un passaggio che costi meno —: cambia che cosa si scrive, non il percorso.
+
+Se il progettista le chiede, scrivi nella pianta `"forature": true`. Allora la tavola numera i
+fori e li elenca, e `.tracciati.json` dice per ogni tratta `attraversamenti_di_parete`: le pareti
+**interne** che la tratta fora (fuori da un'apertura che lascia passare la sua quota) più il foro
+del pezzo a parete che è un suo capo (la bocchetta nella tramezza); i fori nel muro perimetrale
+stanno a parte (`fori_nel_perimetrale`), perché quello dell'unità esterna la distinta lo conta già
+con la sua posa. Con `--grafo` il comando li scrive da sé sulla tubazione della tratta, come
+`attraversamenti` (§4, «Le lunghezze nel grafo»), e la distinta rifatta conta le forature della
+pianta invece di assumerne una per ramo. Le linee frigo forano insieme: la distinta le conta sulla
+linea del gas.
 
 ## 5. Che cosa la tavola garantisce — misurato, non promesso
 
@@ -182,8 +212,9 @@ Il comando stampa i controlli e li scrive in `.tracciati.json`:
   legenda**: un numero cerchiato accanto alla linea, il testo nella colonna;
 - **tratte non instradate**: dette una per una, e disegnate tratteggiate;
 - **sormonti**: contati ed elencati; il percorso li evita quando può, non sempre può;
-- **forature**: ogni muro passato fuori da un'apertura che lascia passare quella quota, numerata
-  F1, F2… sulla tavola e nella colonna. Un fascio che fora lo stesso muro fa un foro solo;
+- **forature**, se le accendi (`"forature": true`): ogni muro passato fuori da un'apertura che
+  lascia passare quella quota, numerata F1, F2… sulla tavola e nella colonna. Un fascio che fora
+  lo stesso muro fa un foro solo;
 - **fuori dall'edificio solo nelle zone esterne**: una tratta che esce altrove ha la **fascia rossa**
   ed è un rilievo bloccante (§4bis);
 - **pezzi sovrapposti solo se dichiarati** (§4ter), se no bloccante;
