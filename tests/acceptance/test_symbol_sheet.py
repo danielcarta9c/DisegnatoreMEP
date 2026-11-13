@@ -106,6 +106,10 @@ AIR_AND_CONTROL_MACHINES = (
     "zone-controller",
     "electrical-panel",
     "plant-controller",
+    # REL-026 (I-300): il plenum di mandata da due a sei uscite, come quello di zona, e
+    # il ventilconvettore canalizzato col lato aria, come l'unita' interna canalizzata.
+    *(f"supply-plenum-{uscite}" for uscite in range(2, 7)),
+    "fan-coil-ducted-air",
 )
 """Le macchine di `REL-012` che non si ruotano (I-224, I-226).
 

@@ -153,8 +153,10 @@ def test_ogni_simbolo_della_libreria_si_traduce(simboli: SymbolRegistry) -> None
     # collettore con ritorno da tre a dodici vie (REL-016, D3); 84 con la valvola
     # antigelo (D-230) e il rele' d'appoggio (D-228); 85 col termostato ambiente a
     # contatto (I-269, REL-017); 86 con la riduzione all'attacco della macchina (I-281,
-    # D-233, REL-017); 87 con l'interruttore magnetotermico differenziale (I-278, REL-018).
-    assert len(simboli.all()) == 87
+    # D-233, REL-017); 87 con l'interruttore magnetotermico differenziale (I-278, REL-018);
+    # 93 col plenum di mandata da due a sei uscite e il ventilconvettore canalizzato col
+    # lato aria (I-300, REL-026).
+    assert len(simboli.all()) == 93
 
 
 def test_il_foglio_di_riscontro_si_traduce(simboli: SymbolRegistry) -> None:

@@ -832,6 +832,114 @@ def test_b4_un_organo_sulla_piega_e_un_rilievo() -> None:
     assert f"x={sopra.x_mm:.1f}" in detto
 
 
+def un_plenum_di_mandata_a_due_uscite() -> ProjectModel:
+    """Il ventilconvettore canalizzato manda l'aria al plenum, e il plenum a due bocchette
+    (REL-026, I-300): tre attacchi sul percorso, l'ingresso a sinistra e le due uscite
+    affiancate a destra."""
+    aria = "aria"
+    pezzi = [
+        ("fc", "fan-coil-ducted-air"),
+        ("plenum", "supply-plenum-2"),
+        ("b1", "air-supply-terminal"),
+        ("b2", "air-supply-terminal"),
+    ]
+
+    def canale(identifier: str, a: tuple[str, str], b: tuple[str, str]) -> ConnectionModel:
+        return ConnectionModel(
+            id=identifier,
+            network_id=aria,
+            endpoint_a=PortRef(component_id=a[0], port_id=a[1]),
+            endpoint_b=PortRef(component_id=b[0], port_id=b[1]),
+        )
+
+    return ProjectModel(
+        metadata=ProjectMetadata(
+            project_id="prova-plenum",
+            client="prova",
+            project_name="prova",
+            commission_code="PROVA",
+            revision="00",
+            issue_date=date(2026, 11, 13),
+        ),
+        plant_regime=PlantRegime.UP_TO_35_KW,
+        networks=[NetworkModel(id=aria, name=aria, domain="aeraulic", medium="supply_air")],
+        components=[ComponentInstance(id=item, definition_id=voce) for item, voce in pezzi],
+        connections=[
+            canale("a0", ("fc", "supply"), ("plenum", "in")),
+            canale("a1", ("plenum", "out_1"), ("b1", "a")),
+            canale("a2", ("plenum", "out_2"), ("b2", "a")),
+        ],
+        subsystems=[
+            SubsystemModel(
+                id="tutto", name="tutto", component_ids=[item for item, _ in pezzi], network_ids=[aria]
+            )
+        ],
+    )
+
+
+def test_b4_il_plenum_di_mandata_a_due_uscite_non_e_una_tre_vie() -> None:
+    """L'ingresso del plenum a due uscite sta **al centro** delle uscite (il PO, 13 novembre
+    2026, I-300): il canale che entra corre a una quota, e nessuna delle due uscite e' la
+    sua via dritta. Prima di REL-026 B4 lo leggeva come una tre vie — ingresso e prima
+    uscita su facce opposte — e fermava la tavola: per questo la copia della commessa
+    aveva messo l'ingresso in asse con la prima uscita."""
+    registry = catalogo()
+    project = un_plenum_di_mandata_a_due_uscite()
+    symbols = posa(
+        project,
+        registry,
+        # La mandata del ventilconvettore (12,5 dal suo bordo) alla quota dell'ingresso
+        # del plenum (10 dal suo): il canale fra i due e' una retta.
+        {"fc": (0.0, 0.0), "plenum": (70.0, 2.5), "b1": (140.0, 2.5), "b2": (140.0, 15.0)},
+    )
+    porte = porte_di(project, registry, symbols)
+    ingresso, uscita_1 = dove(porte, "plenum", "in"), dove(porte, "plenum", "out_1")
+    assert ingresso.y_mm != uscita_1.y_mm, "la prova vale solo se l'ingresso non e' in asse"
+
+    def canale(cid: str, *punti: Point) -> RoutedTrunk:
+        return RoutedTrunk(network_id="aria", medium="supply_air", connection_ids=[cid], segments=[list(punti)])
+
+    routes = [
+        canale("a0", dove(porte, "fc", "supply"), ingresso),
+        canale("a1", uscita_1, dove(porte, "b1", "a")),
+        canale("a2", dove(porte, "plenum", "out_2"), dove(porte, "b2", "a")),
+    ]
+    assert organi_che_spezzano_il_tratto(tavola(symbols, routes), registry, project) == []
+
+
+def test_b4_il_terzo_attacco_di_lato_resta_una_tre_vie() -> None:
+    """La correzione di REL-026 e' stretta: la deviatrice, col terzo attacco **di lato**, e'
+    ancora soggetto di B4 — ingresso e prima uscita su due giaciture diverse sono un
+    rilievo bloccante, come prima."""
+    registry = catalogo()
+    project = impianto(
+        [("nord", "heat-pump-air-water"), ("deviatrice", "diverting-valve-3way"), ("volano", "buffer-four-port"),
+         ("bollitore", "dhw-cylinder")],
+        [
+            tubo("d1", ("nord", "water_supply"), ("deviatrice", "in")),
+            tubo("d2", ("deviatrice", "out_a"), ("volano", "primary_in")),
+            tubo("d3", ("deviatrice", "out_b"), ("bollitore", "coil_in")),
+        ],
+    )
+    facce = {item.id: item.face for item in registry.resolve("diverting-valve-3way").symbol.manifest.ports}
+    assert facce["in"] is facce["out_a"].opposite and facce["out_b"] not in (facce["in"], facce["out_a"])
+    symbols = posa(project, registry, {"nord": (0.0, 0.0), "deviatrice": (60.0, 0.0), "volano": (100.0, 60.0),
+                                       "bollitore": (100.0, 150.0)})
+    porte = porte_di(project, registry, symbols)
+    ingresso, uscita = dove(porte, "deviatrice", "in"), dove(porte, "deviatrice", "out_a")
+    routes = [
+        # L'ingresso prende una tratta orizzontale, l'uscita dritta una verticale: la
+        # deviatrice sta sulla piega.
+        tratta(["d1"], [dove(porte, "nord", "water_supply"), Point(x_mm=ingresso.x_mm - 10, y_mm=ingresso.y_mm),
+                        ingresso]),
+        tratta(["d2"], [uscita, Point(x_mm=uscita.x_mm, y_mm=uscita.y_mm + 10),
+                        Point(x_mm=dove(porte, "volano", "primary_in").x_mm, y_mm=uscita.y_mm + 10)]),
+    ]
+    rilievi = organi_che_spezzano_il_tratto(tavola(symbols, routes), registry, project)
+    assert [item.code for item in rilievi] == ["INLINE_ORGAN_BREAKS_THE_RUN"]
+    assert rilievi[0].severity is IssueSeverity.BLOCKING
+
+
 # ===========================================================================
 # Il raccoglitore
 # ===========================================================================

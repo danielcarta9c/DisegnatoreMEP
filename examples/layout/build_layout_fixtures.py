@@ -852,6 +852,73 @@ REL_012: list[dict[str, Any]] = [
     ),
 ]
 
+
+# --- REL-026, i rilievi d'uso della 2.0.0 (I-300) ------------------------------
+# Le voci che la sessione di una commessa (BD.RM.260, 12/11/2026) aveva aggiunto a una
+# copia della skill (`docs/input-pm/2026-11-13-rilievi-bd-rm-260/estendi_catalogo.py`),
+# rifatte qui perche' il catalogo e' generato. Forma, porte e sigla sono **proposte**:
+# il PO le giudica sulla tavola.
+
+DUCTED_FAN_COIL_AIR_I300 = (
+    "proposta della sessione del 13/11/2026 (REL-026, I-300), dall'estensione di lavoro di una "
+    "commessa del 12/11/2026: attacchi d'acqua e di comando come fan-coil-ducted, attacchi "
+    "d'aria e di condensa come ducted-indoor-unit, e un consenso in entrata e uno in uscita; "
+    "da approvare dal PO sulla tavola"
+)
+SUPPLY_PLENUM_I300 = (
+    "proposta della sessione del 13/11/2026 (REL-026, I-300): la voce del plenum motorizzato "
+    "di zona senza le serrande e senza i motori, una per numero di uscite; da approvare dal PO "
+    "sulla tavola"
+)
+
+REL_026: list[dict[str, Any]] = [
+    # Il ventilconvettore canalizzato **col lato aria**: e' un terminale d'acqua come
+    # `fan-coil-ducted` — si manutiene, sporca il circuito, si chiude sull'acqua — che
+    # porta anche la mandata e la ripresa dell'aria e lo scarico della condensa, come
+    # l'unita' interna canalizzata. Non e' una variante di `fan-coil-ducted`: una
+    # variante ha gli stessi attacchi della sua voce base (D-188). Aria e condensa sono
+    # facoltative, come nella copia della commessa: senza, il pezzo si disegna come un
+    # ventilconvettore canalizzato.
+    definition(
+        "fan-coil-ducted-air",
+        "Ventilconvettore canalizzato",
+        ["emission"],
+        [MAINTAINABLE, FOULS_CIRCUIT, SHUTOFF_ORDINARY, INLINE],
+        [
+            hydronic_port("in", "in"),
+            hydronic_port("out", "out"),
+            port_of("supply", "aeraulic", SUPPLY_AIR, "out", required=False),
+            port_of("return", "aeraulic", RETURN_AIR, "in", required=False),
+            port_of("drain", "condensate", CONDENSATE, "out", required=False),
+            *machine_control_ports(),
+            _porta_di_comando("consenso_in", CONTROL_BUS, "in"),
+            _porta_di_comando("consenso", CONTROL_BUS, "out"),
+        ],
+        sources=[DUCTED_FAN_COIL_AIR_I300],
+    ),
+    # Il plenum di mandata **non motorizzato**, da due a sei uscite: il plenum di zona
+    # senza serrande ne' motori, una voce per numero con le uscite tutte obbligatorie,
+    # come quello. Il mestiere e' suo (`air_distribution`, sigla PL): distribuisce
+    # l'aria, non la zonizza.
+    *(
+        definition(
+            f"supply-plenum-{uscite}",
+            f"Plenum di mandata a {NUMERI_IN_LETTERE[uscite]} uscite",
+            ["air_distribution"],
+            QUIET,
+            [
+                port_of("in", "aeraulic", SUPPLY_AIR, "in"),
+                *(
+                    port_of(f"out_{indice}", "aeraulic", SUPPLY_AIR, "out")
+                    for indice in range(1, uscite + 1)
+                ),
+            ],
+            sources=[SUPPLY_PLENUM_I300],
+        )
+        for uscite in PLENUM_OUTLET_COUNTS
+    ),
+]
+
 DEFINITIONS: list[dict[str, Any]] = [
     definition(
         "heat-pump-air-water",
@@ -1323,6 +1390,7 @@ DEFINITIONS: list[dict[str, Any]] = [
     ),
     *REL_003,
     *REL_012,
+    *REL_026,
     # Il collettore con ritorno da tre a dodici vie (REL-016, D3): una voce per numero,
     # come il plenum di zona, con le vie tutte obbligatorie — una via che non porta a un
     # circuito si tappa, e il disegno non la mostra aperta. I passaggi sono quelli del
