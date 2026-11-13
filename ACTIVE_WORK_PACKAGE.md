@@ -52,7 +52,37 @@ Tre blocchi. I primi due non si toccano fra loro e si sviluppano in parallelo; i
 |---|---|---|
 | C-1 | **Le scritte che non stanno in pianta vanno fuori**, nello spazio bianco attorno alla pianta, collegate al pezzo da una linea di richiamo, incolonnate e senza incroci. **Niente tavole di dettaglio aperte in automatico**: il riquadro di dettaglio si fa solo se il progettista lo chiede (`dettagli` nella pianta). I numeri cerchiati con il testo in legenda **restano**. | LEGGIMI M2 |
 | C-2 | **Una scritta sola per due tubi che corrono insieme** (M1/R1). | LEGGIMI M2 |
-| C-3 | **Le sagome dei muri lette dal disegno di base**, con le correzioni a mano (aggiungi o togli una regione). Si parte da `muri_da_pdf.py` della commessa (base vettoriale). Per il catastale raster lo stesso criterio sull'immagine: **non provato** nella commessa, e se in sessione non c'è un catastale su cui provarlo esce dichiarato come tale o resta fuori. Dipende dai file del PO. | LEGGIMI M3, 6 |
+| C-3 | **La base architettonica della tavola MEP** (vedi sotto). Sostituisce «le sagome lette dal disegno di base con un algoritmo»: il PO, il 13 novembre, ha mostrato cinque planimetrie vere e ha disposto chi fa che cosa. | LEGGIMI M3, 6; I-300 (seconda parte) |
+
+#### C-3, com'è disposta dal PO (I-300, 13 novembre)
+
+> «a volte sono catastali ben fatti a volte disegni a mano altre volte foto di catastali. per questo dicevo che la parte
+> interpretativa va fatta da agente AI (con indicazioni di metodo dalla skill - magari la skill dice di usare un sub
+> agente in modo da non appesantire il contesto di lavoro) poi quello che va standardizzato è l'output della base
+> grafica. Colore appena sbiadito della planimetria come si fa con gli xref architettonici in ambito mep, muri
+> grigiolini, finestre celestine, rimuovere arredi e lasciare solo i nomi delle stanze con i loro mq.»
+
+Le cinque planimetrie (in sessione, **mai nel repository**: portano nomi e codici fiscali): il vettoriale di un
+architetto con gli arredi; due catastali vettoriali, uno con tre piani sullo stesso foglio; un disegno a mano quotato,
+scansito; la fotografia di un catastale stampato.
+
+- **Leggere la planimetria è un pezzo AI**, con la forma di `skill/capire/` (`docs/ARCHITETTURA-DEL-PIANO.md` §3):
+  `skill/base/ISTRUZIONI.md` che bastano da sole, `CONSEGNA.md` che dice che cosa si restituisce e come si giudica, la
+  prova in camera pulita agli atti. La skill dice di affidarlo a **un sub-agente**, perché le immagini non pesino sul
+  contesto di chi disegna l'impianto. Il metodo comprende la **taratura** (la barra dei 10 metri del catastale, le
+  quote del disegno a mano, la scala dichiarata) e che cosa fare quando la planimetria non basta: una **domanda
+  dichiarata**, mai una misura inventata.
+- **Quello che l'agente consegna è la base in dati**, dentro il JSON della pianta: le sagome dei muri
+  (`sagome_muri`, B-2), le aperture con il loro tipo, le stanze con il nome. I mq li calcola il motore dal poligono.
+  Gli arredi non si trascrivono.
+- **Disegnare la base è deterministico, e la grafica è una sola** qualunque fosse l'ingresso: muri grigio chiaro,
+  finestre celesti, porte a tratto fine, nome del locale con i mq, tutto in mezzatinta sotto l'impianto. I colori sono
+  **proposte**, da giudicare sulla tavola.
+- **Il controllo è a vista**: un comando sovrappone la base ridisegnata alla planimetria d'origine, e l'agente (e il
+  PO) guardano se combacia. Gli aiuti deterministici — leggere i tratti di un PDF vettoriale — sono **aiuti** per
+  l'agente, non il lettore.
+- **La prova**: le cinque planimetrie del PO lette in camera pulita, in sessione; nel repository entra un caso
+  anonimo.
 
 ## Fuori
 
