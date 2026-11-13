@@ -1,0 +1,32 @@
+# formato, scala, avvisi sulla tavola, avvisi del confronto (rifai_le_tavole.py)
+t3 prima: A2 50 1 0
+t3 dopo: A3 50 1 0
+t3 dopo, forature accese: A2 50 1 0
+t3 prima = dopo con le forature accese, PNG identici byte per byte: pianta-dettaglio-A.png, pianta-dettaglio-B.png, pianta-dettaglio-C.png, pianta.png
+sagome senza: A3 50 1 0
+sagome con: A3 50 1 0
+discordanze prima, distinta e grafo: A1 50 50 49
+discordanze dopo, distinta e grafo: A3 50 2 49
+discordanze dopo, senza confronto: A3 50 1 0
+== giro 1: pianta --grafo
+Grafo grafo-completo.json: scritte le lunghezze di 9 tratte
+  - T01: — → 2,8 m (ramo-matrimoniale)
+  - T02: — → 3,4 m (ramo-singola)
+  - T03: — → 1,55 m (ramo-soggiorno-varco)
+  - T04: — → 4,55 m (ramo-soggiorno-parete)
+  - T10: — → 10,63 m (alim-quadro-sezionatore)
+  - T12: — → 3,465 m (bus-matrimoniale)
+  - T13: — → 5,105 m (bus-singola)
+  - T14: — → 2,365 m (bus-soggiorno)
+  - T16: — → 3,79 m (cavo-comando-filo)
+Lunghezze del progettista, lasciate come sono (la pianta misura altro): T06 9 m (misura 8,635 m); T07 9 m (misura 9,035 m); T08 8 m (misura 1,775 m); T09 8 m (misura 8,325 m); T11 10 m (misura 8,235 m); T15 2 m (misura 0,125 m)
+Avviso: Senza L prog., quotate sulla misura (°): T01, T02, T04, T03, T10, T12, T13, T14, T16. Le misure sono nel grafo: schema e distinta, rifatti, le leggono da li'.
+== giro 1 rilanciato uguale
+Grafo grafo-completo.json: nessuna lunghezza cambiata, il file non si riscrive
+Lunghezze del progettista, lasciate come sono (la pianta misura altro): T06 9 m (misura 8,635 m); T07 9 m (misura 9,035 m); T08 8 m (misura 1,775 m); T09 8 m (misura 8,325 m); T11 10 m (misura 8,235 m); T15 2 m (misura 0,125 m)
+Avviso: Senza L prog., quotate sulla misura (°): T01, T02, T04, T03, T10, T12, T13, T14, T16. Le misure sono nel grafo: schema e distinta, rifatti, le leggono da li'.
+== giro 2: TA-01 spostata di un metro verso ovest
+Grafo grafo-completo.json: scritte le lunghezze di 1 tratta
+  - T01: 2,8 m → 3,8 m (ramo-matrimoniale)
+Lunghezze del progettista, lasciate come sono (la pianta misura altro): T06 9 m (misura 8,635 m); T07 9 m (misura 9,035 m); T08 8 m (misura 1,775 m); T09 8 m (misura 8,325 m); T11 10 m (misura 8,235 m); T15 2 m (misura 0,125 m)
+Avviso: Senza L prog., quotate sulla misura (°): T01, T02, T04, T03, T10, T12, T13, T14, T16. Le misure sono nel grafo: schema e distinta, rifatti, le leggono da li'.
