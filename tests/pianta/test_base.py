@@ -179,10 +179,22 @@ def test_la_cerniera_sta_dove_la_pianta_dice() -> None:
 
 
 def test_la_porta_a_due_ante_e_la_scorrevole() -> None:
-    disegno, _ = aperture_della_base(_porta(anta="doppia"), _identita, 1.0)
+    disegno, _ = aperture_della_base(_porta(anta="doppia", apre_verso="sotto"), _identita, 1.0)
     assert len([p for p in disegno if isinstance(p, Arco)]) == 2
     disegno, _ = aperture_della_base(_porta(anta="scorrevole"), _identita, 1.0)
     assert not [p for p in disegno if isinstance(p, Arco)] and len(disegno) == 1
+
+
+def test_la_porta_senza_verso_si_disegna_chiusa() -> None:
+    """Uno schizzo o un catastale non disegnano il verso (camera pulita di REL-026): l'anta sta
+    chiusa nel vano, un tratto solo. Un arco da una parte a caso sembrerebbe un dato letto."""
+    for campi in ({}, {"anta": "doppia"}, {"cerniera": "destra"}):
+        disegno, tratti = aperture_della_base(_porta(**campi), _identita, 1.0)
+        assert not [p for p in disegno if isinstance(p, Arco)], campi
+        (anta,) = disegno
+        assert isinstance(anta, Linea) and anta.layer == LAYER_APERTURE
+        assert [tuple(q) for q in anta.punti] == [pytest.approx((1.6, 0.0)), pytest.approx((2.4, 0.0))]
+        assert tratti
 
 
 def test_la_cerniera_deve_stare_lungo_il_muro() -> None:

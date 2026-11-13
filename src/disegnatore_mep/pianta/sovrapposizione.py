@@ -516,6 +516,7 @@ def guarda_la_planimetria(sorgente: Path, cartella: Path, pagina: int = 1, dpi: 
 def controlla_a_vista(sorgente: Path, cartella: Path,
                       zona_m: tuple[float, float, float, float] | None = None) -> EsitoDellaBase:
     """La base trascritta sopra la planimetria d'origine, alla stessa scala, e i controlli."""
+    zona_chiesta = zona_m
     pianta = carica_pianta(sorgente)
     if pianta.sfondo is None:
         raise ErroreDellaBase(
@@ -555,7 +556,11 @@ def controlla_a_vista(sorgente: Path, cartella: Path,
         ("balconi", ARANCIO_DEI_BALCONI),
         (f"griglia in metri, 1 m = {_un_metro(sfondo.px_per_m, sfondo.px_per_m_y)} px", CIANO_DELLA_GRIGLIA),
     ], zona_mm)
-    pdf, png = cartella / f"{sorgente.stem}-sovrapposizione.pdf", cartella / f"{sorgente.stem}-sovrapposizione.png"
+    # Un riquadro ingrandito ha il suo file, come con la planimetria: se no chi ingrandisce
+    # per controllare lascia nella cartella, col nome della sovrapposizione intera, l'ultimo riquadro.
+    coda = "" if zona_chiesta is None else f"-zona-{'_'.join(f'{v:g}' for v in zona_chiesta)}"
+    pdf = cartella / f"{sorgente.stem}-sovrapposizione{coda}.pdf"
+    png = cartella / f"{sorgente.stem}-sovrapposizione{coda}.png"
     foglio.scrivi(pdf)
     lettore, resa = _rendi(foglio, pdf, png, zona_mm)
     righe = [

@@ -383,7 +383,13 @@ def aperture_della_base(
             if apertura.apre_verso is not None:
                 v = verso[apertura.apre_verso]
                 segno = 1.0 if -uy * v[0] + ux * v[1] >= 0 else -1.0
-            if apertura.anta == "scorrevole":
+            if apertura.apre_verso is None and apertura.anta != "scorrevole":
+                # Il verso non e' dato (uno schizzo, un catastale che non lo disegna): l'anta si
+                # disegna chiusa, nel vano. Un arco da una parte a caso sembrerebbe un dato letto.
+                chiusa = (P(*_sull_asse(muro, s0, 0.0)), P(*_sull_asse(muro, s1, 0.0)))
+                primitive.append(Linea(chiusa, LINEA_DELLE_PORTE, TRATTO_FINE_MM, LAYER_APERTURE))
+                tratti += _segmenti(chiusa, di, 0.09)
+            elif apertura.anta == "scorrevole":
                 m = SPESSORE_DELL_ANTA_SCORREVOLE_M / 2
                 d0 = segno * h / 2
                 listello = [P(*_sull_asse(muro, s, d0 + d)) for s, d in ((s0, -m), (s1, -m), (s1, m), (s0, m))]
