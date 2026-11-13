@@ -53,7 +53,7 @@ from disegnatore_mep.layout.flow import (
 from disegnatore_mep.layout.hierarchy import Level, hierarchy_of, is_a_machine
 from disegnatore_mep.layout.trunks import Trunk
 from disegnatore_mep.model.project import ProjectModel
-from disegnatore_mep.model.types import PortFlow
+from disegnatore_mep.model.types import Domain, PortFlow
 
 from .calcolatore import portata_da_potenza
 
@@ -157,8 +157,16 @@ def _attraversati(definizione: ComponentDefinition) -> tuple[frozenset[str], ...
     Per fluido: una coppia con un'entrata e un'uscita dello stesso fluido. Il
     fluido che il pezzo **tiene in serbo** non si attraversa — il volume di un
     accumulo assorbe la differenza fra il primario e il secondario —, tranne
-    quando il pezzo ha due attacchi soli, come il volano sul ritorno."""
-    percorso = [porta for porta in definizione.ports if not porta.off_the_run]
+    quando il pezzo ha due attacchi soli, come il volano sul ritorno.
+
+    **Le porte di comando non si attraversano** (REL-026, I-300, da una commessa): un cavo
+    non porta acqua. Il catalogo del progetto mette da parte quelle che il grafo non
+    collega, e una pompa di calore con l'alimentazione e la sola uscita `out_acs`
+    collegate aveva sul fluido `power_supply` un'entrata e un'uscita: contate come una
+    seconda coppia, lasciavano la macchina senza la sua portata."""
+    percorso = [
+        porta for porta in definizione.ports if not porta.off_the_run and porta.domain is not Domain.CONTROL
+    ]
     per_fluido: dict[str, list[tuple[str, PortFlow]]] = defaultdict(list)
     for porta in percorso:
         per_fluido[porta.medium].append((porta.id, porta.flow))
