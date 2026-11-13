@@ -26,6 +26,19 @@ done
 PYTHONPATH=src $PY -m disegnatore_mep symbols-sheet --symbols "$LAVORO/simboli" "$QUI/simboli-nuovi.svg" > /dev/null
 $MEP anteprima "$QUI/simboli-nuovi.svg" --out "$QUI/simboli-nuovi.png" --dpi 200 > /dev/null
 
+# Il vaso sanitario (A-5) sul T1 di REL-023, che e' esecutivo: il comando scrive taglia e
+# precarica sul vaso e la taratura accanto al gruppo di sicurezza, e la tavola le porta.
+T1=docs/collaudi/REL-023/T1
+rm -rf "$QUI/vaso-sanitario" && mkdir -p "$QUI/vaso-sanitario"
+$MEP vaso "$T1/grafo-completo.json" --sanitario --tmax 60 --rete 3 --taratura 6 \
+    --out "$QUI/vaso-sanitario/grafo-completo.json" | tee "$QUI/vaso-sanitario/vaso.txt"
+$MEP disegna "$QUI/vaso-sanitario/grafo-completo.json" --piano "$T1/piano-idraulica.json" \
+    --out "$QUI/vaso-sanitario/tavola" > "$QUI/vaso-sanitario/disegna.txt" || true
+grep -E "^Formato" "$QUI/vaso-sanitario/disegna.txt" || tail -3 "$QUI/vaso-sanitario/disegna.txt"
+for PDF in "$QUI"/vaso-sanitario/tavola/*.pdf; do
+    $MEP anteprima "$PDF" --out "${PDF%.pdf}.png" --dpi 110 > /dev/null
+done
+
 for CASO in plenum-di-mandata plenum-motorizzato; do
     echo "== $CASO"
     $MEP valida "$QUI/grafo-$CASO.json" | sed -n 1p
