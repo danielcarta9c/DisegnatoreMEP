@@ -45,7 +45,9 @@ sul ramo `claude/magical-wright-ffrf86`, **PR #95**. Il rapporto, con ogni crite
 - **Il prossimo**, quando la 2.1.0 è su `main`: quello che il PO risponde sui punti aperti; poi `REL-025` (la 2.2:
   derivazione air-split, termostato radio, resistenza integrativa, termostato di sicurezza, distinta a quantità nette,
   pianta su più piani) e le fasi 2-4 di `REL-024`. L'ordine lo dice il PO.
-- **I numeri**: il prossimo input è **I-301**, la prossima decisione **D-241** (REL-026 non ha aperto decisioni: le
+- **La precarica del vaso sanitario** (I-301): il PO l'ha rimessa alla sessione; scelta, da una fonte letta, 0,2 bar
+  sotto la pressione di rete (rapporto, §8).
+- **I numeri**: il prossimo input è **I-302**, la prossima decisione **D-241** (REL-026 non ha aperto decisioni: le
   proposte aspettano il PO).
 
 ## Com'era il 6 novembre 2026 sera, con REL-024 e la 2.0.0

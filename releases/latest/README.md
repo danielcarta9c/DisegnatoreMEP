@@ -1,6 +1,6 @@
 # L'ultima release: 2.1.0
 
-`DisegnatoreMEP-v2.1.0.zip` — sha256 `39c04228517c4ec2…`, 155 file — è `REL-026` (I-300): **i rilievi d'uso della 2.0.0 su una
+`DisegnatoreMEP-v2.1.0.zip` — sha256 `7a37dd4348ba330c…`, 155 file — è `REL-026` (I-300): **i rilievi d'uso della 2.0.0 su una
 commessa**. Si carica come ogni skill personale, dallo ZIP così com'è.
 
 Rispetto alla 2.0.0:

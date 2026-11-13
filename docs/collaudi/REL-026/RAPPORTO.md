@@ -70,13 +70,13 @@ La base (`d9c8f2e`, la 2.0.0 col pacchetto scritto) dava 2922 passed, 15 skipped
 | criterio | comando | output | esito |
 |---|---|---|---|
 | le tavole per prime | §1 | escono da tutti i casi | raggiunto |
-| suite a 0 failed, senza skip o xfail nuovi | `python -m pytest -q -p no:cacheprovider` | `3156 passed, 15 skipped, 11 xfailed in 342.37s` | raggiunto (skip e xfail: gli stessi 15 e 11 della base) |
+| suite a 0 failed, senza skip o xfail nuovi | `python -m pytest -q -p no:cacheprovider` | `3159 passed, 15 skipped, 11 xfailed in 347.79s` | raggiunto (skip e xfail: gli stessi 15 e 11 della base); misurato dopo le correzioni dei §7 e §8 |
 | ruff verde | `ruff check src tests scripts skill/scripts` | `All checks passed!` | raggiunto |
 | mypy verde | `python -m mypy` | `Success: no issues found in 131 source files` | raggiunto |
 | il banco verde | `python scripts/banco.py` | `30 uguali, 0 cambiati, su 30` | raggiunto |
 | le tavole cambiate registrate e mostrate | confronto di `tests/banco/impronte.json` con `origin/main` | 28 casi → 30: nuovi `plenum-di-mandata-rel026`, `plenum-motorizzato-rel026`; cambiato `collaudo-t3-rel012` (la pianta: niente dettagli automatici, la base nuova, le scritte fuori); cambiata un'impronta di `t1-rel023`, `distinta/distinta.json` (la sola impronta delle regole, per la riga in più di `corredo.json`: `blocco-a/RAPPORTO.md`) | raggiunto: `blocco-c-scritte/t3/`, `blocco-c-base/t3/` |
 | nessun dato di cliente nel diff | ricerca nel diff di nomi, indirizzi e codici fiscali delle planimetrie del PO; elenco dei PDF e delle immagini fuori da `docs/collaudi` | nessun riscontro; un solo PDF, `examples/pianta/casi/base-anonima/planimetria.pdf`, inventato | raggiunto |
-| la 2.1.0 costruita con `scripts/costruisci-skill.py` | `python scripts/costruisci-skill.py --out …` | `155 file, 3659 kB` · `Controlli della guida di Anthropic, di skill-creator e del caricamento su claude.ai (al massimo 200 file): passati.` · sha256 `39c04228517c4ec2…` | raggiunto |
+| la 2.1.0 costruita con `scripts/costruisci-skill.py` | `python scripts/costruisci-skill.py --out …` | `155 file, 3659 kB` · `Controlli della guida di Anthropic, di skill-creator e del caricamento su claude.ai (al massimo 200 file): passati.` · sha256 `7a37dd4348ba330c…` | raggiunto |
 | `tests/test_le_release.py` verde | `python -m pytest -q -p no:cacheprovider tests/test_le_release.py tests/test_il_banco.py tests/test_package.py` | `38 passed in 27.89s` | raggiunto |
 | `SKILL.md` sotto le 500 righe | `wc -l skill/SKILL.md` | `465` | raggiunto |
 | la CI verde sulla PR | GitHub Actions sulla PR #95 | verde sull'unione dei blocchi (`2ef0ad0`); **sull'ultima testa si legge sulla PR**: questo rapporto è scritto prima che giri | da leggere sulla PR |
@@ -162,7 +162,8 @@ DA DEFINIRE, sezione X); la distinta che dice «unità interna» anche per il ve
 `consenso_in`/`consenso` tenute facoltative; la porta `p1p2` del `zone-controller`, obbligatoria, nell'esempio collegata
 al `bus` del ventilconvettore.
 
-**Vaso sanitario** — la precarica uguale alla pressione di rete; il margine fino a 5 bar (taratura − 0,5); la serie
+**Vaso sanitario** — ~~la precarica uguale alla pressione di rete~~ (**scelta rimessa dal PO alla sessione, I-301:
+0,2 bar sotto la rete, §8**); il margine fino a 5 bar (taratura − 0,5, ora con una fonte letta: Reflex, p. 45); la serie
 delle taglie e la scelta della taglia (sull'esempio di Caleffi il comando sceglie 80 l, Caleffi propone 60); l'acqua
 fredda a 10 °C.
 
@@ -218,3 +219,40 @@ piano diceva; l'errore stava a monte, in due punti dove le istruzioni tacevano:
 I grafi di riferimento già nel repository (`examples/prova/`) non seguono tutti la regola della via dritta: non sono
 stati toccati.
 
+## 8. La precarica del vaso sanitario (I-301)
+
+Il PO: «Non so come si dimensiona la precarica del vaso esp del sanitario decidi tu per me». La sessione non ha
+deciso a memoria: ha cercato una fonte che la precarica la dica, perché il focus tecnico Caleffi (la fonte del
+metodo) fa il conto con la pressione di alimentazione e la precarica non la nomina.
+
+**La fonte letta**: Reflex, «Reflex, Refix — Expansion vessels» (catalogo tecnico RE1884en), letto il 13 novembre
+2026 dal PDF pubblicato da un distributore:
+
+- p. 48: «The minimum operating pressure or supply pressure p0 in the expansion vessel must be at least 0.2 bar less
+  than the minimum flow pressure. Depending on the distance between the pressure reducer and the Refix, supply pressure
+  settings of 0.2 to 1.0 bar less than the preset pressure on the pressure reducer are required.»
+- p. 49: `p0 = pa − (0.2 … 1.0 bar)`, e la formula `Vn = VSp · n · (psv + 0.5)(p0 + 1.2) / [100 (p0 + 1)(psv − p0 − 0.7)]`;
+- p. 53 (messa in servizio): `p0 [bar] = pa − 0.2 bar`, da aumentare fino a 1 bar se il vaso è lontano dal riduttore;
+- p. 45: `pe ≤ psv − 0.5 bar` (raccomandazione Reflex).
+
+Il catalogo dice che il calcolo è «in accordance with DIN 4807 part 5». **La DIN 4807-5 non è stata letta.** Le altre
+tre fonti cercate (una nota Buderus, il sito Reflex, un catalogo IMI) non si sono aperte o non parlano del caso.
+
+**La scelta**: `precarica = pressione di rete − 0,2 bar` (`SCARTO_DELLA_PRECARICA_SANITARIA_BAR`), il minimo del
+catalogo; lo scarto maggiore per la distanza dal riduttore resta a chi installa. Con la precarica sotto la rete il
+vaso tiene già un po' d'acqua a freddo, quindi la formula prende il fattore `(pa + 1)/(p0 + 1)`:
+`Vn = Ve · (pe + 1)(pa + 1) / [(p0 + 1)(pe − pa)]`. Con `p0 = pa` è la formula di Caleffi; con `pe = psv − 0,5` è
+quella di Reflex. La pressione finale resta quella di prima (il 10 % sotto la valvola sopra i 5 bar, Caleffi).
+
+**Le prove** (`tests/vaso/test_il_vaso_sanitario.py`, 36 passed): l'esempio di Caleffi con la sua ipotesi (63,49 l);
+l'esempio di Reflex p. 46 (900 l, 1,7 %, riduttore 4,2, precarica 4,0, valvola 10 → 31,5 l); la riga della tabella
+Reflex per 200 l e valvola a 6 bar (12 l, la stessa taglia).
+
+| bollitore, T max, rete, valvola | precarica | finale | nominale prima | nominale ora | taglia |
+|---|---|---|---|---|---|
+| 200 l, 60 °C, 3 bar, 6 bar | 2,8 bar | 5,4 bar | 8,95 l | 9,42 l | 12 l (uguale) |
+| 300 l, 65 °C, 4 bar, 6 bar | 3,8 bar | 5,4 bar | 26,78 l | 27,89 l | 35 l (uguale) |
+| 500 l, 70 °C, 3 bar, 8 bar | 2,8 bar | 7,2 bar | 21,89 l | 23,05 l | 24 l (uguale) |
+| 1000 l, 80 °C, 3 bar, 7 bar | 2,8 bar | 6,3 bar | 63,51 l | 66,86 l | 80 l (uguale) |
+
+Sulla tavola dell'esecutivo cambia la scritta della precarica (`blocco-a/vaso-sanitario/`: da 3,0 a 2,8 bar).

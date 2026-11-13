@@ -266,7 +266,8 @@ def esegui_sanitario(
     )
     print(
         f"Vaso sanitario: coefficiente {vaso.coefficiente:.4f}, espansione {vaso.volume_di_espansione_l:.1f} l; "
-        f"precarica {_bar(vaso.precarica_bar)} bar (la rete), finale {_bar(vaso.pressione_finale_bar)} bar; "
+        f"precarica {_bar(vaso.precarica_bar)} bar (0,2 bar sotto la rete a {_bar(vaso.pressione_di_rete_bar)} bar), "
+        f"finale {_bar(vaso.pressione_finale_bar)} bar; "
         f"nominale {vaso.volume_nominale_l:.1f} l → "
         + (f"{vaso.taglia_l} l" if vaso.taglia_l else "oltre la serie")
         + "."

@@ -162,6 +162,12 @@ lì (sta sui canali, come nell'AA-01). E il «nr» delle due tavole (§1, punto 
 
 ### A-5 — il vaso sanitario
 
+> **Aggiornato il 13 novembre 2026 (I-301).** Il PO ha rimesso alla sessione la scelta della precarica. Da qui in
+> poi: **precarica = pressione di rete − 0,2 bar** (catalogo tecnico Reflex «Reflex, Refix — Expansion vessels»,
+> RE1884en, pp. 48, 49, 53, che richiama la DIN 4807-5, non letta), e il volume nominale col fattore che ne segue,
+> `Vn = Ve · (pe + 1)(pa + 1) / [(p0 + 1)(pe − pa)]`. Gli esempi qui sotto sono quelli di prima della scelta: i numeri
+> nuovi sono in `docs/collaudi/REL-026/RAPPORTO.md`, §8.
+
 **Fatto**: `vaso --sanitario --tmax <°C di accumulo> --rete <bar> --taratura <bar> [--bollitore <l>]`
 (`vaso/calcolatore.py`, `dimensiona_il_vaso_sanitario`; `vaso/comando.py`, `applica_sanitario`).
 

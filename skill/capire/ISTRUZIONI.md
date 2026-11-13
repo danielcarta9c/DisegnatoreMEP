@@ -256,9 +256,11 @@ Regole di forma:
   accumulo, la pressione di rete (o la taratura del riduttore), la taratura della valvola di
   sicurezza del bollitore; il volume del bollitore sì, quello va sul bollitore (`volume_l`).
   Il comando conta la dilatazione della sola acqua del bollitore, dall'acqua fredda a 10 °C
-  alla massima di accumulo; precarica uguale alla pressione di rete; pressione finale il 10 %
-  sotto la taratura della valvola (0,5 bar sotto, fino a 5 bar); la taglia dalla serie d'uso
-  comune (focus tecnico Caleffi 0851415, p. 4; metodo proposto, da confermare dal PO).
+  alla massima di accumulo; **precarica 0,2 bar sotto la pressione di rete** (catalogo tecnico
+  Reflex RE1884en, pp. 48–49: `p0 = pa − 0,2 bar`; I-301); pressione finale il 10 % sotto la
+  taratura della valvola (0,5 bar sotto, fino a 5 bar); la taglia dalla serie d'uso comune
+  (focus tecnico Caleffi 0851415, p. 4). Se il vaso sta lontano dal riduttore, chi installa
+  può scendere fino a 1 bar sotto: lo dici al progettista, non lo decidi tu.
 - Il campo `evidence` che lo schema prevede puoi lasciarlo vuoto: la tracciabilità la
   dai con la tabella di rilettura (§8, passo 6). Nelle assunzioni puoi usare
   `source_message_refs` per citare la frase del testo da cui nasce la voce.
