@@ -390,9 +390,11 @@ PREZZARE»: non la stimi.
 
 ### Su richiesta — la pianta dei posizionamenti e dei tracciati
 
-Solo se il progettista l'ha chiesta e ti ha dato la planimetria. Leggi **per intero**
-[riferimenti/pianta.md](riferimenti/pianta.md): dici tu muri, aperture e pezzi in un JSON, in
-metri; il comando instrada i tracciati **ortogonali**, lungo i muri, pagando curve e sormonti, e
+Solo se il progettista l'ha chiesta e ti ha dato la planimetria. **La planimetria la legge un
+sub-agente** con [riferimenti/base.md](riferimenti/base.md) (il §2 dice che cosa passargli): torna
+`base.json`, la base in dati — muri, aperture, stanze, balconi — e la sovrapposizione, che guardi.
+Poi leggi **per intero** [riferimenti/pianta.md](riferimenti/pianta.md): nella base metti pezzi e
+tracciati; il comando instrada i tracciati **ortogonali**, lungo i muri, pagando curve e sormonti, e
 misura le lunghezze: con `--grafo` le scrive nel grafo (quelle del progettista restano), non a mano.
 Poi rifai schema e distinta.
 
@@ -450,6 +452,7 @@ così basta un sì. Un messaggio per passo, non uno per domanda.
 | [riferimenti/distinta.md](riferimenti/distinta.md) | la distinta materiali per l'installatore | solo se il progettista la chiede |
 | [riferimenti/listino-minuteria.md](riferimenti/listino-minuteria.md) | il listino interno della minuteria, con data e fonte dei prezzi | solo se il progettista chiede un costo |
 | [riferimenti/pianta.md](riferimenti/pianta.md) | la pianta dei posizionamenti e dei tracciati | solo se il progettista la chiede |
+| [riferimenti/base.md](riferimenti/base.md) | leggere la planimetria e trascriverne la base, per un sub-agente | con la pianta, a chi legge la planimetria |
 | `dati/` | simboli, catalogo, regole degli accessori e della distinta — un file ciascuno —, nomi, cartiglio, lo schema e un esempio della pianta | li legge il comando; una voce e un manifesto si leggono con `catalogo <id>` e `simbolo <id>` |
 | `scripts/mep.py` | il comando | si esegue, non si legge |
 

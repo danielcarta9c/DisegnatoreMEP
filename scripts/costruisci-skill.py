@@ -14,7 +14,7 @@ Che cosa ci mette, e da dove:
 | nella skill | dal repository |
 |---|---|
 | `SKILL.md` | `skill/SKILL.md` — l'ingresso |
-| `riferimenti/capire.md`, `comporre.md`, `rivedere.md`, `distinta.md`, `pianta.md` | le istruzioni in `skill/<pezzo>/ISTRUZIONI.md` |
+| `riferimenti/capire.md`, `comporre.md`, `rivedere.md`, `distinta.md`, `pianta.md`, `base.md` | le istruzioni in `skill/<pezzo>/ISTRUZIONI.md` |
 | `riferimenti/regole-del-piano.md` | `docs/regole-del-piano.md` |
 | `riferimenti/listino-minuteria.md` | `skill/distinta/LISTINO-MINUTERIA.md` — il listino interno della minuteria |
 | `scripts/mep.py` | `skill/scripts/mep.py` — il comando |
@@ -162,9 +162,15 @@ PERCORSI_DELLA_DISTINTA = (
 
 PERCORSI_DELLA_PIANTA = (
     Sostituzione("`schemas/pianta.schema.json`", "`dati/schema/pianta.schema.json`", 1, "lo schema della pianta"),
+    Sostituzione("`skill/base/ISTRUZIONI.md`", "`riferimenti/base.md`", 1,
+                 "le istruzioni per leggere la planimetria sono un riferimento della skill (REL-026, C-3)"),
     Sostituzione("`examples/pianta/appartamento-aria-aria.json`", "`dati/esempi/pianta-appartamento.json`", 1,
                  "l'esempio completo sta nei dati della skill"),
     Sostituzione("`naming/media.json`", "`dati/naming/media.json`", 1, "i fluidi"),
+)
+
+PERCORSI_DELLA_BASE = (
+    Sostituzione("`schemas/pianta.schema.json`", "`dati/schema/pianta.schema.json`", 1, "lo schema della pianta"),
 )
 
 NOTA_DELLE_REGOLE = (
@@ -330,6 +336,7 @@ def costruisci(uscita: Path) -> tuple[Path, Path]:
         ("rivedere", PERCORSI_DI_RIVEDERE),
         ("distinta", PERCORSI_DELLA_DISTINTA),
         ("pianta", PERCORSI_DELLA_PIANTA),
+        ("base", PERCORSI_DELLA_BASE),
     ):
         testo = (ROOT / "skill" / pezzo / "ISTRUZIONI.md").read_text(encoding="utf-8")
         _scrivi(riferimenti / f"{pezzo}.md", _con_l_indice(_sostituisci(testo, sostituzioni, pezzo)))
