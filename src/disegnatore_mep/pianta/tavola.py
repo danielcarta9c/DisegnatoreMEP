@@ -457,15 +457,36 @@ def colonna(
     return c
 
 
+COLONNE_DELLE_TRATTE: tuple[tuple[str, float, str], ...] = (
+    ("Tratta", 0.0, "start"), ("Fluido", 11.0, "start"), ("Da", 38.0, "start"),
+    ("A", 53.0, "start"), ("Dim.", 68.0, "start"), ("L prog.", 98.0, "end"),
+    ("L mis.", 111.0, "end"), ("L quot.", 124.0, "end"),
+)
+"""Le colonne della tabella delle tratte: il titolo, la x in millimetri, l'ancora."""
+
+NOMI_CORTI_DEI_FLUIDI: dict[str, str] = {
+    "supply_air": "Aria di mandata", "return_air": "Aria di ripresa",
+    "refrigerant_liquid": "Frigo, liquido", "refrigerant_gas": "Frigo, gas",
+    "interconnection": "Cavo UI-UE", "power_supply": "Alimentazione", "control_bus": "Bus",
+    "condensate": "Condensa",
+    # BD.RM.260 (REL-026, B-1): la scritta lunga dei fluidi idronici finiva sulla colonna «Da».
+    "heating_water": "Acqua risc.", "domestic_hot_water": "ACS", "cold_water": "AFS",
+}
+"""Il nome del fluido nella colonna «Fluido» della tabella delle tratte, quando quello
+della legenda non ci sta. Gli altri fluidi hanno il nome della legenda."""
+
+
+def nome_corto_del_fluido(fluido: str) -> str:
+    return NOMI_CORTI_DEI_FLUIDI.get(fluido, nome_del_fluido(fluido))
+
+
 def _tratte_e_avvisi(
     c: _Colonna, pianta: Pianta, lunghe: Sequence[Lunghezza], forature: Sequence[Foratura],
     fori_dei_pezzi: Sequence[tuple[str, str]], regola: Regola | None, avvisi: Sequence[str],
 ) -> None:
     corpo_mm = CORPO_COLONNA_PT * PT_MM
     c.riga("TRATTE", CORPO_TITOLETTI_PT, True)
-    colonne = (("Tratta", 0.0, "start"), ("Fluido", 11.0, "start"), ("Da", 38.0, "start"),
-               ("A", 53.0, "start"), ("Dim.", 68.0, "start"), ("L prog.", 98.0, "end"),
-               ("L mis.", 111.0, "end"), ("L quot.", 124.0, "end"))
+    colonne = COLONNE_DELLE_TRATTE
     c.stacco(1.0)
     c.y += corpo_mm * 1.2
     for testo, x, ancora in colonne:
@@ -474,17 +495,11 @@ def _tratte_e_avvisi(
     c.primitive.append(Linea(((0.0, c.y + 1.0), (c.larghezza, c.y + 1.0)), "#000000", 0.18, LAYER_COLONNA))
     c.stacco(1.0)
     per_tratta = {lu.tratta: lu for lu in lunghe}
-    corta = {
-        "supply_air": "Aria di mandata", "return_air": "Aria di ripresa",
-        "refrigerant_liquid": "Frigo, liquido", "refrigerant_gas": "Frigo, gas",
-        "interconnection": "Cavo UI-UE", "power_supply": "Alimentazione", "control_bus": "Bus",
-        "condensate": "Condensa",
-    }
     for tracciato in sorted(pianta.tracciati, key=lambda t: chiave_della_tratta(t.tratta)):
         lu = per_tratta[tracciato.tratta]
         c.y += corpo_mm * 1.25
         valori = (
-            tracciato.tratta, corta.get(tracciato.fluido, nome_del_fluido(tracciato.fluido)),
+            tracciato.tratta, nome_corto_del_fluido(tracciato.fluido),
             tracciato.estremo_da.pezzo, tracciato.estremo_a.pezzo, tracciato.dimensione or "",
             "—" if lu.data_m is None else metri(lu.data_m),
             metri(lu.misurata_m) + ("!" if lu.oltre_lo_scarto else ""),
