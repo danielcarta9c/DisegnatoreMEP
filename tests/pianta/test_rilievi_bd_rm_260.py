@@ -189,6 +189,10 @@ def test_di_base_le_forature_non_si_scrivono(esiti: dict[str, Esito]) -> None:
     assert dati["forature_accese"] is False and dati["forature"] == [] and dati["fori_dei_pezzi"] == []
     assert "per_il_grafo" not in dati
     assert all("attraversamenti_di_parete" not in t for t in dati["tratte"])
+    # Nemmeno la colonna dei dettagli le nomina (visto sul dettaglio B del T3).
+    for dettaglio in (p for p in esito.file if p.suffix == ".svg" and "dettaglio" in p.name):
+        testo = dettaglio.read_text(encoding="utf-8")
+        assert "forature" not in testo and "Tratte, lunghezze e avvisi: tavola" in testo
 
 
 def test_accese_le_forature_tornano_come_prima(tmp_path: Path, esiti: dict[str, Esito]) -> None:

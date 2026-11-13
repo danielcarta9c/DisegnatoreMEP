@@ -509,7 +509,8 @@ def colonna(
     c.stacco(STACCO_MM)
 
     if ridotta is not None:
-        c.riga(f"Tratte, lunghezze, forature e avvisi: tavola {ridotta}.", CORPO_COLONNA_PT, True)
+        cose = "Tratte, lunghezze, forature e avvisi" if pianta.forature else "Tratte, lunghezze e avvisi"
+        c.riga(f"{cose}: tavola {ridotta}.", CORPO_COLONNA_PT, True)
         c.stacco(STACCO_MM)
     else:
         _tratte_e_avvisi(c, pianta, lunghe, forature, fori_dei_pezzi, regola, avvisi)
