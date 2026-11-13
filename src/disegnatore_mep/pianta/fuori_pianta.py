@@ -78,9 +78,13 @@ DENTRO_MM = 0.2
 si' (la linea che costeggia il plenum)."""
 
 PASSO_DEI_PUNTI_MM = 1.0
-"""Ogni quanto si prova un punto d'attacco lungo un tratto."""
+"""Ogni quanto si prova un punto d'attacco lungo un tratto, per un richiamo dritto."""
 
-SCOSTAMENTI_MM = (2.0, 4.0, 6.0, 9.0, 12.0, 16.0, 22.0)
+PASSO_DEI_GOMITI_MM = 2.0
+"""Ogni quanto, per un richiamo col gomito: ce ne sono molti di piu', e un millimetro in
+piu' o in meno del gomito non cambia la tavola."""
+
+SCOSTAMENTI_MM = (3.0, 6.0, 10.0, 15.0)
 """Per una riga sopra o sotto, raggiunta da un tratto verticale: quanto il gomito si
 scosta dal tratto."""
 
@@ -129,14 +133,16 @@ class _Tratto:
     orizzontale: bool
     versi: tuple[int, ...]
 
-    def punti(self) -> Iterator[Punto]:
+    def punti(self, passo: float = PASSO_DEI_PUNTI_MM) -> Iterator[Punto]:
         """I punti d'attacco lungo il tratto, lontani dai capi, a passo fisso."""
         asse = 0 if self.orizzontale else 1
         lo, hi = sorted((self.a[asse], self.b[asse]))
         lo, hi = lo + FINE_MM, hi - FINE_MM
         if hi < lo:
             return
-        passi = max(1, int((hi - lo) / PASSO_DEI_PUNTI_MM))
+        # Un tratto corto (il cavo fra due pezzi vicini) si prova fitto: ha pochi punti, e
+        # vicino ai capi molti non vanno bene.
+        passi = max(1, int((hi - lo) / min(passo, max(0.25, (hi - lo) / 8))))
         for indice in range(passi + 1):
             v = round(lo + (hi - lo) * indice / passi, 3)
             yield (v, self.a[1]) if self.orizzontale else (self.a[0], v)
@@ -276,7 +282,7 @@ def _candidati(
                     giu = 1 if ay > py else -1
                     if abs(ay - py) < VICINO_MM or giu not in tratto.versi:
                         continue
-                    for px, _ in tratto.punti():
+                    for px, _ in tratto.punti(PASSO_DEI_GOMITI_MM):
                         if (ax - px) * verso > FINE_MM:
                             aggiungi(((px, py), (px, ay), (ax, ay)), posto, (n, px))
     for lato in LATI[2:]:
@@ -292,12 +298,16 @@ def _candidati(
                             aggiungi(((px, py), (px, bordo)), posto, (n, px, posto.x))
                 elif not tratto.orizzontale:
                     px = tratto.a[0]
-                    for _, py in tratto.punti():
+                    for _, py in tratto.punti(PASSO_DEI_GOMITI_MM):
                         if (bordo - py) * verso <= VICINO_MM:
                             continue
                         for fianco in tratto.versi:
                             for scosto in SCOSTAMENTI_MM:
-                                gx = px + fianco * scosto
+                                gx = round(px + fianco * scosto, 3)
+                                if not pianta[0] < gx < pianta[2]:
+                                    # Il richiamo di una riga non corre nei margini di fianco:
+                                    # li' sbarrerebbe la colonna.
+                                    continue
                                 for posto in _posti_in_riga(lato, indice, base, bordo, gx, area, larghezza, salita,
                                                             discesa):
                                     aggiungi(((px, py), (gx, py), (gx, bordo)), posto, (n, py, fianco, scosto, posto.x))
@@ -449,10 +459,37 @@ GIRI_DI_MIGLIORIA = 2
 """Quante volte si ripassano le scritte fuori, ciascuna con le altre ferme."""
 
 
+LUNGO_MM = 120.0
+"""Un richiamo fuori piu' lungo di cosi' attraversa mezza tavola: la tavola prova a
+spostare la pianta sul foglio (`tavola.componi`), e tiene la prova se costa meno."""
+
+
+@dataclass(frozen=True)
+class Fuori:
+    """Le scritte fuori, una per richiesta (None se non ha trovato posto), e quanto
+    costano i loro richiami."""
+
+    posate: list[ScrittaPosata | None]
+    costi: list[float | None]
+
+    @property
+    def totale(self) -> float:
+        return sum(10 * COSTO_OSTACOLO if c is None else c for c in self.costi)
+
+    def da_migliorare(self) -> list[int]:
+        """Le scritte senza posto, o col richiamo che passa su una scritta o un pezzo, o
+        piu' lungo di `LUNGO_MM`."""
+        return [
+            indice for indice, (posata, costo) in enumerate(zip(self.posate, self.costi, strict=True))
+            if posata is None or costo is None or costo >= COSTO_OSTACOLO
+            or _lunghezza(posata.richiamo_fuori or ()) > LUNGO_MM
+        ]
+
+
 def posa_fuori(
     richieste: Sequence[Richiesta], ingombri: Ingombri, pianta: Rettangolo, area: Rettangolo,
     tubi: frozenset[Segmento], richiami: Sequence[Segmento], proprie: dict[str, frozenset[Segmento]],
-) -> list[ScrittaPosata | None]:
+) -> Fuori:
     """Le scritte fuori, una per richiesta, nell'ordine; None per quelle che non trovano
     posto. `pianta` e' l'ingombro del disegno sulla carta (muri, pezzi, zone esterne,
     tracciati), `area` il campo del disegno; `tubi` le linee dei tracciati, `richiami` i
@@ -461,8 +498,9 @@ def posa_fuori(
     Si posano una alla volta, ciascuna nel posto che costa meno con quelle gia' posate;
     poi si ripassano (`GIRI_DI_MIGLIORIA`): ognuna si toglie e si riposa con le altre
     ferme, e cambia posto solo se costa meno. La prima posata non prende il posto che
-    serviva a un'altra solo perche' e' venuta prima. Se resta un richiamo sopra una
-    scritta o un pezzo, si riprova nell'ordine inverso, e si tiene il migliore.
+    serviva a un'altra solo perche' e' venuta prima. Se ne resta una da migliorare
+    (`Fuori.da_migliorare`), tutto si rifa' nell'ordine inverso (prima le sigle dei pezzi,
+    che stanno nei margini stretti, poi le scritte delle tratte), e si tiene il migliore.
 
     Le scritte e i richiami posati entrano negli `ingombri`: chi viene dopo (i nomi delle
     stanze) non ci va sopra."""
@@ -476,14 +514,20 @@ def posa_fuori(
         scelte = _posa_e_migliora(richieste, ordine, prova, pianta, area, tubi, richiami, proprie)
         if migliori is None or _totale(scelte) < _totale(migliori) - 1e-6:
             migliori = scelte
-        if len(ordine) > 1 and ordine[0] == 0 and any(s is not None and s[0] >= COSTO_OSTACOLO for s in scelte):
+        if len(ordine) > 1 and ordine[0] == 0 and Fuori(
+            [None if c is None else _posata(r, c) for r, c in zip(richieste, scelte, strict=True)],
+            [None if c is None else c[0] for c in scelte],
+        ).da_migliorare():
             ordini.append(ordine[::-1])
     assert migliori is not None
     finale = _con_le_scelte(prova, migliori, tubi, richiami)
     finale.ingombri.area = vecchia_area
     ingombri.prendi(finale.ingombri)
-    return [None if scelta is None else _posata(richiesta, scelta) for richiesta, scelta in zip(richieste, migliori,
-                                                                                                strict=True)]
+    return Fuori(
+        [None if scelta is None else _posata(richiesta, scelta) for richiesta, scelta in zip(richieste, migliori,
+                                                                                             strict=True)],
+        [None if scelta is None else scelta[0] for scelta in migliori],
+    )
 
 
 def _totale(scelte: Sequence[Scelta | None]) -> float:

@@ -560,6 +560,50 @@ def posa_dentro(
     return None
 
 
+CORRONO_INSIEME = 0.8
+"""Due tratte corrono insieme se per almeno questa parte del loro percorso hanno
+l'altra accanto (REL-026, C-2): «(quasi) tutto il percorso»."""
+
+
+def affiancate(
+    a: Sequence[Sequence[tuple[float, float]]], b: Sequence[Sequence[tuple[float, float]]], entro: float,
+    campione: float,
+) -> float:
+    """La parte dei percorsi `a` e `b` (le spezzate, in metri) che ha l'altro accanto:
+    parallelo, a non piu' di `entro`, di fianco. Si misura a campioni ogni `campione`,
+    su tutti e due: 1 vuol dire che corrono insieme da un capo all'altro."""
+
+    def segmenti(linee: Sequence[Sequence[tuple[float, float]]]) -> list[tuple[tuple[float, float], tuple[float, float]]]:
+        return [(p, q) for punti in linee for p, q in zip(punti, punti[1:], strict=False) if p != q]
+
+    def accanto(punto: tuple[float, float], orizzontale: bool,
+                altri: list[tuple[tuple[float, float], tuple[float, float]]]) -> bool:
+        x, y = punto
+        for p, q in altri:
+            if orizzontale:
+                parallelo = abs(p[1] - q[1]) < 1e-9 and 1e-9 < abs(p[1] - y) <= entro + 1e-9
+                di_fianco = min(p[0], q[0]) - 1e-9 <= x <= max(p[0], q[0]) + 1e-9
+            else:
+                parallelo = abs(p[0] - q[0]) < 1e-9 and 1e-9 < abs(p[0] - x) <= entro + 1e-9
+                di_fianco = min(p[1], q[1]) - 1e-9 <= y <= max(p[1], q[1]) + 1e-9
+            if parallelo and di_fianco:
+                return True
+        return False
+
+    totale = vicini = 0
+    for mie, altre in ((segmenti(a), segmenti(b)), (segmenti(b), segmenti(a))):
+        for p, q in mie:
+            orizzontale = abs(p[1] - q[1]) < 1e-9
+            lunghezza = abs(q[0] - p[0]) + abs(q[1] - p[1])
+            passi = max(1, round(lunghezza / campione))
+            for indice in range(passi):
+                t = (indice + 0.5) / passi
+                totale += 1
+                if accanto((p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t), orizzontale, altre):
+                    vicini += 1
+    return vicini / totale if totale else 0.0
+
+
 def _posata(
     testo: str, x: float, y: float, corpo_pt: float, grassetto: bool, r: Rettangolo,
     ingombri: Ingombri, richiamo: tuple[float, float, float, float] | None = None,
