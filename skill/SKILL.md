@@ -196,7 +196,9 @@ python3 scripts/mep.py vaso $L/grafo-completo.json --contenuto <l> --tmax <°C> 
 Scrive la taglia sulla riga del vaso in tabella e, nell'esecutivo, la precarica, la taratura
 accanto alle valvole di sicurezza e la pressione di carica accanto al gruppo di riempimento. Con
 le Shenling usa la loro pressione minima (1,5 bar) e di riempimento (2,0 bar). Con il glicole
-passa `--coefficiente` della miscela, dalla sua scheda.
+passa `--coefficiente` della miscela, dalla sua scheda. **Il vaso sanitario** del bollitore:
+`vaso --sanitario --tmax <°C di accumulo> --rete <bar> --taratura <bar della valvola>
+[--bollitore <l>]` (i dati e il metodo in `capire.md` §3; senza `--bollitore`, il `volume_l` del bollitore).
 
 ### 4. L'approvazione — l'unico cancello
 

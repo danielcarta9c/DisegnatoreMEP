@@ -13,6 +13,15 @@ Un vaso per circuito: quello d'acqua di riscaldamento. Se nel grafo ce n'e' piu'
 comando vuole sapere quale (``--vaso``). Se le macchine del circuito sono Shenling, la
 pressione minima (1,5 bar) e quella di riempimento (2,0 bar) sono quelle del manuale, a
 meno che il progettista ne dia altre.
+
+**Il vaso sanitario** (REL-026, I-300; ``--sanitario``): quello sull'acqua fredda del
+bollitore, che la regola posa fra il non ritorno e il bollitore (D-178, I-272). Si
+dimensiona dal volume del bollitore — se il progettista non lo da', quello scritto sul
+bollitore del grafo —, dalla massima di accumulo, dalla pressione di rete (o dalla taratura
+del riduttore) e dalla taratura della valvola di sicurezza (`calcolatore`,
+`dimensiona_il_vaso_sanitario`). Scrive come per il riscaldamento: sul vaso ``volume_l``
+sempre, ``precarica_bar`` nell'esecutivo; nell'esecutivo la taratura accanto alla sicurezza
+del sanitario. Prima di REL-026 la taglia del vaso sanitario si scriveva a mano nel grafo.
 """
 
 from pathlib import Path
@@ -21,7 +30,14 @@ from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.io.project_json import dump_project, load_project
 from disegnatore_mep.model.project import MARCA, ComponentInstance, ProjectModel
 
-from .calcolatore import DatiDelVaso, Vaso, dimensiona_il_vaso
+from .calcolatore import (
+    DatiDelVaso,
+    DatiDelVasoSanitario,
+    Vaso,
+    VasoSanitario,
+    dimensiona_il_vaso,
+    dimensiona_il_vaso_sanitario,
+)
 
 ETICHETTA = "etichetta"
 
@@ -48,10 +64,15 @@ def _reti_di(modello: ProjectModel, pezzo_id: str) -> set[str]:
     }
 
 
-def _circuito(modello: ProjectModel, partenza: str) -> set[str]:
-    """I pezzi raggiungibili dal vaso senza uscire dall'acqua di riscaldamento: il suo
-    circuito, attraverso volani e collettori (un volano a 4 attacchi non separa l'acqua)."""
-    reti = {n.id for n in modello.networks if n.medium == "heating_water"}
+ACQUA_DI_RISCALDAMENTO = "heating_water"
+ACQUA_FREDDA_SANITARIA = "cold_water"
+"""Il fluido su cui sta il vaso sanitario: l'acqua fredda in ingresso al bollitore."""
+
+
+def _circuito(modello: ProjectModel, partenza: str, fluido: str = ACQUA_DI_RISCALDAMENTO) -> set[str]:
+    """I pezzi raggiungibili dal vaso senza uscire dal suo fluido: il suo circuito,
+    attraverso volani e collettori (un volano a 4 attacchi non separa l'acqua)."""
+    reti = {n.id for n in modello.networks if n.medium == fluido}
     vicini: dict[str, set[str]] = {}
     for c in modello.connections:
         if c.network_id not in reti:
@@ -151,6 +172,113 @@ def applica(
                 scritto.append(f"{pezzo.id}: «{proprieta[ETICHETTA]}»")
         nuovi.append(pezzo.model_copy(update={"properties": proprieta}) if proprieta != pezzo.properties else pezzo)
     return modello.model_copy(update={"components": nuovi}), vaso, scritto
+
+
+def vasi_sanitari(modello: ProjectModel, catalogo: ComponentRegistry) -> list[ComponentInstance]:
+    reti = {n.id for n in modello.networks if n.medium == ACQUA_FREDDA_SANITARIA}
+    return [
+        p for p in modello.components
+        if "expansion" in _funzioni(catalogo, p) and _reti_di(modello, p.id) & reti
+    ]
+
+
+def applica_sanitario(
+    modello: ProjectModel,
+    catalogo: ComponentRegistry,
+    temperatura_massima_c: float,
+    pressione_di_rete_bar: float,
+    taratura_bar: float,
+    volume_bollitore_l: float | None = None,
+    vaso_id: str | None = None,
+) -> tuple[ProjectModel, VasoSanitario, list[str]]:
+    """Il grafo con il vaso sanitario scritto, il vaso, e che cosa e' stato scritto dove."""
+    vasi = vasi_sanitari(modello, catalogo)
+    if vaso_id is not None:
+        vasi = [v for v in vasi if v.id == vaso_id]
+        if not vasi:
+            raise ValueError(f"nessun vaso sanitario con id {vaso_id!r}")
+    if not vasi:
+        raise ValueError(
+            "il grafo non ha un vaso d'espansione sull'acqua fredda del bollitore: prima `completa` (il vaso "
+            "sanitario lo posa la regola, se il bollitore non lo porta a bordo)"
+        )
+    if len(vasi) > 1:
+        raise ValueError(
+            "il grafo ha piu' vasi sanitari: " + ", ".join(v.id for v in vasi)
+            + ". Uno per volta, con --vaso e il volume del suo bollitore"
+        )
+    vaso_pezzo = vasi[0]
+    circuito = _circuito(modello, vaso_pezzo.id, ACQUA_FREDDA_SANITARIA)
+    scritto: list[str] = []
+    if volume_bollitore_l is None:
+        bollitori = [
+            p for p in modello.components
+            if p.id in circuito and "dhw_storage" in _funzioni(catalogo, p)
+        ]
+        volumi = [p.properties.get("volume_l") for p in bollitori]
+        if len(bollitori) != 1 or not isinstance(volumi[0], int | float) or isinstance(volumi[0], bool):
+            raise ValueError(
+                "il volume del bollitore non e' nel grafo (`volume_l` sul bollitore, uno solo sul circuito del "
+                "vaso): dallo con --bollitore"
+            )
+        volume_bollitore_l = float(volumi[0])
+        scritto.append(f"volume del bollitore dal grafo: {bollitori[0].id}, {volume_bollitore_l:g} l")
+    vaso = dimensiona_il_vaso_sanitario(
+        DatiDelVasoSanitario(
+            volume_bollitore_l=volume_bollitore_l,
+            temperatura_massima_c=temperatura_massima_c,
+            pressione_di_rete_bar=pressione_di_rete_bar,
+            taratura_sicurezza_bar=taratura_bar,
+        )
+    )
+    esecutivo = modello.metadata.livello == "esecutivo"
+    nuovi: list[ComponentInstance] = []
+    for pezzo in modello.components:
+        proprieta = dict(pezzo.properties)
+        if pezzo.id == vaso_pezzo.id:
+            if vaso.taglia_l is not None:
+                proprieta["volume_l"] = vaso.taglia_l
+            proprieta.pop("precarica_bar", None)
+            if esecutivo:
+                proprieta["precarica_bar"] = vaso.precarica_bar
+            scritto.append(f"{pezzo.id}: {vaso.caratteristiche(esecutivo)}")
+        elif esecutivo and pezzo.id in circuito:
+            if "safety" in _funzioni(catalogo, pezzo) and not proprieta.get(ETICHETTA):
+                proprieta[ETICHETTA] = f"{_bar(taratura_bar)} bar"
+                scritto.append(f"{pezzo.id}: «{proprieta[ETICHETTA]}»")
+        nuovi.append(pezzo.model_copy(update={"properties": proprieta}) if proprieta != pezzo.properties else pezzo)
+    return modello.model_copy(update={"components": nuovi}), vaso, scritto
+
+
+def esegui_sanitario(
+    grafo: Path,
+    uscita: Path | None,
+    catalogo: ComponentRegistry,
+    temperatura_massima_c: float,
+    pressione_di_rete_bar: float,
+    taratura_bar: float,
+    volume_bollitore_l: float | None = None,
+    vaso_id: str | None = None,
+) -> int:
+    modello = load_project(grafo)
+    completo, vaso, scritto = applica_sanitario(
+        modello, catalogo, temperatura_massima_c, pressione_di_rete_bar, taratura_bar, volume_bollitore_l, vaso_id
+    )
+    print(
+        f"Vaso sanitario: coefficiente {vaso.coefficiente:.4f}, espansione {vaso.volume_di_espansione_l:.1f} l; "
+        f"precarica {_bar(vaso.precarica_bar)} bar (la rete), finale {_bar(vaso.pressione_finale_bar)} bar; "
+        f"nominale {vaso.volume_nominale_l:.1f} l → "
+        + (f"{vaso.taglia_l} l" if vaso.taglia_l else "oltre la serie")
+        + "."
+    )
+    livello = completo.metadata.livello or "definitivo (non dichiarato)"
+    print(f"Livello del progetto: {livello}. Scritto sul grafo:")
+    for riga in scritto:
+        print(f"  - {riga}")
+    for avviso in vaso.avvisi:
+        print(f"Avviso: {avviso}")
+    dump_project(completo, uscita or grafo)
+    return 2 if vaso.avvisi else 0
 
 
 def esegui(
