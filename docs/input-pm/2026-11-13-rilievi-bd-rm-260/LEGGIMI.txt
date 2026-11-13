@@ -1,0 +1,32 @@
+Modifiche alla copia di lavoro di Disegnatore MEP v2.0.0 usate per BD.RM.260 (12.11.2026). La skill installata non e' stata toccata.
+File: modifiche-alla-skill.diff (codice, 4 file) + estendi_catalogo.py (dati: catalogo, simboli, famiglie).
+
+1. estendi_catalogo.py: aggiunge a catalogo e simboli il ventilconvettore canalizzato idronico con lato aria (fan-coil-ducted-air) e i plenum di mandata non motorizzati a 2 e 3 uscite (supply-plenum-2, supply-plenum-3; famiglia PL).
+2. diametri/portate.py: le porte di comando non contano come attraversamento (con out_acs collegata il primario restava senza portata).
+3. graphics/tabella.py: i terminali (emission) con marca e modello entrano nella tabella delle apparecchiature, con potenza e portata.
+4. pianta/tavola.py: nome corto dei fluidi idronici nella tabella delle tratte (la scritta lunga finiva sopra la colonna "Da").
+5. pianta/modello.py e pianta/tavola.py: nuovo campo della pianta "sagome_muri" (lista di poligoni in metri). Se c'e', il retino grigio dei muri si disegna su queste sagome e non sui rettangoli asse+spessore di "muri", che restano solo per instradamento e forature. Vale anche nei riquadri di dettaglio (sagome ritagliate) e nel DXF (HATCH sul layer A-WALL). Motivo: con il disegno di base sotto, i rettangoli si sovrapponevano negli angoli, sporgevano alle estremita' e non cadevano dentro i contorni veri dei muri.
+   Nello stesso diff c'e' anche "muri_visibili" sullo sfondo (default true; false = nessun retino): e' rimasto dalla rev02, non serve piu' e si puo' togliere.
+6. Fuori dalla skill, in ..\pianta: muri_da_pdf.py ricava le sagome dal PDF vettoriale dell'architetto (linee spesse = contorni dei muri; regioni chiuse spesse 16-100 cm = muri; serramenti e battute di porta esclusi) e scrive muri-contorni.json. In questo disegno tramezzi e serramenti sono entrambi doppie linee da 8 cm: lo spessore non li distingue, quindi i tramezzi isolati si indicano a mano con un punto x,y in coda al comando (per la rev04: 9.54,9.18 9.30,9.49 9.54,9.49). Per la skill: sagome automatiche + lista di correzioni a mano (aggiungi/togli regione).
+    base_e_retini_dxf.py aggiunge al DXF la base vettoriale sul layer A-PLAN-D01. Funzionano solo con una base vettoriale: per un catastale raster serve lo stesso criterio applicato all'immagine.
+
+RICHIESTE PER LO SVILUPPO (non corrette nel diff; priorita' decise con Daniel il 12.11.2026)
+
+ALTA
+A1. Lunghezze dalla pianta al file dell'impianto. Oggi le lunghezze misurate in pianta si ricopiano a mano nel grafo, da cui le leggono schema e distinta: se la pianta cambia, schema e distinta restano con i numeri vecchi. Serve un passaggio unico: dopo la pianta le lunghezze misurate si scrivono da sole nel grafo, con l'elenco di cosa e' cambiato; quelle date a mano dal progettista restano e vengono segnalate. Va sistemato insieme il collegamento che gia' esiste (pianta con --grafo): provato su BD.RM.260 da' 72 avvisi e porta il foglio da A2 ad A1.
+
+MEDIA
+M1. Vaso sanitario. Il comando "vaso" dimensiona solo il vaso del riscaldamento; quello del bollitore ACS viene disegnato ma la taglia si scrive a mano nel grafo (qui 18 l, precarica 3,5 bar). Estendere "vaso" al sanitario: volume del bollitore, temperatura massima di accumulo, pressione di rete, taratura della valvola di sicurezza.
+M2. Scritte della pianta. Niente tavole di dettaglio aperte in automatico per far stare le scritte (il dettaglio B e' un A3 con due tubi e le parole mandata/ritorno). Quando una scritta non sta in pianta va nello spazio bianco fuori dalla pianta, collegata al pezzo con una linea di richiamo, incolonnata e senza incroci. I numeri cerchiati con il testo in legenda RESTANO: sono ordinati e piacciono. Il riquadro di dettaglio solo se lo chiede il progettista. Utile anche: una scritta unica per due tubi che corrono insieme (M1/R1).
+M3. Retino dei muri sulla sagoma vera (punti 5 e 6 qui sopra). Portare in skill la lettura delle sagome dal disegno di base, con correzioni a mano (aggiungi/togli regione). Per il catastale raster, che e' la base piu' frequente, lo stesso criterio va applicato all'immagine: non provato.
+
+BASSA
+B1. Forature. In una tavola MEP non servono: spente di default (niente F1/F2, niente elenco, niente conteggio in distinta), attivabili su richiesta. Cade quindi la richiesta di far passare il cavo di comando dal foro delle tubazioni.
+B2. Formato del foglio della pianta con --distinta (esce in A1).
+B3. Regola B4 sul plenum a due uscite: da rivedere.
+B4. Togliere "muri_visibili" (rimasto dalla rev02, non serve).
+B5. Distinta non provata con le voci nuove del catalogo ne' con la colonna Fornitura; nessun test lanciato sulle modifiche del diff.
+
+NON RICHIESTO: la base vettoriale dell'architetto nel DXF (base_e_retini_dxf.py). Resta uno script di commessa: il disegno dell'architetto in vettoriale e' raro.
+
+Caso di prova: grafo e pianta di BD.RM.260 nelle cartelle schema e pianta (IM.03 rev04).

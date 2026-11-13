@@ -1,0 +1,92 @@
+diff -ru '--exclude=__pycache__' '--exclude=*.pyc' /root/.claude/skills/synced/573b1397-0283-4afc-961c-43c7904e6340_78f9ba77-9f3a-4dc7-8cb9-caece0bf6847/disegnatore-mep/scripts/disegnatore_mep/diametri/portate.py /tmp/mep/skill/disegnatore-mep/scripts/disegnatore_mep/diametri/portate.py
+--- /root/.claude/skills/synced/573b1397-0283-4afc-961c-43c7904e6340_78f9ba77-9f3a-4dc7-8cb9-caece0bf6847/disegnatore-mep/scripts/disegnatore_mep/diametri/portate.py	2026-11-12 10:59:41.300150607 +0100
++++ /tmp/mep/skill/disegnatore-mep/scripts/disegnatore_mep/diametri/portate.py	2026-11-12 11:41:43.026759927 +0100
+@@ -158,7 +158,12 @@
+     fluido che il pezzo **tiene in serbo** non si attraversa — il volume di un
+     accumulo assorbe la differenza fra il primario e il secondario —, tranne
+     quando il pezzo ha due attacchi soli, come il volano sul ritorno."""
+-    percorso = [porta for porta in definizione.ports if not porta.off_the_run]
++    # BD.RM.260 (12/11/2026): le porte di comando non si attraversano. Senza questo filtro una
++    # pompa di calore con `power` e una sola uscita di comando collegata (`out_acs`) conta una
++    # seconda coppia entrata-uscita sul fluido `power_supply`, e la sua portata non si legge piu'.
++    percorso = [
++        porta for porta in definizione.ports if not porta.off_the_run and porta.domain.value != "control"
++    ]
+     per_fluido: dict[str, list[tuple[str, PortFlow]]] = defaultdict(list)
+     for porta in percorso:
+         per_fluido[porta.medium].append((porta.id, porta.flow))
+diff -ru '--exclude=__pycache__' '--exclude=*.pyc' /root/.claude/skills/synced/573b1397-0283-4afc-961c-43c7904e6340_78f9ba77-9f3a-4dc7-8cb9-caece0bf6847/disegnatore-mep/scripts/disegnatore_mep/graphics/tabella.py /tmp/mep/skill/disegnatore-mep/scripts/disegnatore_mep/graphics/tabella.py
+--- /root/.claude/skills/synced/573b1397-0283-4afc-961c-43c7904e6340_78f9ba77-9f3a-4dc7-8cb9-caece0bf6847/disegnatore-mep/scripts/disegnatore_mep/graphics/tabella.py	2026-11-12 10:59:41.305201633 +0100
++++ /tmp/mep/skill/disegnatore-mep/scripts/disegnatore_mep/graphics/tabella.py	2026-11-12 12:03:25.868262928 +0100
+@@ -96,7 +96,7 @@
+ macchine della centrale. *Proposta della sessione*, da giudicare sulla tavola.
+ Un pezzo entra se **uno qualunque** dei suoi mestieri e' in elenco."""
+ 
+-FUNZIONI_CON_MARCA_O_MODELLO: tuple[str, ...] = ("room_control",)
++FUNZIONI_CON_MARCA_O_MODELLO: tuple[str, ...] = ("room_control", "emission")  # BD.RM.260: il ventilconvettore con marca e modello entra in tabella
+ """I mestieri che entrano nella tabella **solo se il pezzo ha marca o modello
+ dichiarati** (collaudo T3 di REL-012, §2: il progettista aveva dato «Airzone Think a
+ filo» per i termostati, e sulla tavola non comparivano). Un termostato senza marca ne'
+@@ -114,6 +114,7 @@
+     "expansion": ("volume_l",),
+     "circulation": ("flow_rate_m3h", "head_kpa", "head_m"),
+     "direct_expansion_terminal": ("power_kw", "flow_rate_m3h"),
++    "emission": ("power_kw", "flow_rate_m3h"),  # BD.RM.260
+ }
+ """Che cosa si scrive fra le caratteristiche, secondo il mestiere del pezzo.
+ 
+diff -ru '--exclude=__pycache__' '--exclude=*.pyc' /root/.claude/skills/synced/573b1397-0283-4afc-961c-43c7904e6340_78f9ba77-9f3a-4dc7-8cb9-caece0bf6847/disegnatore-mep/scripts/disegnatore_mep/pianta/modello.py /tmp/mep/skill/disegnatore-mep/scripts/disegnatore_mep/pianta/modello.py
+--- /root/.claude/skills/synced/573b1397-0283-4afc-961c-43c7904e6340_78f9ba77-9f3a-4dc7-8cb9-caece0bf6847/disegnatore-mep/scripts/disegnatore_mep/pianta/modello.py	2026-11-12 10:59:41.310705911 +0100
++++ /tmp/mep/skill/disegnatore-mep/scripts/disegnatore_mep/pianta/modello.py	2026-11-12 22:13:50.055585065 +0100
+@@ -182,6 +182,9 @@
+     """Il pixel dove cade il punto (0, 0) della pianta."""
+     opacita: FiniteFloat = Field(default=0.35, gt=0, le=1)
+     """Quanto si vede: lo sfondo si stampa schiarito, sotto i tracciati."""
++    muri_visibili: bool = True
++    """Se lo sfondo mostra gia' le murature, `false` non disegna il retino dei muri:
++    restano per l'instradamento e per le forature, ma non si vedono."""
+ 
+ 
+ class Pezzo(StrictModel):
+@@ -356,6 +359,10 @@
+     zone_esterne: list[ZonaEsterna] = Field(default_factory=list)
+     """Dove fuori dall'edificio le linee possono correre (vedi `ZonaEsterna`)."""
+     sfondo: Sfondo | None = None
++    sagome_muri: list[list[Punto]] = Field(default_factory=list)
++    """Facoltativo: i contorni veri dei muri, in metri, presi dal disegno di base.
++    Se ci sono, il retino dei muri si disegna su queste sagome e non sui
++    rettangoli asse-spessore di `muri`, che restano per instradamento e forature."""
+     pezzi: list[Pezzo] = Field(default_factory=list)
+     tracciati: list[Tracciato] = Field(default_factory=list)
+     maggiorazione: Maggiorazione | None = None
+diff -ru '--exclude=__pycache__' '--exclude=*.pyc' /root/.claude/skills/synced/573b1397-0283-4afc-961c-43c7904e6340_78f9ba77-9f3a-4dc7-8cb9-caece0bf6847/disegnatore-mep/scripts/disegnatore_mep/pianta/tavola.py /tmp/mep/skill/disegnatore-mep/scripts/disegnatore_mep/pianta/tavola.py
+--- /root/.claude/skills/synced/573b1397-0283-4afc-961c-43c7904e6340_78f9ba77-9f3a-4dc7-8cb9-caece0bf6847/disegnatore-mep/scripts/disegnatore_mep/pianta/tavola.py	2026-11-12 10:59:41.310876147 +0100
++++ /tmp/mep/skill/disegnatore-mep/scripts/disegnatore_mep/pianta/tavola.py	2026-11-12 22:13:50.056065899 +0100
+@@ -478,7 +478,8 @@
+         "supply_air": "Aria di mandata", "return_air": "Aria di ripresa",
+         "refrigerant_liquid": "Frigo, liquido", "refrigerant_gas": "Frigo, gas",
+         "interconnection": "Cavo UI-UE", "power_supply": "Alimentazione", "control_bus": "Bus",
+-        "condensate": "Condensa",
++        "condensate": "Condensa", "heating_water": "Acqua risc.", "chilled_water": "Acqua refr.",
++        "domestic_hot_water": "ACS", "domestic_cold_water": "AFS",
+     }
+     for tracciato in sorted(pianta.tracciati, key=lambda t: chiave_della_tratta(t.tratta)):
+         lu = per_tratta[tracciato.tratta]
+@@ -672,11 +673,15 @@
+         angoli_z = ((a[0], a[1]), (b[0], a[1]), (b[0], b[1]), (a[0], b[1]), (a[0], a[1]))
+         primitive.append(Linea(angoli_z, COLORE_ZONE_ESTERNE, 0.25, LAYER_STANZE, TRATTO_ZONE_ESTERNE))
+ 
+-    # I muri.
++    # I muri: sulle sagome vere, se il piano le da'; altrimenti un rettangolo per muro.
++    for sagoma in pianta.sagome_muri:
++        if len(sagoma) >= 3:
++            primitive.append(Area(tuple(P(*q) for q in sagoma), COLORE_MURI["perimetrale"], LAYER_MURI, velo))
+     for muro, s0, s1 in pezzi_dei_muri(pianta):
+         h = muro.spessore / 2
+         angoli = tuple(P(*_sull_asse(muro, s, d)) for s, d in ((s0, -h), (s1, -h), (s1, h), (s0, h)))
+-        primitive.append(Area(angoli, COLORE_MURI[muro.tipo], LAYER_MURI, velo))
++        if not pianta.sagome_muri and (pianta.sfondo is None or pianta.sfondo.muri_visibili):
++            primitive.append(Area(angoli, COLORE_MURI[muro.tipo], LAYER_MURI, velo))
+         r = (min(p[0] for p in angoli), min(p[1] for p in angoli),
+              max(p[0] for p in angoli), max(p[1] for p in angoli))
+         ingombri.metti_rettangolo(r, muro=True)
