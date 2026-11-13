@@ -555,6 +555,24 @@ def _dati(
     }
 
 
+def locali_senza_nome(esito: Esito) -> str:
+    """Quanti locali hanno il nome sulla tavola, e quali no: un locale stretto (un balcone di un
+    metro, una scala esterna) col nome lungo resta senza, e prima non lo diceva nessuno (la camera
+    pulita di REL-026). Chi legge la base accorcia il nome; i mq se ne vanno per primi."""
+    from .base import locali_con_nome
+
+    locali = locali_con_nome(esito.pianta)
+    righe_di = {chi: [p.testo for c, p in esito.tavola.scritte if c == chi] for chi, _, _ in locali}
+    senza = [parti[0] for chi, parti, _ in locali if not righe_di[chi]]
+    senza_mq = [parti[0] for chi, parti, _ in locali if righe_di[chi] and not any("m²" in t for t in righe_di[chi])]
+    riga = f"Locali col nome sulla tavola: {len(locali) - len(senza)} su {len(locali)}"
+    if senza:
+        riga += f". DA GUARDARE, senza nome (non c'e' posto: accorcia il nome): {', '.join(senza)}"
+    if senza_mq:
+        riga += f". Col nome ma senza i mq: {', '.join(senza_mq)}"
+    return riga
+
+
 def riassunto(esito: Esito) -> list[str]:
     r = esito.rilievi
     righe = [
@@ -584,6 +602,7 @@ def riassunto(esito: Esito) -> list[str]:
         if esito.pianta.forature else
         "Forature: spente, come di base (le accende \"forature\": true nella pianta)",
     ]
+    righe.append(locali_senza_nome(esito))
     for fascio, quota in sorted(r.fasci.items()):
         righe.append(f"Fascio «{fascio}»: {round(quota * 100)}% del percorso accanto a un compagno")
     if esito.confronto is not None and esito.confronto.fonti:

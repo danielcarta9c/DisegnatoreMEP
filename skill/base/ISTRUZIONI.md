@@ -52,8 +52,16 @@ python3 scripts/mep.py pianta <base.json> --out <cartella>
   trascritta a colori forti — muri rossi, finestre blu, porte verdi, stanze viola, balconi
   arancio —; `--zona` ingrandisce un riquadro, **in metri**. In console i controlli della
   taratura (porte, spessori, superfici). Con il solo `sfondo` e niente muri è **lo strumento per
-  leggere**: le coordinate si leggono in metri sulla griglia;
-- **`pianta`**: la base standard, com'è sulla tavola consegnata.
+  leggere**: le coordinate si leggono in metri sulla griglia. Con `--zona` il riquadro va in un
+  file suo (`…-sovrapposizione-zona-….png`): la sovrapposizione intera resta quella senza;
+- **`pianta`**: la base standard, com'è sulla tavola consegnata. Sceglie da sé il formato, scrive
+  anche SVG, PDF e DXF (al primo uso può installare `ezdxf`, se c'è la rete) e stampa in console i
+  controlli dell'impianto, che su una base sola sono tutti a zero: non ti riguardano.
+
+**Prima di tutto copia la planimetria nella cartella di lavoro con un nome neutro**
+(`planimetria.pdf`, `planimetria.jpg`): il nome del file che ricevi porta spesso il nome o
+l'indirizzo del committente, e i file che il comando scrive prendono il nome dell'origine. In
+`sfondo.file` il percorso è relativo alla cartella di `base.json`.
 
 Due avvertenze che le prove hanno insegnato:
 
@@ -68,16 +76,37 @@ Due avvertenze che le prove hanno insegnato:
 
 | planimetria | che cosa aspettarti |
 |---|---|
-| **il PDF dell'architetto** | la scala nel cartiglio (1:50, 1:100) e il formato di stampa; muri spesso a due linee senza campitura; **armadi a muro** come rettangoli con una croce (sono arredi); quote; i nomi dei locali possono mancare |
+| **il PDF dell'architetto** | la scala nel cartiglio (1:50, 1:100) e il formato di stampa; muri a due linee senza campitura, o poligoni chiusi attorno alla massa del muro; **armadi a muro** come rettangoli con una croce (sono arredi); quote; i nomi dei locali possono mancare |
 | **il catastale** | «Scala 1:200» nell'intestazione; **la planimetria è spesso un'immagine dentro il PDF**, anche quando sembra vettoriale; a volte **più piani sullo stesso foglio**, ciascuno col suo titolo («PIANO TERRA», «PIANO PRIMO SOTTOSTRADA»); «altra U.I.U.» sono altre unità; muri neri spessi, finestre a linee sottili attraverso il muro, balconi fuori dal perimetro col loro nome, l'altezza «H» |
 | **il disegno a mano quotato** | le quote dei locali in metri; **non è in scala**, e nemmeno in scala uguale nei due versi; porte come vuoti nel muro, senza arco |
 | **la foto** | storta, e con la prospettiva: le pareti parallele convergono |
 
+**Se il PDF porta un'immagine** (il catastale, la scansione), rendila **alla sua risoluzione**:
+`--dpi 200` se l'immagine è nata a 200 punti per pollice (lo dice `pdfimages -list`, se c'è; se
+no prova 200 e 300 e tieni quella in cui le linee sono nette, larghe un pixel). A 150, il valore di
+base, le linee sottili di un catastale si impastano. La stessa risoluzione va poi in `sfondo.dpi`.
+Su un 1:200 un pixel vale 2–3 cm: dove la griglia non basta, conta i pixel scuri lungo una riga
+o una colonna dell'immagine resa (un piccolo script va bene, e lo dici).
+
+**Se il PDF è vettoriale** (linee e curve, non un'immagine: lo vedi ingrandendo, i tratti restano
+netti) e nell'ambiente hai di che leggerne i tratti (pdfplumber, PyMuPDF), puoi estrarre le linee
+dei muri — di solito le più spesse, nere — e convertirle in metri **con la stessa taratura**. È un
+aiuto, e su una planimetria con molti muri risparmia tempo e dà il centimetro; ma **non è il
+lettore**: che cosa è un muro e che cosa un armadio lo decidi tu, e il controllo resta la
+sovrapposizione (§8). Se lo fai, dillo nella consegna.
+
+**Stato di fatto o di progetto.** Se la planimetria porta demolizioni e costruzioni (per
+convenzione **giallo** quello che si demolisce, **rosso** quello che si costruisce) e la richiesta
+non dice quale stato serve, **è una domanda**. Se nessuno può rispondere, trascrivi lo stato di
+progetto — quello che ci sarà quando l'impianto si monta — e dichiaralo fra le stime.
+
 ### 4.2 Quale piano, quale unità
 
 Quello che la richiesta dice. Se il foglio ne ha più d'uno e la richiesta non dice quale, **è una
-domanda**: non si sceglie. Le altre unità, le scale e gli spazi comuni non si trascrivono, salvo i
-muri che l'unità ha in comune con loro (sono i suoi perimetrali).
+domanda**: non si sceglie. Le altre unità, le scale **comuni** e gli spazi comuni non si
+trascrivono, salvo i muri che l'unità ha in comune con loro (sono i suoi perimetrali). Una scala
+esterna **dell'unità** va fra i balconi (§6); se non si capisce di chi è, la trascrivi come
+balcone e lo chiedi.
 
 ### 4.3 Che cosa è che cosa
 
@@ -85,12 +114,19 @@ muri che l'unità ha in comune con loro (sono i suoi perimetrali).
 - **finestre**: linee sottili nello spessore del muro; **la portafinestra si trascrive come
   finestra** (sulla tavola è celeste come le altre);
 - **porte**: l'arco e l'anta; in uno schizzo un vuoto con i segni degli stipiti; la scorrevole
-  una linea lungo il muro, senza arco;
+  una linea lungo il muro, senza arco. **Sul catastale** la porta è un vuoto nel muro con un
+  trattino di traverso, senza arco; la finestra ha lo stesso trattino e in più le linee del
+  telaio nello spessore del muro;
 - **varchi**: un vuoto nel muro senza porta;
 - **arredi**: letti, divani, tavoli, sedie, cucina, sanitari, vasca e doccia, armadi — **non si
   trascrivono**, e lo spazio che occupano è del locale;
 - **quote**: linee coi trattini e un numero; **retini**: giardini, campiture, gradini;
-- **scale**: gradini con la freccia — una scala interna è un locale («Scala»);
+- **scale**: gradini con la freccia — una scala interna chiusa nel suo vano è un locale
+  («Scala»); una scala aperta dentro un locale (a giorno) non è un locale a sé: il locale resta
+  intero, e lo dici;
+- **pilastri, cavedi, canne**: un ingrossamento pieno del muro, o un blocco con una croce. Si
+  trascrivono come un muro corto col loro spessore (`portante` il pilastro, `tramezza` il
+  cavedio) e si dicono fra le stime: in console escono fra i «DA GUARDARE», ed è giusto;
 - **balconi e terrazzi**: fuori dal muro esterno, col parapetto a linea sottile.
 
 ## 5. La taratura
@@ -104,13 +140,19 @@ quest'ordine di preferenza:
    differiscono più del 2 %, il disegno non è in scala uguale nei due versi, e allora
    `px_per_m` è quello lungo x e `px_per_m_y` quello lungo y. **In uno schizzo le quote
    prevalgono sul disegno**: le coordinate si costruiscono sommando le quote e gli spessori, e il
-   disegno serve solo per quello che le quote non dicono (dove sta una porta);
+   disegno serve solo per quello che le quote non dicono (dove sta una porta). Se le quote sono
+   numeri scritti in mezzo ai locali, senza linee di quota, i capi sono **le facce interne del
+   locale**. Con molte quote tara su tutte le facce che le quote collocano (la retta che meglio
+   le mette d'accordo), non su due sole. **Quando una catena di quote non chiude** con quella
+   accanto, prevale la catena esterna, la più lunga; le quote piccole si adattano, e la
+   differenza va fra le domande;
 2. **la barra della scala** (catastali, tavole): misura in pixel la barra dei 10 metri, o quella
    che c'è;
 3. **la scala dichiarata con il formato**: su un PDF a misura reale un metro fa
    `dpi / 25,4 × 1000 / scala` pixel — il comando lo stampa per 1:50, 1:100 e 1:200. Vale solo
    se la pagina è a misura reale (il catastale dice il formato di stampa: A4): **verificala**
-   almeno su una quota o su una porta;
+   almeno su una quota o su una porta. Verificata solo sulle porte è una taratura buona ma
+   **non misurata**: lo dici fra le stime;
 4. solo se non c'è niente di meglio, **le porte** (80 cm): e allora la taratura è una stima, e va
    fra le domande.
 
@@ -119,6 +161,8 @@ quest'ordine di preferenza:
 - **La prospettiva** (la foto): se le pareti parallele convergono a vista, la sovrapposizione
   non combacerà dappertutto. Chiedi una scansione, o una foto fatta dall'alto e diritta; se vai
   avanti lo stesso, di' dove la base è incerta.
+- **I pixel** si contano dall'angolo in alto a sinistra dell'immagine resa, da zero; mezzo pixel
+  in più o in meno non conta.
 - **L'origine**: scegli il punto 0, 0 in modo che l'unità stia tutta in coordinate positive —
   lo spigolo esterno in alto a sinistra, o poco fuori. Le coordinate sono in metri, **x verso
   destra e y verso il basso**, come in un'immagine.
@@ -161,9 +205,9 @@ Il file, con lo schema della pianta (`schemas/pianta.schema.json`):
 | campo | che cosa | come |
 |---|---|---|
 | `muri` | l'**asse** (`da`, `a`), lo `spessore`, il `tipo` | l'asse è la linea a metà fra le due facce, lo spessore la distanza fra le facce. **Un capo che arriva su un altro muro va sull'asse dell'altro**: il comando chiude da sé l'angolo e la T, senza sporgenze (entro 5 cm il raccordo c'è lo stesso); un capo libero (una spalletta) va dove il muro finisce. **Un muro per ogni tratto dritto**, anche con porte e finestre: le aperture stanno sul muro, il muro non si spezza. Dove lo spessore cambia, due muri. Un muro curvo o obliquo: tratti dritti. `tipo`: `perimetrale` (l'involucro, e i muri verso altre unità e spazi comuni), `portante` (un muro interno spesso che riconosci come strutturale; nel dubbio `tramezza`, e lo dici), `tramezza` |
-| `aperture` | `muro`, `centro` (sull'asse), `larghezza` (la luce fra gli stipiti), `tipo`: `porta`, `finestra`, `varco`, `foro` | per le porte: `apre_verso` (il lato del muro in cui l'anta si apre), `cerniera` (lo stipite con la cerniera: `sinistra`/`destra` su un muro orizzontale, `sopra`/`sotto` su uno verticale), `anta`: `battente`, `doppia`, `scorrevole` (anche a scomparsa). Se il verso non è disegnato (uno schizzo) lascia fuori `apre_verso` e `cerniera`, e dillo fra le stime |
-| `stanze` | `id`, `nome`, `poligono`, `disimpegno` | il nome **come sulla planimetria**, in minuscolo con l'iniziale («CAMERA» → «Camera»; due camere: «Camera 1», «Camera 2»). Senza nomi sulla planimetria, il nome da quello che c'è (un letto: Camera; un WC: Bagno; i fornelli: Cucina), e lo dici fra le stime. Il poligono segue **le facce interne dei muri**: i mq sono quelli netti. `disimpegno: true` per i corridoi. **`controsoffitto` e `zona` non li scrivi**: sono del progettista |
-| `balconi` | `id`, `nome`, `poligono` | balconi, terrazzi, logge, scale esterne: dal filo del muro al parapetto. Non sono stanze: sono fuori |
+| `aperture` | `muro`, `centro` (sull'asse), `larghezza` (la luce fra gli stipiti), `tipo`: `porta`, `finestra`, `varco`, `foro` | per le porte: `apre_verso` (il lato del muro in cui l'anta si apre), `cerniera` (lo stipite con la cerniera: `sinistra`/`destra` su un muro orizzontale, `sopra`/`sotto` su uno verticale), `anta`: `battente`, `doppia`, `scorrevole` (anche a scomparsa). `apre_verso` è `sopra` o `sotto` per un muro orizzontale, `sinistra` o `destra` per uno verticale. Se il verso non è disegnato (uno schizzo) lascia fuori `apre_verso` e `cerniera`: **la porta esce disegnata chiusa**, senza arco, e lo dici fra le stime. Due ante disuguali: `doppia` (esce con due ante uguali), e lo dici. Un vano solo con un'anta e un pannello fisso è **un'apertura sola**. Un varco in un vuoto fra un pilastro e un muro, o una porta fra due spallette senza un muro intero: stendi un muro attraverso il vuoto e mettici l'apertura. Un setto isolato dentro un locale (lo spigolo di una scala) è un muro coi due capi liberi |
+| `stanze` | `id`, `nome`, `poligono`, `disimpegno` | il nome **come sulla planimetria**, in minuscolo con l'iniziale («CAMERA» → «Camera»; due camere: «Camera 1», «Camera 2»). Senza nomi sulla planimetria, il nome da quello che c'è (un letto: Camera; un WC: Bagno; i fornelli: Cucina), e lo dici fra le stime. Il poligono segue **le facce interne dei muri**: i mq sono quelli netti; nicchie e armadi a muro stanno dentro il poligono del locale da cui si aprono, gli sguinci delle finestre fuori. `disimpegno: true` per i corridoi. **`controsoffitto` e `zona` non li scrivi**: sono del progettista |
+| `balconi` | `id`, `nome`, `poligono` | balconi, terrazzi, logge, **portici**, scale esterne: dal filo del muro al parapetto (o alla linea esterna del cordolo e dei pilastri). Un portico continuo è un poligono solo, anche se il nome è scritto due volte. Non sono stanze: sono fuori. Su un balcone stretto un nome lungo non trova posto: tienilo corto («Scala est.»), e guarda la riga «Locali col nome sulla tavola» che `pianta` stampa |
 | `sagome_muri` | i contorni dei muri come poligoni | **di regola no**. Solo se il progettista vuole la forma esatta del disegno dell'architetto: allora il disegno usa solo le sagome, per tutti i muri, e i `muri` restano per l'instradamento |
 
 **Non si trascrive:** arredi, sanitari, cucina, armadi (anche a muro: il loro spazio è del
@@ -202,15 +246,18 @@ Si consegna quando:
   (arancio) ci sono;
 - i controlli in console non hanno un «DA GUARDARE» senza una spiegazione (un perimetrale
   sottile può esserci: allora lo dici);
-- sulla base standard (`pianta`) ogni locale ha il suo nome.
+- sulla base standard (`pianta`) ogni locale ha il suo nome: la console dice «Locali col nome
+  sulla tavola: n su n», e quali restano senza.
 
 Dove non combacia e la planimetria non basta a deciderlo, è una domanda.
 
 ## 9. Che cosa restituisci
 
 1. **`base.json`**: solo la base — `sfondo`, `muri`, `aperture`, `stanze`, `balconi`, e in
-   `note` che planimetria era, come l'hai tarata e come hai verificato la taratura. **Niente
-   pezzi, niente tracciati**: li mette chi disegna l'impianto.
+   `note` **due o tre righe**: che planimetria era, come l'hai tarata, se la taratura è misurata
+   o stimata. Le `note` **escono sulla tavola**, nella colonna delle note: il racconto del lavoro
+   (catene di quote, scarti, script) va nella consegna, non lì. **Niente pezzi, niente
+   tracciati**: li mette chi disegna l'impianto.
 2. I percorsi della **sovrapposizione** (il PNG e il suo PDF) e della **base standard** (il PNG di
    `pianta`).
 3. **Le domande** — quello che la planimetria non dice e che serve — e **le stime** — quello che
@@ -229,4 +276,6 @@ Dove non combacia e la planimetria non basta a deciderlo, è una domanda.
 - chiudere un angolo mettendo il capo sulla faccia dell'altro muro invece che sull'asse;
 - prendere un catastale per vettoriale: spesso è un'immagine dentro il PDF;
 - scegliere da sé il piano quando il foglio ne ha tre;
-- ricopiare nel JSON il nome del committente dal cartiglio.
+- ricopiare nel JSON il nome del committente dal cartiglio, o lasciarlo nel nome dei file;
+- consegnare come sovrapposizione l'ultimo riquadro ingrandito invece di quella intera;
+- scrivere nelle `note` il diario del lavoro, che poi esce sulla tavola.

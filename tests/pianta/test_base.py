@@ -334,3 +334,20 @@ def test_il_modulo_della_base_ha_i_colori_in_un_punto_solo() -> None:
     sorgente = Path(tavola.__file__).read_text(encoding="utf-8")
     for colore in (base.GRIGIO_DEI_MURI, base.CELESTE_DELLE_FINESTRE, base.LINEA_DELLE_PORTE):
         assert colore not in sorgente
+
+
+def test_il_comando_dice_quale_locale_resta_senza_nome(tmp_path: Path) -> None:
+    """Un balcone di 90 cm con un nome lungo resta senza nome: il riassunto lo dice (la camera
+    pulita di REL-026: prima non lo diceva nessuno, e lo si scopriva cercando nell'SVG)."""
+    from disegnatore_mep.pianta.comando import locali_senza_nome
+
+    dati = json.loads(CASI["base-anonima"].read_text(encoding="utf-8"))
+    dati.pop("sfondo", None)
+    dati["pezzi"], dati["tracciati"] = [], []
+    dati["balconi"] = [{"id": "scala", "nome": "Scala esterna di servizio numero uno",
+                        "poligono": [[11.0, 1.0], [11.9, 1.0], [11.9, 3.0], [11.0, 3.0]]}]
+    sorgente = tmp_path / "stretta.json"
+    sorgente.write_text(json.dumps(dati), encoding="utf-8")
+    esito = disegna_la_pianta(sorgente, tmp_path / "out", None, dxf=False, png=False)
+    riga = locali_senza_nome(esito)
+    assert "5 su 6" in riga and "DA GUARDARE" in riga and "Scala esterna di servizio numero uno" in riga
