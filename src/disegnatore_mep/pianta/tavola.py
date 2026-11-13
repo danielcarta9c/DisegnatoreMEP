@@ -1144,9 +1144,10 @@ def componi(
 def _versi_dello_spostamento(
     senza: Sequence[Richiesta], intorno: Rettangolo, gioco_x: float, gioco_y: float,
 ) -> list[tuple[int, int]]:
-    """Da che parte spostare la pianta perche' le scritte senza posto lo trovino: prima
+    """Da che parte spostare la pianta perche' le scritte da migliorare trovino posto:
     lontano dai loro oggetti (se stanno a sinistra, la pianta va a destra e il margine
-    sinistro raddoppia), poi gli altri versi; solo dove c'e' gioco."""
+    sinistro raddoppia), di fianco, in alto o in basso, o in diagonale; solo dove c'e'
+    gioco. Verso i loro oggetti no: il margine dalla loro parte si stringerebbe."""
     punti: list[Punto] = []
     for richiesta in senza:
         if richiesta.rettangolo is not None:
@@ -1157,7 +1158,7 @@ def _versi_dello_spostamento(
     cy = sum(q[1] for q in punti) / len(punti) if punti else 0.0
     dx = 1 if cx < (intorno[0] + intorno[2]) / 2 else -1
     dy = 1 if cy < (intorno[1] + intorno[3]) / 2 else -1
-    versi = [(dx, 0), (0, dy), (dx, dy), (-dx, 0), (0, -dy)]
+    versi = [(dx, 0), (0, dy), (dx, dy)]
     return [(vx, vy) for vx, vy in versi if (vx == 0 or gioco_x > 1.0) and (vy == 0 or gioco_y > 1.0)]
 
 
