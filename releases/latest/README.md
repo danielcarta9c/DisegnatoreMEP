@@ -1,5 +1,30 @@
-# L'ultima release: 2.0.0
+# L'ultima release: 2.1.0
 
+`DisegnatoreMEP-v2.1.0.zip` — sha256 `f80a8a05da5041e6…`, 155 file — è `REL-026` (I-300): **i rilievi d'uso della 2.0.0 su una
+commessa**. Si carica come ogni skill personale, dallo ZIP così com'è.
+
+Rispetto alla 2.0.0:
+- **la base architettonica della tavola**: la planimetria (il PDF dell'architetto, un catastale, un disegno a mano)
+  la legge un sub-agente con istruzioni proprie (`riferimenti/base.md`) e la trascrive in dati — muri, aperture,
+  stanze, balconi —; il comando la ridisegna sempre nello stesso modo, in mezzatinta sotto l'impianto (muri grigio
+  chiaro, finestre celesti, nome del locale con i mq); `mep.py base` la sovrappone all'origine per il controllo a vista;
+- **le scritte che non stanno in pianta vanno fuori**, col richiamo; i riquadri di dettaglio solo se chiesti
+  (`dettagli`); una scritta sola per due tubi che corrono insieme;
+- **`pianta --grafo` scrive nel grafo le lunghezze misurate** (quelle del progettista restano, e si segnala quando la
+  pianta misura altro; `--grafo-in-sola-lettura` per il solo confronto); il confronto con grafo e distinta non cambia
+  più il formato del foglio; le forature spente di base (`"forature": true` le accende); `sagome_muri`; il nome corto
+  dei fluidi nella tabella delle tratte;
+- **nel catalogo**: il ventilconvettore canalizzato idronico col lato aria (`fan-coil-ducted-air`), il plenum di
+  mandata non motorizzato da 2 a 6 uscite (`supply-plenum-2` … `-6`, sigla PL), provati anche col plenum motorizzato;
+- **`vaso --sanitario`**: il vaso del bollitore da volume, temperatura d'accumulo, pressione di rete e taratura della
+  valvola (metodo dal focus tecnico Caleffi 0851415; proposta, nessuna norma letta);
+- le porte di comando non contano come attraversamento nelle portate; i terminali con marca e modello nella tabella
+  delle apparecchiature.
+
+Forma dei simboli, colori della base, metodo del vaso e uscita delle scritte sono **proposte** in attesa del PO
+(`docs/collaudi/REL-026/RAPPORTO.md`, §6). Il banco: 30 casi, cambia la sola pianta del collaudo T3.
+
+Prima, la **2.0.0**:
 `DisegnatoreMEP-v2.0.0.zip` — sha256 `193f7194d2385472…`, 150 file — è **la versione da dare ai progettisti** (I-295,
 I-299). Si carica come ogni skill personale, dallo ZIP così com'è; il nome della skill su claude.ai è
 `disegnatore-mep`, qualunque sia il nome del file.

@@ -1,0 +1,1267 @@
+{
+  "tavola": {
+    "formato": "A3",
+    "scala": "1:50",
+    "avvisi": []
+  },
+  "forature_accese": false,
+  "avvisi": [
+    "Fuori dal controsoffitto (fascia arancio): T44 0,2 m; T46-T47-T51 3,2 m; T48 1 m. Canalina o traccia, da verificare.",
+    "Confronto con la distinta e il grafo: 49 discordanze (15 tratte della pianta che la distinta non ha; 15 tratte della distinta non in pianta; 4 sigle diverse dallo schema; 15 lunghezze diverse dal grafo). L'elenco per esteso e' in discordanze.tracciati.json («confronto») e in console."
+  ],
+  "regola_delle_lunghezze": {
+    "origine": "della distinta",
+    "della_distinta": true,
+    "regola": {
+      "aggiunta_m": 1.0,
+      "fattore": 1.15,
+      "passo_m": 0.5
+    },
+    "scarto_della_misura": 0.15
+  },
+  "tratte": [
+    {
+      "tratta": "T41",
+      "fluido": "supply_air",
+      "da": "PLZ-01",
+      "a": "BOC-01",
+      "passa_per": [],
+      "dimensione": "Ø200",
+      "quota": "controsoffitto",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_data_m": 6.0,
+      "lunghezza_data_da": "pianta",
+      "lunghezza_misurata_m": 2.8,
+      "lunghezza_usata_m": 6.0,
+      "lunghezza_usata_da": "progettista",
+      "scarto_della_misura": -0.533,
+      "misura_oltre_lo_scarto": false,
+      "lunghezza_da_quotare_m": 8.5,
+      "calcolo": "(6 + 1) × 1,15 = 8,05 → 8,5 m",
+      "deciso_dal_minimo": false,
+      "curve": 1,
+      "fuori_dal_controsoffitto_m": 0.0,
+      "fuori_dalle_zone_esterne_m": 0.0,
+      "punti_m": [
+        [
+          5.25,
+          4.0
+        ],
+        [
+          2.7,
+          4.0
+        ],
+        [
+          2.7,
+          3.75
+        ]
+      ],
+      "tronchi_m": null,
+      "attraversamenti": []
+    },
+    {
+      "tratta": "T42",
+      "fluido": "supply_air",
+      "da": "PLZ-01",
+      "a": "BOC-02",
+      "passa_per": [],
+      "dimensione": "Ø200",
+      "quota": "controsoffitto",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_data_m": 4.0,
+      "lunghezza_data_da": "pianta",
+      "lunghezza_misurata_m": 3.4,
+      "lunghezza_usata_m": 4.0,
+      "lunghezza_usata_da": "progettista",
+      "scarto_della_misura": -0.15,
+      "misura_oltre_lo_scarto": false,
+      "lunghezza_da_quotare_m": 6.0,
+      "calcolo": "(4 + 1) × 1,15 = 5,75 → 6 m",
+      "deciso_dal_minimo": false,
+      "curve": 2,
+      "fuori_dal_controsoffitto_m": 0.0,
+      "fuori_dalle_zone_esterne_m": 0.0,
+      "punti_m": [
+        [
+          5.7,
+          3.95
+        ],
+        [
+          5.7,
+          3.85
+        ],
+        [
+          8.9,
+          3.85
+        ],
+        [
+          8.9,
+          3.75
+        ]
+      ],
+      "tronchi_m": null,
+      "attraversamenti": []
+    },
+    {
+      "tratta": "T44",
+      "fluido": "supply_air",
+      "da": "PLZ-01",
+      "a": "BOC-04",
+      "passa_per": [],
+      "dimensione": "Ø200",
+      "quota": "controsoffitto",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_data_m": 7.0,
+      "lunghezza_data_da": "pianta",
+      "lunghezza_misurata_m": 4.55,
+      "lunghezza_usata_m": 7.0,
+      "lunghezza_usata_da": "progettista",
+      "scarto_della_misura": -0.35,
+      "misura_oltre_lo_scarto": false,
+      "lunghezza_da_quotare_m": 9.5,
+      "calcolo": "(7 + 1) × 1,15 = 9,2 → 9,5 m",
+      "deciso_dal_minimo": false,
+      "curve": 2,
+      "fuori_dal_controsoffitto_m": 0.2,
+      "fuori_dalle_zone_esterne_m": 0.0,
+      "punti_m": [
+        [
+          5.25,
+          4.45
+        ],
+        [
+          3.1,
+          4.45
+        ],
+        [
+          3.1,
+          5.25
+        ],
+        [
+          1.5,
+          5.25
+        ]
+      ],
+      "tronchi_m": null,
+      "attraversamenti": [
+        {
+          "muro": "t-corridoio-sud",
+          "apertura": "varco-soggiorno",
+          "forato": false,
+          "punto_m": [
+            3.1,
+            4.95
+          ]
+        }
+      ]
+    },
+    {
+      "tratta": "T43",
+      "fluido": "supply_air",
+      "da": "PLZ-01",
+      "a": "BOC-03",
+      "passa_per": [],
+      "dimensione": "Ø200",
+      "quota": "controsoffitto",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_data_m": 5.0,
+      "lunghezza_data_da": "pianta",
+      "lunghezza_misurata_m": 1.55,
+      "lunghezza_usata_m": 5.0,
+      "lunghezza_usata_da": "progettista",
+      "scarto_della_misura": -0.69,
+      "misura_oltre_lo_scarto": false,
+      "lunghezza_da_quotare_m": 7.0,
+      "calcolo": "(5 + 1) × 1,15 = 6,9 → 7 m",
+      "deciso_dal_minimo": false,
+      "curve": 1,
+      "fuori_dal_controsoffitto_m": 0.0,
+      "fuori_dalle_zone_esterne_m": 0.0,
+      "punti_m": [
+        [
+          5.25,
+          4.6
+        ],
+        [
+          3.95,
+          4.6
+        ],
+        [
+          3.95,
+          4.85
+        ]
+      ],
+      "tronchi_m": null,
+      "attraversamenti": []
+    },
+    {
+      "tratta": "T46",
+      "fluido": "refrigerant_liquid",
+      "da": "UI-01",
+      "a": "UE-01",
+      "passa_per": [],
+      "dimensione": "1/4\"",
+      "quota": "controsoffitto",
+      "fascio": "frigo",
+      "instradata": true,
+      "lunghezza_data_m": 10.0,
+      "lunghezza_data_da": "pianta",
+      "lunghezza_misurata_m": 8.635,
+      "lunghezza_usata_m": 10.0,
+      "lunghezza_usata_da": "progettista",
+      "scarto_della_misura": -0.137,
+      "misura_oltre_lo_scarto": false,
+      "lunghezza_da_quotare_m": 13.0,
+      "calcolo": "(10 + 1) × 1,15 = 12,65 → 13 m",
+      "deciso_dal_minimo": false,
+      "curve": 4,
+      "fuori_dal_controsoffitto_m": 3.2,
+      "fuori_dalle_zone_esterne_m": 0.0,
+      "punti_m": [
+        [
+          6.45,
+          4.665
+        ],
+        [
+          6.45,
+          8.9
+        ],
+        [
+          3.45,
+          8.9
+        ],
+        [
+          3.45,
+          9.2
+        ],
+        [
+          2.55,
+          9.2
+        ],
+        [
+          2.55,
+          9.0
+        ]
+      ],
+      "tronchi_m": null,
+      "attraversamenti": [
+        {
+          "muro": "t-corridoio-sud",
+          "apertura": null,
+          "forato": true,
+          "punto_m": [
+            6.45,
+            4.95
+          ]
+        },
+        {
+          "muro": "m-sud",
+          "apertura": null,
+          "forato": true,
+          "punto_m": [
+            6.45,
+            8.45
+          ]
+        }
+      ]
+    },
+    {
+      "tratta": "T47",
+      "fluido": "refrigerant_gas",
+      "da": "UI-01",
+      "a": "UE-01",
+      "passa_per": [],
+      "dimensione": "5/8\"",
+      "quota": "controsoffitto",
+      "fascio": "frigo",
+      "instradata": true,
+      "lunghezza_data_m": 10.0,
+      "lunghezza_data_da": "pianta",
+      "lunghezza_misurata_m": 9.035,
+      "lunghezza_usata_m": 10.0,
+      "lunghezza_usata_da": "progettista",
+      "scarto_della_misura": -0.097,
+      "misura_oltre_lo_scarto": false,
+      "lunghezza_da_quotare_m": 13.0,
+      "calcolo": "(10 + 1) × 1,15 = 12,65 → 13 m",
+      "deciso_dal_minimo": false,
+      "curve": 4,
+      "fuori_dal_controsoffitto_m": 3.2,
+      "fuori_dalle_zone_esterne_m": 0.0,
+      "punti_m": [
+        [
+          6.55,
+          4.665
+        ],
+        [
+          6.55,
+          9.0
+        ],
+        [
+          3.55,
+          9.0
+        ],
+        [
+          3.55,
+          9.3
+        ],
+        [
+          2.45,
+          9.3
+        ],
+        [
+          2.45,
+          9.0
+        ]
+      ],
+      "tronchi_m": null,
+      "attraversamenti": [
+        {
+          "muro": "t-corridoio-sud",
+          "apertura": null,
+          "forato": true,
+          "punto_m": [
+            6.55,
+            4.95
+          ]
+        },
+        {
+          "muro": "m-sud",
+          "apertura": null,
+          "forato": true,
+          "punto_m": [
+            6.55,
+            8.45
+          ]
+        }
+      ]
+    },
+    {
+      "tratta": "T51",
+      "fluido": "interconnection",
+      "da": "UI-01",
+      "a": "UE-01",
+      "passa_per": [],
+      "dimensione": "4G1,5",
+      "quota": "controsoffitto",
+      "fascio": "frigo",
+      "instradata": true,
+      "lunghezza_data_m": 11.0,
+      "lunghezza_data_da": "pianta",
+      "lunghezza_misurata_m": 8.235,
+      "lunghezza_usata_m": 11.0,
+      "lunghezza_usata_da": "progettista",
+      "scarto_della_misura": -0.251,
+      "misura_oltre_lo_scarto": false,
+      "lunghezza_da_quotare_m": 14.0,
+      "calcolo": "(11 + 1) × 1,15 = 13,8 → 14 m",
+      "deciso_dal_minimo": false,
+      "curve": 4,
+      "fuori_dal_controsoffitto_m": 3.2,
+      "fuori_dalle_zone_esterne_m": 0.0,
+      "punti_m": [
+        [
+          6.35,
+          4.665
+        ],
+        [
+          6.35,
+          8.8
+        ],
+        [
+          3.35,
+          8.8
+        ],
+        [
+          3.35,
+          9.1
+        ],
+        [
+          2.65,
+          9.1
+        ],
+        [
+          2.65,
+          9.0
+        ]
+      ],
+      "tronchi_m": null,
+      "attraversamenti": [
+        {
+          "muro": "t-corridoio-sud",
+          "apertura": null,
+          "forato": true,
+          "punto_m": [
+            6.35,
+            4.95
+          ]
+        },
+        {
+          "muro": "m-sud",
+          "apertura": null,
+          "forato": true,
+          "punto_m": [
+            6.35,
+            8.45
+          ]
+        }
+      ]
+    },
+    {
+      "tratta": "T48",
+      "fluido": "condensate",
+      "da": "UI-01",
+      "a": "AL-01",
+      "passa_per": [
+        "SIF-01"
+      ],
+      "dimensione": "PVC Ø32",
+      "quota": "controsoffitto",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_data_m": 9.0,
+      "lunghezza_data_da": "pianta",
+      "lunghezza_misurata_m": 1.775,
+      "lunghezza_usata_m": 9.0,
+      "lunghezza_usata_da": "progettista",
+      "scarto_della_misura": -0.803,
+      "misura_oltre_lo_scarto": false,
+      "lunghezza_da_quotare_m": 11.5,
+      "calcolo": "(9 + 1) × 1,15 = 11,5 → 11,5 m",
+      "deciso_dal_minimo": false,
+      "curve": 3,
+      "fuori_dal_controsoffitto_m": 1.0,
+      "fuori_dalle_zone_esterne_m": 0.0,
+      "punti_m": [
+        [
+          6.85,
+          4.6
+        ],
+        [
+          7.1,
+          4.6
+        ],
+        [
+          7.1,
+          6.2
+        ],
+        [
+          7.15,
+          6.2
+        ],
+        [
+          7.15,
+          6.225
+        ]
+      ],
+      "tronchi_m": [
+        [
+          [
+            6.85,
+            4.6
+          ],
+          [
+            7.1,
+            4.6
+          ],
+          [
+            7.1,
+            5.225
+          ]
+        ],
+        [
+          [
+            7.1,
+            5.375
+          ],
+          [
+            7.1,
+            6.2
+          ],
+          [
+            7.15,
+            6.2
+          ],
+          [
+            7.15,
+            6.225
+          ]
+        ]
+      ],
+      "attraversamenti": [
+        {
+          "muro": "t-corridoio-sud",
+          "apertura": null,
+          "forato": true,
+          "punto_m": [
+            7.1,
+            4.95
+          ]
+        }
+      ]
+    },
+    {
+      "tratta": "T49",
+      "fluido": "power_supply",
+      "da": "QE-01",
+      "a": "CZ-01",
+      "passa_per": [],
+      "dimensione": "3G1,5",
+      "quota": "traccia",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_data_m": 9.0,
+      "lunghezza_data_da": "pianta",
+      "lunghezza_misurata_m": 8.325,
+      "lunghezza_usata_m": 9.0,
+      "lunghezza_usata_da": "progettista",
+      "scarto_della_misura": -0.075,
+      "misura_oltre_lo_scarto": false,
+      "lunghezza_da_quotare_m": 11.5,
+      "calcolo": "(9 + 1) × 1,15 = 11,5 → 11,5 m",
+      "deciso_dal_minimo": false,
+      "curve": 6,
+      "fuori_dal_controsoffitto_m": 0.0,
+      "fuori_dalle_zone_esterne_m": 0.0,
+      "punti_m": [
+        [
+          11.15,
+          6.1
+        ],
+        [
+          11.15,
+          5.2
+        ],
+        [
+          8.9,
+          5.2
+        ],
+        [
+          8.9,
+          4.0
+        ],
+        [
+          6.95,
+          4.0
+        ],
+        [
+          6.95,
+          3.8
+        ],
+        [
+          5.55,
+          3.8
+        ],
+        [
+          5.55,
+          4.225
+        ]
+      ],
+      "tronchi_m": null,
+      "attraversamenti": [
+        {
+          "muro": "t-corridoio-sud",
+          "apertura": "porta-ingresso",
+          "forato": false,
+          "punto_m": [
+            8.9,
+            4.95
+          ]
+        }
+      ]
+    },
+    {
+      "tratta": "T50",
+      "fluido": "power_supply",
+      "da": "QE-01",
+      "a": "UE-01",
+      "passa_per": [
+        "SZ-01"
+      ],
+      "dimensione": "3G4",
+      "quota": "traccia",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_data_m": 19.0,
+      "lunghezza_data_da": "pianta",
+      "lunghezza_misurata_m": 10.63,
+      "lunghezza_usata_m": 19.0,
+      "lunghezza_usata_da": "progettista",
+      "scarto_della_misura": -0.441,
+      "misura_oltre_lo_scarto": false,
+      "lunghezza_da_quotare_m": 23.0,
+      "calcolo": "(19 + 1) × 1,15 = 23 → 23 m",
+      "deciso_dal_minimo": false,
+      "curve": 4,
+      "fuori_dal_controsoffitto_m": 0.0,
+      "fuori_dalle_zone_esterne_m": 0.0,
+      "punti_m": [
+        [
+          11.15,
+          6.5
+        ],
+        [
+          11.15,
+          8.15
+        ],
+        [
+          3.2,
+          8.15
+        ],
+        [
+          3.2,
+          8.7
+        ],
+        [
+          3.1,
+          8.7
+        ],
+        [
+          3.1,
+          8.8
+        ],
+        [
+          2.7,
+          8.8
+        ]
+      ],
+      "tronchi_m": [
+        [
+          [
+            11.15,
+            6.5
+          ],
+          [
+            11.15,
+            8.15
+          ],
+          [
+            3.2,
+            8.15
+          ],
+          [
+            3.2,
+            8.7
+          ],
+          [
+            3.16,
+            8.7
+          ]
+        ],
+        [
+          [
+            3.1,
+            8.76
+          ],
+          [
+            3.1,
+            8.8
+          ],
+          [
+            2.7,
+            8.8
+          ]
+        ]
+      ],
+      "attraversamenti": [
+        {
+          "muro": "t-soggiorno-ingresso",
+          "apertura": null,
+          "forato": true,
+          "punto_m": [
+            7.3,
+            8.15
+          ]
+        },
+        {
+          "muro": "m-sud",
+          "apertura": null,
+          "forato": true,
+          "punto_m": [
+            3.2,
+            8.45
+          ]
+        }
+      ]
+    },
+    {
+      "tratta": "T52",
+      "fluido": "control_bus",
+      "da": "CZ-01",
+      "a": "TZ-01",
+      "passa_per": [],
+      "dimensione": "bus",
+      "quota": "traccia",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_data_m": 8.0,
+      "lunghezza_data_da": "pianta",
+      "lunghezza_misurata_m": 3.465,
+      "lunghezza_usata_m": 8.0,
+      "lunghezza_usata_da": "progettista",
+      "scarto_della_misura": -0.567,
+      "misura_oltre_lo_scarto": false,
+      "lunghezza_da_quotare_m": 10.5,
+      "calcolo": "(8 + 1) × 1,15 = 10,35 → 10,5 m",
+      "deciso_dal_minimo": false,
+      "curve": 3,
+      "fuori_dal_controsoffitto_m": 0.0,
+      "fuori_dalle_zone_esterne_m": 0.0,
+      "punti_m": [
+        [
+          5.45,
+          4.225
+        ],
+        [
+          5.45,
+          3.85
+        ],
+        [
+          2.95,
+          3.85
+        ],
+        [
+          2.95,
+          3.55
+        ],
+        [
+          3.24,
+          3.55
+        ]
+      ],
+      "tronchi_m": null,
+      "attraversamenti": [
+        {
+          "muro": "t-corridoio-nord",
+          "apertura": "porta-matrimoniale",
+          "forato": false,
+          "punto_m": [
+            2.95,
+            3.65
+          ]
+        }
+      ]
+    },
+    {
+      "tratta": "T53",
+      "fluido": "control_bus",
+      "da": "CZ-01",
+      "a": "TZ-02",
+      "passa_per": [],
+      "dimensione": "bus",
+      "quota": "traccia",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_data_m": 6.0,
+      "lunghezza_data_da": "pianta",
+      "lunghezza_misurata_m": 5.105,
+      "lunghezza_usata_m": 6.0,
+      "lunghezza_usata_da": "progettista",
+      "scarto_della_misura": -0.149,
+      "misura_oltre_lo_scarto": false,
+      "lunghezza_da_quotare_m": 8.5,
+      "calcolo": "(6 + 1) × 1,15 = 8,05 → 8,5 m",
+      "deciso_dal_minimo": false,
+      "curve": 2,
+      "fuori_dal_controsoffitto_m": 0.0,
+      "fuori_dalle_zone_esterne_m": 0.0,
+      "punti_m": [
+        [
+          5.5,
+          4.225
+        ],
+        [
+          5.5,
+          3.45
+        ],
+        [
+          9.8,
+          3.45
+        ],
+        [
+          9.8,
+          3.48
+        ]
+      ],
+      "tronchi_m": null,
+      "attraversamenti": [
+        {
+          "muro": "t-corridoio-nord",
+          "apertura": "porta-bagno",
+          "forato": false,
+          "punto_m": [
+            5.5,
+            3.65
+          ]
+        },
+        {
+          "muro": "t-bagno-singola",
+          "apertura": null,
+          "forato": true,
+          "punto_m": [
+            6.8,
+            3.45
+          ]
+        }
+      ]
+    },
+    {
+      "tratta": "T54",
+      "fluido": "control_bus",
+      "da": "CZ-01",
+      "a": "TZ-03",
+      "passa_per": [],
+      "dimensione": "bus",
+      "quota": "traccia",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_data_m": 10.0,
+      "lunghezza_data_da": "pianta",
+      "lunghezza_misurata_m": 2.365,
+      "lunghezza_usata_m": 10.0,
+      "lunghezza_usata_da": "progettista",
+      "scarto_della_misura": -0.763,
+      "misura_oltre_lo_scarto": false,
+      "lunghezza_da_quotare_m": 13.0,
+      "calcolo": "(10 + 1) × 1,15 = 12,65 → 13 m",
+      "deciso_dal_minimo": false,
+      "curve": 3,
+      "fuori_dal_controsoffitto_m": 0.0,
+      "fuori_dalle_zone_esterne_m": 0.0,
+      "punti_m": [
+        [
+          5.45,
+          4.375
+        ],
+        [
+          5.45,
+          4.75
+        ],
+        [
+          4.5,
+          4.75
+        ],
+        [
+          4.5,
+          5.05
+        ],
+        [
+          5.24,
+          5.05
+        ]
+      ],
+      "tronchi_m": null,
+      "attraversamenti": [
+        {
+          "muro": "t-corridoio-sud",
+          "apertura": "varco-soggiorno",
+          "forato": false,
+          "punto_m": [
+            4.5,
+            4.95
+          ]
+        }
+      ]
+    },
+    {
+      "tratta": "T56",
+      "fluido": "control_bus",
+      "da": "UI-01",
+      "a": "CF-01",
+      "passa_per": [],
+      "dimensione": "2×0,75",
+      "quota": "traccia",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_data_m": 7.0,
+      "lunghezza_data_da": "pianta",
+      "lunghezza_misurata_m": 3.79,
+      "lunghezza_usata_m": 7.0,
+      "lunghezza_usata_da": "progettista",
+      "scarto_della_misura": -0.459,
+      "misura_oltre_lo_scarto": false,
+      "lunghezza_da_quotare_m": 9.5,
+      "calcolo": "(7 + 1) × 1,15 = 9,2 → 9,5 m",
+      "deciso_dal_minimo": false,
+      "curve": 2,
+      "fuori_dal_controsoffitto_m": 0.0,
+      "fuori_dalle_zone_esterne_m": 0.0,
+      "punti_m": [
+        [
+          6.85,
+          4.45
+        ],
+        [
+          9.7,
+          4.45
+        ],
+        [
+          9.7,
+          5.05
+        ],
+        [
+          10.04,
+          5.05
+        ]
+      ],
+      "tronchi_m": null,
+      "attraversamenti": [
+        {
+          "muro": "t-corridoio-sud",
+          "apertura": "porta-ingresso",
+          "forato": false,
+          "punto_m": [
+            9.7,
+            4.95
+          ]
+        }
+      ]
+    },
+    {
+      "tratta": "T55",
+      "fluido": "control_bus",
+      "da": "CZ-01",
+      "a": "UI-01",
+      "passa_per": [],
+      "dimensione": "2×0,75",
+      "quota": "controsoffitto",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_data_m": 3.0,
+      "lunghezza_data_da": "pianta",
+      "lunghezza_misurata_m": 0.125,
+      "lunghezza_usata_m": 3.0,
+      "lunghezza_usata_da": "progettista",
+      "scarto_della_misura": -0.958,
+      "misura_oltre_lo_scarto": false,
+      "lunghezza_da_quotare_m": 5.0,
+      "calcolo": "(3 + 1) × 1,15 = 4,6 → 5 m",
+      "deciso_dal_minimo": false,
+      "curve": 0,
+      "fuori_dal_controsoffitto_m": 0.0,
+      "fuori_dalle_zone_esterne_m": 0.0,
+      "punti_m": [
+        [
+          5.625,
+          4.3
+        ],
+        [
+          5.75,
+          4.3
+        ]
+      ],
+      "tronchi_m": null,
+      "attraversamenti": []
+    }
+  ],
+  "forature": [],
+  "fori_dei_pezzi": [],
+  "confronto": {
+    "con": [
+      "la distinta",
+      "il grafo"
+    ],
+    "bloccanti": [],
+    "avvisi": [
+      "T41 (PLZ-01 – BOC-01) non c'e' nella distinta.",
+      "T42 (PLZ-01 – BOC-02) non c'e' nella distinta.",
+      "T44 (PLZ-01 – BOC-04) non c'e' nella distinta.",
+      "T43 (PLZ-01 – BOC-03) non c'e' nella distinta.",
+      "T46 (UI-01 – UE-01) non c'e' nella distinta; con questi capi nella distinta c'e' T06, T07, T11.",
+      "T47 (UI-01 – UE-01) non c'e' nella distinta; con questi capi nella distinta c'e' T06, T07, T11.",
+      "T51 (UI-01 – UE-01) non c'e' nella distinta; con questi capi nella distinta c'e' T06, T07, T11.",
+      "T48 (UI-01 – SIF-01 – AL-01) non c'e' nella distinta; con questi capi nella distinta c'e' T08.",
+      "T49 (QE-01 – CZ-01) non c'e' nella distinta; con questi capi nella distinta c'e' T09.",
+      "T50 (QE-01 – SZ-01 – UE-01) non c'e' nella distinta; con questi capi nella distinta c'e' T10.",
+      "T52 (CZ-01 – TZ-01) non c'e' nella distinta; con questi capi nella distinta c'e' T12.",
+      "T53 (CZ-01 – TZ-02) non c'e' nella distinta; con questi capi nella distinta c'e' T13.",
+      "T54 (CZ-01 – TZ-03) non c'e' nella distinta; con questi capi nella distinta c'e' T14.",
+      "T56 (UI-01 – CF-01) non c'e' nella distinta; con questi capi nella distinta c'e' T16.",
+      "T55 (CZ-01 – UI-01) non c'e' nella distinta; con questi capi nella distinta c'e' T15.",
+      "T01 della distinta (PLZ-01 – TA-01) non e' in pianta.",
+      "T02 della distinta (PLZ-01 – TA-02) non e' in pianta.",
+      "T03 della distinta (PLZ-01 – TA-03) non e' in pianta.",
+      "T04 della distinta (PLZ-01 – TA-04) non e' in pianta.",
+      "T06 della distinta (UE-01 – UI-01) non e' in pianta.",
+      "T07 della distinta (UE-01 – UI-01) non e' in pianta.",
+      "T08 della distinta (UI-01 – SIF-01 – AL-01) non e' in pianta.",
+      "T09 della distinta (QE-01 – CZ-01) non e' in pianta.",
+      "T10 della distinta (QE-01 – SZ-01 – UE-01) non e' in pianta.",
+      "T11 della distinta (UE-01 – UI-01) non e' in pianta.",
+      "T12 della distinta (CZ-01 – TZ-01) non e' in pianta.",
+      "T13 della distinta (CZ-01 – TZ-02) non e' in pianta.",
+      "T14 della distinta (CZ-01 – TZ-03) non e' in pianta.",
+      "T15 della distinta (CZ-01 – UI-01) non e' in pianta.",
+      "T16 della distinta (UI-01 – CF-01) non e' in pianta.",
+      "BOC-01 (bocchetta-matrimoniale): lo schema lo chiama TA-01.",
+      "BOC-02 (bocchetta-singola): lo schema lo chiama TA-02.",
+      "BOC-03 (bocchetta-soggiorno-varco): lo schema lo chiama TA-03.",
+      "BOC-04 (bocchetta-soggiorno-parete): lo schema lo chiama TA-04.",
+      "T41: L 6 m in pianta, 5 m nel grafo.",
+      "T42: L 4 m in pianta, 3 m nel grafo.",
+      "T44: L 7 m in pianta, 6 m nel grafo.",
+      "T43: L 5 m in pianta, 4 m nel grafo.",
+      "T46: L 10 m in pianta, 9 m nel grafo.",
+      "T47: L 10 m in pianta, 9 m nel grafo.",
+      "T51: L 11 m in pianta, 10 m nel grafo.",
+      "T48: L 9 m in pianta, 8 m nel grafo.",
+      "T49: L 9 m in pianta, 8 m nel grafo.",
+      "T50: L 19 m in pianta, 18 m nel grafo.",
+      "T52: L 8 m in pianta, 7 m nel grafo.",
+      "T53: L 6 m in pianta, 5 m nel grafo.",
+      "T54: L 10 m in pianta, 9 m nel grafo.",
+      "T56: L 7 m in pianta, 6 m nel grafo.",
+      "T55: L 3 m in pianta, 2 m nel grafo."
+    ],
+    "avvisi_per_tipo": {
+      "fuori_dalla_distinta": 15,
+      "tratta_non_in_pianta": 15,
+      "sigla": 4,
+      "lunghezza_del_grafo": 15
+    },
+    "lunghezze_prese": {}
+  },
+  "rilievi": {
+    "diagonali": 0,
+    "sormonti": 5,
+    "sovrapposizioni": 0,
+    "scritte_su_linee": 0,
+    "scritte_su_scritte": 0,
+    "fori_fuori_dalle_aperture": 0,
+    "tratte_cedute": 0,
+    "fasci_in_parallelo": {
+      "frigo": 0.969
+    },
+    "fuori_dal_controsoffitto_m": {
+      "T44": 0.2,
+      "T46": 3.2,
+      "T47": 3.2,
+      "T48": 1.0,
+      "T51": 3.2
+    },
+    "richiami": 8,
+    "richiamo_piu_lungo_mm": 9.5,
+    "richiamo_massimo_mm": 12.0,
+    "richiami_lunghi": 0,
+    "richiami_che_attraversano": 0,
+    "richiami_su_una_linea": 2,
+    "scritte_in_legenda": 1,
+    "linee_sui_pezzi": 0,
+    "misure_oltre_la_lunghezza": 0,
+    "scritte_nel_dettaglio": 0,
+    "scritte_fuori_pianta": 3,
+    "richiamo_fuori_piu_lungo_mm": 118.2,
+    "richiami_che_si_incrociano": 0,
+    "richiami_fuori_sopra_scritte_o_pezzi": 0,
+    "fuori_dalle_zone_esterne": 0,
+    "pezzi_sovrapposti": 0,
+    "discordanze_con_distinta_e_grafo": 49,
+    "bloccanti": [],
+    "elenco": {
+      "diagonali": [],
+      "sormonti": [
+        "T42 × T49 a (6.95; 3.85)",
+        "T46 × T50 a (6.45; 8.15)",
+        "T47 × T50 a (6.55; 8.15)",
+        "T51 × T50 a (6.35; 8.15)",
+        "T49 × T56 a (8.90; 4.45)"
+      ],
+      "sovrapposizioni": [],
+      "scritte_su_linee": [],
+      "scritte_su_scritte": [],
+      "fori_fuori_dalle_aperture": [],
+      "tratte_cedute": [],
+      "richiami": [
+        "«T43 · Ø200 · L 5 m» (tratta T43): 9.0 mm",
+        "«T52 · bus · L 8 m» (tratta T52): 3.0 mm",
+        "«T54 · bus · L 10 m» (tratta T54): 3.0 mm",
+        "«CZ-01» (pezzo CZ-01): 9.5 mm",
+        "«BOC-02» (pezzo BOC-02): 2.5 mm",
+        "«BOC-03» (pezzo BOC-03): 2.5 mm",
+        "«AL-01» (pezzo AL-01): 2.5 mm",
+        "«CF-01» (pezzo CF-01): 2.5 mm"
+      ],
+      "richiami_lunghi": [],
+      "richiami_che_attraversano": [],
+      "richiami_su_una_linea": [
+        "«CZ-01» (pezzo CZ-01) attraversa: tratta T49",
+        "«BOC-02» (pezzo BOC-02) attraversa: tratta T53"
+      ],
+      "scritte_in_legenda": [
+        "1: «SIF-01» (pezzo SIF-01)"
+      ],
+      "linee_sui_pezzi": [],
+      "misure_oltre_la_lunghezza": [],
+      "scritte_nel_dettaglio": [],
+      "scritte_fuori_pianta": [
+        "«T55 · 2×0,75 · L 3 m» (tratta T55): richiamo 118.1 mm, 1 gomito",
+        "«TZ-01» (pezzo TZ-01): richiamo 79.7 mm, 1 gomito",
+        "«TZ-03» (pezzo TZ-03): richiamo 118.2 mm, 1 gomito"
+      ],
+      "richiami_che_si_incrociano": [],
+      "richiami_fuori_sopra_scritte_o_pezzi": [],
+      "fuori_dalle_zone_esterne": [],
+      "pezzi_sovrapposti": [],
+      "discordanze_con_distinta_e_grafo": [
+        "T41 (PLZ-01 – BOC-01) non c'e' nella distinta.",
+        "T42 (PLZ-01 – BOC-02) non c'e' nella distinta.",
+        "T44 (PLZ-01 – BOC-04) non c'e' nella distinta.",
+        "T43 (PLZ-01 – BOC-03) non c'e' nella distinta.",
+        "T46 (UI-01 – UE-01) non c'e' nella distinta; con questi capi nella distinta c'e' T06, T07, T11.",
+        "T47 (UI-01 – UE-01) non c'e' nella distinta; con questi capi nella distinta c'e' T06, T07, T11.",
+        "T51 (UI-01 – UE-01) non c'e' nella distinta; con questi capi nella distinta c'e' T06, T07, T11.",
+        "T48 (UI-01 – SIF-01 – AL-01) non c'e' nella distinta; con questi capi nella distinta c'e' T08.",
+        "T49 (QE-01 – CZ-01) non c'e' nella distinta; con questi capi nella distinta c'e' T09.",
+        "T50 (QE-01 – SZ-01 – UE-01) non c'e' nella distinta; con questi capi nella distinta c'e' T10.",
+        "T52 (CZ-01 – TZ-01) non c'e' nella distinta; con questi capi nella distinta c'e' T12.",
+        "T53 (CZ-01 – TZ-02) non c'e' nella distinta; con questi capi nella distinta c'e' T13.",
+        "T54 (CZ-01 – TZ-03) non c'e' nella distinta; con questi capi nella distinta c'e' T14.",
+        "T56 (UI-01 – CF-01) non c'e' nella distinta; con questi capi nella distinta c'e' T16.",
+        "T55 (CZ-01 – UI-01) non c'e' nella distinta; con questi capi nella distinta c'e' T15.",
+        "T01 della distinta (PLZ-01 – TA-01) non e' in pianta.",
+        "T02 della distinta (PLZ-01 – TA-02) non e' in pianta.",
+        "T03 della distinta (PLZ-01 – TA-03) non e' in pianta.",
+        "T04 della distinta (PLZ-01 – TA-04) non e' in pianta.",
+        "T06 della distinta (UE-01 – UI-01) non e' in pianta.",
+        "T07 della distinta (UE-01 – UI-01) non e' in pianta.",
+        "T08 della distinta (UI-01 – SIF-01 – AL-01) non e' in pianta.",
+        "T09 della distinta (QE-01 – CZ-01) non e' in pianta.",
+        "T10 della distinta (QE-01 – SZ-01 – UE-01) non e' in pianta.",
+        "T11 della distinta (UE-01 – UI-01) non e' in pianta.",
+        "T12 della distinta (CZ-01 – TZ-01) non e' in pianta.",
+        "T13 della distinta (CZ-01 – TZ-02) non e' in pianta.",
+        "T14 della distinta (CZ-01 – TZ-03) non e' in pianta.",
+        "T15 della distinta (CZ-01 – UI-01) non e' in pianta.",
+        "T16 della distinta (UI-01 – CF-01) non e' in pianta.",
+        "BOC-01 (bocchetta-matrimoniale): lo schema lo chiama TA-01.",
+        "BOC-02 (bocchetta-singola): lo schema lo chiama TA-02.",
+        "BOC-03 (bocchetta-soggiorno-varco): lo schema lo chiama TA-03.",
+        "BOC-04 (bocchetta-soggiorno-parete): lo schema lo chiama TA-04.",
+        "T41: L 6 m in pianta, 5 m nel grafo.",
+        "T42: L 4 m in pianta, 3 m nel grafo.",
+        "T44: L 7 m in pianta, 6 m nel grafo.",
+        "T43: L 5 m in pianta, 4 m nel grafo.",
+        "T46: L 10 m in pianta, 9 m nel grafo.",
+        "T47: L 10 m in pianta, 9 m nel grafo.",
+        "T51: L 11 m in pianta, 10 m nel grafo.",
+        "T48: L 9 m in pianta, 8 m nel grafo.",
+        "T49: L 9 m in pianta, 8 m nel grafo.",
+        "T50: L 19 m in pianta, 18 m nel grafo.",
+        "T52: L 8 m in pianta, 7 m nel grafo.",
+        "T53: L 6 m in pianta, 5 m nel grafo.",
+        "T54: L 10 m in pianta, 9 m nel grafo.",
+        "T56: L 7 m in pianta, 6 m nel grafo.",
+        "T55: L 3 m in pianta, 2 m nel grafo."
+      ]
+    }
+  },
+  "grafo": {
+    "file": "collaudo-t3.grafo-completo.json",
+    "sola_lettura": true,
+    "scritto": false,
+    "formato_conservato": true,
+    "lunghezze_cambiate": [],
+    "lunghezze_allineate": [],
+    "lunghezze_del_progettista": [
+      {
+        "tratta": "T41",
+        "data_m": 5.0,
+        "misurata_m": 2.8,
+        "dove": "grafo"
+      },
+      {
+        "tratta": "T42",
+        "data_m": 3.0,
+        "misurata_m": 3.4,
+        "dove": "grafo"
+      },
+      {
+        "tratta": "T43",
+        "data_m": 4.0,
+        "misurata_m": 1.55,
+        "dove": "grafo"
+      },
+      {
+        "tratta": "T44",
+        "data_m": 6.0,
+        "misurata_m": 4.55,
+        "dove": "grafo"
+      },
+      {
+        "tratta": "T46",
+        "data_m": 9.0,
+        "misurata_m": 8.635,
+        "dove": "grafo"
+      },
+      {
+        "tratta": "T47",
+        "data_m": 9.0,
+        "misurata_m": 9.035,
+        "dove": "grafo"
+      },
+      {
+        "tratta": "T48",
+        "data_m": 8.0,
+        "misurata_m": 1.775,
+        "dove": "grafo"
+      },
+      {
+        "tratta": "T49",
+        "data_m": 8.0,
+        "misurata_m": 8.325,
+        "dove": "grafo"
+      },
+      {
+        "tratta": "T50",
+        "data_m": 18.0,
+        "misurata_m": 10.63,
+        "dove": "grafo"
+      },
+      {
+        "tratta": "T51",
+        "data_m": 10.0,
+        "misurata_m": 8.235,
+        "dove": "grafo"
+      },
+      {
+        "tratta": "T52",
+        "data_m": 7.0,
+        "misurata_m": 3.465,
+        "dove": "grafo"
+      },
+      {
+        "tratta": "T53",
+        "data_m": 5.0,
+        "misurata_m": 5.105,
+        "dove": "grafo"
+      },
+      {
+        "tratta": "T54",
+        "data_m": 9.0,
+        "misurata_m": 2.365,
+        "dove": "grafo"
+      },
+      {
+        "tratta": "T55",
+        "data_m": 2.0,
+        "misurata_m": 0.125,
+        "dove": "grafo"
+      },
+      {
+        "tratta": "T56",
+        "data_m": 6.0,
+        "misurata_m": 3.79,
+        "dove": "grafo"
+      }
+    ],
+    "attraversamenti_cambiati": [],
+    "attraversamenti_del_progettista": [],
+    "tratte_che_il_grafo_non_ha": [],
+    "tratte_non_instradate": []
+  },
+  "dettagli": []
+}

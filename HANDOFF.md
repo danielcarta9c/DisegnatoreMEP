@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-11-06 sera — **la 2.0 di consolidamento** (`REL-024`, I-295): la skill si prepara per i progettisti del PO. `REL-023` è sospeso. La **2.0.0** è uscita per i progettisti (I-299): la 1.15.2 con il numero della 2.0, tavole identiche alla 1.15.0.
+**Aggiornato:** 2026-11-13 — **la 2.1.0** (`REL-026`, I-300): i rilievi d'uso della 2.0.0 su una commessa. In PR #95, **in attesa che il PO guardi le tavole**: non è su `main` finché non dice di sì. `REL-024` è sospeso (fasi 2-4), `REL-025` diventa la 2.2.
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -11,7 +11,45 @@
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
 
-## ▶ Da dove riparte la prossima sessione — scritto il 6 novembre 2026 sera, con REL-024
+## ▶ Da dove riparte la prossima sessione — scritto il 13 novembre 2026, con REL-026
+
+**Il pacchetto è `REL-026`, la 2.1.0** (`ACTIVE_WORK_PACKAGE.md`, I-300): il PO ha usato la 2.0.0 su una commessa e la
+sessione che la usava ha annotato che cosa manca. Tre blocchi, sviluppati da agenti della sessione (D-152) e riuniti
+sul ramo `claude/magical-wright-ffrf86`, **PR #95**. Il rapporto, con ogni criterio e il suo comando, è
+`docs/collaudi/REL-026/RAPPORTO.md`; i rapporti dei blocchi sono nelle sottocartelle.
+
+- **Prima cosa da guardare all'avvio: la PR #95.** Se è ancora aperta, il PO non ha ancora detto di sì: **non si
+  fonde**, gli si mostrano le tavole (`docs/collaudi/REL-026/`) e l'elenco dei punti che decide lui (§6 del rapporto).
+  Se è fusa, il lavoro che segue è qui sotto.
+- **Blocco A — catalogo, schema, vaso**: il ventilconvettore canalizzato idronico col lato aria
+  (`fan-coil-ducted-air`), il plenum di mandata non motorizzato da 2 a 6 uscite (`supply-plenum-2…6`, sigla PL,
+  ingresso centrato), le porte di comando che non contano come attraversamento nelle portate, i terminali con marca e
+  modello nella tabella delle apparecchiature, `vaso --sanitario` (metodo dal focus tecnico Caleffi, **proposta al
+  PO**), le voci nuove in distinta (sezione X, DA DEFINIRE).
+- **Blocco B — la pianta, prima parte**: nome corto dei fluidi nella tabella delle tratte; `sagome_muri`; le forature
+  spente di base (`forature: true` le accende); `pianta --grafo` scrive nel grafo le lunghezze misurate
+  (`lunghezza_dalla_pianta_m`; quelle del progettista restano; `--grafo-in-sola-lettura`); il confronto con grafo e
+  distinta non cambia più il formato del foglio.
+- **Blocco C — la pianta, seconda parte**: le scritte che non stanno in pianta vanno **fuori**, col richiamo
+  (`pianta/fuori_pianta.py`); niente dettagli automatici (solo quelli chiesti in `dettagli`); una scritta sola per due
+  tubi che corrono insieme («T05/T06 · MS 16 · L 11 m»); **la base architettonica** — leggere la planimetria è un
+  pezzo AI affidato a un sub-agente (`skill/base/ISTRUZIONI.md`, `CONSEGNA.md`), la base in dati sta nel JSON della
+  pianta (muri o `sagome_muri`, aperture, stanze, `balconi`), il disegno è uno solo e deterministico (muri grigio
+  chiaro, finestre celesti, nome del locale con i mq, in mezzatinta), il controllo è a vista (`mep.py base`).
+- **La prova in camera pulita della base** (agenti nuovi con le sole istruzioni, sulle planimetrie vere del PO, in
+  sessione): esiti e correzioni nel rapporto, §5. Le planimetrie del PO **non sono nel repository** e non ci entrano.
+- **Che cosa decide il PO**, e la sessione ha solo proposto: forma e sigla dei simboli nuovi, il metodo del vaso
+  sanitario, i colori della base, come escono le scritte fuori pianta. L'elenco completo è nel rapporto, §6.
+- **Non fatto**: la misura dei «72 avvisi» sulla commessa vera (grafo e pianta di BD.RM.260 non sono arrivati in
+  sessione); la fotografia di un catastale (non era su disco); l'estrattore dei tratti dal PDF vettoriale.
+- **Il prossimo**, quando la 2.1.0 è su `main`: quello che il PO risponde sui punti aperti; poi `REL-025` (la 2.2:
+  derivazione air-split, termostato radio, resistenza integrativa, termostato di sicurezza, distinta a quantità nette,
+  pianta su più piani) e le fasi 2-4 di `REL-024`. L'ordine lo dice il PO.
+- **I numeri**: il prossimo input è **I-301**, la prossima decisione **D-241** (REL-026 non ha aperto decisioni: le
+  proposte aspettano il PO).
+
+## Com'era il 6 novembre 2026 sera, con REL-024 e la 2.0.0
+
 
 **Il pacchetto è `REL-024`, la 2.0** (`ACTIVE_WORK_PACKAGE.md`): il PO la vuole di consolidamento, per distribuire la
 skill ai suoi progettisti (I-295). Cinque fasi: messa in sicurezza, prova dell'agente agli atti, debito di decisioni,

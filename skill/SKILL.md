@@ -7,7 +7,7 @@ compatibility: Richiede l'esecuzione del codice (claude.ai, Claude Cowork o Clau
 
 # Disegnatore MEP
 
-**Versione 2.0.0** — 7 novembre 2026.
+**Versione 2.1.0** — 13 novembre 2026.
 
 Il progettista ha già deciso e dimensionato l'impianto, e te lo descrive a parole. Tu ne fai la
 **tavola dello schema funzionale**: la leggi, chiedi quello che manca, la fai approvare, la componi e
