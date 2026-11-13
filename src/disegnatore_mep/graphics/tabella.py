@@ -93,17 +93,23 @@ Generatori, accumuli e bollitori, separatori idraulici, scambiatori,
 circolatori — e i vasi. **Fuori** le valvole, come il PO ha detto, e con loro
 filtri, strumenti, raccordi e attacchi. Fuori anche i **terminali** (radiatori,
 ventilconvettori, pannelli): nello schema di centrale sono le utenze, non
-macchine della centrale. *Proposta della sessione*, da giudicare sulla tavola.
+macchine della centrale — tranne quelli con marca o modello dichiarati (REL-026,
+`FUNZIONI_CON_MARCA_O_MODELLO`). *Proposta della sessione*, da giudicare sulla tavola.
 Un pezzo entra se **uno qualunque** dei suoi mestieri e' in elenco."""
 
-FUNZIONI_CON_MARCA_O_MODELLO: tuple[str, ...] = ("room_control",)
+FUNZIONI_CON_MARCA_O_MODELLO: tuple[str, ...] = ("room_control", "emission")
 """I mestieri che entrano nella tabella **solo se il pezzo ha marca o modello
 dichiarati** (collaudo T3 di REL-012, §2: il progettista aveva dato «Airzone Think a
 filo» per i termostati, e sulla tavola non comparivano). Un termostato senza marca ne'
 modello resta fuori, come prima: una riga col solo nome non dice niente che il simbolo
 non dica. Il preflight vuole sul disegno la sigla di ogni pezzo in tabella (I-160), e
 il motore la scrive per i pezzi fuori dall'acqua (`sigle_sul_disegno`). *Proposta
-della sessione*, da giudicare sulla tavola."""
+della sessione*, da giudicare sulla tavola.
+
+**I terminali d'emissione** (REL-026, I-300, da una commessa): il ventilconvettore con
+marca e modello dati dal progettista entra, con potenza e portata
+(`CARATTERISTICHE_PER_MESTIERE`). Un radiatore o un pannello senza marca ne' modello
+resta fuori, come prima: nello schema di centrale e' un'utenza."""
 
 CARATTERISTICHE_PER_MESTIERE: dict[str, tuple[str, ...]] = {
     "heat_generation": ("power_kw",),
@@ -114,12 +120,16 @@ CARATTERISTICHE_PER_MESTIERE: dict[str, tuple[str, ...]] = {
     "expansion": ("volume_l",),
     "circulation": ("flow_rate_m3h", "head_kpa", "head_m"),
     "direct_expansion_terminal": ("power_kw", "flow_rate_m3h"),
+    "emission": ("power_kw", "flow_rate_m3h"),
 }
 """Che cosa si scrive fra le caratteristiche, secondo il mestiere del pezzo.
 
 La **potenza** dei generatori e degli scambiatori, il **volume** di accumuli,
 bollitori e vasi, **portata e prevalenza** dei circolatori, **potenza e portata
-d'aria** dell'unita' interna (REL-012). Un pezzo che fa
+d'aria** dell'unita' interna (REL-012), **potenza e portata** del terminale d'emissione
+che entra in tabella con marca o modello (REL-026: la portata e' quella che il
+progettista ha scritto in `flow_rate_m3h`, che sull'acqua il calcolo dei diametri legge
+come portata d'acqua del terminale). Un pezzo che fa
 piu' mestieri — il boiler in pompa di calore genera e accumula — le porta
 tutte, nell'ordine delle chiavi di `CHIAVI_DEI_DATI_NUMERICI`. Il separatore
 idraulico non ha una sua caratteristica: quando e' anche un accumulo, porta il
