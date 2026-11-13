@@ -1,0 +1,545 @@
+{
+ "versione": "1.0.0",
+ "titolo": "Pianta dei posizionamenti e dei tracciati",
+ "cartiglio": {
+  "committente": "Caso di prova (planimetria inventata)",
+  "indirizzo": "Nessun indirizzo: esempio",
+  "progetto": "REL-026 - la base standard da una planimetria d'architetto",
+  "numero_tavola": "M.03",
+  "revisione": "00",
+  "data": "13.11.2026",
+  "commessa": "PROVA-REL-026",
+  "disegnato": "Nove C"
+ },
+ "note": [
+  "Caso anonimo di REL-026 (C-3): la planimetria d'origine e' un disegno inventato (planimetria.pdf, disegnato da disegna_la_planimetria.py), con arredi, quote e retini; la base e' trascritta dalle sue quote e la tavola la ridisegna nella grafica standard.",
+  "Taratura: scala 1:50 dichiarata nel cartiglio, verificata sulla quota 10,60 e sulle porte da 80 cm."
+ ],
+ "sfondo": {
+  "file": "base-anonima/planimetria.pdf",
+  "pagina": 1,
+  "dpi": 150,
+  "px_per_m": 118.11,
+  "origine_px": [
+   354.33,
+   236.22
+  ]
+ },
+ "muri": [
+  {
+   "id": "p-nord",
+   "da": [
+    0.15,
+    1.65
+   ],
+   "a": [
+    10.45,
+    1.65
+   ],
+   "spessore": 0.3,
+   "tipo": "perimetrale"
+  },
+  {
+   "id": "p-sud",
+   "da": [
+    0.15,
+    8.95
+   ],
+   "a": [
+    10.45,
+    8.95
+   ],
+   "spessore": 0.3,
+   "tipo": "perimetrale"
+  },
+  {
+   "id": "p-ovest",
+   "da": [
+    0.15,
+    1.65
+   ],
+   "a": [
+    0.15,
+    8.95
+   ],
+   "spessore": 0.3,
+   "tipo": "perimetrale"
+  },
+  {
+   "id": "p-est",
+   "da": [
+    10.45,
+    1.65
+   ],
+   "a": [
+    10.45,
+    8.95
+   ],
+   "spessore": 0.3,
+   "tipo": "perimetrale"
+  },
+  {
+   "id": "t-soggiorno-camera",
+   "da": [
+    5.75,
+    1.65
+   ],
+   "a": [
+    5.75,
+    6.05
+   ],
+   "spessore": 0.1,
+   "tipo": "tramezza"
+  },
+  {
+   "id": "t-giorno-notte",
+   "da": [
+    0.15,
+    6.05
+   ],
+   "a": [
+    10.45,
+    6.05
+   ],
+   "spessore": 0.1,
+   "tipo": "tramezza"
+  },
+  {
+   "id": "t-cameretta",
+   "da": [
+    3.65,
+    6.05
+   ],
+   "a": [
+    3.65,
+    8.95
+   ],
+   "spessore": 0.1,
+   "tipo": "tramezza"
+  },
+  {
+   "id": "t-bagno",
+   "da": [
+    7.75,
+    6.05
+   ],
+   "a": [
+    7.75,
+    8.95
+   ],
+   "spessore": 0.1,
+   "tipo": "tramezza"
+  }
+ ],
+ "aperture": [
+  {
+   "id": "f-soggiorno",
+   "muro": "p-nord",
+   "centro": [
+    2.0,
+    1.65
+   ],
+   "larghezza": 1.6,
+   "tipo": "finestra"
+  },
+  {
+   "id": "f-camera",
+   "muro": "p-nord",
+   "centro": [
+    8.0,
+    1.65
+   ],
+   "larghezza": 1.4,
+   "tipo": "finestra"
+  },
+  {
+   "id": "f-cucina",
+   "muro": "p-ovest",
+   "centro": [
+    0.15,
+    3.9
+   ],
+   "larghezza": 1.2,
+   "tipo": "finestra"
+  },
+  {
+   "id": "f-cameretta",
+   "muro": "p-ovest",
+   "centro": [
+    0.15,
+    7.5
+   ],
+   "larghezza": 1.0,
+   "tipo": "finestra"
+  },
+  {
+   "id": "f-bagno",
+   "muro": "p-est",
+   "centro": [
+    10.45,
+    7.5
+   ],
+   "larghezza": 0.6,
+   "tipo": "finestra"
+  },
+  {
+   "id": "p-ingresso",
+   "muro": "p-sud",
+   "centro": [
+    5.7,
+    8.95
+   ],
+   "larghezza": 0.9,
+   "tipo": "porta",
+   "apre_verso": "sopra",
+   "cerniera": "sinistra"
+  },
+  {
+   "id": "p-camera",
+   "muro": "t-giorno-notte",
+   "centro": [
+    7.0,
+    6.05
+   ],
+   "larghezza": 0.8,
+   "tipo": "porta",
+   "apre_verso": "sopra",
+   "cerniera": "destra"
+  },
+  {
+   "id": "p-cameretta",
+   "muro": "t-cameretta",
+   "centro": [
+    3.65,
+    6.8
+   ],
+   "larghezza": 0.8,
+   "tipo": "porta",
+   "apre_verso": "sinistra",
+   "cerniera": "sopra"
+  },
+  {
+   "id": "p-bagno",
+   "muro": "t-bagno",
+   "centro": [
+    7.75,
+    6.8
+   ],
+   "larghezza": 0.7,
+   "tipo": "porta",
+   "apre_verso": "destra",
+   "cerniera": "sopra"
+  },
+  {
+   "id": "v-soggiorno",
+   "muro": "t-giorno-notte",
+   "centro": [
+    4.6,
+    6.05
+   ],
+   "larghezza": 1.2,
+   "tipo": "varco"
+  }
+ ],
+ "stanze": [
+  {
+   "id": "soggiorno",
+   "nome": "Soggiorno-cucina",
+   "poligono": [
+    [
+     0.3,
+     1.8
+    ],
+    [
+     5.7,
+     1.8
+    ],
+    [
+     5.7,
+     6.0
+    ],
+    [
+     0.3,
+     6.0
+    ]
+   ],
+   "controsoffitto": true
+  },
+  {
+   "id": "camera",
+   "nome": "Camera",
+   "poligono": [
+    [
+     5.8,
+     1.8
+    ],
+    [
+     10.3,
+     1.8
+    ],
+    [
+     10.3,
+     6.0
+    ],
+    [
+     5.8,
+     6.0
+    ]
+   ]
+  },
+  {
+   "id": "cameretta",
+   "nome": "Cameretta",
+   "poligono": [
+    [
+     0.3,
+     6.1
+    ],
+    [
+     3.6,
+     6.1
+    ],
+    [
+     3.6,
+     8.8
+    ],
+    [
+     0.3,
+     8.8
+    ]
+   ]
+  },
+  {
+   "id": "ingresso",
+   "nome": "Ingresso",
+   "poligono": [
+    [
+     3.7,
+     6.1
+    ],
+    [
+     7.7,
+     6.1
+    ],
+    [
+     7.7,
+     8.8
+    ],
+    [
+     3.7,
+     8.8
+    ]
+   ],
+   "controsoffitto": true,
+   "disimpegno": true
+  },
+  {
+   "id": "bagno",
+   "nome": "Bagno",
+   "poligono": [
+    [
+     7.8,
+     6.1
+    ],
+    [
+     10.3,
+     6.1
+    ],
+    [
+     10.3,
+     8.8
+    ],
+    [
+     7.8,
+     8.8
+    ]
+   ],
+   "controsoffitto": true
+  }
+ ],
+ "balconi": [
+  {
+   "id": "balcone",
+   "nome": "Balcone",
+   "poligono": [
+    [
+     1.0,
+     0.1
+    ],
+    [
+     9.0,
+     0.1
+    ],
+    [
+     9.0,
+     1.5
+    ],
+    [
+     1.0,
+     1.5
+    ]
+   ]
+  }
+ ],
+ "zone_esterne": [
+  {
+   "id": "balcone",
+   "nome": "Balcone",
+   "rettangolo": [
+    1.0,
+    0.10000000000000009,
+    9.0,
+    1.5
+   ]
+  }
+ ],
+ "pezzi": [
+  {
+   "sigla": "UI-01",
+   "tipo": "ducted-indoor-unit",
+   "nome": "Unita' interna canalizzata",
+   "x": 5.4,
+   "y": 6.7,
+   "larghezza": 0.9,
+   "profondita": 0.45,
+   "quota": "controsoffitto",
+   "ingombro_da_confermare": true
+  },
+  {
+   "sigla": "B1",
+   "tipo": "air-supply-terminal",
+   "nome": "Bocchetta soggiorno",
+   "x": 2.4,
+   "y": 6.05,
+   "larghezza": 0.4,
+   "profondita": 0.2
+  },
+  {
+   "sigla": "B2",
+   "tipo": "air-supply-terminal",
+   "nome": "Bocchetta camera",
+   "x": 9.0,
+   "y": 6.05,
+   "larghezza": 0.4,
+   "profondita": 0.2
+  },
+  {
+   "sigla": "B3",
+   "tipo": "air-supply-terminal",
+   "nome": "Bocchetta cameretta",
+   "x": 3.65,
+   "y": 8.1,
+   "larghezza": 0.2,
+   "profondita": 0.4
+  },
+  {
+   "sigla": "UE-01",
+   "tipo": "split-outdoor-unit",
+   "nome": "Unita' esterna",
+   "x": 4.8,
+   "y": 0.75,
+   "larghezza": 0.8,
+   "profondita": 0.3
+  },
+  {
+   "sigla": "SZ-01",
+   "tipo": "isolator-switch",
+   "nome": "Sezionatore dell'UE",
+   "x": 5.45,
+   "y": 0.75,
+   "larghezza": 0.12,
+   "profondita": 0.12
+  },
+  {
+   "sigla": "QE-01",
+   "tipo": "electrical-panel",
+   "nome": "Quadro elettrico",
+   "x": 4.0,
+   "y": 8.65,
+   "larghezza": 0.4,
+   "profondita": 0.2
+  },
+  {
+   "sigla": "SC-01",
+   "tipo": "condensate-outlet",
+   "nome": "Scarico della condensa nel bagno",
+   "x": 8.05,
+   "y": 8.4,
+   "larghezza": 0.15,
+   "profondita": 0.15
+  }
+ ],
+ "tracciati": [
+  {
+   "tratta": "T01",
+   "da": "UI-01",
+   "a": "B1",
+   "fluido": "supply_air",
+   "dimensione": "Ø160",
+   "lunghezza_m": 5
+  },
+  {
+   "tratta": "T02",
+   "da": "UI-01",
+   "a": "B2",
+   "fluido": "supply_air",
+   "dimensione": "Ø160",
+   "lunghezza_m": 5
+  },
+  {
+   "tratta": "T03",
+   "da": "UI-01",
+   "a": "B3",
+   "fluido": "supply_air",
+   "dimensione": "Ø160",
+   "lunghezza_m": 3
+  },
+  {
+   "tratta": "T04",
+   "da": "UI-01",
+   "a": "UE-01",
+   "fluido": "refrigerant_liquid",
+   "dimensione": "1/4\"",
+   "fascio": "frigo",
+   "lunghezza_m": 8
+  },
+  {
+   "tratta": "T05",
+   "da": "UI-01",
+   "a": "UE-01",
+   "fluido": "refrigerant_gas",
+   "dimensione": "1/2\"",
+   "fascio": "frigo",
+   "lunghezza_m": 8
+  },
+  {
+   "tratta": "T06",
+   "da": "UI-01",
+   "a": "UE-01",
+   "fluido": "interconnection",
+   "dimensione": "4G1,5",
+   "fascio": "frigo",
+   "lunghezza_m": 9
+  },
+  {
+   "tratta": "T07",
+   "da": "UI-01",
+   "a": "SC-01",
+   "fluido": "condensate",
+   "dimensione": "PVC Ø32",
+   "lunghezza_m": 4
+  },
+  {
+   "tratta": "T08",
+   "da": "QE-01",
+   "a": "UE-01",
+   "passa_per": [
+    "SZ-01"
+   ],
+   "fluido": "power_supply",
+   "dimensione": "3G2,5",
+   "quota": "traccia",
+   "lunghezza_m": 12
+  }
+ ]
+}

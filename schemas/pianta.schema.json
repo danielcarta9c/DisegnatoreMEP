@@ -81,6 +81,34 @@
           ],
           "default": null,
           "title": "Apre Verso"
+        },
+        "cerniera": {
+          "anyOf": [
+            {
+              "enum": [
+                "sopra",
+                "sotto",
+                "sinistra",
+                "destra"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cerniera"
+        },
+        "anta": {
+          "default": "battente",
+          "enum": [
+            "battente",
+            "doppia",
+            "scorrevole"
+          ],
+          "title": "Anta",
+          "type": "string"
         }
       },
       "required": [
@@ -91,6 +119,46 @@
         "tipo"
       ],
       "title": "Apertura",
+      "type": "object"
+    },
+    "Balcone": {
+      "additionalProperties": false,
+      "description": "Un balcone, un terrazzo, una loggia: uno spazio aperto della planimetria, che\nla base disegna col suo contorno e col nome e i mq (REL-026, C-3). **Non e' una\nstrada per i tracciati**: dove fuori si puo' passare lo dice una `zona_esterna`,\nche il progettista dichiara, e non e' una stanza (le stanze sono l'interno).",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z0-9][a-z0-9_-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "nome": {
+          "default": "Balcone",
+          "title": "Nome",
+          "type": "string"
+        },
+        "poligono": {
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array"
+          },
+          "minItems": 3,
+          "title": "Poligono",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "poligono"
+      ],
+      "title": "Balcone",
       "type": "object"
     },
     "Dettaglio": {
@@ -544,16 +612,42 @@
     },
     "Sfondo": {
       "additionalProperties": false,
-      "description": "Una planimetria raster sotto il disegno: un JPEG, la sua scala, l'origine.",
+      "description": "La planimetria d'origine — il disegno da cui la base e' stata trascritta —, con\nla sua taratura: quanti pixel fa un metro, dove cade il punto (0, 0), di quanto e'\nruotata.\n\nServe al **controllo a vista** (`mep.py base`, REL-026 C-3): la base ridisegnata\nsovrapposta all'origine, alla stessa scala. **Sulla tavola consegnata non c'e'**\nquando la base e' ridisegnata (ci sono muri o sagome): la tavola MEP ha la base\nstandard, una sola qualunque fosse l'ingresso. Il progettista la puo' chiedere\n(`sulla_tavola`), e allora va un JPEG o un PNG, che il PDF del motore incorpora.",
       "properties": {
         "file": {
           "title": "File",
           "type": "string"
         },
+        "pagina": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Pagina",
+          "type": "integer"
+        },
+        "dpi": {
+          "default": 150,
+          "maximum": 600,
+          "minimum": 36,
+          "title": "Dpi",
+          "type": "integer"
+        },
         "px_per_m": {
           "exclusiveMinimum": 0,
           "title": "Px Per M",
           "type": "number"
+        },
+        "px_per_m_y": {
+          "anyOf": [
+            {
+              "gt": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Px Per M Y"
         },
         "origine_px": {
           "maxItems": 2,
@@ -569,12 +663,31 @@
           "title": "Origine Px",
           "type": "array"
         },
+        "rotazione": {
+          "default": 0.0,
+          "maximum": 45,
+          "minimum": -45,
+          "title": "Rotazione",
+          "type": "number"
+        },
         "opacita": {
           "default": 0.35,
           "exclusiveMinimum": 0,
           "maximum": 1,
           "title": "Opacita",
           "type": "number"
+        },
+        "sulla_tavola": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sulla Tavola"
         }
       },
       "required": [
@@ -885,6 +998,13 @@
         "$ref": "#/$defs/Stanza"
       },
       "title": "Stanze",
+      "type": "array"
+    },
+    "balconi": {
+      "items": {
+        "$ref": "#/$defs/Balcone"
+      },
+      "title": "Balconi",
       "type": "array"
     },
     "velette": {

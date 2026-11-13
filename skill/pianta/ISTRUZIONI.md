@@ -40,7 +40,7 @@ dell'oggetto giusto).
 
 | dato | da dove |
 |---|---|
-| **la planimetria** | il disegno (PDF, immagine, catastale) **oppure una planimetria a parole** con le misure: va bene anche quella. Leggi le misure come **misure interne** dei locali, salvo che il testo dica altro («11 × 8 m esterni»); metti i muri perimetrali **fuori** dal rettangolo interno, e scrivi in `note` come l'hai letta. Se la descrizione è ambigua — quale parete, da che parte si apre una porta, dov'è il terrazzo — **chiedi**, non scegliere |
+| **la planimetria** | il disegno (PDF, immagine, catastale): **leggerlo è un lavoro a parte**, con le istruzioni `skill/base/ISTRUZIONI.md`, di regola affidato a un sub-agente; torna la base in dati (muri, aperture, stanze, balconi, lo `sfondo` tarato), a cui aggiungi pezzi e tracciati. **Oppure una planimetria a parole** con le misure: va bene anche quella. Leggi le misure come **misure interne** dei locali, salvo che il testo dica altro («11 × 8 m esterni»); metti i muri perimetrali **fuori** dal rettangolo interno, e scrivi in `note` come l'hai letta. Se la descrizione è ambigua — quale parete, da che parte si apre una porta, dov'è il terrazzo — **chiedi**, non scegliere |
 | **le sigle dei pezzi** | dalla **tavola dello schema funzionale**: la tabella delle apparecchiature e le sigle scritte sul disegno. Sono le stesse sulla pianta. Sul pezzo scrivi anche l'`id` del grafo: con `--grafo` il comando ritrova il pezzo e controlla la sigla |
 | **i numeri di tratta** e le lunghezze | dalla **tabella delle tratte della distinta** (`tabelle-del-foglio.json`, o `distinta.json`, che il comando `distinta` scrive): T01, T02… e la lunghezza di ogni tratta. Una tratta della distinta che è un raccordo diretto (lunghezza 0, la ripresa attaccata alla macchina) non ha tracciato |
 | **le posizioni** | dal progettista; quelle che assumi le scrivi in `note` come «da confermare» |
@@ -68,12 +68,13 @@ destra, **y verso il basso** — come leggi un'immagine.
 | campo | che cosa | come lo ricavi |
 |---|---|---|
 | `muri` | asse (`da`, `a`) e `spessore`; `tipo` perimetrale, portante o tramezza | sul disegno, misurando con la scala; perimetrali 0,30, tramezze 0,10 se il disegno non dice altro |
-| `aperture` | `muro`, `centro` (sull'asse del muro), `larghezza`, `tipo`: porta, varco, finestra, foro | le porte con il verso (`apre_verso`), i varchi a tutta altezza, i fori già previsti |
-| `stanze` | `id`, `nome`, `zona`, `poligono` (le facce interne), `controsoffitto`, `disimpegno` | dove c'è il controsoffitto lo dice il progettista; i corridoi sono `disimpegno: true` |
+| `aperture` | `muro`, `centro` (sull'asse del muro), `larghezza`, `tipo`: porta, varco, finestra, foro | le porte con il verso (`apre_verso`), la `cerniera` e l'`anta` (battente, doppia, scorrevole); la portafinestra è una finestra; i varchi a tutta altezza, i fori già previsti |
+| `stanze` | `id`, `nome`, `zona`, `poligono` (le facce interne), `controsoffitto`, `disimpegno` | dove c'è il controsoffitto lo dice il progettista; i corridoi sono `disimpegno: true`. La tavola scrive il nome con i mq, calcolati dal poligono |
+| `balconi` | balconi, terrazzi, logge: `id`, `nome`, `poligono` | la tavola li disegna col contorno, il nome e i mq. **Non sono una strada**: dove fuori si può passare lo dice una zona esterna |
 | `velette` | rettangoli di controsoffitto fuori dalle stanze che ce l'hanno: `id` e `rettangolo` `[x0, y0, x1, y1]` | **non** un `poligono`: un rettangolo. Esempio sotto |
 | `zone_esterne` | dove **fuori dall'edificio** le linee possono correre: `id`, `nome` (si scrive sulla tavola), `rettangolo`, `costo` (1 come in casa; 2-3 se fuori le vuole corte) | il terrazzo, il balcone, la facciata attrezzata: **solo quelli che il progettista dice**. Fuori dalle zone l'esterno non è una strada (§4bis) |
-| `sfondo` | facoltativo: un **JPEG** con `px_per_m` e `origine_px` (il pixel del punto 0,0) | quando hai solo il catastale. **I muri principali si dichiarano lo stesso**: l'instradatore non legge l'immagine |
-| `sagome_muri` | facoltativo: i **contorni veri** dei muri, un poligono per muro `[[x, y], …]` in metri (almeno tre punti; una L è un poligono solo) | dal disegno di base, quando i rettangoli asse-spessore non combaciano con i muri disegnati (angoli che si sovrappongono, estremità che sporgono). Se ci sono, **il retino dei muri si disegna sulle sagome**, anche nei riquadri di dettaglio e nel DXF; i `muri` restano e servono all'instradatore. Porte e finestre sono **buchi** della sagoma: fermala dove comincia l'apertura. Un muro ad anello va in più pezzi |
+| `sfondo` | facoltativo: la planimetria d'origine con la sua taratura — un JPEG, un PNG o un PDF (`pagina`, `dpi`), `px_per_m` (e `px_per_m_y` se diverso), `origine_px` (il pixel del punto 0,0), `rotazione` | serve al **controllo a vista** (`mep.py base`): **sulla tavola non c'è** quando la base è ridisegnata. Il progettista la può volere sotto: `"sulla_tavola": true`, con un JPEG o un PNG diritto |
+| `sagome_muri` | facoltativo: i **contorni veri** dei muri, un poligono per muro `[[x, y], …]` in metri (almeno tre punti; una L è un poligono solo) | dal disegno di base, quando i rettangoli asse-spessore non combaciano con i muri disegnati (angoli che si sovrappongono, estremità che sporgono). Se ci sono, **il retino dei muri si disegna sulle sagome** (unite, dove si toccano, in un contorno solo), anche nei riquadri di dettaglio e nel DXF; i `muri` restano e servono all'instradatore. Di regola non servono: dai `muri` il disegno chiude da sé angoli e T. Porte e finestre sono **buchi** della sagoma: fermala dove comincia l'apertura. Un muro ad anello va in più pezzi |
 | `pezzi` | `sigla`, `tipo` (l'**id della voce di catalogo**: `return-air-terminal`, non l'id del simbolo `return-grille`), `x`/`y` (il **centro**), `larghezza` (lungo x), `profondita` (lungo y); facoltativi `id` (l'id del grafo), `sovrapposto_a` e `sta`, `ingombro_da_confermare` | le sigle dello schema funzionale. Bocchette e griglie a parete **a cavallo del muro**: il loro foro è il pezzo. Due pezzi uno sopra l'altro: §4ter |
 | `tracciati` | `tratta` (T01…), `da`/`a` (sigla o id, o `{pezzo, lato}`), `passa_per`, `fluido`, `dimensione`, `quota`, `fascio`, `lunghezza_m`, `lunghezza_minima_m` | i numeri e le lunghezze della tabella delle tratte. `lato` (sopra, sotto, sinistra, destra) solo dove l'attacco c'è davvero: le uscite di un plenum |
 | `dettagli` | facoltativo: i riquadri a scala maggiore, `{id, rettangolo, scala}` | di regola **non lo scrivi**: li fa la tavola dove serve (§6) |
@@ -86,6 +87,11 @@ destra, **y verso il basso** — come leggi un'immagine.
 ```json
 "zone_esterne": [{"id": "terrazzo", "nome": "Terrazzo", "rettangolo": [0.0, 8.6, 7.35, 10.1]}]
 ```
+
+**La base è una sola, qualunque fosse la planimetria**: muri grigio chiaro con gli angoli chiusi,
+finestre celesti, porte a tratto fine, il nome dei locali con i mq, tutto in mezzatinta sotto
+l'impianto; nel DXF su layer distinti (`A-WALL`, `A-GLAZ`, `A-DOOR`, `A-FLOR-OTLN`, `A-AREA-IDEN`).
+Gli arredi non ci sono, e non si trascrivono.
 
 I `fluido` sono quelli di `naming/media.json`: `supply_air`, `return_air`, `refrigerant_liquid`,
 `refrigerant_gas`, `condensate`, `power_supply`, `interconnection`, `control_bus`, e gli idronici.

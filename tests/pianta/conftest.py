@@ -19,6 +19,7 @@ CASI = {
     "collaudo": ESEMPI / "casi" / "collaudo-t1.json",
     "collaudo-t3": ESEMPI / "casi" / "collaudo-t3.json",
     "sagome": ESEMPI / "casi" / "sagome-muri.json",
+    "base-anonima": ESEMPI / "casi" / "base-anonima.json",
 }
 """`collaudo` e' la pianta del collaudo indipendente REL-012 (t1): una planimetria
 inventata, data a parole, con le lunghezze del progettista sui tracciati.
@@ -26,7 +27,10 @@ inventata, data a parole, con le lunghezze del progettista sui tracciati.
 testo: la centrale sopra il plenum, la ripresa sotto la UI, il terrazzo solo davanti
 al soggiorno; si disegna con la distinta e il grafo del collaudo accanto. `sagome` e' il
 caso anonimo di REL-026 (B-2): un appartamento a L con muri di spessori diversi, il
-retino sulle `sagome_muri` e un riquadro di dettaglio sull'angolo della tramezza a L."""
+retino sulle `sagome_muri` e un riquadro di dettaglio sull'angolo della tramezza a L.
+`base-anonima` e' il caso anonimo di REL-026 (C-3): un trilocale inventato, la sua planimetria
+d'origine disegnata da un architetto immaginario (`base-anonima/planimetria.pdf`, con arredi e
+quote), la base trascritta e un canalizzato con l'unita' esterna sul balcone."""
 
 CONFRONTI = {
     "collaudo-t3": (

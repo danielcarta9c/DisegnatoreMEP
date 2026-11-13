@@ -168,10 +168,10 @@ def attraversamenti_per_tratta(
     return interni, esterni
 
 
-def _pixel_del_jpeg(percorso: Path) -> tuple[int, int]:
-    from disegnatore_mep.graphics.pdf import _jpeg
+def _pixel_dell_immagine(percorso: Path) -> tuple[int, int]:
+    from disegnatore_mep.graphics.pdf import misura_dell_immagine
 
-    larghezza, altezza, _ = _jpeg(percorso.read_bytes())
+    larghezza, altezza = misura_dell_immagine(percorso.read_bytes())
     return larghezza, altezza
 
 
@@ -282,11 +282,21 @@ def disegna_la_pianta(
     pixel = None
     cartella.mkdir(parents=True, exist_ok=True)
     scritti: list[Path] = []
-    if pianta.sfondo is not None:
+    # Lo sfondo va sulla tavola solo se il progettista lo chiede, o se non c'e' altra base
+    # (REL-026, C-3): se no la planimetria d'origine serve al controllo a vista (`base`).
+    if pianta.sfondo is not None and pianta.sfondo_sulla_tavola:
         immagine = sorgente.parent / pianta.sfondo.file
-        if immagine.suffix.lower() not in (".jpg", ".jpeg"):
-            raise ValueError(f"lo sfondo {immagine.name} non e' un JPEG: il PDF del motore incorpora solo JPEG")
-        pixel = _pixel_del_jpeg(immagine)
+        if immagine.suffix.lower() not in (".jpg", ".jpeg", ".png"):
+            raise ValueError(
+                f"lo sfondo {immagine.name} va sulla tavola, e non e' un JPEG o un PNG: il PDF del motore "
+                "incorpora solo quelli (l'immagine della pagina la scrive mep.py base)"
+            )
+        if pianta.sfondo.rotazione:
+            raise ValueError(
+                f"lo sfondo {immagine.name} e' ruotato di {pianta.sfondo.rotazione:g} gradi: sulla tavola si stampa "
+                "solo diritto. Serve al controllo a vista (mep.py base), non alla tavola"
+            )
+        pixel = _pixel_dell_immagine(immagine)
         copia = cartella / immagine.name
         if copia.resolve() != immagine.resolve():
             shutil.copyfile(immagine, copia)

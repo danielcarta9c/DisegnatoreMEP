@@ -197,7 +197,8 @@ class Sostituzione:
 @dataclass
 class _Risorse:
     trasparenze: dict[tuple[float, float], str] = field(default_factory=dict)
-    immagini: list[tuple[str, bytes, int, int, int]] = field(default_factory=list)
+    immagini: list[tuple[str, str, bytes]] = field(default_factory=list)
+    """Il nome, il dizionario dell'XObject (senza la lunghezza) e i dati."""
     caratteri_usati: set[str] = field(default_factory=set)
 
     def trasparenza(self, riempimento: float, tratto: float) -> str:
@@ -584,16 +585,105 @@ def _jpeg(dati: bytes) -> tuple[int, int, int]:
     raise ErroreDelPdf("JPEG senza segmento SOF")
 
 
+FIRMA_DEL_PNG = b"\x89PNG\r\n\x1a\n"
+
+
+@dataclass(frozen=True)
+class _Png:
+    larghezza: int
+    altezza: int
+    bit: int
+    colore: int
+    """Il tipo di colore del PNG: 0 grigi, 2 RGB, 3 tavolozza, 4 e 6 con la trasparenza."""
+    interlacciato: bool
+    tavolozza: bytes
+    compressi: bytes
+    """Gli IDAT, uno dopo l'altro: un flusso zlib con il filtro PNG in testa a ogni riga."""
+
+
+def leggi_il_png(dati: bytes) -> _Png:
+    """Le parti di un PNG che servono per incorporarlo: l'intestazione, la tavolozza, i dati."""
+    if dati[:8] != FIRMA_DEL_PNG:
+        raise ErroreDelPdf("l'immagine non e' un PNG")
+    i, intestazione, tavolozza, compressi = 8, b"", b"", bytearray()
+    while i + 8 <= len(dati):
+        lunghezza = int.from_bytes(dati[i : i + 4], "big")
+        tipo, corpo = dati[i + 4 : i + 8], dati[i + 8 : i + 8 + lunghezza]
+        if tipo == b"IHDR":
+            intestazione = corpo
+        elif tipo == b"PLTE":
+            tavolozza = corpo
+        elif tipo == b"IDAT":
+            compressi += corpo
+        elif tipo == b"IEND":
+            break
+        i += 12 + lunghezza
+    if len(intestazione) != 13:
+        raise ErroreDelPdf("PNG senza intestazione")
+    return _Png(
+        larghezza=int.from_bytes(intestazione[0:4], "big"), altezza=int.from_bytes(intestazione[4:8], "big"),
+        bit=intestazione[8], colore=intestazione[9], interlacciato=intestazione[12] == 1,
+        tavolozza=tavolozza, compressi=bytes(compressi),
+    )
+
+
+def misura_dell_immagine(dati: bytes) -> tuple[int, int]:
+    """Larghezza e altezza in pixel di un JPEG o di un PNG."""
+    if dati[:8] == FIRMA_DEL_PNG:
+        png = leggi_il_png(dati)
+        return png.larghezza, png.altezza
+    larghezza, altezza, _ = _jpeg(dati)
+    return larghezza, altezza
+
+
+def _xobject_dell_immagine(dati: bytes) -> tuple[int, int, str, bytes]:
+    """Pixel, dizionario dell'XObject e dati di un JPEG (DCTDecode, come sono) o di un PNG
+    senza trasparenza (FlateDecode con il predittore PNG: i suoi IDAT vanno nel PDF come
+    sono, niente da decodificare). Un PNG con la trasparenza o interlacciato si rifiuta, e
+    il messaggio dice perche'."""
+    if dati[:8] == FIRMA_DEL_PNG:
+        png = leggi_il_png(dati)
+        if png.colore in (4, 6) or png.interlacciato:
+            raise ErroreDelPdf(
+                "PNG con la trasparenza o interlacciato: il PDF lo incorpora solo pieno e a righe; "
+                "salvalo senza trasparenza (o come JPEG)"
+            )
+        if png.colore not in (0, 2, 3):
+            raise ErroreDelPdf(f"PNG di un tipo di colore sconosciuto: {png.colore}")
+        colori = 3 if png.colore == 2 else 1
+        if png.colore == 3:
+            voci = len(png.tavolozza) // 3
+            spazio = f"[/Indexed /DeviceRGB {voci - 1} <{png.tavolozza.hex()}>]"
+        else:
+            spazio = "/DeviceRGB" if png.colore == 2 else "/DeviceGray"
+        dizionario = (
+            f"<< /Type /XObject /Subtype /Image /Width {png.larghezza} /Height {png.altezza} "
+            f"/ColorSpace {spazio} /BitsPerComponent {png.bit} /Filter /FlateDecode "
+            f"/DecodeParms << /Predictor 15 /Colors {colori} /BitsPerComponent {png.bit} "
+            f"/Columns {png.larghezza} >>"
+        )
+        return png.larghezza, png.altezza, dizionario, png.compressi
+    larghezza_px, altezza_px, componenti = _jpeg(dati)
+    if componenti not in (1, 3):
+        raise ErroreDelPdf(f"JPEG a {componenti} componenti: il PDF vuole grigi o RGB")
+    spazio = "/DeviceRGB" if componenti == 3 else "/DeviceGray"
+    dizionario = (
+        f"<< /Type /XObject /Subtype /Image /Width {larghezza_px} /Height {altezza_px} "
+        f"/ColorSpace {spazio} /BitsPerComponent 8 /Filter /DCTDecode"
+    )
+    return larghezza_px, altezza_px, dizionario, dati
+
+
 def _dati_dell_immagine(href: str, cartella: Path | None) -> bytes:
     if href.startswith("data:"):
         intestazione, _, contenuto = href.partition(",")
-        if "image/jpeg" not in intestazione or ";base64" not in intestazione:
+        if not any(t in intestazione for t in ("image/jpeg", "image/png")) or ";base64" not in intestazione:
             raise ErroreDelPdf(f"immagine che il PDF non sa incorporare: {intestazione}")
         return base64.b64decode(contenuto)
     if cartella is None:
         raise ErroreDelPdf(f"immagine collegata senza la cartella dell'SVG: {href}")
     percorso = cartella / href
-    if percorso.suffix.lower() not in (".jpg", ".jpeg"):
+    if percorso.suffix.lower() not in (".jpg", ".jpeg", ".png"):
         raise ErroreDelPdf(f"immagine che il PDF non sa incorporare: {href}")
     return percorso.read_bytes()
 
@@ -788,10 +878,7 @@ class _Pagina:
         href = e.get("href") or e.get(XLINK_HREF)
         if not href:
             return
-        dati = _dati_dell_immagine(href, self.cartella)
-        larghezza_px, altezza_px, componenti = _jpeg(dati)
-        if componenti not in (1, 3):
-            raise ErroreDelPdf(f"JPEG a {componenti} componenti: il PDF vuole grigi o RGB")
+        larghezza_px, altezza_px, dizionario, dati = _xobject_dell_immagine(_dati_dell_immagine(href, self.cartella))
         x, y = _lunghezza(e.get("x")), _lunghezza(e.get("y"))
         w, h = _lunghezza(e.get("width")), _lunghezza(e.get("height"))
         if w <= 0 or h <= 0:
@@ -809,7 +896,7 @@ class _Pagina:
                 self.operatori.append(f"{_n(x)} {_n(y)} {_n(w)} {_n(h)} re W n")
             x, y, w, h = ix, iy, iw, ih
         nome = f"Im{len(self.risorse.immagini) + 1}"
-        self.risorse.immagini.append((nome, dati, larghezza_px, altezza_px, componenti))
+        self.risorse.immagini.append((nome, dizionario, dati))
         self._trasparenza(self._opacita, 1.0)
         self.operatori.append(f"{_n(w)} 0 0 {_n(-h)} {_n(x)} {_n(y + h)} cm /{nome} Do")
 
@@ -882,16 +969,9 @@ def svg_in_pdf(svg: str, cartella: Path | None = None, titolo: str | None = None
         if nome in pagina.risorse.caratteri_usati
     }
     immagini = {}
-    for nome, dati, larghezza_px, altezza_px, componenti in pagina.risorse.immagini:
-        spazio = "/DeviceRGB" if componenti == 3 else "/DeviceGray"
+    for nome, dizionario, dati in pagina.risorse.immagini:
         immagini[nome] = aggiungi(
-            (
-                f"<< /Type /XObject /Subtype /Image /Width {larghezza_px} /Height {altezza_px} "
-                f"/ColorSpace {spazio} /BitsPerComponent 8 /Filter /DCTDecode "
-                f"/Length {len(dati)} >>\nstream\n"
-            ).encode("ascii")
-            + dati
-            + b"\nendstream"
+            f"{dizionario} /Length {len(dati)} >>\nstream\n".encode("ascii") + dati + b"\nendstream"
         )
     risorse = ["/ProcSet [/PDF /Text /ImageC /ImageB]"]
     if caratteri:

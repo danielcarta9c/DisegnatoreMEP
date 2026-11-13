@@ -118,7 +118,21 @@ class Apertura(StrictModel):
     """Le quote che passano senza forare; se manca, quelle del tipo
     (`PASSA_PER_TIPO`)."""
     apre_verso: Lato | None = None
-    """Solo per il disegno della porta: da che parte si apre l'anta."""
+    """Solo per il disegno della porta: da che parte del muro si apre l'anta."""
+    cerniera: Lato | None = None
+    """Solo per il disegno della porta a battente: lo stipite con la cerniera, sul
+    foglio — `sinistra` o `destra` su un muro orizzontale, `sopra` o `sotto` su uno
+    verticale. Se manca, lo stipite dalla parte del capo `da` del muro (REL-026, C-3)."""
+    anta: Literal["battente", "doppia", "scorrevole"] = "battente"
+    """Solo per il disegno della porta: a battente (un'anta e l'arco), a due ante, o
+    scorrevole — anche a scomparsa —, senza arco (REL-026, C-3: le planimetrie vere
+    ne hanno)."""
+
+    @model_validator(mode="after")
+    def la_cerniera_e_di_una_porta(self) -> Apertura:
+        if (self.cerniera is not None or self.anta != "battente") and self.tipo != "porta":
+            raise ValueError(f"l'apertura {self.id} e' una {self.tipo}: cerniera e anta sono solo delle porte")
+        return self
 
     @property
     def quote_ammesse(self) -> tuple[Quota, ...]:
@@ -136,6 +150,18 @@ class Stanza(StrictModel):
     disimpegno: bool = False
     """Un disimpegno e' tutto corsia: ci si passa a costo basso anche lontano
     dai muri."""
+
+
+class Balcone(StrictModel):
+    """Un balcone, un terrazzo, una loggia: uno spazio aperto della planimetria, che
+    la base disegna col suo contorno e col nome e i mq (REL-026, C-3). **Non e' una
+    strada per i tracciati**: dove fuori si puo' passare lo dice una `zona_esterna`,
+    che il progettista dichiara, e non e' una stanza (le stanze sono l'interno)."""
+
+    id: str = Field(pattern=r"^[a-z0-9][a-z0-9_-]*$")
+    nome: str = "Balcone"
+    poligono: list[Punto] = Field(min_length=3)
+    """Il contorno praticabile, in metri: dal filo del muro al parapetto."""
 
 
 class Rettangolo(StrictModel):
@@ -175,16 +201,52 @@ class ZonaEsterna(StrictModel):
         return self
 
 
+DPI_DEL_PDF = 150
+"""La risoluzione a cui si guarda la pagina di una planimetria in PDF, se lo
+sfondo non ne dice un'altra: i pixel di `px_per_m` e `origine_px` sono quelli della
+pagina resa cosi' (`mep.py base`). A 1:50 un pixel e' meno di un centimetro."""
+
+
 class Sfondo(StrictModel):
-    """Una planimetria raster sotto il disegno: un JPEG, la sua scala, l'origine."""
+    """La planimetria d'origine — il disegno da cui la base e' stata trascritta —, con
+    la sua taratura: quanti pixel fa un metro, dove cade il punto (0, 0), di quanto e'
+    ruotata.
+
+    Serve al **controllo a vista** (`mep.py base`, REL-026 C-3): la base ridisegnata
+    sovrapposta all'origine, alla stessa scala. **Sulla tavola consegnata non c'e'**
+    quando la base e' ridisegnata (ci sono muri o sagome): la tavola MEP ha la base
+    standard, una sola qualunque fosse l'ingresso. Il progettista la puo' chiedere
+    (`sulla_tavola`), e allora va un JPEG o un PNG, che il PDF del motore incorpora."""
 
     file: str
-    """Il JPEG, relativo alla cartella del JSON."""
+    """La planimetria, relativa alla cartella del JSON: un JPEG, un PNG o un PDF."""
+    pagina: int = Field(default=1, ge=1)
+    """Per un PDF: la pagina, dalla prima."""
+    dpi: int = Field(default=DPI_DEL_PDF, ge=36, le=600)
+    """Per un PDF: la risoluzione della pagina resa, quella dei pixel della taratura."""
     px_per_m: FiniteFloat = Field(gt=0)
+    px_per_m_y: FiniteFloat | None = Field(default=None, gt=0)
+    """Facoltativo: i pixel di un metro lungo y, se non sono quelli lungo x — uno schizzo
+    quotato non e' in scala uguale nei due versi, una scansione puo' stirare il foglio
+    (REL-026, C-3: il disegno a mano del PO, 4 % di differenza). Se manca, `px_per_m`."""
     origine_px: Punto
     """Il pixel dove cade il punto (0, 0) della pianta."""
+    rotazione: FiniteFloat = Field(default=0.0, ge=-45, le=45)
+    """Di quanti gradi la planimetria e' girata nell'immagine, in senso orario: una
+    scansione o una foto storte. Il punto (x, y) in metri sta nel pixel
+    `origine_px + R(rotazione) · (px_per_m · x, px_per_m_y · y)`."""
     opacita: FiniteFloat = Field(default=0.35, gt=0, le=1)
-    """Quanto si vede: lo sfondo si stampa schiarito, sotto i tracciati."""
+    """Quanto si vede, se si stampa sulla tavola: schiarito, sotto i tracciati."""
+    sulla_tavola: bool | None = None
+    """Se lo sfondo si stampa sulla tavola. Se manca: solo se la base non e'
+    ridisegnata (nessun muro e nessuna sagoma)."""
+
+    def in_pixel(self, x: float, y: float) -> tuple[float, float]:
+        """Il pixel dell'immagine d'origine in cui cade il punto (x, y) della pianta."""
+        angolo = math.radians(self.rotazione)
+        c, s = math.cos(angolo), math.sin(angolo)
+        u, v = self.px_per_m * x, (self.px_per_m_y or self.px_per_m) * y
+        return (self.origine_px[0] + c * u - s * v, self.origine_px[1] + s * u + c * v)
 
 
 class Pezzo(StrictModel):
@@ -354,6 +416,8 @@ class Pianta(StrictModel):
     muri: list[Muro] = Field(default_factory=list)
     aperture: list[Apertura] = Field(default_factory=list)
     stanze: list[Stanza] = Field(default_factory=list)
+    balconi: list[Balcone] = Field(default_factory=list)
+    """Balconi, terrazzi, logge: nella base col contorno, il nome e i mq (vedi `Balcone`)."""
     velette: list[Rettangolo] = Field(default_factory=list)
     """Tratti di controsoffitto fuori dalle stanze che ce l'hanno."""
     zone_esterne: list[ZonaEsterna] = Field(default_factory=list)
@@ -452,6 +516,15 @@ class Pianta(StrictModel):
                     f"il centro dell'apertura {apertura.id} non sta sul muro {muro.id}: "
                     f"e' a {distanza:.3f} m dall'asse"
                 )
+            if apertura.cerniera is not None:
+                orizzontale = abs(muro.a[0] - muro.da[0]) >= abs(muro.a[1] - muro.da[1])
+                ammesse = ("sinistra", "destra") if orizzontale else ("sopra", "sotto")
+                if apertura.cerniera not in ammesse:
+                    raise ValueError(
+                        f"la porta {apertura.id} ha la cerniera {apertura.cerniera!r}, ma il muro {muro.id} e' "
+                        f"{'orizzontale' if orizzontale else 'verticale'}: la cerniera sta {' o '.join(ammesse)}"
+                    )
+        unici([b.id for b in self.balconi], "il balcone")
         unici([p.id for p in self.pezzi if p.id is not None], "l'id di pezzo")
         unici([z.id for z in self.zone_esterne], "la zona esterna")
         sigle = {p.sigla for p in self.pezzi}
@@ -501,6 +574,22 @@ class Pianta(StrictModel):
         if apertura.tipo == "porta" and muro is not None and muro.tipo == "perimetrale":
             return PORTA_DI_CASA
         return PASSA_PER_TIPO[apertura.tipo]
+
+    @property
+    def base_ridisegnata(self) -> bool:
+        """La base e' ridisegnata se la pianta ha muri o sagome: allora la tavola porta la
+        base standard, e lo sfondo serve al controllo, non alla tavola (REL-026, C-3)."""
+        return bool(self.muri or self.sagome_muri)
+
+    @property
+    def sfondo_sulla_tavola(self) -> bool:
+        """Lo sfondo si stampa sulla tavola: se il progettista lo chiede, o se non c'e'
+        altra base."""
+        if self.sfondo is None:
+            return False
+        if self.sfondo.sulla_tavola is not None:
+            return self.sfondo.sulla_tavola
+        return not self.base_ridisegnata
 
     def sovrapposti(self) -> dict[str, set[str]]:
         """Per sigla, i pezzi con cui la sovrapposizione e' dichiarata (nei due versi)."""
@@ -552,12 +641,16 @@ def carica_pianta(percorso: Path) -> Pianta:
 
 ESEMPI: dict[str, str] = {
     "Muro": '{"id": "m-nord", "da": [0.15, 0.15], "a": [11.45, 0.15], "spessore": 0.30, "tipo": "perimetrale"}',
-    "Apertura": '{"id": "porta-1", "muro": "t-corr", "centro": [2.55, 3.70], "larghezza": 0.90, "tipo": "porta"}',
+    "Apertura": '{"id": "porta-1", "muro": "t-corr", "centro": [2.55, 3.70], "larghezza": 0.90, "tipo": "porta", '
+                '"apre_verso": "sopra", "cerniera": "sinistra"}',
+    "Balcone": '{"id": "balcone-sud", "nome": "Balcone", "poligono": [[0.3, 8.6], [7.35, 8.6], [7.35, 10.1], '
+               '[0.3, 10.1]]}',
     "Stanza": '{"id": "corridoio", "nome": "Disimpegno", "poligono": [[0.3, 3.75], [11.3, 3.75], '
               '[11.3, 4.85], [0.3, 4.85]], "controsoffitto": true, "disimpegno": true}',
     "Rettangolo": '{"id": "veletta-soggiorno", "rettangolo": [0.30, 4.95, 2.30, 5.45]}',
     "ZonaEsterna": '{"id": "terrazzo", "nome": "Terrazzo", "rettangolo": [0.0, 8.6, 7.4, 10.1], "costo": 1}',
-    "Sfondo": '{"file": "catastale.jpg", "px_per_m": 40, "origine_px": [120, 80]}',
+    "Sfondo": '{"file": "catastale.jpg", "px_per_m": 40, "origine_px": [120, 80]}; da un PDF: {"file": '
+              '"planimetria.pdf", "pagina": 1, "dpi": 150, "px_per_m": 118.11, "origine_px": [412, 300]}',
     "Pezzo": '{"sigla": "UI-01", "tipo": "ducted-indoor-unit", "x": 6.3, "y": 4.3, '
              '"larghezza": 1.1, "profondita": 0.73}; sopra un altro: {"sigla": "CZ-01", '
              '"tipo": "zone-controller", "x": 5.5, "y": 4.3, "larghezza": 0.25, "profondita": 0.15, '

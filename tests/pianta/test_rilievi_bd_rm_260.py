@@ -23,6 +23,7 @@ from typing import Any
 import pytest
 
 from disegnatore_mep.model.project import ProjectModel
+from disegnatore_mep.pianta.base import dentro, tratti_pieni
 from disegnatore_mep.pianta.comando import Esito, disegna_la_pianta, riassunto
 from disegnatore_mep.pianta.modello import ErroreDellaPianta, Fluido, carica_pianta
 from disegnatore_mep.pianta.nel_grafo import Tratta as TrattaNelGrafo
@@ -34,7 +35,6 @@ from disegnatore_mep.pianta.tavola import (
     LAYER_MURI,
     Area,
     nome_corto_del_fluido,
-    pezzi_dei_muri,
 )
 from disegnatore_mep.skill import cartelle_del_repository
 from disegnatore_mep.skill import main as skill
@@ -78,25 +78,59 @@ def test_i_nomi_corti_degli_idronici() -> None:
 # --- B-2. il retino dei muri sulle sagome vere ------------------------------------------------
 
 
+def _nel_pieno_dei_muri(esito_o_tavola: Any, punto: tuple[float, float]) -> bool:
+    """Il punto, in metri, sta nel pieno dei muri disegnati (pari e dispari su ogni area)?"""
+    tavola = getattr(esito_o_tavola, "tavola", esito_o_tavola)
+    ox, oy, xmin, ymin, k = tavola.trasforma
+    carta = (ox + (punto[0] - xmin) * k, oy + (punto[1] - ymin) * k)
+    return any(
+        sum(dentro(carta, anello) for anello in (area.punti, *area.buchi)) % 2 == 1
+        for area in _aree_dei_muri(tavola)
+    )
+
+
 def test_con_le_sagome_il_retino_sta_sulle_sagome(esiti: dict[str, Esito]) -> None:
-    """Un'area per sagoma, con i suoi vertici: nessun rettangolo asse-spessore."""
+    """Il pieno dei muri e' l'unione delle sagome (REL-026 C-3: le sagome dritte che si
+    toccano diventano un contorno solo, senza le linee dove si toccano): ogni punto di una
+    sagoma e' pieno, e un punto fuori da tutte e' vuoto. Nessun rettangolo asse-spessore."""
     esito = esiti["sagome"]
-    aree = _aree_dei_muri(esito)
-    assert len(aree) == len(esito.pianta.sagome_muri) == 17
+    sagome = esito.pianta.sagome_muri
+    assert len(sagome) == 17
+    for sagoma in sagome:
+        cx = sum(x for x, _ in sagoma) / len(sagoma)
+        cy = sum(y for _, y in sagoma) / len(sagoma)
+        assert _nel_pieno_dei_muri(esito, (cx, cy)) == dentro((cx, cy), sagoma), sagoma
+    x0 = min(x for s in sagome for x, _ in s)
+    x1 = max(x for s in sagome for x, _ in s)
+    y0 = min(y for s in sagome for _, y in s)
+    y1 = max(y for s in sagome for _, y in s)
+    passi = 60
+    for i in range(passi + 1):
+        for j in range(passi + 1):
+            q = (x0 + (x1 - x0) * (i + 0.37) / passi, y0 + (y1 - y0) * (j + 0.41) / passi)
+            assert _nel_pieno_dei_muri(esito, q) == any(dentro(q, s) for s in sagome), q
+    # Le aree hanno solo vertici delle sagome (ne' raccordi ne' rettangoli dei muri).
+    vertici = {(round(x, 3), round(y, 3)) for s in sagome for x, y in s}
     ox, oy, xmin, ymin, k = esito.tavola.trasforma
-    for area, sagoma in zip(aree, esito.pianta.sagome_muri, strict=True):
-        in_metri = [v for x, y in area.punti for v in ((x - ox) / k + xmin, (y - oy) / k + ymin)]
-        assert in_metri == pytest.approx([v for q in sagoma for v in q], abs=1e-3)
-    # La tramezza a L e' un poligono solo, di sei vertici.
-    assert max(len(a.punti) for a in aree) == 6
+    for area in _aree_dei_muri(esito):
+        for anello in (area.punti, *area.buchi):
+            for x, y in anello:
+                q = (round((x - ox) / k + xmin, 3), round((y - oy) / k + ymin, 3))
+                assert any(abs(q[0] - v[0]) < 2e-3 and abs(q[1] - v[1]) < 2e-3 for v in vertici), q
 
 
-def test_senza_le_sagome_il_retino_e_quello_di_sempre(tmp_path: Path, esiti: dict[str, Esito]) -> None:
-    """Senza `sagome_muri`, un rettangolo per tratto pieno di muro, come prima; e il
-    percorso dei tracciati e' lo stesso: l'instradatore conosce i muri, non le sagome."""
+def test_senza_le_sagome_il_retino_e_quello_dei_muri(tmp_path: Path, esiti: dict[str, Esito]) -> None:
+    """Senza `sagome_muri`, il pieno sono i tratti pieni dei muri, raccordati negli angoli
+    (REL-026 C-3); e il percorso dei tracciati e' lo stesso: l'instradatore conosce i muri,
+    non le sagome."""
     senza = _variante(SAGOME, tmp_path, lambda d: d.pop("sagome_muri"))
     esito = disegna_la_pianta(senza, tmp_path / "out", None, dxf=False, png=False)
-    assert len(_aree_dei_muri(esito)) == len(pezzi_dei_muri(esito.pianta))
+    for muro, s0, s1 in tratti_pieni(esito.pianta):
+        ux, uy = (muro.a[0] - muro.da[0]), (muro.a[1] - muro.da[1])
+        lungo = (ux**2 + uy**2) ** 0.5
+        mezzo = (s0 + s1) / 2
+        centro = (muro.da[0] + ux / lungo * mezzo, muro.da[1] + uy / lungo * mezzo)
+        assert _nel_pieno_dei_muri(esito, centro), muro.id
     con = esiti["sagome"]
     assert [p.punti for p in esito.percorsi] == [p.punti for p in con.percorsi]
     assert [lu.misurata_m for lu in esito.lunghezze] == [lu.misurata_m for lu in con.lunghezze]
@@ -124,19 +158,25 @@ def test_nel_dettaglio_le_sagome_si_ritagliano(esiti: dict[str, Esito]) -> None:
         for x, y in area.punti:
             xm, ym = (x - ox) / k + xmin, (y - oy) / k + ymin
             assert x0 - 1e-3 <= xm <= x1 + 1e-3 and y0 - 1e-3 <= ym <= y1 + 1e-3
-    # La L intera sta nel riquadro: si ritrova con i suoi sei vertici.
-    assert any(len(a.punti) == 6 for a in aree)
+    # Dentro il riquadro il pieno e' ancora l'unione delle sagome.
+    for sagoma in esito.pianta.sagome_muri:
+        cx = sum(x for x, _ in sagoma) / len(sagoma)
+        cy = sum(y for _, y in sagoma) / len(sagoma)
+        if x0 < cx < x1 and y0 < cy < y1 and dentro((cx, cy), sagoma):
+            assert _nel_pieno_dei_muri(dettaglio, (cx, cy))
 
 
 def test_nel_dxf_le_sagome_sono_campiture_sul_layer_dei_muri(esiti: dict[str, Esito]) -> None:
+    """Una campitura per gruppo di sagome che si toccano, con i buchi fra i suoi contorni:
+    le stesse aree della tavola."""
     ezdxf = pytest.importorskip("ezdxf")
     esito = esiti["sagome"]
     dxf = next(p for p in esito.file if p.name == "sagome-muri.dxf")
     documento = ezdxf.readfile(dxf)
     campiture = [h for h in documento.modelspace().query("HATCH") if h.dxf.layer == LAYER_MURI]
-    assert len(campiture) == len(esito.pianta.sagome_muri)
-    vertici = sorted(len(h.paths[0].vertices) for h in campiture)
-    assert vertici == sorted(len(s) for s in esito.pianta.sagome_muri)
+    aree = _aree_dei_muri(esito)
+    assert len(campiture) == len(aree) >= 1
+    assert sorted(len(h.paths) for h in campiture) == sorted(1 + len(a.buchi) for a in aree)
 
 
 def test_una_sagoma_vuole_tre_punti(tmp_path: Path) -> None:
