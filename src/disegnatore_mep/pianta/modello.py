@@ -225,12 +225,16 @@ class Sfondo(StrictModel):
     dpi: int = Field(default=DPI_DEL_PDF, ge=36, le=600)
     """Per un PDF: la risoluzione della pagina resa, quella dei pixel della taratura."""
     px_per_m: FiniteFloat = Field(gt=0)
+    px_per_m_y: FiniteFloat | None = Field(default=None, gt=0)
+    """Facoltativo: i pixel di un metro lungo y, se non sono quelli lungo x — uno schizzo
+    quotato non e' in scala uguale nei due versi, una scansione puo' stirare il foglio
+    (REL-026, C-3: il disegno a mano del PO, 4 % di differenza). Se manca, `px_per_m`."""
     origine_px: Punto
     """Il pixel dove cade il punto (0, 0) della pianta."""
     rotazione: FiniteFloat = Field(default=0.0, ge=-45, le=45)
     """Di quanti gradi la planimetria e' girata nell'immagine, in senso orario: una
     scansione o una foto storte. Il punto (x, y) in metri sta nel pixel
-    `origine_px + px_per_m · R(rotazione) · (x, y)`."""
+    `origine_px + R(rotazione) · (px_per_m · x, px_per_m_y · y)`."""
     opacita: FiniteFloat = Field(default=0.35, gt=0, le=1)
     """Quanto si vede, se si stampa sulla tavola: schiarito, sotto i tracciati."""
     sulla_tavola: bool | None = None
@@ -241,8 +245,8 @@ class Sfondo(StrictModel):
         """Il pixel dell'immagine d'origine in cui cade il punto (x, y) della pianta."""
         angolo = math.radians(self.rotazione)
         c, s = math.cos(angolo), math.sin(angolo)
-        return (self.origine_px[0] + self.px_per_m * (c * x - s * y),
-                self.origine_px[1] + self.px_per_m * (s * x + c * y))
+        u, v = self.px_per_m * x, (self.px_per_m_y or self.px_per_m) * y
+        return (self.origine_px[0] + c * u - s * v, self.origine_px[1] + s * u + c * v)
 
 
 class Pezzo(StrictModel):

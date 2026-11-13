@@ -636,6 +636,19 @@
           "title": "Px Per M",
           "type": "number"
         },
+        "px_per_m_y": {
+          "anyOf": [
+            {
+              "gt": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Px Per M Y"
+        },
         "origine_px": {
           "maxItems": 2,
           "minItems": 2,

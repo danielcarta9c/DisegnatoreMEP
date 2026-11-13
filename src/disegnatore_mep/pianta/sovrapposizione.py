@@ -306,23 +306,28 @@ def griglia_in_metri(foglio: Foglio, pianta: Pianta, zona_m: tuple[float, float,
 
     x0, y0, x1, y1 = zona_m
     passo = _passo(max(x1 - x0, y1 - y0), 12.0)
-    alta_mm = max(x1 - x0, y1 - y0) * sfondo.px_per_m * k / 90
+    alta_mm = max(x1 - x0, y1 - y0) * sfondo.px_per_m * k / 100
     corpo = alta_mm / PT_MM
     spessore = max(0.1, alta_mm * 0.07)
-    v = math.floor(x0 / passo) * passo
-    while v <= x1 + 1e-9:
+    xs = [round(math.ceil(x0 / passo) * passo + i * passo, 6) for i in range(int((x1 - x0) / passo) + 2)]
+    ys = [round(math.ceil(y0 / passo) * passo + j * passo, 6) for j in range(int((y1 - y0) / passo) + 2)]
+    xs, ys = [v for v in xs if v <= x1 + 1e-9], [v for v in ys if v <= y1 + 1e-9]
+    for v in xs:
         foglio.primitive.append(Linea((P(v, y0), P(v, y1)), CIANO_DELLA_GRIGLIA, spessore, "g", "2 1"))
-        a = P(v, y0)
-        foglio.primitive.append(Scritta(f"{v:g}", a[0] + spessore, a[1] - spessore * 2, corpo, "g",
-                                        colore=CIANO_DELLA_GRIGLIA))
-        v = round(v + passo, 6)
-    v = math.floor(y0 / passo) * passo
-    while v <= y1 + 1e-9:
+    for v in ys:
         foglio.primitive.append(Linea((P(x0, v), P(x1, v)), CIANO_DELLA_GRIGLIA, spessore, "g", "2 1"))
-        a = P(x0, v)
-        foglio.primitive.append(Scritta(f"{v:g}", a[0] - alta_mm * 2.2, a[1] + alta_mm * 0.35, corpo, "g",
-                                        colore=CIANO_DELLA_GRIGLIA))
-        v = round(v + passo, 6)
+    # I numeri: x= sulle verticali e y= sulle orizzontali, ripetuti ogni quattro maglie, perche'
+    # dovunque si guardi ce ne sia uno vicino (e il bordo dell'immagine non li tagli tutti).
+    for j, riga in enumerate(ys):
+        for i, colonna in enumerate(xs):
+            if j % 4 == 0:
+                a = P(colonna, riga + passo * 0.12)
+                foglio.primitive.append(Scritta(f"x={colonna:g}", a[0] + spessore * 2, a[1] + alta_mm, corpo, "g",
+                                                colore=CIANO_DELLA_GRIGLIA))
+            if i % 4 == 0:
+                a = P(colonna + passo * 0.05, riga)
+                foglio.primitive.append(Scritta(f"y={riga:g}", a[0], a[1] - spessore * 3, corpo, "g",
+                                                colore=CIANO_DELLA_GRIGLIA))
 
 
 def _ricolora(p: Primitiva, colore: str, spessore: float, riempimento_opacita: float = 0.18) -> Primitiva:
@@ -372,18 +377,20 @@ def base_sopra(foglio: Foglio, pianta: Pianta) -> None:
                                         NERO_DEI_PEZZI, "middle"))
 
 
-def legenda(foglio: Foglio, righe: Sequence[tuple[str, str]], zona_mm: tuple[float, float, float, float]) -> None:
-    """Il cartiglio della sovrapposizione, in alto a sinistra della zona guardata."""
-    x0, y0, x1, y1 = zona_mm
-    alta = max(x1 - x0, y1 - y0) / 75
+def legenda(foglio: Foglio, voci: Sequence[tuple[str, str]], zona_mm: tuple[float, float, float, float]) -> None:
+    """La legenda della sovrapposizione: una riga sola sul bordo basso della zona guardata, perche'
+    copra il meno possibile della planimetria."""
+    x0, _, x1, y1 = zona_mm
+    alta = max(x1 - x0, zona_mm[3] - zona_mm[1]) / 110
     corpo = alta / PT_MM
-    larghezza = max(len(t) for t, _ in righe) * alta * 0.55 + alta
-    altezza = (len(righe) + 0.6) * alta * 1.35
-    angoli = ((x0, y0), (x0 + larghezza, y0), (x0 + larghezza, y0 + altezza), (x0, y0 + altezza))
-    foglio.primitive.append(Area(angoli, "#ffffff", "l", 0.88))
-    foglio.primitive.append(Linea((*angoli, angoli[0]), "#333333", alta * 0.05, "l"))
-    for i, (testo, colore) in enumerate(righe):
-        foglio.primitive.append(Scritta(testo, x0 + alta * 0.5, y0 + (i + 1) * alta * 1.35, corpo, "l", i == 0, colore))
+    larghezza = sum(len(t) + 3 for t, _ in voci) * alta * 0.55 + alta
+    y0 = y1 - alta * 1.6
+    angoli = ((x0, y0), (x0 + larghezza, y0), (x0 + larghezza, y1), (x0, y1))
+    foglio.primitive.append(Area(angoli, "#ffffff", "l", 0.8))
+    x = x0 + alta * 0.5
+    for i, (testo, colore) in enumerate(voci):
+        foglio.primitive.append(Scritta(testo, x, y1 - alta * 0.45, corpo, "l", i == 0, colore))
+        x += (len(testo) + 3) * alta * 0.55
 
 
 # --- i controlli della taratura -------------------------------------------------------------
@@ -436,6 +443,12 @@ def controlli_della_taratura(pianta: Pianta) -> list[str]:
 
 
 # --- il comando ----------------------------------------------------------------------------------
+
+
+def _un_metro(px_per_m: float, px_per_m_y: float | None) -> str:
+    if px_per_m_y is None or px_per_m_y == px_per_m:
+        return f"{px_per_m:g}"
+    return f"{px_per_m:g} (x) / {px_per_m_y:g} (y)"
 
 
 def _zona(testo: str | None) -> tuple[float, float, float, float] | None:
@@ -520,8 +533,9 @@ def controlla_a_vista(sorgente: Path, cartella: Path,
         zona_m = (estesa[0] - margine, estesa[1] - margine, estesa[2] + margine, estesa[3] + margine)
     if zona_m is None:
         w, h = immagine.pixel
-        zona_m = (-sfondo.origine_px[0] / sfondo.px_per_m, -sfondo.origine_px[1] / sfondo.px_per_m,
-                  (w - sfondo.origine_px[0]) / sfondo.px_per_m, (h - sfondo.origine_px[1]) / sfondo.px_per_m)
+        py_per_m = sfondo.px_per_m_y or sfondo.px_per_m
+        zona_m = (-sfondo.origine_px[0] / sfondo.px_per_m, -sfondo.origine_px[1] / py_per_m,
+                  (w - sfondo.origine_px[0]) / sfondo.px_per_m, (h - sfondo.origine_px[1]) / py_per_m)
     griglia_in_metri(foglio, pianta, zona_m)
     base_sopra(foglio, pianta)
     angoli = [sfondo.in_pixel(x, y) for x in (zona_m[0], zona_m[2]) for y in (zona_m[1], zona_m[3])]
@@ -533,11 +547,13 @@ def controlla_a_vista(sorgente: Path, cartella: Path,
             "la base cade fuori dall'immagine d'origine: la taratura (px_per_m, origine_px) la porta altrove"
         )
     legenda(foglio, [
-        ("Controllo a vista della base", "#000000"),
-        ("rosso: muri trascritti", ROSSO_DEI_MURI),
-        ("blu: finestre - verde: porte", BLU_DELLE_FINESTRE),
-        ("viola: stanze - arancio: balconi", VIOLA_DELLE_STANZE),
-        (f"griglia: la pianta in metri; 1 m = {sfondo.px_per_m:g} px", CIANO_DELLA_GRIGLIA),
+        ("Controllo a vista", "#000000"),
+        ("muri", ROSSO_DEI_MURI),
+        ("finestre", BLU_DELLE_FINESTRE),
+        ("porte", VERDE_DELLE_PORTE),
+        ("stanze", VIOLA_DELLE_STANZE),
+        ("balconi", ARANCIO_DEI_BALCONI),
+        (f"griglia in metri, 1 m = {_un_metro(sfondo.px_per_m, sfondo.px_per_m_y)} px", CIANO_DELLA_GRIGLIA),
     ], zona_mm)
     pdf, png = cartella / f"{sorgente.stem}-sovrapposizione.pdf", cartella / f"{sorgente.stem}-sovrapposizione.png"
     foglio.scrivi(pdf)
@@ -547,7 +563,7 @@ def controlla_a_vista(sorgente: Path, cartella: Path,
                                      "lettore di PDF (pypdfium2, PyMuPDF o pdftoppm); c'e' il PDF"),
         f"PDF della sovrapposizione (si ingrandisce): {pdf}",
         f"Origine: {origine.name}" + (f", pagina {sfondo.pagina} a {sfondo.dpi} dpi" if origine.suffix.lower() == ".pdf"
-                                      else "") + f"; taratura 1 m = {sfondo.px_per_m:g} px, (0, 0) nel pixel "
+                                      else "") + f"; taratura 1 m = {_un_metro(sfondo.px_per_m, sfondo.px_per_m_y)} px, (0, 0) nel pixel "
         f"({sfondo.origine_px[0]:g}, {sfondo.origine_px[1]:g})" + (f", ruotata di {sfondo.rotazione:g} gradi"
                                                                     if sfondo.rotazione else ""),
         f"Zona guardata, in metri: {', '.join(f'{v:.2f}' for v in zona_m)} (--zona per ingrandire)",

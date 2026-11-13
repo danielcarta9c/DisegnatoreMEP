@@ -717,10 +717,11 @@ def componi(
     # non alla tavola consegnata (REL-026, C-3).
     if pianta.sfondo is not None and pianta.sfondo_sulla_tavola and pixel_dello_sfondo is not None and zona is None:
         sf = pianta.sfondo
-        x0, y0 = P(-sf.origine_px[0] / sf.px_per_m, -sf.origine_px[1] / sf.px_per_m)
+        py_per_m = sf.px_per_m_y or sf.px_per_m
+        x0, y0 = P(-sf.origine_px[0] / sf.px_per_m, -sf.origine_px[1] / py_per_m)
         primitive.append(
             Immagine(Path(sf.file).name, x0, y0, pixel_dello_sfondo[0] / sf.px_per_m * k,
-                     pixel_dello_sfondo[1] / sf.px_per_m * k, sf.opacita, pixel_dello_sfondo)
+                     pixel_dello_sfondo[1] / py_per_m * k, sf.opacita, pixel_dello_sfondo)
         )
     velo = 0.55 if pianta.sfondo_sulla_tavola else 1.0
 
@@ -954,14 +955,29 @@ def componi(
                               (foro[0] - 0.9, foro[1] - 0.9, foro[0] + 0.9, foro[1] + 0.9), ingombri, sopra=muro_del_foro)
         ammessi[f"foratura {foratura.numero}"] = {f"muro {foratura.muro}"}
         scritte.append((f"foratura {foratura.numero}", posata))
-    # I nomi dei locali — stanze e balconi (REL-026, C-3) — con i mq dal poligono.
+    # I nomi dei locali — stanze e balconi (REL-026, C-3) — con i mq dal poligono, tutti
+    # dentro il loro locale: il nome di un bagno stretto non esce dalla porta.
+    from .base import dentro as dentro_al_poligono
     from .base import locali_con_nome
 
     for chi_del_locale, parti, poligono in locali_con_nome(pianta):
-        posata_o_niente = posa_dentro(
-            " · ".join(parti), CORPO_STANZE_PT, False,
-            (P(*p) for p in _punti_dentro(poligono)), ingombri,
-        )
+        carta_del_locale = [P(*q) for q in poligono]
+        # Un locale stretto (un bagno di 1,3 m, un balcone) non prende la scritta intera: si
+        # prova piu' piccola, poi il nome solo, prima di lasciarlo senza.
+        posata_o_niente = None
+        for testo_del_locale, corpo_del_locale in ((" · ".join(parti), CORPO_STANZE_PT),
+                                                   (" · ".join(parti), CORPO_TRATTE_PT),
+                                                   (parti[0], CORPO_TRATTE_PT)):
+            largo, sale, scende = misura(testo_del_locale, corpo_del_locale, False)
+            centri = [
+                c for c in (P(*p) for p in _punti_dentro(poligono))
+                if all(dentro_al_poligono((c[0] + dx * (largo / 2 + 0.5), c[1] + dy * ((sale + scende) / 2 + 0.3)),
+                                          carta_del_locale)
+                       for dx in (-1, 1) for dy in (-1, 1))
+            ]
+            posata_o_niente = posa_dentro(testo_del_locale, corpo_del_locale, False, centri, ingombri)
+            if posata_o_niente is not None:
+                break
         if posata_o_niente is not None:
             scritte.append((chi_del_locale, posata_o_niente))
 
