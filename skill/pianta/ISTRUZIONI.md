@@ -50,8 +50,10 @@ tracciato abbia nella distinta una tratta con lo stesso numero, gli stessi capi 
 stessi organi in linea) e la stessa lunghezza data, che ogni tratta della distinta sia in pianta, e
 che ogni pezzo con l'`id` del grafo abbia la sigla che lo schema gli dà. La nota dice allora
 «Controllati con la distinta e il grafo: concordano», oppure «ci sono discordanze». Ogni discordanza
-è un avviso, sulla tavola e in console; **un numero di tratta che nella distinta collega pezzi
-diversi ferma la consegna** (uscita `2`). Senza i due file la nota dice «Non controllati dal
+è un avviso: **per esteso in console e in `.tracciati.json`** (`confronto`), **riassunta sulla
+tavola** — quante, di che tipo, dove leggere il resto —, così il formato del foglio lo decide il
+disegno e non l'elenco; **un numero di tratta che nella distinta collega pezzi diversi ferma la
+consegna** (uscita `2`). Senza i due file la nota dice «Non controllati dal
 comando», ed è vero. Se lo schema non dà la sigla a un pezzo, o la distinta non numera una tratta,
 non inventarli: chiedi, o fai rigenerare lo schema e la distinta.
 

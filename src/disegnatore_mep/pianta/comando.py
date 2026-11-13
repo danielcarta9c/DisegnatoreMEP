@@ -40,7 +40,7 @@ from disegnatore_mep.graphics.cartiglio import Cartiglio
 from .confronto import Confronto, con_le_lunghezze, confronta
 from .controlli import Rilievi, controlla
 from .griglia import Griglia, costruisci_la_griglia
-from .instrada import Percorso, instrada_tutto
+from .instrada import Percorso, chiave_della_tratta, instrada_tutto
 from .lunghezze import Lunghezza, Regola, la_regola, lunghezze, metri
 from .modello import Dettaglio, Foglio, Pianta, Tracciato, carica_pianta
 from .scritte import RICHIAMO_MASSIMO_MM
@@ -237,13 +237,17 @@ def disegna_la_pianta(
     lunghe = lunghezze(list(pianta.tracciati), percorsi, regola, pianta.parametri.scarto_della_misura)
     avvisi = avvisi_della_tavola(pianta, percorsi, lunghe, regola)
     if confronto.lunghezze:
+        per_fonte: dict[str, list[str]] = {}
+        for tratta, (_, fonte) in sorted(confronto.lunghezze.items(), key=lambda v: chiave_della_tratta(v[0])):
+            per_fonte.setdefault(fonte, []).append(tratta)
         avvisi.append(
-            "L prog. presa dalla distinta o dal grafo (non scritta nella pianta): "
-            + ", ".join(f"{t} dal{'la' if da == 'distinta' else ''} {da}" for t, (_, da) in sorted(confronto.lunghezze.items()))
+            "L prog. non scritta nella pianta, presa "
+            + "; ".join(f"dal{'la' if fonte == 'distinta' else ''} {fonte} per {', '.join(tratte)}"
+                        for fonte, tratte in per_fonte.items())
             + "."
         )
-    avvisi += [f"Discordanza con la distinta: {voce}" for voce in confronto.bloccanti]
-    avvisi += [f"Discordanza: {voce}" for voce in confronto.avvisi]
+    # Le discordanze, riassunte: l'elenco intero sta nei dati e in console (REL-026, B-5).
+    avvisi += confronto.per_la_tavola(f"{sorgente.stem}.tracciati.json")
     fori = forature(pianta, percorsi)
     dei_pezzi = fori_dei_pezzi(pianta, griglia)
     # Le forature sono spente di base (REL-026, B-3): si contano, ma la tavola, i
@@ -509,6 +513,7 @@ def _dati(
         **per_il_grafo,
         "confronto": None if confronto is None else {
             "con": confronto.fonti, "bloccanti": confronto.bloccanti, "avvisi": confronto.avvisi,
+            "avvisi_per_tipo": {tipo: len(elenco) for tipo, elenco in confronto.per_tipo.items()},
             "lunghezze_prese": {t: {"m": m, "da": da} for t, (m, da) in sorted(confronto.lunghezze.items())},
         },
         "rilievi": rilievi.come_dati(),
@@ -547,6 +552,9 @@ def riassunto(esito: Esito) -> list[str]:
             f"Confronto con {' e '.join(esito.confronto.fonti)}: {len(r.confronto_bloccante)} bloccanti, "
             f"{len(r.confronto)} avvisi"
         )
+        # Per esteso qui e nei dati: sulla tavola sono riassunte (REL-026, B-5). I
+        # bloccanti escono in fondo, con gli altri.
+        righe += [f"  - {voce}" for voce in r.confronto]
     righe += [f"Avviso: {a}" for a in [*esito.tavola.avvisi, *(esito.avvisi or [])]]
     for elenco in (r.diagonali, r.sovrapposizioni, r.scritte_su_linee, r.scritte_su_scritte, r.tratte_cedute,
                    r.richiami_lunghi, r.richiami_che_attraversano, r.richiami_su_una_linea,

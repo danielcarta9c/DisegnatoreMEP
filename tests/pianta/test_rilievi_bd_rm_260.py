@@ -32,7 +32,7 @@ from disegnatore_mep.pianta.tavola import (
     pezzi_dei_muri,
 )
 
-from .conftest import CASI
+from .conftest import CASI, CATALOGO, CONFRONTI, NOMI
 
 SAGOME = CASI["sagome"]
 
@@ -210,3 +210,93 @@ def test_il_riassunto_dice_che_le_forature_sono_spente(esiti: dict[str, Esito]) 
     righe = riassunto(esiti["collaudo-t3"])
     assert any(r.startswith("Forature: spente") for r in righe)
     assert not any(r.startswith("Forature fuori dalle aperture") for r in righe)
+
+
+# --- B-5. il confronto con grafo e distinta non cambia il foglio ------------------------------
+
+DISTINTA_T3, GRAFO_T3 = CONFRONTI["collaudo-t3"]
+
+
+def _discordante(dati: dict[str, Any]) -> None:
+    """Il T3 con molte discordanze, come la commessa: numeri di tratta che la distinta
+    non ha (e tratte della distinta che la pianta non ha), lunghezze diverse da quelle
+    del grafo, sigle diverse da quelle dello schema."""
+    nuove = {p["sigla"]: p["sigla"].replace("TA-", "BOC-") for p in dati["pezzi"] if p["sigla"].startswith("TA-")}
+    for pezzo in dati["pezzi"]:
+        pezzo["sigla"] = nuove.get(pezzo["sigla"], pezzo["sigla"])
+    for tracciato in dati["tracciati"]:
+        tracciato["tratta"] = f"T{int(tracciato['tratta'][1:]) + 40:02d}"
+        if tracciato.get("lunghezza_m") is not None:
+            tracciato["lunghezza_m"] += 1
+        for capo in ("da", "a"):
+            valore = tracciato[capo]
+            if isinstance(valore, dict):
+                valore["pezzo"] = nuove.get(valore["pezzo"], valore["pezzo"])
+            else:
+                tracciato[capo] = nuove.get(valore, valore)
+
+
+@pytest.fixture(scope="module")
+def discordanti(tmp_path_factory: pytest.TempPathFactory) -> dict[str, Esito]:
+    cartella = tmp_path_factory.mktemp("discordanze")
+    sorgente = _variante(T3, cartella, _discordante, "discordanze.json")
+    out: dict[str, Esito] = {}
+    for nome, distinta, grafo in (
+        ("senza", None, None), ("grafo", None, GRAFO_T3), ("distinta", DISTINTA_T3, None),
+        ("entrambi", DISTINTA_T3, GRAFO_T3),
+    ):
+        out[nome] = disegna_la_pianta(
+            sorgente, cartella / nome, None, dxf=False, png=False, distinta=distinta, grafo=grafo,
+            catalogo=CATALOGO, nomi=NOMI,
+        )
+    return out
+
+
+def test_con_o_senza_il_confronto_il_foglio_e_lo_stesso(discordanti: dict[str, Esito]) -> None:
+    """BD.RM.260: 72 avvisi con `--grafo` portavano il foglio da A2 ad A1, e
+    `--distinta` lo portava in A1. Sulla 2.0.0 questo caso usciva in A3 senza
+    confronto, in A2 con uno dei due file e in A1 con tutti e due (49 avvisi)."""
+    entrambi = discordanti["entrambi"]
+    assert entrambi.confronto is not None and len(entrambi.confronto.avvisi) >= 40
+    formati = {nome: (e.tavola.formato, e.tavola.scala) for nome, e in discordanti.items()}
+    assert len(set(formati.values())) == 1, formati
+
+
+def test_sulla_tavola_le_discordanze_sono_riassunte(discordanti: dict[str, Esito]) -> None:
+    """Quante, di che tipo, dove leggere il resto: una riga, non quarantanove."""
+    senza, entrambi = discordanti["senza"], discordanti["entrambi"]
+    assert entrambi.confronto is not None
+    assert len(entrambi.avvisi or []) == len(senza.avvisi or []) + 1
+    (riassunto_del_confronto,) = [a for a in entrambi.avvisi or [] if a.startswith("Confronto con")]
+    n = len(entrambi.confronto.avvisi)
+    assert f"{n} discordanze" in riassunto_del_confronto
+    assert "15 tratte della pianta che la distinta non ha" in riassunto_del_confronto
+    assert "lunghezze diverse dal grafo" in riassunto_del_confronto
+    assert "discordanze.tracciati.json" in riassunto_del_confronto
+    assert sum(len(v) for v in entrambi.confronto.per_tipo.values()) == n
+
+
+def test_per_esteso_nei_dati_e_in_console(discordanti: dict[str, Esito]) -> None:
+    from disegnatore_mep.pianta.comando import riassunto
+
+    entrambi = discordanti["entrambi"]
+    assert entrambi.confronto is not None
+    dati = _dati(entrambi)
+    assert dati["confronto"]["avvisi"] == entrambi.confronto.avvisi
+    assert sum(dati["confronto"]["avvisi_per_tipo"].values()) == len(entrambi.confronto.avvisi)
+    righe = riassunto(entrambi)
+    for voce in entrambi.confronto.avvisi:
+        assert f"  - {voce}" in righe
+
+
+def test_i_bloccanti_si_riassumono_coi_numeri_di_tratta(tmp_path: Path) -> None:
+    def scambia(dati: dict[str, Any]) -> None:
+        t03 = next(t for t in dati["tracciati"] if t["tratta"] == "T03")
+        t04 = next(t for t in dati["tracciati"] if t["tratta"] == "T04")
+        t03["a"], t04["a"] = t04["a"], t03["a"]
+
+    esito = disegna_la_pianta(_variante(T3, tmp_path, scambia), tmp_path / "out", None, dxf=False, png=False,
+                              distinta=DISTINTA_T3)
+    (riga,) = [a for a in esito.avvisi or [] if a.startswith("Ferma la consegna")]
+    assert "T03, T04 nella distinta collegano pezzi diversi" in riga
+    assert len(esito.rilievi.confronto_bloccante) == 2

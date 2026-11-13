@@ -38,10 +38,27 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+from .instrada import chiave_della_tratta
 from .lunghezze import metri
 from .modello import Pianta, Tracciato
 
 TOLLERANZA_M = 1e-6
+
+
+TIPI_DI_DISCORDANZA: dict[str, tuple[str, str]] = {
+    "fuori_dalla_distinta": ("tratta della pianta che la distinta non ha", "tratte della pianta che la distinta non ha"),
+    "organi_in_linea": ("tratta con organi in linea diversi", "tratte con organi in linea diversi"),
+    "lunghezza_della_distinta": ("lunghezza diversa dalla distinta", "lunghezze diverse dalla distinta"),
+    "tratta_non_in_pianta": ("tratta della distinta non in pianta", "tratte della distinta non in pianta"),
+    "id_fuori_dal_grafo": ("id di pezzo che il grafo non ha", "id di pezzi che il grafo non ha"),
+    "sigla": ("sigla diversa dallo schema", "sigle diverse dallo schema"),
+    "pezzo_fuori_dal_grafo": ("pezzo che il grafo non ha", "pezzi che il grafo non ha"),
+    "non_e_una_tubazione": ("tracciato che non e' una tubazione del grafo",
+                            "tracciati che non sono tubazioni del grafo"),
+    "lunghezza_del_grafo": ("lunghezza diversa dal grafo", "lunghezze diverse dal grafo"),
+    "tubazione_non_in_pianta": ("tubazione del grafo non in pianta", "tubazioni del grafo non in pianta"),
+}
+"""I tipi di discordanza, al singolare e al plurale: la tavola li conta (REL-026, B-5)."""
 
 
 @dataclass
@@ -52,6 +69,14 @@ class Confronto:
     """Per tratta senza lunghezza nella pianta: la lunghezza presa e da dove."""
     fonti: list[str] = field(default_factory=list)
     """Con che cosa si e' confrontata la pianta: «la distinta», «il grafo»."""
+    per_tipo: dict[str, list[str]] = field(default_factory=dict)
+    """Gli avvisi per tipo (`TIPI_DI_DISCORDANZA`), nell'ordine in cui escono."""
+    tratte_bloccanti: list[str] = field(default_factory=list)
+    """I numeri di tratta che nella distinta collegano pezzi diversi."""
+
+    def avviso(self, tipo: str, testo: str) -> None:
+        self.avvisi.append(testo)
+        self.per_tipo.setdefault(tipo, []).append(testo)
 
     @property
     def nota(self) -> str:
@@ -62,6 +87,34 @@ class Confronto:
         if self.avvisi or self.bloccanti:
             return f"Controllati con {con}: ci sono discordanze (vedi gli avvisi)."
         return f"Controllati con {con}: concordano."
+
+    def per_la_tavola(self, dati: str) -> list[str]:
+        """Le discordanze **riassunte**, per gli avvisi della tavola: quante, di che tipo,
+        dove si leggono per esteso (`dati`, il nome del `.tracciati.json`).
+
+        BD.RM.260: `pianta --grafo` dava 72 avvisi, e l'elenco scritto per intero nella
+        colonna portava il foglio da A2 ad A1 (anche `--distinta` lo portava in A1). Il
+        formato lo decide il disegno: l'elenco sta nei dati e in console."""
+        if not self.avvisi and not self.bloccanti:
+            return []
+        con = " e ".join(self.fonti)
+        dove = f"L'elenco per esteso e' in {dati} («confronto») e in console."
+        righe: list[str] = []
+        if self.bloccanti:
+            quali = ", ".join(sorted(self.tratte_bloccanti, key=chiave_della_tratta)) or str(len(self.bloccanti))
+            righe.append(
+                f"Ferma la consegna: {quali} nella distinta collega{'no' if len(self.bloccanti) > 1 else ''} "
+                f"pezzi diversi da quelli della pianta."
+            )
+        if self.avvisi:
+            voci = [
+                f"{len(elenco)} {TIPI_DI_DISCORDANZA[tipo][0 if len(elenco) == 1 else 1]}"
+                for tipo, elenco in self.per_tipo.items()
+            ]
+            n = len(self.avvisi)
+            righe.append(f"Confronto con {con}: {n} discordanz{'a' if n == 1 else 'e'} ({'; '.join(voci)}).")
+        righe[-1] += " " + dove
+        return righe
 
 
 class ErroreDelConfronto(ValueError):
@@ -121,17 +174,18 @@ def confronta_con_la_distinta(pianta: Pianta, percorso: Path, confronto: Confron
         if voce is None:
             stessi = [n for n, v in tratte.items() if _stessi_capi(capi_della_distinta(v), capi)]
             altrove = f"; con questi capi nella distinta c'e' {', '.join(stessi)}" if stessi else ""
-            confronto.avvisi.append(
-                f"{tracciato.tratta} ({_in_parole(capi)}) non c'e' nella distinta{altrove}."
+            confronto.avviso(
+                "fuori_dalla_distinta", f"{tracciato.tratta} ({_in_parole(capi)}) non c'e' nella distinta{altrove}."
             )
             continue
         della_distinta = capi_della_distinta(voce)
         if not _stessi_capi(della_distinta, capi):
             stessi_capi_estremi = bool(della_distinta) and {della_distinta[0], della_distinta[-1]} == {capi[0], capi[-1]}
             if stessi_capi_estremi:
-                confronto.avvisi.append(
+                confronto.avviso(
+                    "organi_in_linea",
                     f"{tracciato.tratta}: in pianta {_in_parole(capi)}, nella distinta "
-                    f"{_in_parole(della_distinta)} (gli organi in linea non coincidono)."
+                    f"{_in_parole(della_distinta)} (gli organi in linea non coincidono).",
                 )
             else:
                 stessi = [n for n, v in tratte.items() if _stessi_capi(capi_della_distinta(v), capi)]
@@ -140,22 +194,24 @@ def confronta_con_la_distinta(pianta: Pianta, percorso: Path, confronto: Confron
                     f"{tracciato.tratta} collega pezzi diversi: in pianta {_in_parole(capi)}, nella distinta "
                     f"{_in_parole(della_distinta)}{giusto}"
                 )
+                confronto.tratte_bloccanti.append(tracciato.tratta)
             continue
         data = _numero(voce.get("lunghezza_stimata_m"))
         if tracciato.lunghezza_m is None:
             if data is not None:
                 confronto.lunghezze.setdefault(tracciato.tratta, (data, "distinta"))
         elif data is not None and abs(data - tracciato.lunghezza_m) > TOLLERANZA_M:
-            confronto.avvisi.append(
+            confronto.avviso(
+                "lunghezza_della_distinta",
                 f"{tracciato.tratta}: L {metri(tracciato.lunghezza_m, 2)} m in pianta, "
-                f"{metri(data, 2)} m nella distinta."
+                f"{metri(data, 2)} m nella distinta.",
             )
     in_pianta = {t.tratta for t in pianta.tracciati}
     for numero, voce in tratte.items():
         if numero in in_pianta or voce.get("raccordo_diretto"):
             continue
-        confronto.avvisi.append(
-            f"{numero} della distinta ({_in_parole(capi_della_distinta(voce))}) non e' in pianta."
+        confronto.avviso(
+            "tratta_non_in_pianta", f"{numero} della distinta ({_in_parole(capi_della_distinta(voce))}) non e' in pianta."
         )
 
 
@@ -206,19 +262,18 @@ def confronta_con_il_grafo(
     for pezzo in pianta.pezzi:
         if pezzo.id is not None:
             if pezzo.id not in componenti:
-                confronto.avvisi.append(f"{pezzo.sigla}: l'id {pezzo.id!r} non c'e' nel grafo.")
+                confronto.avviso("id_fuori_dal_grafo", f"{pezzo.sigla}: l'id {pezzo.id!r} non c'e' nel grafo.")
                 continue
             id_di[pezzo.sigla] = pezzo.id
             dello_schema = sigle_del_grafo.get(pezzo.id)
             if dello_schema is not None and dello_schema != pezzo.sigla:
-                confronto.avvisi.append(
-                    f"{pezzo.sigla} ({pezzo.id}): lo schema lo chiama {dello_schema}."
-                )
+                confronto.avviso("sigla", f"{pezzo.sigla} ({pezzo.id}): lo schema lo chiama {dello_schema}.")
         elif pezzo.sigla in per_sigla_del_grafo:
             id_di[pezzo.sigla] = per_sigla_del_grafo[pezzo.sigla]
         else:
-            confronto.avvisi.append(
-                f"{pezzo.sigla}: non si ritrova nel grafo (ne' l'id ne' la sigla dello schema)."
+            confronto.avviso(
+                "pezzo_fuori_dal_grafo",
+                f"{pezzo.sigla}: non si ritrova nel grafo (ne' l'id ne' la sigla dello schema).",
             )
     sigla_di = {i: s for s, i in id_di.items()}
 
@@ -244,8 +299,9 @@ def confronta_con_il_grafo(
             coppia = frozenset((id_di[da], id_di[a]))
             trovate = [t for t in tubazioni if t[0] == coppia and t[1] == tracciato.fluido and t[3] not in usate]
             if not trovate:
-                confronto.avvisi.append(
-                    f"{tracciato.tratta}: {da} – {a} ({tracciato.fluido}) non e' una tubazione del grafo."
+                confronto.avviso(
+                    "non_e_una_tubazione",
+                    f"{tracciato.tratta}: {da} – {a} ({tracciato.fluido}) non e' una tubazione del grafo.",
                 )
                 manca = True
                 break
@@ -258,15 +314,16 @@ def confronta_con_il_grafo(
             if tracciato.lunghezza_m is None:
                 confronto.lunghezze.setdefault(tracciato.tratta, (somma, "grafo"))
             elif abs(somma - tracciato.lunghezza_m) > TOLLERANZA_M:
-                confronto.avvisi.append(
+                confronto.avviso(
+                    "lunghezza_del_grafo",
                     f"{tracciato.tratta}: L {metri(tracciato.lunghezza_m, 2)} m in pianta, "
-                    f"{metri(somma, 2)} m nel grafo."
+                    f"{metri(somma, 2)} m nel grafo.",
                 )
     for coppia, fluido, lunghezza, ident in tubazioni:
         if ident in usate or lunghezza == 0:
             continue
         nomi_dei_capi = " – ".join(sorted(sigla_di.get(c, sigle_del_grafo.get(c, c)) for c in coppia))
-        confronto.avvisi.append(f"La tubazione {nomi_dei_capi} ({fluido}) del grafo non e' in pianta.")
+        confronto.avviso("tubazione_non_in_pianta", f"La tubazione {nomi_dei_capi} ({fluido}) del grafo non e' in pianta.")
 
 
 def confronta(
