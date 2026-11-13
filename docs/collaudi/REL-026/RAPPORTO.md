@@ -63,7 +63,22 @@ file fermi, 0 falliti (§3).
 
 ## 3. I criteri, ciascuno col suo comando
 
-*Bozza: le misure sull'ultima testa del ramo si scrivono qui alla chiusura, ciascuna col suo comando e il suo output.*
+Misurati dalla sessione sull'ultima testa del ramo (il commit che porta questo rapporto), nel `.venv` del repository.
+La base (`d9c8f2e`, la 2.0.0 col pacchetto scritto) dava 2922 passed, 15 skipped, 11 xfailed (`blocco-a/RAPPORTO.md`, §3).
+
+| criterio | comando | output | esito |
+|---|---|---|---|
+| le tavole per prime | §1 | escono da tutti i casi | raggiunto |
+| suite a 0 failed, senza skip o xfail nuovi | `python -m pytest -q -p no:cacheprovider` | `3156 passed, 15 skipped, 11 xfailed in 369.22s` | raggiunto (skip e xfail: gli stessi 15 e 11 della base) |
+| ruff verde | `ruff check src tests scripts skill/scripts` | `All checks passed!` | raggiunto |
+| mypy verde | `python -m mypy` | `Success: no issues found in 131 source files` | raggiunto |
+| il banco verde | `python scripts/banco.py` | `30 uguali, 0 cambiati, su 30` | raggiunto |
+| le tavole cambiate registrate e mostrate | confronto di `tests/banco/impronte.json` con `origin/main` | 28 casi → 30: nuovi `plenum-di-mandata-rel026`, `plenum-motorizzato-rel026`; cambiato `collaudo-t3-rel012` (la pianta: niente dettagli automatici, la base nuova, le scritte fuori); cambiata un'impronta di `t1-rel023`, `distinta/distinta.json` (la sola impronta delle regole, per la riga in più di `corredo.json`: `blocco-a/RAPPORTO.md`) | raggiunto: `blocco-c-scritte/t3/`, `blocco-c-base/t3/` |
+| nessun dato di cliente nel diff | ricerca nel diff di nomi, indirizzi e codici fiscali delle planimetrie del PO; elenco dei PDF e delle immagini fuori da `docs/collaudi` | nessun riscontro; un solo PDF, `examples/pianta/casi/base-anonima/planimetria.pdf`, inventato | raggiunto |
+| la 2.1.0 costruita con `scripts/costruisci-skill.py` | `python scripts/costruisci-skill.py --out …` | `155 file, 3659 kB` · `Controlli della guida di Anthropic, di skill-creator e del caricamento su claude.ai (al massimo 200 file): passati.` · sha256 `d14b83f0ba00760b…` | raggiunto |
+| `tests/test_le_release.py` verde | `python -m pytest -q -p no:cacheprovider tests/test_le_release.py tests/test_il_banco.py tests/test_package.py` | `38 passed in 27.89s` | raggiunto |
+| `SKILL.md` sotto le 500 righe | `wc -l skill/SKILL.md` | `465` | raggiunto |
+| la CI verde sulla PR | GitHub Actions sulla PR #95 | verde sull'unione dei blocchi (`2ef0ad0`); **sull'ultima testa si legge sulla PR**: questo rapporto è scritto prima che giri | da leggere sulla PR |
 
 ## 4. Che cosa non è stato fatto o verificato
 
@@ -74,12 +89,66 @@ file fermi, 0 falliti (§3).
   sono immagini a 1 bit dentro il PDF.
 - **Il DXF non è stato aperto in AutoCAD**; della resa dei PDF è provato solo pypdfium2.
 - **Il PDF della distinta** non esce in sessione (serve la skill `nove-c-report` accanto): il contenuto è in Markdown.
-- **I tempi**: la suite passa da 248 a circa 355 secondi; la pianta dell'appartamento, senza PNG, da 2,2 a 5,5 s (le
+- **I tempi**: la suite passa da 248 a circa 370 secondi; la pianta dell'appartamento, senza PNG, da 2,2 a 5,5 s (le
   prove di spostamento della pianta per le scritte fuori).
 
 ## 5. La prova in camera pulita della lettura della base (C-3)
 
-*Bozza: la prova è in corso (quattro agenti con le sole istruzioni della skill); gli esiti si scrivono qui.*
+Quattro agenti nuovi, uno per planimetria, hanno ricevuto **solo** il testo che `skill/base/ISTRUZIONI.md` §2 dice
+di passare al sub-agente, la skill costruita (`scripts/costruisci-skill.py`) e la planimetria. Non potevano leggere il
+repository né il lavoro dell'agente che ha scritto le istruzioni. Le planimetrie sono quelle vere del PO: basi,
+immagini e rapporti stanno **nella sessione**, non qui. La sessione ha guardato le otto immagini (sovrapposizione e
+base standard di ciascuna).
+
+| planimetria | tempo dichiarato | che cosa ha consegnato | come combacia (controllo a vista della sessione) |
+|---|---|---|---|
+| progetto dell'architetto, 1:50 su A3, vettoriale, con arredi | 13 min | 47 muri, 19 aperture, 8 stanze; 107,7 m² netti; 9 domande | i muri sulle linee del disegno, nicchie e cavedi compresi; arredi e armadi a muro fuori |
+| catastale 1:200 (immagine a 200 dpi nel PDF), un piano | 22 min | 34 muri, 24 aperture, 10 stanze, 4 balconi; 104,6 m²; 7 domande | i muri sulle linee, balconi sui parapetti; taratura sulla barra e sulle porte |
+| catastale 1:200 con tre piani sul foglio | 15 min | il solo piano terra: 13 muri, 14 aperture, 7 stanze, 4 fra portici e scale esterne; 80,6 m²; 8 domande | i muri sulle linee entro un pixel (2,5 cm); taratura sulla barra, scarto 0,05 % |
+| disegno a mano quotato, scansito | 12 min | 15 muri, 16 aperture, 8 stanze, una scala esterna; 96,0 m²; 7 domande | i muri entro 5–10 cm dallo schizzo, come le quote; scala diversa nei due versi (2,9 %), trovata e dichiarata |
+
+**Esito: le istruzioni sono bastate in tutti e quattro i casi.** Ogni agente ha consegnato una base che si carica, una
+sovrapposizione che combacia, i locali col nome e i mq, e le cose non dette come **domande** (l'ingresso, i versi
+delle porte, lo stato di fatto o di progetto, i locali senza nome). Nessuno ha trascritto arredi, né nomi o dati
+catastali dal cartiglio. **Ma in due basi su quattro `sfondo.file` porta il nome del file ricevuto, che contiene un
+riferimento al committente** (contato dalla sessione sui quattro `base.json`): gli altri due agenti l'avevano copiato
+con un nome neutro di loro iniziativa. Ora lo dicono le istruzioni. I tempi sono quelli dichiarati dagli agenti: non
+sono stati misurati dalla sessione.
+
+**Limiti della prova, da dire:**
+- nel caso dei tre piani la richiesta **diceva già** quale piano («quello con soggiorno e cucina»): la domanda sul
+  piano, che `CONSEGNA.md` voleva provare, non è stata provata;
+- sul progetto vettoriale l'agente **non ha seguito il metodo a griglia**: ha letto i tratti del PDF con uno script
+  suo (pdfplumber) e li ha convertiti con la stessa taratura. Il risultato è buono, ma la lettura a griglia di una
+  planimetria di 47 muri non è provata;
+- due agenti su quattro si sono scritti un piccolo strumento per **misurare** i pixel scuri lungo una riga: sul
+  catastale a 1:200 la sola griglia non bastava (uno ha sbagliato di 0,5 m una faccia, e se n'è accorto dalla
+  sovrapposizione);
+- la fotografia di un catastale non è provata (§4).
+
+**Che cosa la prova ha fatto correggere** (nello stesso ramo, dopo la prova: le correzioni non sono a loro volta provate
+in camera pulita):
+- **la porta senza verso** usciva con un arco da una parte a caso, che sulla tavola sembra un dato letto: ora esce
+  **chiusa**, un tratto nel vano (`pianta/base.py`, con la prova). Segnalato da tre agenti su quattro;
+- **`base base.json --zona`** riscriveva la sovrapposizione intera con l'ultimo riquadro: ora il riquadro ha il suo
+  file. Segnalato da tre agenti su quattro;
+- **un locale stretto col nome lungo restava senza nome in silenzio**: `pianta` ora stampa «Locali col nome sulla
+  tavola: n su n», con quelli che restano senza;
+- **nelle istruzioni**: il file della planimetria si copia con un nome neutro (quello ricevuto portava il nome del
+  committente, e finiva nei nomi dei file); la risoluzione nativa dell'immagine; il PDF vettoriale come aiuto; stato di
+  fatto e di progetto (gialli e rossi); le catene di quote che non chiudono; i segni di porte e finestre sul catastale;
+  portici, pilastri, cavedi, setti isolati; i nomi senza arredi; la barra della scala da confermare sulle porte; le
+  `note` che escono sulla tavola.
+
+**Che cosa la prova suggerisce, e non è stato fatto** (va fra le decisioni del PO, §6):
+- **un aiuto per misurare**: un'opzione del comando che stampi, in metri, le linee incontrate lungo una riga o una
+  colonna dell'immagine; e, per il PDF vettoriale, l'elenco dei tratti spessi. Due agenti se li sono costruiti da sé in
+  pochi minuti. Il rapporto del blocco C-3 aveva concluso che l'estrattore non serviva: la prova dice il contrario per
+  il progetto dell'architetto;
+- **il comando potrebbe dire** da sé che la pagina è un'immagine e a quale risoluzione è nata;
+- **la tavola della sola base** esce in A2 o in A1 con la colonna dell'impianto vuota e le note di lavoro: una resa
+  «solo base», più piccola, sarebbe più utile da mostrare al progettista;
+- la porta **a due ante disuguali** non ha una voce (esce con due ante uguali).
 
 ## 6. Che cosa decide il PO
 
@@ -99,7 +168,9 @@ fredda a 10 °C.
 **Base architettonica** — i colori (muri `#dcdcdc` col contorno `#a8a8a8`, finestre `#d6ecfa`/`#74b3e0`, porte
 `#a0a0a0`, nomi `#8a8a8a`); un grigio solo per perimetrali e tramezze; il contorno dei muri a 1:20; i gradini delle
 scale; il nome su due righe, poi a 8 pt, poi senza mq; la portafinestra come finestra; i balconi col solo contorno; lo
-sfondo fuori dalla tavola quando la base è ridisegnata; l'estrattore dei tratti dal PDF vettoriale.
+sfondo fuori dalla tavola quando la base è ridisegnata; **la porta senza verso disegnata chiusa**; lo stato di progetto
+come assunzione quando nessuno risponde; gli aiuti per misurare (le linee lungo una riga, i tratti del PDF
+vettoriale), che la camera pulita suggerisce (§5).
 
 **Scritte e pianta** — l'ordine dei ripieghi (accanto, richiamo corto, numero in legenda, e solo alla fine fuori); le
 righe sopra e sotto oltre alle colonne ai lati; la pianta spostata dal centro del foglio prima di cambiare formato; i
