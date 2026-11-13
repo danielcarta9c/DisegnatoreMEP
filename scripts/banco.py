@@ -134,8 +134,10 @@ def rifai(caso: Caso, cartella: Path) -> dict[str, str]:
     if caso.distinta:
         esegui(["distinta", str(grafo), "--out", str(cartella / "distinta")])
     if caso.pianta:
+        # In sola lettura: dal REL-026 (B-4) la pianta scrive nel grafo le lunghezze misurate,
+        # e il banco non tocca i file del repository.
         esegui(["pianta", str(RADICE / caso.pianta), "--out", str(cartella / "pianta"), "--senza-dxf",
-                "--grafo", str(grafo)])
+                "--grafo", str(grafo), "--grafo-in-sola-lettura"])
     for file in sorted(cartella.rglob("*")):
         if file.is_file() and file.name.endswith(DA_IMPRONTARE):
             impronte[file.relative_to(cartella).as_posix()] = _sha(file)

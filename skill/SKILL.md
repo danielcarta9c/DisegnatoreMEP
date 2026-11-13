@@ -391,10 +391,11 @@ PREZZARE»: non la stimi.
 Solo se il progettista l'ha chiesta e ti ha dato la planimetria. Leggi **per intero**
 [riferimenti/pianta.md](riferimenti/pianta.md): dici tu muri, aperture e pezzi in un JSON, in
 metri; il comando instrada i tracciati **ortogonali**, lungo i muri, pagando curve e sormonti, e
-misura le lunghezze.
+misura le lunghezze: con `--grafo` le scrive nel grafo (quelle del progettista restano), non a mano.
+Poi rifai schema e distinta.
 
 ```bash
-python3 scripts/mep.py pianta $L/pianta.json --out $L/pianta
+python3 scripts/mep.py pianta $L/pianta.json --out $L/pianta --grafo $L/grafo-completo.json
 ```
 
 Le sigle e i numeri di tratta sono quelli dello schema funzionale. Guarda la tavola come al

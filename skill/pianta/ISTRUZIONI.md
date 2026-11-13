@@ -27,6 +27,8 @@ python3 scripts/mep.py pianta <pianta.json> --out <cartella> --distinta <distint
 `--distinta` (il `distinta.json` che scrive il comando `distinta`) e `--grafo` (il grafo completo dello
 schema) sono facoltativi, ma **passali tutte le volte che li hai**: il comando controlla con loro sigle,
 numeri di tratta e lunghezze (§3), e prende dalla distinta la lunghezza dei tracciati che non ce l'hanno.
+**Con `--grafo` il comando scrive nel grafo le lunghezze che ha misurato** (§4, «Le lunghezze nel
+grafo»); `--grafo-in-sola-lettura` lo lascia com'è e fa solo il confronto.
 
 Esce, col nome del JSON: `.pdf`, `.svg`, `.dxf` (con il logo accanto), `.png` (l'anteprima: guardala),
 `.tracciati.json` (percorsi, lunghezze, rilievi, avvisi) e, se c'è un riquadro di
@@ -139,11 +141,29 @@ Se supera la lunghezza data di oltre il 15 % (`parametri.scarto_della_misura`), 
 negli avvisi e la colonna lo segna con `!`: o il percorso è sbagliato, o il dato; chiedi.
 
 Se il progettista **non** ha dato la lunghezza, la scritta dice la misura col `°` («L 3,4 m°») e la
-tavola quota la misura, segnata anche lei con `°`; in
-`.tracciati.json` trovi `lunghezza_misurata_m`: **riportala nel grafo** (o chiedila), così la
-distinta quota lo stesso numero. Non scrivere `maggiorazione` nella pianta: la regola è quella
-della distinta; se il progettista ne dà un'altra, la tavola la usa e avvisa che i numeri possono
-non coincidere.
+tavola quota la misura, segnata anche lei con `°`. Non scrivere `maggiorazione` nella pianta: la
+regola è quella della distinta; se il progettista ne dà un'altra, la tavola la usa e avvisa che i
+numeri possono non coincidere.
+
+### Le lunghezze nel grafo: `--grafo` le scrive
+
+Con `--grafo`, dopo aver disegnato, **il comando scrive nel grafo le lunghezze che ha misurato**:
+non le ricopi a mano. Su ogni tubazione della tratta mette la misura del suo tronco in
+`lunghezza_m`, e accanto, fra le `properties`, `lunghezza_dalla_pianta_m` con lo stesso numero:
+è il segno che quella lunghezza l'ha scritta la pianta. In console e in `.tracciati.json` (`grafo`)
+c'è l'elenco di che cosa è cambiato — tratta, prima, dopo —; rilanciata senza cambi, la pianta non
+riscrive niente e lo dice. Poi **rifai schema e distinta** dal grafo: leggono i numeri nuovi, e la
+distinta quota lo stesso numero della pianta.
+
+**Le lunghezze del progettista restano.** Una tratta è del progettista se la sua lunghezza c'è nella
+pianta (`lunghezza_m` sul tracciato) o nel grafo senza il segno della pianta — anche un grafo di
+prima, che il segno non lo ha: allora la pianta non scrive niente su quella tratta, e la console
+dice dove misura altro. Se il progettista corregge a mano una lunghezza scritta dalla pianta, la
+correzione resta (il numero non è più quello del segno). Se invece vuole che una sua lunghezza la
+misuri la pianta, toglila dal grafo. **Si scrivono solo le lunghezze** — e gli `attraversamenti`, a
+forature accese —: mai i collegamenti né altri campi. Se rilanci `completa`, il grafo completo si
+rifà: rilancia anche la pianta con `--grafo`. `--grafo-in-sola-lettura` fa solo il confronto, e la
+console dice che cosa cambierebbe.
 
 ### Organi in linea: `passa_per`
 

@@ -1387,7 +1387,8 @@ def _pianta(args: argparse.Namespace, cartelle: Cartelle) -> int:
     from disegnatore_mep.pianta.comando import esegui
 
     return esegui(args.pianta, args.out, cartelle.cartiglio, not args.senza_dxf, distinta=args.distinta,
-                  grafo=args.grafo, catalogo=cartelle.catalogo, nomi=cartelle.naming)
+                  grafo=args.grafo, catalogo=cartelle.catalogo, nomi=cartelle.naming,
+                  grafo_in_sola_lettura=args.grafo_in_sola_lettura)
 
 
 # --- il comando ---------------------------------------------------------------
@@ -1462,7 +1463,13 @@ def costruisci_il_parser() -> argparse.ArgumentParser:
         "lunghezza ai tracciati che non l'hanno",
     )
     pianta.add_argument(
-        "--grafo", type=Path, help="il grafo completo: controlla sigle, tubazioni e lunghezze dei tracciati"
+        "--grafo", type=Path,
+        help="il grafo completo: controlla sigle, tubazioni e lunghezze dei tracciati, e ci scrive le lunghezze "
+        "misurate (quelle del progettista restano)",
+    )
+    pianta.add_argument(
+        "--grafo-in-sola-lettura", action="store_true",
+        help="con --grafo, solo il confronto: il grafo non si scrive (la console dice che cosa cambierebbe)",
     )
 
     finale = comandi.add_parser(
