@@ -1,0 +1,964 @@
+{
+ "formato": "disegnatore-mep/tabelle-del-foglio",
+ "versione": 1,
+ "tabelle": [
+  {
+   "id": "tratte",
+   "titolo": "TABELLA DELLE TRATTE — diametri e lunghezze per la quotazione",
+   "colonne": [
+    {
+     "id": "tratto",
+     "titolo": "Tratto",
+     "allinea": "sinistra",
+     "peso": 0.6
+    },
+    {
+     "id": "da_a",
+     "titolo": "Da - a",
+     "allinea": "sinistra",
+     "peso": 2.4
+    },
+    {
+     "id": "sezione",
+     "titolo": "Ø / sezione",
+     "allinea": "sinistra",
+     "peso": 1.4
+    },
+    {
+     "id": "materiale",
+     "titolo": "Materiale",
+     "allinea": "sinistra",
+     "peso": 1.9
+    },
+    {
+     "id": "portata",
+     "titolo": "Q m³/h",
+     "allinea": "destra",
+     "peso": 0.6
+    },
+    {
+     "id": "velocita",
+     "titolo": "v m/s",
+     "allinea": "destra",
+     "peso": 0.5
+    },
+    {
+     "id": "l_stimata",
+     "titolo": "L stim. m",
+     "allinea": "destra",
+     "peso": 0.6
+    },
+    {
+     "id": "l_quotare",
+     "titolo": "L quot. m",
+     "allinea": "destra",
+     "peso": 0.6
+    }
+   ],
+   "sezioni": [
+    {
+     "titolo": null,
+     "righe": [
+      [
+       "T01",
+       "PL-01 - TA-01",
+       "Ø160",
+       "flessibile coibentato",
+       "",
+       "",
+       "3",
+       "5"
+      ],
+      [
+       "T02",
+       "PL-01 - TA-02",
+       "Ø160",
+       "flessibile coibentato",
+       "",
+       "",
+       "4",
+       "6"
+      ],
+      [
+       "T03",
+       "PL-01 - TA-03",
+       "Ø160",
+       "flessibile coibentato",
+       "",
+       "",
+       "5",
+       "7"
+      ],
+      [
+       "T04",
+       "PL-01 - TA-04",
+       "Ø160",
+       "flessibile coibentato",
+       "",
+       "",
+       "6",
+       "8,5"
+      ],
+      [
+       "T05",
+       "PL-01 - TA-05",
+       "Ø160",
+       "flessibile coibentato",
+       "",
+       "",
+       "7",
+       "9,5"
+      ],
+      [
+       "T06",
+       "PL-01 - TA-06",
+       "Ø160",
+       "flessibile coibentato",
+       "",
+       "",
+       "8",
+       "10,5"
+      ],
+      [
+       "T07",
+       "PL-02 - TA-07",
+       "Ø160",
+       "flessibile coibentato",
+       "",
+       "",
+       "3",
+       "5"
+      ],
+      [
+       "T08",
+       "PL-02 - TA-08",
+       "Ø160",
+       "flessibile coibentato",
+       "",
+       "",
+       "4",
+       "6"
+      ],
+      [
+       "T09",
+       "PL-03 - TA-09",
+       "Ø160",
+       "flessibile coibentato",
+       "",
+       "",
+       "3",
+       "5"
+      ],
+      [
+       "T10",
+       "PL-03 - TA-10",
+       "Ø160",
+       "flessibile coibentato",
+       "",
+       "",
+       "4",
+       "6"
+      ],
+      [
+       "T11",
+       "PL-03 - TA-11",
+       "Ø160",
+       "flessibile coibentato",
+       "",
+       "",
+       "5",
+       "7"
+      ],
+      [
+       "T12",
+       "TE-01 - SIF-01 - AL-01",
+       "Ø32",
+       "PVC rigido, pendenza min. 1%",
+       "",
+       "",
+       "3",
+       "10"
+      ],
+      [
+       "T13",
+       "TE-02 - SIF-02 - AL-02",
+       "Ø32",
+       "PVC rigido, pendenza min. 1%",
+       "",
+       "",
+       "3",
+       "10"
+      ],
+      [
+       "T14",
+       "TE-03 - SIF-03 - AL-03",
+       "Ø32",
+       "PVC rigido, pendenza min. 1%",
+       "",
+       "",
+       "3",
+       "10"
+      ],
+      [
+       "T15",
+       "QE-01 - GT-01",
+       "3G2,5",
+       "FG16OR16",
+       "",
+       "",
+       "12",
+       "15"
+      ],
+      [
+       "T16",
+       "QE-01 - TE-01",
+       "3G1,5",
+       "FG16OR16",
+       "",
+       "",
+       "11",
+       "14"
+      ],
+      [
+       "T17",
+       "QE-01 - TE-02",
+       "3G1,5",
+       "FG16OR16",
+       "",
+       "",
+       "9",
+       "11,5"
+      ],
+      [
+       "T18",
+       "QE-01 - TE-03",
+       "3G1,5",
+       "FG16OR16",
+       "",
+       "",
+       "10",
+       "13"
+      ],
+      [
+       "T19",
+       "TZ-01 - TE-02",
+       "2×0,75",
+       "cavo di bus",
+       "",
+       "",
+       "6",
+       "8,5"
+      ],
+      [
+       "T20",
+       "TZ-02 - TE-03",
+       "2×0,75",
+       "cavo di bus",
+       "",
+       "",
+       "6",
+       "8,5"
+      ],
+      [
+       "T21",
+       "TZ-03 - TE-01",
+       "2×0,75",
+       "cavo di bus",
+       "",
+       "",
+       "6",
+       "8,5"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "computo",
+   "titolo": "COMPUTO DELLE QUANTITÀ E DEI PEZZI SPECIALI — quantità indicative per il prezzo a corpo, da verificare in sopralluogo (varianti e voci aggiunte: documento della distinta)",
+   "colonne": [
+    {
+     "id": "rif",
+     "titolo": "Rif.",
+     "allinea": "sinistra",
+     "peso": 0.5
+    },
+    {
+     "id": "voce",
+     "titolo": "Voce",
+     "allinea": "sinistra",
+     "peso": 6.0
+    },
+    {
+     "id": "um",
+     "titolo": "UM",
+     "allinea": "sinistra",
+     "peso": 0.7
+    },
+    {
+     "id": "quantita",
+     "titolo": "Q.tà",
+     "allinea": "destra",
+     "peso": 0.6
+    },
+    {
+     "id": "fornitura",
+     "titolo": "Fornitura",
+     "allinea": "sinistra",
+     "peso": 1.0
+    },
+    {
+     "id": "note",
+     "titolo": "Note",
+     "allinea": "sinistra",
+     "peso": 2.6
+    }
+   ],
+   "sezioni": [
+    {
+     "titolo": "A. Apparecchiature (posa dell'installatore; chi le fornisce: colonna Fornitura)",
+     "righe": [
+      [
+       "A.1",
+       "Pompa di calore aria-acqua: marca e modello DA DEFINIRE",
+       "n",
+       "1",
+       "Nove C",
+       "GT-01; 9 kW"
+      ],
+      [
+       "A.2",
+       "Termostato di zona: marca e modello DA DEFINIRE",
+       "n",
+       "3",
+       "Nove C",
+       "TZ-01, TZ-02, TZ-03"
+      ]
+     ]
+    },
+    {
+     "titolo": "S. Staffaggi e sospensioni delle apparecchiature",
+     "righe": [
+      [
+       "S.1",
+       "Basamento a terra per l'unità esterna con supporti antivibranti",
+       "n",
+       "1",
+       "installatore",
+       "GT-01"
+      ],
+      [
+       "S.2",
+       "Sospensione del plenum di ripresa: 2 barre filettate M8 con ancoranti e dadi",
+       "kit",
+       "3",
+       "installatore",
+       "RA-01, RA-02, RA-03"
+      ]
+     ]
+    },
+    {
+     "titolo": "B. Distribuzione aria",
+     "righe": [
+      [
+       "B.1",
+       "Condotto flessibile coibentato Ø160 (isolamento 25 mm, barriera vapore), confezione da 10 m",
+       "conf.",
+       "11",
+       "installatore",
+       "75,5 m in 11 tratti interi: 5 + 6 + 7 + 8,5 + 9,5 + 10,5 + 5 + 6 + 5 + 6 + 7 m"
+      ],
+      [
+       "B.2",
+       "Manicotto di giunzione Ø160 per i tratti piu' lunghi di una confezione",
+       "n",
+       "1",
+       "installatore",
+       ""
+      ],
+      [
+       "B.3",
+       "Manicotto di giunzione Ø160",
+       "n",
+       "2",
+       "installatore",
+       ""
+      ],
+      [
+       "B.4",
+       "Fascetta di serraggio Ø160 (anima e mantello)",
+       "n",
+       "44",
+       "installatore",
+       ""
+      ],
+      [
+       "B.5",
+       "Nastro alluminio rinforzato 50 mm",
+       "rotolo",
+       "4",
+       "installatore",
+       ""
+      ],
+      [
+       "B.6",
+       "Sostegno per flessibile (fascia o collare con pendino), passo max. 1,2 m",
+       "n",
+       "78",
+       "installatore",
+       ""
+      ],
+      [
+       "B.7",
+       "Plenum porta-bocchetta coibentato per bocchetta 300×150, attacco Ø160 laterale",
+       "n",
+       "11",
+       "installatore",
+       "TA-07, TA-08, TA-09, TA-10, TA-11, TA-01, TA-02, TA-03, TA-04, TA-05, TA-06"
+      ],
+      [
+       "B.8",
+       "Plenum di ripresa in lamiera zincata, non coibentato, con filtro ispezionabile, bocca DA DEFINIRE (sezione), sulla bocca di aspirazione dell'unità interna; filtro unico: l'eventuale filtro di serie dell'unità interna si toglie",
+       "n",
+       "3",
+       "installatore",
+       "RA-01, RA-02, RA-03"
+      ]
+     ]
+    },
+    {
+     "titolo": "D. Scarichi condensa (unità interna e unità esterna)",
+     "righe": [
+      [
+       "D.1",
+       "Tubo PVC rigido Ø32",
+       "m",
+       "30",
+       "installatore",
+       "T12 stimati 3 m; T13 stimati 3 m; T14 stimati 3 m"
+      ],
+      [
+       "D.2",
+       "Curva 87°-90° Ø32",
+       "n",
+       "18",
+       "installatore",
+       ""
+      ],
+      [
+       "D.3",
+       "Manicotto Ø32",
+       "n",
+       "9",
+       "installatore",
+       ""
+      ],
+      [
+       "D.4",
+       "Collare per tubo condensa",
+       "n",
+       "30",
+       "installatore",
+       ""
+      ],
+      [
+       "D.5",
+       "Isolamento anticondensa 9 mm per il tubo della condensa",
+       "m",
+       "30",
+       "installatore",
+       "T12 stimati 3 m; T13 stimati 3 m; T14 stimati 3 m"
+      ],
+      [
+       "D.6",
+       "Collante e pulitore PVC",
+       "n",
+       "1",
+       "installatore",
+       ""
+      ],
+      [
+       "D.7",
+       "Innesto sullo scarico esistente con braga 45° Ø40, a valle del sifone dell'apparecchio",
+       "n",
+       "3",
+       "installatore",
+       "AL-02, AL-03, AL-01"
+      ],
+      [
+       "D.8",
+       "Sifone ispezionabile per condensa",
+       "n",
+       "3",
+       "installatore",
+       "SIF-02, SIF-03, SIF-01"
+      ]
+     ]
+    },
+    {
+     "titolo": "I. Circuito idraulico (tubazioni, valvolame e accessori, con il loro corredo di posa)",
+     "righe": [
+      [
+       "I.1",
+       "Tubo della rete «Circuito dei ventilconvettori»: diametro, metri e isolamento DA DEFINIRE",
+       "m",
+       "DA DEFINIRE",
+       "installatore",
+       ""
+      ],
+      [
+       "I.2",
+       "Tee a pressare tubo multistrato MS 26×3",
+       "n",
+       "3",
+       "installatore",
+       "RC-04, RC-03, RC-02"
+      ],
+      [
+       "I.3",
+       "Defangatore magnetico 1\"",
+       "n",
+       "1",
+       "installatore",
+       "DEF-01"
+      ],
+      [
+       "I.4",
+       "Vaso di espansione chiuso a membrana per riscaldamento DA DEFINIRE (volume_l) l, con attacco e staffa",
+       "n",
+       "1",
+       "installatore",
+       "VE-01"
+      ],
+      [
+       "I.5",
+       "Giunto antivibrante 1\"",
+       "n",
+       "2",
+       "installatore",
+       "GA-02, GA-01"
+      ],
+      [
+       "I.6",
+       "Pulitore per impianti nuovi o recenti, 1 l",
+       "n",
+       "1",
+       "installatore",
+       "GT-01"
+      ],
+      [
+       "I.7",
+       "Filmante e inibitore per impianti, 1 l",
+       "n",
+       "1",
+       "installatore",
+       "GT-01"
+      ],
+      [
+       "I.8",
+       "Manometro 0-6 bar attacco ½\"",
+       "n",
+       "1",
+       "installatore",
+       "MN-01"
+      ],
+      [
+       "I.9",
+       "Tee a pressare tubo multistrato MS 32×3",
+       "n",
+       "4",
+       "installatore",
+       "RC-01, DER-03, DER-02, DER-01"
+      ],
+      [
+       "I.10",
+       "Filtro a Y 1\" FF, maglia 500 µm",
+       "n",
+       "1",
+       "installatore",
+       "FIL-01"
+      ],
+      [
+       "I.11",
+       "Rubinetto portamanometro a tre vie ½\"",
+       "n",
+       "1",
+       "installatore",
+       "RM-01"
+      ],
+      [
+       "I.12",
+       "Valvola a sfera a passaggio totale 1\" FF, con leva",
+       "n",
+       "3",
+       "installatore",
+       "VI-04, VI-05, VI-01"
+      ],
+      [
+       "I.13",
+       "Valvola a sfera a passaggio totale ½\" FF, con leva",
+       "n",
+       "6",
+       "installatore",
+       "VI-07, VI-06, VI-09, VI-08, VI-02, VI-03"
+      ],
+      [
+       "I.14",
+       "Valvola a sfera a passaggio totale DA DEFINIRE (pollice) FF, con leva",
+       "n",
+       "1",
+       "installatore",
+       "VIB-01"
+      ],
+      [
+       "I.15",
+       "Valvola di sicurezza ½\" MF 3 bar, con scarico convogliato",
+       "n",
+       "1",
+       "installatore",
+       "VS-01"
+      ],
+      [
+       "I.16",
+       "Raccordo diritto a pressare M 1\" × tubo multistrato MS 32×3",
+       "n",
+       "10",
+       "installatore",
+       ""
+      ],
+      [
+       "I.17",
+       "Raccordo diritto a pressare M ½\" × tubo multistrato MS 20×2",
+       "n",
+       "12",
+       "installatore",
+       ""
+      ],
+      [
+       "I.18",
+       "Raccordo diritto a pressare M × tubo multistrato MS 20×2, all'attacco",
+       "n",
+       "6",
+       "installatore",
+       ""
+      ],
+      [
+       "I.19",
+       "Nipplo 1\" M × M",
+       "n",
+       "2",
+       "installatore",
+       ""
+      ]
+     ]
+    },
+    {
+     "titolo": "E. Elettrico, comando e regolazione",
+     "righe": [
+      [
+       "E.1",
+       "Cavo FG16OR16 3G2,5, Alimentazione pompa di calore",
+       "m",
+       "15",
+       "installatore",
+       "T15 stimati 12 m"
+      ],
+      [
+       "E.2",
+       "Cavo FG16OR16 3G1,5, Alimentazione ventilconvettore 3, Alimentazione ventilconvettore 1, Alimentazione ventilconvettore 2",
+       "m",
+       "38,5",
+       "installatore",
+       "T16 stimati 11 m; T17 stimati 9 m; T18 stimati 10 m"
+      ],
+      [
+       "E.3",
+       "DA DEFINIRE (protezione), linea dedicata: Alimentazione pompa di calore",
+       "n",
+       "1",
+       "installatore",
+       ""
+      ],
+      [
+       "E.4",
+       "DA DEFINIRE (protezione), linea dedicata: Alimentazione ventilconvettore 3, Alimentazione ventilconvettore 1, Alimentazione ventilconvettore 2",
+       "n",
+       "3",
+       "installatore",
+       ""
+      ],
+      [
+       "E.5",
+       "Scatola di derivazione IP55",
+       "n",
+       "4",
+       "installatore",
+       ""
+      ],
+      [
+       "E.6",
+       "Tubo corrugato Ø25 per le linee di alimentazione",
+       "m",
+       "60",
+       "installatore",
+       ""
+      ],
+      [
+       "E.7",
+       "Cavo 2×0,75, Consenso del termostato 1, Consenso del termostato 2, Consenso del termostato 3",
+       "m",
+       "25,5",
+       "installatore",
+       "T19 stimati 6 m; T20 stimati 6 m; T21 stimati 6 m"
+      ],
+      [
+       "E.8",
+       "Tubo corrugato Ø20 per bus e linee di comando",
+       "m",
+       "30",
+       "installatore",
+       ""
+      ],
+      [
+       "E.9",
+       "Aggiornamento dello schema del quadro elettrico",
+       "a corpo",
+       "1",
+       "installatore",
+       "QE-01"
+      ],
+      [
+       "E.10",
+       "Scatola 503 per termostati e comandi a parete",
+       "n",
+       "3",
+       "installatore",
+       "TZ-01, TZ-02, TZ-03"
+      ]
+     ]
+    },
+    {
+     "titolo": "F. Assistenze murarie (aperture comprese)",
+     "righe": [
+      [
+       "F.1",
+       "Foratura di tramezza Ø300 (o vano 470×270) per flessibili coibentati e plenum di bocchetta",
+       "n",
+       "11",
+       "installatore",
+       "assunti 1 per T01, T02, T03, T04, T05, T06, T07, T08, T09, T10, T11 (attraversamenti non dati)"
+      ],
+      [
+       "F.2",
+       "Foratura per lo scarico della condensa (tramezze e parete del bagno)",
+       "n",
+       "3",
+       "installatore",
+       "assunti 1 per T12, T13, T14 (attraversamenti non dati)"
+      ],
+      [
+       "F.3",
+       "Tracce per le linee dal quadro al controsoffitto",
+       "m",
+       "10",
+       "installatore",
+       "QE-01"
+      ],
+      [
+       "F.4",
+       "Traccia per la condensa fino allo scarico",
+       "m",
+       "9",
+       "installatore",
+       "AL-02, AL-03, AL-01"
+      ],
+      [
+       "F.5",
+       "Traccia per termostati e comandi a parete, dal controsoffitto alla scatola",
+       "m",
+       "4,2",
+       "installatore",
+       "TZ-01, TZ-02, TZ-03"
+      ]
+     ]
+    },
+    {
+     "titolo": "X. Pezzi e linee senza regola di distinta (DA DEFINIRE)",
+     "righe": [
+      [
+       "X.1",
+       "Ventilconvettore canalizzato: fornitura e corredo di posa DA DEFINIRE",
+       "n",
+       "3",
+       "DA DEFINIRE",
+       "TE-02, TE-03, TE-01"
+      ],
+      [
+       "X.2",
+       "Plenum di mandata a due uscite: fornitura e corredo di posa DA DEFINIRE",
+       "n",
+       "1",
+       "DA DEFINIRE",
+       "PL-02"
+      ],
+      [
+       "X.3",
+       "Plenum di mandata a tre uscite: fornitura e corredo di posa DA DEFINIRE",
+       "n",
+       "1",
+       "DA DEFINIRE",
+       "PL-03"
+      ],
+      [
+       "X.4",
+       "Plenum di mandata a sei uscite: fornitura e corredo di posa DA DEFINIRE",
+       "n",
+       "1",
+       "DA DEFINIRE",
+       "PL-01"
+      ]
+     ]
+    },
+    {
+     "titolo": "Z. Opere del Committente (escluse dall'offerta, da coordinare)",
+     "righe": [
+      [
+       "Z.1",
+       "Velette o controsoffitti per le bocchette, altezza utile min. 30 cm",
+       "a corpo",
+       "1",
+       "committente",
+       ""
+      ],
+      [
+       "Z.2",
+       "Bocchetta di mandata 300×150 a doppio filare con serranda",
+       "n",
+       "11",
+       "committente",
+       "TA-07, TA-08, TA-09, TA-10, TA-11, TA-01, TA-02, TA-03, TA-04, TA-05, TA-06"
+      ],
+      [
+       "Z.3",
+       "Griglia di transito o luce sotto porta per il ritorno dell'aria dal locale servito",
+       "n",
+       "11",
+       "committente",
+       "Camera 1, Camera 2, Studio, Bagno, Disimpegno, Soggiorno 1, Soggiorno 2, Cucina, Pranzo, Ingresso, Corridoio"
+      ],
+      [
+       "Z.4",
+       "Griglia di ripresa DA DEFINIRE (sezione) senza filtro, apribile per accedere al filtro",
+       "n",
+       "3",
+       "committente",
+       "RA-01, RA-02, RA-03"
+      ],
+      [
+       "Z.5",
+       "Chiusura e ripristino di fori, tracce e passaggi",
+       "a corpo",
+       "1",
+       "committente",
+       ""
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "attivita",
+   "titolo": "G. ATTIVITÀ DA QUOTARE A CORPO (MANODOPERA, MEZZI, PROVE, DOCUMENTI)",
+   "colonne": [
+    {
+     "id": "rif",
+     "titolo": "Rif.",
+     "allinea": "sinistra",
+     "peso": 0.5
+    },
+    {
+     "id": "voce",
+     "titolo": "Attività",
+     "allinea": "sinistra",
+     "peso": 9.5
+    }
+   ],
+   "sezioni": [
+    {
+     "titolo": null,
+     "righe": [
+      [
+       "G.1",
+       "Distribuzione aria: 11 rami flessibili interi dal plenum alle bocchette, senza curve rigide: curve del flessibile ampie (raggio in asse non inferiore a un diametro), senza schiacciamenti né anse; UI e plenum arretrati verso il portico quanto serve a curvare ampi all'uscita delle serrande; plenum porta-bocchetta, sostegni e sigillature; bocche protette fino alla posa delle bocchette."
+      ],
+      [
+       "G.2",
+       "Scarico condensa con sifone e allaccio allo scarico; prova di scarico e della pompa prima della chiusura del controsoffitto."
+      ],
+      [
+       "G.3",
+       "Linee elettriche dedicate dal quadro, collegamento fra le unità, linee di comando e bus; posa di termostati e comandi a parete."
+      ],
+      [
+       "G.4",
+       "Dichiarazione di conformità D.M. 37/2008, art. 1 lettera a) (impianti elettrici), con lo schema del quadro aggiornato e gli allegati."
+      ],
+      [
+       "G.5",
+       "Dichiarazione di conformità D.M. 37/2008, art. 1 lettera c) (impianti di climatizzazione), con allegati; documenti per libretto di impianto, catasto regionale e F-Gas."
+      ],
+      [
+       "G.6",
+       "Cantiere: POS e oneri della sicurezza (presenza dell'impresa del Committente), trabattello e mezzi di sollevamento."
+      ],
+      [
+       "G.7",
+       "Pulizia finale e smaltimento di imballi e residui di lavorazione."
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "note",
+   "titolo": "NOTE DELLA DISTINTA",
+   "colonne": [
+    {
+     "id": "n",
+     "titolo": "",
+     "allinea": "destra",
+     "peso": 0.3
+    },
+    {
+     "id": "nota",
+     "titolo": "",
+     "allinea": "sinistra",
+     "peso": 9.7
+    }
+   ],
+   "sezioni": [
+    {
+     "titolo": null,
+     "righe": [
+      [
+       "1.",
+       "«L da quotare» = (L stimata + 1 m) × 1,15, per eccesso a 0,5 m; minimi: fluido frigorigeno in fase liquida, fluido frigorigeno in fase gassosa 12 m; condensa 10 m; bus di comando 5 m; aria di mandata, aria di ripresa 2 m. La L stimata è un dato del progettista, scritta su ogni tratto."
+      ],
+      [
+       "2.",
+       "Quantità indicative per un prezzo a corpo, fisso e invariabile: l'installatore le verifica nel sopralluogo obbligatorio prima dell'offerta; le varianti hanno solo il prezzo unitario."
+      ],
+      [
+       "3.",
+       "Fornitura da confermare: apparecchiature fornite da Nove C; bocchette e griglie, opere edili del Committente; messa in servizio con Nove C."
+      ],
+      [
+       "4.",
+       "La distinta non progetta: lunghezze, sezioni, portate, protezioni, marca e modello sono dati del progettista; la distinta li maggiora e ne conta il corredo con regole scritte, ciascuna con la sua fonte."
+      ]
+     ]
+    }
+   ]
+  }
+ ]
+}

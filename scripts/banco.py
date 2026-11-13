@@ -18,7 +18,8 @@ semi di hash diversi: misurato il 6 novembre 2026 sui 24 casi di REL-011.
 
 I casi: i 24 del banco di REL-011, il T1 di REL-023, la villetta di REL-015 (idraulica ed
 elettrico), l'aria-aria di REL-012 fase 2, il collaudo T3 di REL-012 con la sua pianta, la
-distinta del T1.
+distinta del T1; i due casi di REL-026 coi ventilconvettori canalizzati idronici, col plenum
+di mandata e col plenum motorizzato di zona, con le loro distinte.
 """
 
 from __future__ import annotations
@@ -95,6 +96,13 @@ CASI: list[Caso] = [
     Caso("aria-aria-rel012", f"{C}/REL-012/fase-2/grafo.json", (f"{C}/REL-012/fase-2/piano.json",), completa=True),
     Caso("collaudo-t3-rel012", f"{C}/REL-012/collaudo-t3/grafo-completo.json", (f"{C}/REL-012/collaudo-t3/piano.json",),
          pianta=f"{C}/REL-012/collaudo-t3/pianta.json"),
+    # REL-026 (I-300): i ventilconvettori canalizzati idronici col plenum di mandata a due, tre e
+    # sei uscite (idraulica ed elettrico), e col plenum motorizzato di zona (tavola unica).
+    Caso("plenum-di-mandata-rel026", f"{C}/REL-026/blocco-a/grafo-plenum-di-mandata.json",
+         (f"{C}/REL-026/blocco-a/piano-plenum-di-mandata.json", f"{C}/REL-026/blocco-a/piano-plenum-di-mandata-elettrico.json"),
+         completa=True, distinta=True),
+    Caso("plenum-motorizzato-rel026", f"{C}/REL-026/blocco-a/grafo-plenum-motorizzato.json",
+         (f"{C}/REL-026/blocco-a/piano-plenum-motorizzato.json",), completa=True, distinta=True),
 ]
 
 

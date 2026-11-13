@@ -1,0 +1,25 @@
+Girati dalla deduzione:
+  - ra-1 0->90
+  - ra-2 0->90
+  - ra-3 0->90
+  - tee-pressure-gauge-pdc-water-return 0->180
+Area del disegno dell'A2: 524 x 358 mm, con la tabella delle apparecchiature in alto a sinistra (155 x 31.25 mm); la posa ne occupa 385 x 322.5.
+
+Avvisi — la tavola si consegna, e si sa
+  - la tavola t1: il foglio e' pieno al 66%, sopra il 65% di D-140, e li' lo spazio per le sigle si stringe davvero. Resta una **misura** e non un difetto da chiudere (D-149): la posa non insegue piu' questo numero
+    codice: SHEET_TOO_FULL · t1
+  - la tavola t1: il disegno arriva a 5.5 mm dal bordo dell'area, e con il suo ingombro poteva starne 10.0: un disegno comodo non si disegna dal bordo a bordo (D-143)
+    codice: DRAWING_TOUCHES_THE_BORDER · t1
+
+Le regole del piano
+  - la tavola t1: 3 terminali in parallelo (fc-1, fc-2, fc-3) si attaccano ai raccordi conf-r1 a x=277.5, conf-r2 a x=277.5, che sono allineati, ma le tratte fra loro non sono verticali. Piu' generatori o piu' terminali vogliono una catena di T verticale e allineata (B3, D-154)
+    codice: PARALLEL_MACHINES_WITHOUT_A_COLLECTOR · t1, conf-r1, conf-r2, fc-1, fc-2, fc-3
+
+File scritti:
+  - docs/collaudi/REL-026/blocco-a/plenum-di-mandata/tavola/rel026-canalizzati-plenum-di-mandata-idraulica-t1.pdf
+  - docs/collaudi/REL-026/blocco-a/plenum-di-mandata/tavola/rel026-canalizzati-plenum-di-mandata-idraulica-t1.svg
+  - docs/collaudi/REL-026/blocco-a/plenum-di-mandata/tavola/rel026-canalizzati-plenum-di-mandata-idraulica-t1.dxf
+  - docs/collaudi/REL-026/blocco-a/plenum-di-mandata/tavola/Cartiglio_NoveC_A3-logo.jpg
+  - docs/collaudi/REL-026/blocco-a/plenum-di-mandata/tavola/rel026-canalizzati-plenum-di-mandata-idraulica-t1-rilievi.md
+
+Formato A2 · tratte 36 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 8 · sormonti 2 · avvisi e regole: DRAWING_TOUCHES_THE_BORDER x1, PARALLEL_MACHINES_WITHOUT_A_COLLECTOR x1, SHEET_TOO_FULL x1

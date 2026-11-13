@@ -251,7 +251,14 @@ Regole di forma:
   Sopra i 35 kW `completa` lo chiede (D-230).
 - **I dati che il vaso vuole** — il contenuto d'acqua dell'impianto, la temperatura
   massima, il dislivello fra il vaso e il punto più alto — non vanno nel grafo: li dai al
-  comando `vaso` dopo `completa`. Se il testo li dice, tienili per quel momento.
+  comando `vaso` dopo `completa`. Se il testo li dice, tienili per quel momento. Lo stesso
+  per **il vaso sanitario** (`vaso --sanitario`, REL-026): la temperatura massima di
+  accumulo, la pressione di rete (o la taratura del riduttore), la taratura della valvola di
+  sicurezza del bollitore; il volume del bollitore sì, quello va sul bollitore (`volume_l`).
+  Il comando conta la dilatazione della sola acqua del bollitore, dall'acqua fredda a 10 °C
+  alla massima di accumulo; precarica uguale alla pressione di rete; pressione finale il 10 %
+  sotto la taratura della valvola (0,5 bar sotto, fino a 5 bar); la taglia dalla serie d'uso
+  comune (focus tecnico Caleffi 0851415, p. 4; metodo proposto, da confermare dal PO).
 - Il campo `evidence` che lo schema prevede puoi lasciarlo vuoto: la tracciabilità la
   dai con la tabella di rilettura (§8, passo 6). Nelle assunzioni puoi usare
   `source_message_refs` per citare la frase del testo da cui nasce la voce.
@@ -638,6 +645,14 @@ contatto `room-thermostat-contact` (in linea su un'alimentazione, sotto); comand
 bocchetta per ogni bocchetta del testo: qui il terminale **non** è rappresentativo, perché
 ognuna ha il suo ramo, la sua portata e la sua lunghezza.
 
+**Il canalizzato idronico** (REL-026): un ventilconvettore canalizzato ad acqua con i canali
+dell'aria è `fan-coil-ducted-air` — l'acqua su `in` e `out` come ogni terminale, la mandata
+dell'aria da `supply`, la ripresa su `return`, la condensa da `drain`. Il plenum dopo di lui
+(e dopo un'unità interna) è **motorizzato** se il testo dice serrande, motori o la centrale di
+zona — `zoning-plenum-N`, come sopra —, **di mandata** se il testo lo dice senza serrande né
+motori — `supply-plenum-2` … `supply-plenum-6`; se dice solo «plenum», è una domanda (§6). In
+tutti e due N è il numero delle uscite collegate. Senza canali si resta a `fan-coil-ducted`.
+
 **Le reti e i fluidi.** Ogni linea è una rete, e il fluido dice di che linea si tratta:
 
 | linea | `domain` | `medium` |
@@ -944,7 +959,7 @@ resta alle regole.
 
 **Entrano anche, quando il testo li dice, l'aria-aria e l'elettrico e il comando** (§4.8),
 che non sono ferramenta di servizio: i mestieri `refrigerant_generation`,
-`direct_expansion_terminal`, `air_zoning`, `zone_control`, `air_terminal`, `air_return`,
+`direct_expansion_terminal`, `air_zoning`, `air_distribution`, `zone_control`, `air_terminal`, `air_return`,
 `condensate_trap`, `power_source`, `power_isolation`, `power_switching`, `room_contact_control`, `room_control`, `unit_control`,
 `plant_control`, `temperature_sensing`, `outdoor_temperature_sensing`. La **sonda a
 immersione** su una tubazione si appende come un termometro: un `tee-branch` in linea e dal
