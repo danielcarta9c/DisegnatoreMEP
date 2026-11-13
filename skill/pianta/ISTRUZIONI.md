@@ -31,8 +31,8 @@ numeri di tratta e lunghezze (§3), e prende dalla distinta la lunghezza dei tra
 grafo»); `--grafo-in-sola-lettura` lo lascia com'è e fa solo il confronto.
 
 Esce, col nome del JSON: `.pdf`, `.svg`, `.dxf` (con il logo accanto), `.png` (l'anteprima: guardala),
-`.tracciati.json` (percorsi, lunghezze, rilievi, avvisi) e, se c'è un riquadro di
-dettaglio, le stesse tavole `<nome>-dettaglio-A…`. Uscita `0` fatto, `2` fatto ma con un rilievo
+`.tracciati.json` (percorsi, lunghezze, rilievi, avvisi) e, se hai chiesto un riquadro di
+dettaglio (§6), le stesse tavole `<nome>-dettaglio-A…`. Uscita `0` fatto, `2` fatto ma con un rilievo
 che ferma la consegna, `1` il JSON non regge (il messaggio dice dove, il campo atteso e un esempio
 dell'oggetto giusto).
 
@@ -76,7 +76,7 @@ destra, **y verso il basso** — come leggi un'immagine.
 | `sagome_muri` | facoltativo: i **contorni veri** dei muri, un poligono per muro `[[x, y], …]` in metri (almeno tre punti; una L è un poligono solo) | dal disegno di base, quando i rettangoli asse-spessore non combaciano con i muri disegnati (angoli che si sovrappongono, estremità che sporgono). Se ci sono, **il retino dei muri si disegna sulle sagome**, anche nei riquadri di dettaglio e nel DXF; i `muri` restano e servono all'instradatore. Porte e finestre sono **buchi** della sagoma: fermala dove comincia l'apertura. Un muro ad anello va in più pezzi |
 | `pezzi` | `sigla`, `tipo` (l'**id della voce di catalogo**: `return-air-terminal`, non l'id del simbolo `return-grille`), `x`/`y` (il **centro**), `larghezza` (lungo x), `profondita` (lungo y); facoltativi `id` (l'id del grafo), `sovrapposto_a` e `sta`, `ingombro_da_confermare` | le sigle dello schema funzionale. Bocchette e griglie a parete **a cavallo del muro**: il loro foro è il pezzo. Due pezzi uno sopra l'altro: §4ter |
 | `tracciati` | `tratta` (T01…), `da`/`a` (sigla o id, o `{pezzo, lato}`), `passa_per`, `fluido`, `dimensione`, `quota`, `fascio`, `lunghezza_m`, `lunghezza_minima_m` | i numeri e le lunghezze della tabella delle tratte. `lato` (sopra, sotto, sinistra, destra) solo dove l'attacco c'è davvero: le uscite di un plenum |
-| `dettagli` | facoltativo: i riquadri a scala maggiore, `{id, rettangolo, scala}` | di regola **non lo scrivi**: li fa la tavola dove serve (§6) |
+| `dettagli` | facoltativo: i riquadri a scala maggiore, `{id, rettangolo, scala}` | **solo se il progettista li chiede**: la tavola non ne apre da sola (§6). Senza, o con `[]`, nessun riquadro |
 | `forature` | facoltativo, `false` di base: `true` accende le forature sulla tavola (F1, F2…, l'elenco) e nei dati per la distinta | **solo se il progettista le chiede**: in una tavola MEP di regola non servono |
 
 ```json
@@ -183,6 +183,14 @@ Un **`fascio`** è fatto di tracciati fra **gli stessi due pezzi** (liquido, gas
 unità): corrono paralleli a passo fisso e hanno una scritta sola. Non dichiarare fascio cavi che
 vanno in posti diversi — i bus a stella dalla centrale non sono un fascio.
 
+Mandata e ritorno dello stesso terminale (il collettore e il ventilconvettore) li puoi dichiarare
+in fascio: corrono insieme, e la scritta è una, «T03/T04 · MS 16 · L 6 m» — le due sigle, la
+dimensione e la lunghezza una volta. Se non li dichiari, la tavola dà loro una scritta sola lo
+stesso **se corrono insieme davvero** (per almeno l'80 % del percorso, a non più di due passi del
+fascio) e hanno la stessa dimensione e la stessa lunghezza; se l'instradatore li porta per strade
+diverse, ciascuno ha la sua. In un fascio di dimensioni diverse (linee frigo e cavo) la scritta
+non dice la dimensione: sta nella tabella.
+
 ### Le forature: spente di base, `"forature": true` su richiesta
 
 **Di base la tavola non dice le forature**: niente F1, F2…, niente elenco, niente dato per la
@@ -210,6 +218,14 @@ Il comando stampa i controlli e li scrive in `.tracciati.json`:
 - **richiami corti** (al più 12 mm di carta, 60 cm a 1:50) che non attraversano muri, pezzi né
   scritte, e al più **una** linea — contata e detta. Dove una scritta non ha posto vicino, va **in
   legenda**: un numero cerchiato accanto alla linea, il testo nella colonna;
+- **scritte fuori dalla pianta**: dove non c'è posto nemmeno per il numero, la scritta va nello
+  spazio bianco attorno alla pianta, **col richiamo** dal suo oggetto (§6): incolonnate, i
+  richiami ortogonali con al più un gomito, **mai incrociati** fra loro (se lo sono, ferma la
+  consegna); sopra una scritta o un pezzo passano solo se non c'era altro modo, e si contano;
+- **una scritta per due tubi che corrono insieme**: mandata e ritorno fra gli stessi pezzi, stesso
+  fluido, stessa dimensione e stessa lunghezza, una accanto all'altra per quasi tutto il percorso,
+  hanno una scritta sola, «T05/T06 · MS 16 · L 11 m» — che siano un `fascio` o no. Con dimensioni
+  o lunghezze diverse no: la scritta ne direbbe una sola;
 - **tratte non instradate**: dette una per una, e disegnate tratteggiate;
 - **sormonti**: contati ed elencati; il percorso li evita quando può, non sempre può;
 - **forature**, se le accendi (`"forature": true`): ogni muro passato fuori da un'apertura che
@@ -228,13 +244,30 @@ Il comando stampa i controlli e li scrive in `.tracciati.json`:
 
 Tutto quello che ferma la consegna esce come `BLOCCANTE` e con uscita `2`.
 
-## 6. Il nodo fitto e il riquadro di dettaglio
+## 6. Il nodo fitto: le scritte fuori dalla pianta, e il dettaglio se lo chiedi
 
-Attorno a un'unità interna con il plenum, la ripresa e la centrale, a 1:50 le scritte possono non
-starci. Allora la tavola fa da sé un **riquadro di dettaglio a 1:20**: incornicia la zona sulla
-tavola intera («Dettaglio A 1:20») e la disegna su una tavola a parte, `<nome>-dettaglio-A`, con
-le scritte che a 1:50 non stavano. Se vuoi tu la zona, la dichiari in `dettagli`; `"dettagli": []`
-li spegne, e allora le scritte senza posto fermano la consegna. **Guarda anche il dettaglio.**
+Attorno a un'unità interna con il plenum, la ripresa e la centrale, o in un locale tecnico
+piccolo, a 1:50 le scritte possono non starci. La tavola prova, nell'ordine: **accanto** al suo
+oggetto; con un **richiamo corto**; come **numero cerchiato**, col testo in legenda; e se nemmeno
+il numero ha posto, **fuori dalla pianta**: nello spazio bianco attorno al disegno, collegata al
+suo oggetto da una linea di richiamo. Le scritte fuori stanno **incolonnate** — a destra della
+pianta allineate a sinistra, a sinistra allineate a destra, su una griglia a passo fisso; sopra e
+sotto, dove il margine è basso ma largo, su righe a passo fisso —, ciascuna sul lato che le dà il
+richiamo più corto e più pulito. Il richiamo è ortogonale, con al più un gomito, e **non incrocia
+gli altri richiami**.
+
+Se fuori non c'è posto per tutte, o un richiamo passa sopra una scritta o un pezzo, o attraversa
+mezza tavola (oltre 12 cm), la pianta **si sposta sul foglio** verso il lato opposto, e il margine
+dalla parte delle scritte raddoppia; se nemmeno così ci stanno, la tavola passa al **formato
+successivo** con la stessa scala (come quando la colonna non entra). Il foglio non cresce per
+questo se lo spazio c'è già.
+
+**Il riquadro di dettaglio non nasce più da solo**: lo fai solo se il progettista lo chiede,
+dichiarandolo in `dettagli` (`{"id": "A", "rettangolo": [x0, y0, x1, y1], "scala": 20}`). Allora la
+tavola incornicia la zona («Dettaglio A 1:20»), la disegna su una tavola a parte,
+`<nome>-dettaglio-A`, e le scritte che a 1:50 non stanno e il cui oggetto cade nella zona si
+posano lì invece che fuori. **Guarda anche il dettaglio**, e guarda i richiami: uno lungo che
+attraversa mezza stanza si legge male anche quando i controlli sono a zero — scrivilo.
 
 ## 7. Che cosa la tavola non garantisce
 

@@ -319,8 +319,9 @@ class Parametri(StrictModel):
 
 class Dettaglio(StrictModel):
     """Un riquadro di dettaglio: una zona della pianta disegnata a scala
-    maggiore su una tavola a parte, quando a 1:50 e' troppo fitta per le sue
-    scritte."""
+    maggiore su una tavola a parte, quando il progettista lo chiede. La tavola
+    non ne apre da sola: le scritte che a 1:50 non stanno vanno fuori dalla
+    pianta, col richiamo."""
 
     id: str = Field(pattern=r"^[A-Z0-9]{1,3}$")
     """La lettera del dettaglio: A, B…"""
@@ -375,8 +376,11 @@ class Pianta(StrictModel):
     progettista da' un'altra regola, e la tavola lo dice."""
     parametri: Parametri = Field(default_factory=Parametri)
     dettagli: list[Dettaglio] | None = None
-    """I riquadri di dettaglio. Se manca, la tavola ne fa uno da se' dove le
-    scritte non trovano posto a 1:50, e lo dice; `[]` li spegne."""
+    """I riquadri di dettaglio **che il progettista chiede**. Se manca, o e' `[]`,
+    non ce n'e' nessuno (REL-026, C-1; LEGGIMI M2 di BD.RM.260): fino alla 2.0
+    `None` voleva dire «li fa la tavola dove le scritte non stanno», e il dettaglio
+    della commessa era un A3 con due tubi. Ora le scritte che a 1:50 non stanno
+    vanno fuori dalla pianta, col richiamo (`fuori_pianta.py`)."""
     forature: bool = False
     """Le forature sulla tavola: **spente di base** (REL-026, B-3; LEGGIMI B1 di
     BD.RM.260: «in una tavola MEP non servono»). Spente, la tavola non numera F1,
