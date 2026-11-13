@@ -42,6 +42,8 @@ from disegnatore_mep.graphics.standard import (
 )
 from disegnatore_mep.layout.legend import MEDIUM_NAMES, MEDIUM_STYLES, a_capo
 
+from .fuori_pianta import SPESSORE_MM as SPESSORE_DEL_RICHIAMO_FUORI_MM
+from .fuori_pianta import Richiesta, posa_fuori
 from .instrada import ORDINE_DEI_FLUIDI, Percorso, chiave_della_tratta, ordine_di_instradamento
 from .lunghezze import Lunghezza, Regola, la_regola, metri
 from .modello import Foglio, Muro, Pianta
@@ -52,6 +54,7 @@ from .scritte import (
     ScrittaPosata,
     Segmento,
     misura,
+    occupa,
     posa_accanto,
     posa_dentro,
     posa_intorno,
@@ -911,6 +914,9 @@ def componi(
     # dentro il pezzo non toglie posto a nessuno.
     scritte: list[tuple[str, ScrittaPosata]] = []
     dentro_ai_pezzi: set[str] = set()
+    oggetti: dict[str, Richiesta] = {}
+    """Per scritta, l'oggetto a cui si attacca se va fuori dalla pianta (REL-026, C-1)."""
+    proprie_di: dict[str, frozenset[Segmento]] = {}
     def da_scrivere(chi: str, r: Rettangolo) -> bool:
         """Sulla tavola intera, tutte salvo le rimandate; nel dettaglio, le
         rimandate e quelle degli oggetti tutti dentro la zona."""
@@ -976,6 +982,9 @@ def componi(
         posata = posa_accanto(testo, CORPO_TRATTE_PT, False, carta[guida], proprie, ingombri, mezzo,
                               sotto=[carta_dei_pezzi[c] for c in sotto_la_linea])
         scritte.append((chi, posata))
+        oggetti[chi] = Richiesta(chi, testo, CORPO_TRATTE_PT, False, linee=tuple(tuple(q) for q in carta[guida]),
+                                 sotto=tuple(carta_dei_pezzi[c] for c in sotto_la_linea))
+        proprie_di[chi] = frozenset(proprie)
     for pezzo in pianta.pezzi:
         if pezzo.sigla in dentro_ai_pezzi:
             continue
@@ -986,6 +995,8 @@ def componi(
         posata = posa_intorno(pezzo.sigla, CORPO_SIGLE_PT, True, (a[0], a[1], b[0], b[1]), ingombri,
                               dentro=True, sopra=[carta_dei_pezzi[c] for c in sotto_la_sigla.get(pezzo.sigla, [])])
         scritte.append((f"pezzo {pezzo.sigla}", posata))
+        oggetti[f"pezzo {pezzo.sigla}"] = Richiesta(f"pezzo {pezzo.sigla}", pezzo.sigla, CORPO_SIGLE_PT, True,
+                                                    rettangolo=(a[0], a[1], b[0], b[1]))
     for foratura in forature:
         foro = P(*foratura.punto)
         if not da_scrivere(f"foratura {foratura.numero}", (foro[0], foro[1], foro[0], foro[1])):
@@ -998,6 +1009,37 @@ def componi(
                               (foro[0] - 0.9, foro[1] - 0.9, foro[0] + 0.9, foro[1] + 0.9), ingombri, sopra=muro_del_foro)
         ammessi[f"foratura {foratura.numero}"] = {f"muro {foratura.muro}"}
         scritte.append((f"foratura {foratura.numero}", posata))
+        oggetti[f"foratura {foratura.numero}"] = Richiesta(
+            f"foratura {foratura.numero}", foratura.numero, CORPO_TRATTE_PT, True,
+            rettangolo=(foro[0] - 0.9, foro[1] - 0.9, foro[0] + 0.9, foro[1] + 0.9),
+        )
+
+    # Le scritte che in pianta non hanno trovato posto — ne' accanto, ne' col richiamo
+    # corto, ne' come numero in legenda — vanno fuori dalla pianta, nello spazio bianco
+    # attorno, col loro richiamo (REL-026, C-1): prima aprivano un riquadro di dettaglio.
+    # Prima dei nomi delle stanze, che poi non vanno sopra i richiami.
+    senza_posto = [indice for indice, (_, posata) in enumerate(scritte) if not posata.libera]
+    if senza_posto:
+        intorno = carta_della_zona or (*P(xmin, ymin), *P(xmax, ymax))
+        fuori = posa_fuori(
+            [oggetti[scritte[indice][0]] for indice in senza_posto], ingombri, intorno,
+            (area.x_mm + 2.0, area.y_mm + 2.0, area.right_mm - 2.0, area.y_mm + libera_h),
+            frozenset(s for di, s in linee if di.startswith("tratta ")),
+            [(*p.richiamo, 0.1) for _, p in scritte if p.richiamo is not None], proprie_di,
+        )
+        if any(f is None for f in fuori):
+            # Fuori non c'e' posto per tutte: il formato successivo, con la stessa scala, se
+            # li' ci stanno; se no si resta su questo, e quelle senza posto si contano.
+            tavola_dopo = _sul_formato_dopo(pianta, formato, scala, percorsi, lunghe, forature, fori_dei_pezzi,
+                                            cartiglio, pixel_dello_sfondo, regola, avvisi_della_colonna, zona,
+                                            rimandate, riquadri, ridotta, nel_dettaglio, controllo_delle_sigle)
+            if tavola_dopo is not None and all(p.libera for _, p in tavola_dopo.scritte):
+                return tavola_dopo
+        for indice, posata_fuori in zip(senza_posto, fuori, strict=True):
+            if posata_fuori is None:
+                occupa(scritte[indice][1], ingombri)
+            else:
+                scritte[indice] = (scritte[indice][0], posata_fuori)
     for stanza in pianta.stanze:
         superficie = _superficie(stanza.poligono)
         testo = " · ".join(
@@ -1010,7 +1052,14 @@ def componi(
         if posata_o_niente is not None:
             scritte.append((f"stanza {stanza.id}", posata_o_niente))
 
+    richiami_fuori: list[Primitiva] = []
+    """I richiami delle scritte fuori: escono dalla zona del dettaglio, e non si ritagliano."""
     for chi, posata in scritte:
+        if posata.richiamo_fuori is not None:
+            richiami_fuori.append(Linea(posata.richiamo_fuori, "#000000", SPESSORE_DEL_RICHIAMO_FUORI_MM, LAYER_SIGLE))
+            richiami_fuori.append(Cerchio(posata.richiamo_fuori[0], 0.35, "#000000", 0.1, "#000000", LAYER_SIGLE))
+            for a, b in zip(posata.richiamo_fuori, posata.richiamo_fuori[1:], strict=False):
+                linee.append((f"richiamo fuori:{chi}", (a[0], a[1], b[0], b[1], SPESSORE_DEL_RICHIAMO_FUORI_MM / 2)))
         colore = COLORE_STANZE if chi.startswith("stanza") else "#000000"
         layer = LAYER_STANZE if chi.startswith("stanza") else LAYER_SIGLE
         if chi.startswith(("tratta", "fascio")):
@@ -1032,6 +1081,7 @@ def componi(
         x0z, y0z, x1z, y1z = carta_della_zona
         primitive.append(Linea(((x0z, y0z), (x1z, y0z), (x1z, y1z), (x0z, y1z), (x0z, y0z)), "#000000", 0.25,
                                LAYER_SIGLE, "4 1 1 1"))
+    primitive += richiami_fuori
 
     # La scala.
     primitive += _barra_della_scala(area.x_mm + MARGINE_MM, area.y_mm + area.height_mm - 4.0, k, scala)
@@ -1042,15 +1092,11 @@ def componi(
     if c.y + 6.0 > frame.legend_rect_mm.height_mm:
         # Le scritte in legenda e gli avvisi si sanno solo dopo la posa: se la
         # colonna non entra, si rifa' la tavola sul formato successivo.
-        nomi = list(FORMATI)
-        if pianta.foglio.formato is None and nomi.index(formato) + 1 < len(nomi):
-            piu_grande = pianta.model_copy(
-                update={"foglio": Foglio(formato=nomi[nomi.index(formato) + 1], scala=scala)}
-            )
-            tavola = componi(piu_grande, percorsi, lunghe, forature, fori_dei_pezzi, cartiglio,
-                             pixel_dello_sfondo, regola, avvisi_della_colonna, zona, rimandate, riquadri,
-                             ridotta, nel_dettaglio, controllo_delle_sigle)
-            return tavola
+        tavola_dopo = _sul_formato_dopo(pianta, formato, scala, percorsi, lunghe, forature, fori_dei_pezzi,
+                                        cartiglio, pixel_dello_sfondo, regola, avvisi_della_colonna, zona,
+                                        rimandate, riquadri, ridotta, nel_dettaglio, controllo_delle_sigle)
+        if tavola_dopo is not None:
+            return tavola_dopo
         avvisi.append("la colonna non entra nel foglio: la tavola esce lo stesso, e va vista")
     bx, by = frame.legend_rect_mm.x_mm + 3.0, frame.legend_rect_mm.y_mm + 2.0
     primitive += [_sposta(p, bx, by) for p in c.primitive]
@@ -1063,6 +1109,25 @@ def componi(
             cartiglio=cartiglio, valori=valori_del_cartiglio(pianta, scala)
         ),
     )
+
+
+def _sul_formato_dopo(
+    pianta: Pianta, formato: str, scala: int, percorsi: Sequence[Percorso], lunghe: Sequence[Lunghezza],
+    forature: Sequence[Foratura], fori_dei_pezzi: Sequence[tuple[str, str]], cartiglio: Cartiglio | None,
+    pixel_dello_sfondo: tuple[int, int] | None, regola: Regola | None, avvisi_della_colonna: Sequence[str],
+    zona: tuple[float, float, float, float] | None, rimandate: frozenset[str],
+    riquadri: Sequence[tuple[str, tuple[float, float, float, float], int]], ridotta: str | None,
+    nel_dettaglio: frozenset[str], controllo_delle_sigle: str,
+) -> Tavola | None:
+    """La tavola rifatta sul formato successivo, con la stessa scala, quando sul suo non
+    entra quello che si sa solo dopo la posa: la colonna, o le scritte fuori dalla pianta
+    (REL-026, C-1). None se il formato e' fissato dalla pianta o e' gia' l'ultimo."""
+    nomi = list(FORMATI)
+    if pianta.foglio.formato is not None or nomi.index(formato) + 1 >= len(nomi):
+        return None
+    piu_grande = pianta.model_copy(update={"foglio": Foglio(formato=nomi[nomi.index(formato) + 1], scala=scala)})
+    return componi(piu_grande, percorsi, lunghe, forature, fori_dei_pezzi, cartiglio, pixel_dello_sfondo, regola,
+                   avvisi_della_colonna, zona, rimandate, riquadri, ridotta, nel_dettaglio, controllo_delle_sigle)
 
 
 def _sovrapposti_stretti(a: Rettangolo, b: Rettangolo) -> bool:

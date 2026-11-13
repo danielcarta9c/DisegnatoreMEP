@@ -19,6 +19,11 @@ Se nemmeno il richiamo corto trova posto, la scritta va **in legenda**: accanto
 alla linea (o al pezzo) un numero cerchiato, e il testo nella colonna, sotto
 lo stesso numero. Un richiamo lungo che attraversa mezza stanza non si legge
 (collaudo REL-012, t1): un numero si'.
+
+Se non c'e' posto nemmeno per il numero, la scritta torna **senza posto**
+(`libera=False`) e non occupa niente: la tavola la porta **fuori dalla pianta**,
+nello spazio bianco attorno, con il suo richiamo (`fuori_pianta.py`, REL-026 C-1).
+Fino alla 2.0 apriva da sola un riquadro di dettaglio.
 """
 
 from __future__ import annotations
@@ -79,6 +84,10 @@ class ScrittaPosata:
     il numero, `x` il bordo sinistro del cerchio), il testo intero sta nella
     colonna (`in_legenda`)."""
     in_legenda: str | None = None
+    richiamo_fuori: tuple[tuple[float, float], ...] | None = None
+    """Una scritta fuori dalla pianta (REL-026, C-1): il suo richiamo, dal punto
+    d'attacco sull'oggetto al bordo della scritta, due o tre punti (al piu' un
+    gomito). Allora `richiamo` e' None: il richiamo corto e' un'altra cosa."""
 
 
 def misura(testo: str, corpo_pt: float, grassetto: bool) -> tuple[float, float, float]:
@@ -139,6 +148,22 @@ class Ingombri:
     richiamo puo' attraversare: quelli sovrapposti a un suo capo, sotto cui la
     linea passa (il plenum, per il cavo dalla centrale che gli sta sopra)."""
     _indice: dict[tuple[int, int], list[tuple[str, int]]] = field(default_factory=dict)
+
+    def copia(self) -> Ingombri:
+        """Una copia da provare: le scritte fuori dalla pianta si provano in piu' ordini
+        (`fuori_pianta.py`), e si tiene il migliore."""
+        return Ingombri(
+            area=self.area, segmenti=list(self.segmenti), rettangoli=list(self.rettangoli),
+            scritte=list(self.scritte), legenda=list(self.legenda), muri=set(self.muri), ammessi=self.ammessi,
+            ammessi_al_richiamo=self.ammessi_al_richiamo,
+            _indice={cella: list(dentro) for cella, dentro in self._indice.items()},
+        )
+
+    def prendi(self, altri: Ingombri) -> None:
+        """Diventa `altri`: la prova che si tiene."""
+        for nome in ("area", "segmenti", "rettangoli", "scritte", "legenda", "muri", "ammessi",
+                     "ammessi_al_richiamo", "_indice"):
+            setattr(self, nome, getattr(altri, nome))
 
     def _indicizza(self, tipo: str, numero: int, r: Rettangolo) -> None:
         for cella in _celle(r):
@@ -379,9 +404,7 @@ def _posa_accanto(
     if numero is not None:
         return numero
     x, y = primo if primo is not None else tratti[0][0]
-    r = _riquadro(x, y, larghezza, salita, discesa)
-    ingombri.metti_scritta(r)
-    return ScrittaPosata(testo, x, y, corpo_pt, grassetto, r, libera=False)
+    return _senza_posto(testo, x, y, corpo_pt, grassetto, larghezza, salita, discesa)
 
 
 def _dentro_al_pezzo(
@@ -501,9 +524,24 @@ def _posa_intorno(
             return ScrittaPosata(str(numero_scritto), round(x, 3), round(y, 3), corpo_pt, True, r,
                                  numero=numero_scritto, in_legenda=testo)
     x, y = primo if primo is not None else (x1 + ARIA_MM, base_mezzo)
-    r = _riquadro(x, y, larghezza, salita, discesa)
-    ingombri.metti_scritta(r)
-    return ScrittaPosata(testo, x, y, corpo_pt, grassetto, r, libera=False)
+    return _senza_posto(testo, x, y, corpo_pt, grassetto, larghezza, salita, discesa)
+
+
+def _senza_posto(
+    testo: str, x: float, y: float, corpo_pt: float, grassetto: bool, larghezza: float, salita: float,
+    discesa: float,
+) -> ScrittaPosata:
+    """La scritta che in pianta non ha posto: il primo posto provato, `libera=False`, e
+    **non occupa niente** — la tavola la porta fuori dalla pianta (REL-026, C-1), e solo
+    se nemmeno fuori c'e' posto la rimette qui (`occupa`)."""
+    return ScrittaPosata(testo, x, y, corpo_pt, grassetto, _riquadro(x, y, larghezza, salita, discesa),
+                         libera=False)
+
+
+def occupa(posata: ScrittaPosata, ingombri: Ingombri) -> None:
+    """Una scritta senza posto ne' in pianta ne' fuori resta dove era stata provata, e
+    occupa quel posto: il controllo la conta (scritte su linee o su scritte)."""
+    ingombri.metti_scritta(posata.riquadro)
 
 
 def posa_dentro(
