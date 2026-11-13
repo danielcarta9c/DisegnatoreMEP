@@ -455,6 +455,14 @@ ci si attaccano — e l'ordine è una decisione di progetto:
   dalle utenze verso la sorgente — e il ritorno esce **rovesciato** senza che nessuno l'abbia
   deciso.
 
+**La via dritta del raccordo è `a`–`b`, e ci passa la dorsale.** In una catena di raccordi la
+dorsale entra da `a` ed esce da `b`; la macchina, o l'utenza, si attacca al **braccio `c`**.
+All'ultimo raccordo, dove la dorsale finisce, sulla via dritta va l'ultima utenza. Non stai
+decidendo il disegno: è l'unico modo perché chi compone possa disegnare il collettore come
+**una linea sola**. Una dorsale scritta sul braccio fa una piega a ogni raccordo, e nessuna
+giacitura del pezzo la raddrizza (visto su una tavola di REL-026: tre ventilconvettori, il
+ritorno col dente a ogni confluenza).
+
 Un **ritorno inverso** (Tichelmann), **due dorsali distinte**, un ordine diverso fra mandata
 e ritorno sono **scelte del progettista**. Si trascrivono **solo se il testo le dice**; se
 non le dice, la distribuzione è una sola e il ritorno specchia la mandata. **Non è una

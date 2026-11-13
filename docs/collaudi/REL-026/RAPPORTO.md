@@ -41,7 +41,8 @@ cartelle `blocco-c-*/` e `finale/` sono rifatte **col codice unito** (`rifai_le_
   fitto il vecchio dettaglio a 1:20 si leggeva meglio: si può ancora chiedere in `dettagli`.
 - **Un richiamo sopra una scritta**: nell'appartamento TZ-04 passa sopra la scritta di T16. Il controllo lo conta
   (`richiami_fuori_sopra_scritte_o_pezzi`) e non ferma la consegna.
-- **Il ritorno «col dente»** a ogni confluenza dei ventilconvettori nello schema (i raccordi a T non si specchiano).
+- ~~**Il ritorno «col dente»** a ogni confluenza dei ventilconvettori nello schema.~~ **Corretto dopo i commenti del
+  PO (§7)**: era un errore del grafo e del piano del caso di prova, non un limite del motore.
 - **I plenum a 2 e 3 uscite** si leggono «rettangolo dentro rettangolo»; l'ingresso dei plenum pari sta 1,25 mm fuori
   dal centro, sulla griglia.
 - **Le sigle numerate dal basso** (PL-01 è l'ultimo in fondo alla tavola).
@@ -69,13 +70,13 @@ La base (`d9c8f2e`, la 2.0.0 col pacchetto scritto) dava 2922 passed, 15 skipped
 | criterio | comando | output | esito |
 |---|---|---|---|
 | le tavole per prime | §1 | escono da tutti i casi | raggiunto |
-| suite a 0 failed, senza skip o xfail nuovi | `python -m pytest -q -p no:cacheprovider` | `3156 passed, 15 skipped, 11 xfailed in 369.22s` | raggiunto (skip e xfail: gli stessi 15 e 11 della base) |
+| suite a 0 failed, senza skip o xfail nuovi | `python -m pytest -q -p no:cacheprovider` | `3156 passed, 15 skipped, 11 xfailed in 342.37s` | raggiunto (skip e xfail: gli stessi 15 e 11 della base) |
 | ruff verde | `ruff check src tests scripts skill/scripts` | `All checks passed!` | raggiunto |
 | mypy verde | `python -m mypy` | `Success: no issues found in 131 source files` | raggiunto |
 | il banco verde | `python scripts/banco.py` | `30 uguali, 0 cambiati, su 30` | raggiunto |
 | le tavole cambiate registrate e mostrate | confronto di `tests/banco/impronte.json` con `origin/main` | 28 casi → 30: nuovi `plenum-di-mandata-rel026`, `plenum-motorizzato-rel026`; cambiato `collaudo-t3-rel012` (la pianta: niente dettagli automatici, la base nuova, le scritte fuori); cambiata un'impronta di `t1-rel023`, `distinta/distinta.json` (la sola impronta delle regole, per la riga in più di `corredo.json`: `blocco-a/RAPPORTO.md`) | raggiunto: `blocco-c-scritte/t3/`, `blocco-c-base/t3/` |
 | nessun dato di cliente nel diff | ricerca nel diff di nomi, indirizzi e codici fiscali delle planimetrie del PO; elenco dei PDF e delle immagini fuori da `docs/collaudi` | nessun riscontro; un solo PDF, `examples/pianta/casi/base-anonima/planimetria.pdf`, inventato | raggiunto |
-| la 2.1.0 costruita con `scripts/costruisci-skill.py` | `python scripts/costruisci-skill.py --out …` | `155 file, 3659 kB` · `Controlli della guida di Anthropic, di skill-creator e del caricamento su claude.ai (al massimo 200 file): passati.` · sha256 `d14b83f0ba00760b…` | raggiunto |
+| la 2.1.0 costruita con `scripts/costruisci-skill.py` | `python scripts/costruisci-skill.py --out …` | `155 file, 3659 kB` · `Controlli della guida di Anthropic, di skill-creator e del caricamento su claude.ai (al massimo 200 file): passati.` · sha256 `39c04228517c4ec2…` | raggiunto |
 | `tests/test_le_release.py` verde | `python -m pytest -q -p no:cacheprovider tests/test_le_release.py tests/test_il_banco.py tests/test_package.py` | `38 passed in 27.89s` | raggiunto |
 | `SKILL.md` sotto le 500 righe | `wc -l skill/SKILL.md` | `465` | raggiunto |
 | la CI verde sulla PR | GitHub Actions sulla PR #95 | verde sull'unione dei blocchi (`2ef0ad0`); **sull'ultima testa si legge sulla PR**: questo rapporto è scritto prima che giri | da leggere sulla PR |
@@ -177,3 +178,43 @@ righe sopra e sotto oltre alle colonne ai lati; la pianta spostata dal centro de
 richiami lunghi; «T05/T06» con la barra; il richiamo sopra una scritta permesso come ultima risorsa; un dettaglio
 chiesto che si tiene le scritte del suo nodo; le lunghezze nel grafo al millimetro; le tubazioni della centrale «non
 in pianta» nel confronto; l'A2 → A3 del T3 con le forature spente.
+
+## 7. I commenti del PO sulla tavola, e che cosa ne è uscito
+
+Il PO, guardando la tavola dei tre ventilconvettori (`blocco-a/plenum-di-mandata/tavola/`), ha lasciato due commenti:
+«Come mai questa tavola è stata disegnata con questi evidenti errori di curve non necessarie sulle autostrade?» e
+«Idem qui.. bastava mettere bene la tee. Non vorrei che c'è un errore da risolvere nel disegnatore».
+
+**Aveva ragione, e il rapporto del blocco A aveva torto.** L'agente del blocco A aveva scritto che «il motore ruota i
+raccordi ma non li specchia», e la sessione l'aveva riportato senza verificarlo. Verificato adesso:
+
+- il motore **specchia** (D-169, `"specchio": true` nel piano): le otto giaciture del raccordo a T, stampate dal motore,
+  sono nella tabella nuova di `skill/comporre/ISTRUZIONI.md` (B3);
+- nel **grafo** del caso di prova la dorsale del ritorno era scritta sul braccio `c` delle confluenze invece che sulla
+  via dritta `a`–`b`: così nessuna giacitura la raddrizza;
+- nel **piano** i raccordi erano girati di mezzo giro, senza specchio;
+- il disegnatore **l'aveva detto**: il rilievo `PARALLEL_MACHINES_WITHOUT_A_COLLECTOR` (B3) era nell'esito del disegno.
+  È un avviso, non ferma la consegna, e l'agente l'aveva lasciato com'era.
+
+Corretto il grafo (`blocco-a/fai-i-grafi.py`: la dorsale su `a`–`b`, il terminale sul braccio) e il piano
+(`{"rotazione": 90, "specchio": true}` sulle due confluenze). Misurato con `bash docs/collaudi/REL-026/blocco-a/rifai.sh`:
+
+| | prima | dopo |
+|---|---|---|
+| esito del disegno | `pieghe 8 · sormonti 2 · … PARALLEL_MACHINES_WITHOUT_A_COLLECTOR x1 …` | `pieghe 4 · sormonti 2 · avvisi e regole: DRAWING_TOUCHES_THE_BORDER x1, SHEET_TOO_FULL x1` |
+
+Il ritorno è una verticale sola. Il banco è riregistrato (`plenum-di-mandata-rel026`: grafo, tavola idraulica e rilievi).
+
+**Che cosa resta da risolvere nella skill, perché non succeda in uso reale.** Il motore ha disegnato quello che il
+piano diceva; l'errore stava a monte, in due punti dove le istruzioni tacevano:
+
+- **fatto, nelle istruzioni**: Capire ora dice che la dorsale passa per la via dritta del raccordo e la macchina sta sul
+  braccio; Comporre ha la tabella delle giaciture del raccordo, specchio compreso, e dice che quel rilievo si cura;
+- **proposto al PO, non fatto**: (a) rendere **bloccante** il rilievo B3 quando una catena di raccordi allineati ha le
+  tratte non dritte, come lo sono già la linea che scavalca sé stessa e l'organo su una piega; (b) togliere la
+  dipendenza dal grafo: un raccordo è un punto, e il motore potrebbe scegliere da sé quale attacco esce da quale lato,
+  qualunque nome gli abbia dato chi ha scritto il grafo. La (b) tocca Eseguire e le tavole del banco: va decisa.
+
+I grafi di riferimento già nel repository (`examples/prova/`) non seguono tutti la regola della via dritta: non sono
+stati toccati.
+

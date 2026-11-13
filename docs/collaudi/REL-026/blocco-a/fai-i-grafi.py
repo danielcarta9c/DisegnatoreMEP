@@ -119,10 +119,12 @@ def grafo_plenum_di_mandata() -> dict[str, Any]:
         tubo("m3", "impianto", "rip-m1.b", "rip-m2.a", lunghezza_m=3),
         tubo("m4", "impianto", "rip-m2.c", "fc-2.in", lunghezza_m=4),
         tubo("m5", "impianto", "rip-m2.b", "fc-3.in", lunghezza_m=5),
-        tubo("r5", "impianto", "fc-3.out", "conf-r2.c", lunghezza_m=5),
-        tubo("r4", "impianto", "fc-2.out", "conf-r2.a", lunghezza_m=4),
-        tubo("r3", "impianto", "conf-r2.b", "conf-r1.c", lunghezza_m=3),
-        tubo("r2", "impianto", "fc-1.out", "conf-r1.a", lunghezza_m=4),
+        # La dorsale del ritorno passa dritta nelle confluenze (a -> b); il ritorno di ogni
+        # ventilconvettore entra dal braccio (c). Cosi' la dorsale e' una verticale sola.
+        tubo("r5", "impianto", "fc-3.out", "conf-r2.a", lunghezza_m=5),
+        tubo("r4", "impianto", "fc-2.out", "conf-r2.c", lunghezza_m=4),
+        tubo("r3", "impianto", "conf-r2.b", "conf-r1.a", lunghezza_m=3),
+        tubo("r2", "impianto", "fc-1.out", "conf-r1.c", lunghezza_m=4),
         tubo("r1", "impianto", "conf-r1.b", "pdc.water_return", lunghezza_m=6),
     ]
     lato_aria(1, ["Camera 1", "Camera 2"], reti, pezzi, tubi, "pl-1")

@@ -27,7 +27,15 @@ materiale di collaudo, non prodotto (D-155).
 
 ### Che cosa mi sembra sbagliato sulle tavole, anche con i numeri a posto
 
-1. **La confluenza del ritorno non può stare dritta** (avviso B3 sulla idraulica). I raccordi a T
+1. > **Corretto il 13 novembre 2026, dopo i commenti del PO sulla tavola.** Quello che segue era
+   > sbagliato: il motore **specchia** i raccordi (D-169, `"specchio": true` nel piano), e il dente
+   > veniva dal grafo e dal piano di questo caso di prova — la dorsale del ritorno scritta sul braccio
+   > `c` delle confluenze invece che sulla via dritta `a`–`b`, e i raccordi girati senza specchio. Con
+   > la dorsale su `a`–`b` e `{"rotazione": 90, "specchio": true}` il ritorno è una verticale sola:
+   > le pieghe passano da 8 a 4 e il rilievo B3 sparisce. Grafo, piano e tavola sono rifatti; la
+   > regola è nelle istruzioni di Capire e di Comporre (`docs/collaudi/REL-026/RAPPORTO.md`, §7).
+
+   **La confluenza del ritorno non può stare dritta** (avviso B3 sulla idraulica). I raccordi a T
    del catalogo hanno il braccio da una parte sola del verso del flusso, e il motore li **ruota** ma
    non li specchia. Con tutti gli attacchi d'acqua dei ventilconvettori a sinistra (D-167), una
    distribuzione a ritorno diretto in colonna o ha una piega a ogni confluenza (così è disegnata: la

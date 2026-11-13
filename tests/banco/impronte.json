@@ -103,15 +103,15 @@
    "tavola/riqualificazione-centrale-pdc-cascata-caldaia-t1.svg": "5cb56a96a31af518b2178204eaaa969b87beb19745672ca81ec233f82f6fdda9"
   },
   "plenum-di-mandata-rel026": {
-   "grafo-completo.json": "de8d0fa8fb1e97bb019229b57a5c04e9f5e442bd0fdd26cf23b3958d634e71c1",
-   "sintesi-1": "Formato A2 · tratte 36 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 8 · sormonti 2 · avvisi e regole: DRAWING_TOUCHES_THE_BORDER x1, PARALLEL_MACHINES_WITHOUT_A_COLLECTOR x1, SHEET_TOO_FULL x1",
+   "grafo-completo.json": "aa02b0b3a52374f14764a0116affa5fd371848cae4d59ac61eeed7f413ee40ac",
+   "sintesi-1": "Formato A2 · tratte 36 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 4 · sormonti 2 · avvisi e regole: DRAWING_TOUCHES_THE_BORDER x1, SHEET_TOO_FULL x1",
    "sintesi-2": "Formato A3 · tratte 7 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 5 · sormonti 0 · avvisi e regole: nessuno",
    "distinta/distinta.json": "0436f28979ba9023439c2ef252f67dceb47f9de07c4b3eb5884fba67df791871",
    "distinta/tabelle-del-foglio.json": "81da480b66f3d8661cafc48c52cb3ad74ed50f66d0fe1aadb24c65026468f158",
    "tavola/rel026-canalizzati-plenum-di-mandata-elettrico-t1-rilievi.md": "448b7e1374193be795d9d0543f64eaa26fc7d8cb856e1e7c513ea7b75565034d",
    "tavola/rel026-canalizzati-plenum-di-mandata-elettrico-t1.svg": "7134e5fb20cfcf9bdb5bebd6e49806ee7131fd06cd515cba207bdc08c9b75a63",
-   "tavola/rel026-canalizzati-plenum-di-mandata-idraulica-t1-rilievi.md": "e8e161f4a802c24e8c5b514d6d7a1d977fe887e396fb2551a07712cbb086a39e",
-   "tavola/rel026-canalizzati-plenum-di-mandata-idraulica-t1.svg": "7004a07b3689310589b29b793cdca551a4d4910e414a3fa313b7ced1a0d4ae0c"
+   "tavola/rel026-canalizzati-plenum-di-mandata-idraulica-t1-rilievi.md": "558c3774ce6fee4a12ad6ad9d5aa8640717a39ee67086a1ceb13b72cae83acc4",
+   "tavola/rel026-canalizzati-plenum-di-mandata-idraulica-t1.svg": "18ae4933e445b9408da13246575deb6c098c7bc9c88dc6b57c4536eb7425813d"
   },
   "plenum-motorizzato-rel026": {
    "grafo-completo.json": "d6034576eea44523cc6bd79ded076d075908a36a82c5f42999ff977fe2297177",

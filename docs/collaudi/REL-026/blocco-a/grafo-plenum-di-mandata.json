@@ -454,7 +454,7 @@
    },
    "endpoint_b": {
     "component_id": "conf-r2",
-    "port_id": "c"
+    "port_id": "a"
    },
    "lunghezza_m": 5,
    "properties": {}
@@ -468,7 +468,7 @@
    },
    "endpoint_b": {
     "component_id": "conf-r2",
-    "port_id": "a"
+    "port_id": "c"
    },
    "lunghezza_m": 4,
    "properties": {}
@@ -482,7 +482,7 @@
    },
    "endpoint_b": {
     "component_id": "conf-r1",
-    "port_id": "c"
+    "port_id": "a"
    },
    "lunghezza_m": 3,
    "properties": {}
@@ -496,7 +496,7 @@
    },
    "endpoint_b": {
     "component_id": "conf-r1",
-    "port_id": "a"
+    "port_id": "c"
    },
    "lunghezza_m": 4,
    "properties": {}

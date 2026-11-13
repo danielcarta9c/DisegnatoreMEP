@@ -1,48 +1,170 @@
 {
- "formato": "A2",
- "vista": "idraulica",
- "note": [
-  "Piano scritto a mano per il caso di prova del blocco A di REL-026: e' materiale di collaudo, non prodotto (D-155).",
-  "PdC in alto a sinistra (A1): mandata a y 25 e ritorno a y 40 fino alle due dorsali verticali, la mandata a x 200 e il ritorno a x 185.",
-  "I tre ventilconvettori in colonna a x 230, a passo 100: ogni mandata entra dalla ripartizione a T girata (braccio a destra), ogni ritorno nella confluenza girata di mezzo giro (braccio da destra, dorsale da sotto).",
-  "Ogni plenum di mandata a destra del suo ventilconvettore, con l'ingresso alla quota della mandata dell'aria (12,5 dal bordo del ventilconvettore): il canale e' una retta.",
-  "Le bocchette in colonna a x 375, ciascuna alla quota della sua uscita; la ripresa sopra il ventilconvettore, lo scarico della condensa sotto.",
-  "I pezzi appesi della PdC come nel T1 di REL-023: la sicurezza sopra la mandata, vaso e manometro sotto il ritorno."
- ],
- "pezzi": {
-  "pdc": {"x": 0, "y": 20, "regola": "A1 generazione a sinistra"},
-  "tee-valve-safety-pdc-water-supply": {"x": 75, "y": 22.5, "regola": "B8 sulla quota della mandata, dopo il giunto"},
-  "valve-safety-pdc-water-supply": {"x": 75, "y": 12.5, "regola": "A4 addosso al suo raccordo"},
-  "tee-expansion-connection-pdc-water-return": {"x": 95, "y": 37.5, "regola": "ordine della catena del ritorno"},
-  "expansion-connection-pdc-water-return": {"x": 95, "y": 57.5, "rotazione": 0, "regola": "A4 appeso in giu'"},
-  "tee-pressure-gauge-pdc-water-return": {"x": 120, "y": 37.5},
-  "pressure-gauge-pdc-water-return": {"x": 120, "y": 57.5, "rotazione": 180},
-  "rip-m1": {"x": 197.5, "y": 75, "rotazione": 90, "regola": "braccio a destra verso fc-1.in (77,5)"},
-  "rip-m2": {"x": 197.5, "y": 175, "rotazione": 90, "regola": "braccio a destra verso fc-2.in (177,5)"},
-  "conf-r1": {"x": 180, "y": 85, "rotazione": 180, "regola": "fc-1.out (87,5) da destra, la dorsale da sotto"},
-  "conf-r2": {"x": 180, "y": 185, "rotazione": 180, "regola": "fc-2.out (187,5) da destra, la dorsale da sotto"},
-  "fc-1": {"x": 230, "y": 70},
-  "fc-2": {"x": 230, "y": 170},
-  "fc-3": {"x": 230, "y": 270},
-  "pl-1": {"x": 300, "y": 72.5, "regola": "ingresso (10) alla quota della mandata di fc-1 (82,5)"},
-  "pl-2": {"x": 300, "y": 165, "regola": "ingresso (17,5) alla quota della mandata di fc-2 (182,5)"},
-  "pl-3": {"x": 300, "y": 247.5, "regola": "ingresso (35) alla quota della mandata di fc-3 (282,5)"},
-  "b-1-1": {"x": 375, "y": 72.5},
-  "b-1-2": {"x": 375, "y": 85},
-  "b-2-1": {"x": 375, "y": 165},
-  "b-2-2": {"x": 375, "y": 177.5},
-  "b-2-3": {"x": 375, "y": 190},
-  "b-3-1": {"x": 375, "y": 247.5},
-  "b-3-2": {"x": 375, "y": 260},
-  "b-3-3": {"x": 375, "y": 272.5},
-  "b-3-4": {"x": 375, "y": 285},
-  "b-3-5": {"x": 375, "y": 297.5},
-  "b-3-6": {"x": 375, "y": 310},
-  "ra-1": {"x": 245, "y": 45},
-  "ra-2": {"x": 245, "y": 145},
-  "ra-3": {"x": 245, "y": 245},
-  "sc-1": {"x": 250, "y": 125},
-  "sc-2": {"x": 250, "y": 225},
-  "sc-3": {"x": 250, "y": 325}
- }
+  "formato": "A2",
+  "vista": "idraulica",
+  "note": [
+    "Piano scritto a mano per il caso di prova del blocco A di REL-026: e' materiale di collaudo, non prodotto (D-155).",
+    "PdC in alto a sinistra (A1): mandata a y 25 e ritorno a y 40 fino alle due dorsali verticali, la mandata a x 200 e il ritorno a x 185.",
+    "I tre ventilconvettori in colonna a x 230, a passo 100: ogni mandata entra dalla ripartizione a T girata (braccio a destra), ogni ritorno nel braccio di una confluenza specchiata e girata (D-169: dorsale dritta da sotto in su, braccio da destra).",
+    "Ogni plenum di mandata a destra del suo ventilconvettore, con l'ingresso alla quota della mandata dell'aria (12,5 dal bordo del ventilconvettore): il canale e' una retta.",
+    "Le bocchette in colonna a x 375, ciascuna alla quota della sua uscita; la ripresa sopra il ventilconvettore, lo scarico della condensa sotto.",
+    "I pezzi appesi della PdC come nel T1 di REL-023: la sicurezza sopra la mandata, vaso e manometro sotto il ritorno."
+  ],
+  "pezzi": {
+    "pdc": {
+      "x": 0,
+      "y": 20,
+      "regola": "A1 generazione a sinistra"
+    },
+    "tee-valve-safety-pdc-water-supply": {
+      "x": 75,
+      "y": 22.5,
+      "regola": "B8 sulla quota della mandata, dopo il giunto"
+    },
+    "valve-safety-pdc-water-supply": {
+      "x": 75,
+      "y": 12.5,
+      "regola": "A4 addosso al suo raccordo"
+    },
+    "tee-expansion-connection-pdc-water-return": {
+      "x": 95,
+      "y": 37.5,
+      "regola": "ordine della catena del ritorno"
+    },
+    "expansion-connection-pdc-water-return": {
+      "x": 95,
+      "y": 57.5,
+      "rotazione": 0,
+      "regola": "A4 appeso in giu'"
+    },
+    "tee-pressure-gauge-pdc-water-return": {
+      "x": 120,
+      "y": 37.5
+    },
+    "pressure-gauge-pdc-water-return": {
+      "x": 120,
+      "y": 57.5,
+      "rotazione": 180
+    },
+    "rip-m1": {
+      "x": 197.5,
+      "y": 75,
+      "rotazione": 90,
+      "regola": "braccio a destra verso fc-1.in (77,5)"
+    },
+    "rip-m2": {
+      "x": 197.5,
+      "y": 175,
+      "rotazione": 90,
+      "regola": "braccio a destra verso fc-2.in (177,5)"
+    },
+    "conf-r1": {
+      "x": 182.5,
+      "y": 85,
+      "specchio": true,
+      "rotazione": 90,
+      "regola": "B3: la dorsale del ritorno dritta (a sotto, b sopra, x 185); fc-1.out (87,5) dal braccio a destra"
+    },
+    "conf-r2": {
+      "x": 182.5,
+      "y": 185,
+      "specchio": true,
+      "rotazione": 90,
+      "regola": "B3: la dorsale del ritorno dritta (a sotto, b sopra, x 185); fc-2.out (187,5) dal braccio a destra"
+    },
+    "fc-1": {
+      "x": 230,
+      "y": 70
+    },
+    "fc-2": {
+      "x": 230,
+      "y": 170
+    },
+    "fc-3": {
+      "x": 230,
+      "y": 270
+    },
+    "pl-1": {
+      "x": 300,
+      "y": 72.5,
+      "regola": "ingresso (10) alla quota della mandata di fc-1 (82,5)"
+    },
+    "pl-2": {
+      "x": 300,
+      "y": 165,
+      "regola": "ingresso (17,5) alla quota della mandata di fc-2 (182,5)"
+    },
+    "pl-3": {
+      "x": 300,
+      "y": 247.5,
+      "regola": "ingresso (35) alla quota della mandata di fc-3 (282,5)"
+    },
+    "b-1-1": {
+      "x": 375,
+      "y": 72.5
+    },
+    "b-1-2": {
+      "x": 375,
+      "y": 85
+    },
+    "b-2-1": {
+      "x": 375,
+      "y": 165
+    },
+    "b-2-2": {
+      "x": 375,
+      "y": 177.5
+    },
+    "b-2-3": {
+      "x": 375,
+      "y": 190
+    },
+    "b-3-1": {
+      "x": 375,
+      "y": 247.5
+    },
+    "b-3-2": {
+      "x": 375,
+      "y": 260
+    },
+    "b-3-3": {
+      "x": 375,
+      "y": 272.5
+    },
+    "b-3-4": {
+      "x": 375,
+      "y": 285
+    },
+    "b-3-5": {
+      "x": 375,
+      "y": 297.5
+    },
+    "b-3-6": {
+      "x": 375,
+      "y": 310
+    },
+    "ra-1": {
+      "x": 245,
+      "y": 45
+    },
+    "ra-2": {
+      "x": 245,
+      "y": 145
+    },
+    "ra-3": {
+      "x": 245,
+      "y": 245
+    },
+    "sc-1": {
+      "x": 250,
+      "y": 125
+    },
+    "sc-2": {
+      "x": 250,
+      "y": 225
+    },
+    "sc-3": {
+      "x": 250,
+      "y": 325
+    }
+  }
 }

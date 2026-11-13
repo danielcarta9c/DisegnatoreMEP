@@ -19,7 +19,7 @@ Li misurano i controlli della skill sulla tavola finita: il controllo di qualitÃ
 
 ## Le regole del piano
 
-- la tavola t1: 3 terminali in parallelo (fc-1, fc-2, fc-3) si attaccano ai raccordi conf-r1 a x=277.5, conf-r2 a x=277.5, che sono allineati, ma le tratte fra loro non sono verticali. Piu' generatori o piu' terminali vogliono una catena di T verticale e allineata (B3, D-154) (`PARALLEL_MACHINES_WITHOUT_A_COLLECTOR` Â· t1, conf-r1, conf-r2, fc-1, fc-2, fc-3)
+- nessuna violazione
 
 ## Il cartiglio
 

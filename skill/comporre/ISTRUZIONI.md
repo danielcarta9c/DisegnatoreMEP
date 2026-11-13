@@ -428,6 +428,30 @@ vicina: qualunque sia l'ordine, qualche sormonto c'è. **Prova i due ordini e ti
 meno sormonti**; a parità scegli, e scrivi nelle note che cosa hai misurato. Misurato sulla
 cascata di tre pompe: 5 sormonti con la mandata vicina, 6 col ritorno vicino.
 
+**Il collettore è una linea sola, e lo decide la giacitura dei raccordi.** Il raccordo a T
+(`tee-junction`, anche per la ripartizione `tee-split`) ha la via dritta `a`–`b` e il braccio
+`c`. Ha otto giaciture come le tre vie, **specchio compreso**:
+
+| | `a` | `b` | `c` |
+|---|---|---|---|
+| rotazione 0 | sinistra | destra | sopra |
+| rotazione 90 | sopra | sotto | destra |
+| rotazione 180 | destra | sinistra | sotto |
+| rotazione 270 | sotto | sopra | sinistra |
+| specchio + 0 | destra | sinistra | sopra |
+| **specchio + 90** | **sotto** | **sopra** | **destra** |
+| specchio + 180 | sinistra | destra | sotto |
+| specchio + 270 | sopra | sotto | sinistra |
+
+Una dorsale che **sale** con le macchine a destra (il ritorno di più terminali in colonna) vuole
+`{"rotazione": 90, "specchio": true}`: nessuna delle quattro rotazioni ce l'ha. Posa i raccordi
+uno sopra l'altro sulla x della dorsale, ciascuno alla quota dell'attacco della sua macchina.
+⚠ **Misurato su REL-026**, tre ventilconvettori: coi raccordi girati senza specchio il ritorno
+faceva un dente a ogni confluenza (8 pieghe, e il rilievo `PARALLEL_MACHINES_WITHOUT_A_COLLECTOR`);
+con la giacitura giusta 4 pieghe e nessun rilievo. **Quel rilievo non si lascia: si cura.**
+Se nel grafo la dorsale passa per il braccio `c` invece che per `a`–`b`, nessuna giacitura la
+raddrizza: è da correggere **nel grafo** (Capire, §«la via dritta del raccordo»), e lo dici.
+
 ### B8 — Una linea non lascia la propria quota per poi tornarci
 Il sali-scendi. Se un pezzo sta su un'autostrada, **posalo sulla quota dell'autostrada**, o la
 linea scende a prenderlo e poi risale, portandosi dietro tutto quello che le sta appeso.
