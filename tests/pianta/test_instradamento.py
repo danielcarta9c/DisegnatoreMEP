@@ -4,12 +4,13 @@
 NON si fanno mai + importante seguire le macro linee architettoniche».
 """
 
+import json
 from pathlib import Path
 
 import pytest
 
 from disegnatore_mep.pianta import instrada
-from disegnatore_mep.pianta.comando import Esito, forature
+from disegnatore_mep.pianta.comando import Esito, disegna_la_pianta, forature
 from disegnatore_mep.pianta.controlli import controlla, diagonale, segmenti
 from disegnatore_mep.pianta.griglia import costruisci_la_griglia
 from disegnatore_mep.pianta.modello import Pianta, carica_pianta
@@ -82,10 +83,19 @@ def test_il_fascio_corre_parallelo(esiti: dict[str, Esito]) -> None:
         assert all(not (a & b) for i, a in enumerate(nodi) for b in nodi[i + 1:])
 
 
-def test_un_muro_senza_aperture_si_fora_e_lo_dice(esiti: dict[str, Esito]) -> None:
+def test_un_muro_senza_aperture_si_fora_e_lo_dice(esiti: dict[str, Esito], tmp_path: Path) -> None:
+    """Il percorso fora la tramezza (il costo della foratura vale sempre); la tavola
+    lo dice solo a forature accese (REL-026, B-3): di base sono spente."""
     esito = esiti["muro"]
     assert [(f.muro, f.tratte) for f in esito.forature] == [("tramezza", ("T01",))]
-    assert len(esito.rilievi.fori_fuori_dalle_aperture) == 1
+    assert esito.rilievi.fori_fuori_dalle_aperture == []
+    dati = json.loads(CASI["muro"].read_text(encoding="utf-8"))
+    dati["forature"] = True
+    accese = tmp_path / "muro-con-le-forature.json"
+    accese.write_text(json.dumps(dati), encoding="utf-8")
+    con = disegna_la_pianta(accese, tmp_path / "out", None, dxf=False, png=False)
+    assert [p.punti for p in con.percorsi] == [p.punti for p in esito.percorsi]
+    assert len(con.rilievi.fori_fuori_dalle_aperture) == 1
 
 
 def test_un_foro_dichiarato_si_usa_invece_di_forare() -> None:

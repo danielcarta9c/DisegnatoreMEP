@@ -63,10 +63,12 @@ def test_ogni_tratta_ha_la_sua_scritta(esiti: dict[str, Esito]) -> None:
 
 
 def test_la_tavola_esce_a_1_50_con_tutti_i_file(esiti: dict[str, Esito]) -> None:
-    """A2: l'esempio della skill mostra anche la zona esterna e il pezzo
-    sovrapposto, e la colonna (legenda, note) non entra piu' nell'A3."""
+    """A3: l'esempio della skill mostra anche la zona esterna e il pezzo
+    sovrapposto. Fino alla 2.0.0 la colonna non entrava nell'A3 e la tavola usciva
+    in A2; con le forature spente di base (REL-026, B-3) la colonna perde l'elenco
+    delle forature e la tavola torna in A3, il formato che il disegno chiede."""
     esito = esiti["appartamento"]
-    assert (esito.tavola.formato, esito.tavola.scala) == ("A2", 50)
+    assert (esito.tavola.formato, esito.tavola.scala) == ("A3", 50)
     assert esito.tavola.avvisi == []
     suffissi = {p.suffix for p in esito.file}
     assert {".svg", ".pdf", ".dxf", ".png", ".json", ".jpg"} <= suffissi
@@ -123,7 +125,9 @@ def test_le_lunghezze_sono_quelle_del_percorso_disegnato(esiti: dict[str, Esito]
             ).da_quotare
             assert tratta["lunghezza_da_quotare_m"] == attesa, tratta["tratta"]
     assert dati["rilievi"]["diagonali"] == 0
-    assert dati["forature"] and dati["fori_dei_pezzi"]
+    # Le forature sono spente di base (REL-026, B-3): i dati non le portano.
+    assert dati["forature_accese"] is False
+    assert dati["forature"] == [] and dati["fori_dei_pezzi"] == [] and "per_il_grafo" not in dati
 
 
 def test_lo_sfondo_raster_sta_sotto_il_disegno(esiti: dict[str, Esito]) -> None:
@@ -166,5 +170,5 @@ def test_il_comando_della_skill(tmp_path: Path, capsys: pytest.CaptureFixture[st
         cartelle_del_repository(RADICE),
     )
     assert uscita == 0
-    assert "Forature fuori dalle aperture: 1" in capsys.readouterr().out
+    assert "Forature: spente, come di base" in capsys.readouterr().out
     assert not (tmp_path / "muro-senza-aperture.dxf").exists()

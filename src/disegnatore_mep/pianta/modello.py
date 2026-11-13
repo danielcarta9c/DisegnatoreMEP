@@ -377,6 +377,13 @@ class Pianta(StrictModel):
     dettagli: list[Dettaglio] | None = None
     """I riquadri di dettaglio. Se manca, la tavola ne fa uno da se' dove le
     scritte non trovano posto a 1:50, e lo dice; `[]` li spegne."""
+    forature: bool = False
+    """Le forature sulla tavola: **spente di base** (REL-026, B-3; LEGGIMI B1 di
+    BD.RM.260: «in una tavola MEP non servono»). Spente, la tavola non numera F1,
+    F2…, non ne fa l'elenco e i tracciati non le portano alla distinta; `true` le
+    accende su richiesta del progettista, e tutto torna com'era. Il costo della
+    foratura nell'instradamento (`parametri.foratura_m`) vale sempre: e' la scelta
+    del percorso, non una scritta."""
     note: list[str] = Field(default_factory=list)
 
     @model_validator(mode="before")

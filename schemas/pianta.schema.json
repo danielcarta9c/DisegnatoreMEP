@@ -976,6 +976,11 @@
       "default": null,
       "title": "Dettagli"
     },
+    "forature": {
+      "default": false,
+      "title": "Forature",
+      "type": "boolean"
+    },
     "note": {
       "items": {
         "type": "string"

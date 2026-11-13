@@ -29,7 +29,7 @@ schema) sono facoltativi, ma **passali tutte le volte che li hai**: il comando c
 numeri di tratta e lunghezze (§3), e prende dalla distinta la lunghezza dei tracciati che non ce l'hanno.
 
 Esce, col nome del JSON: `.pdf`, `.svg`, `.dxf` (con il logo accanto), `.png` (l'anteprima: guardala),
-`.tracciati.json` (percorsi, lunghezze, forature, rilievi, avvisi) e, se c'è un riquadro di
+`.tracciati.json` (percorsi, lunghezze, rilievi, avvisi) e, se c'è un riquadro di
 dettaglio, le stesse tavole `<nome>-dettaglio-A…`. Uscita `0` fatto, `2` fatto ma con un rilievo
 che ferma la consegna, `1` il JSON non regge (il messaggio dice dove, il campo atteso e un esempio
 dell'oggetto giusto).
@@ -73,6 +73,7 @@ destra, **y verso il basso** — come leggi un'immagine.
 | `pezzi` | `sigla`, `tipo` (l'**id della voce di catalogo**: `return-air-terminal`, non l'id del simbolo `return-grille`), `x`/`y` (il **centro**), `larghezza` (lungo x), `profondita` (lungo y); facoltativi `id` (l'id del grafo), `sovrapposto_a` e `sta`, `ingombro_da_confermare` | le sigle dello schema funzionale. Bocchette e griglie a parete **a cavallo del muro**: il loro foro è il pezzo. Due pezzi uno sopra l'altro: §4ter |
 | `tracciati` | `tratta` (T01…), `da`/`a` (sigla o id, o `{pezzo, lato}`), `passa_per`, `fluido`, `dimensione`, `quota`, `fascio`, `lunghezza_m`, `lunghezza_minima_m` | i numeri e le lunghezze della tabella delle tratte. `lato` (sopra, sotto, sinistra, destra) solo dove l'attacco c'è davvero: le uscite di un plenum |
 | `dettagli` | facoltativo: i riquadri a scala maggiore, `{id, rettangolo, scala}` | di regola **non lo scrivi**: li fa la tavola dove serve (§6) |
+| `forature` | facoltativo, `false` di base: `true` accende le forature sulla tavola (F1, F2…, l'elenco) e nei dati per la distinta | **solo se il progettista le chiede**: in una tavola MEP di regola non servono |
 
 ```json
 "velette": [{"id": "veletta-soggiorno", "rettangolo": [0.30, 4.95, 2.30, 5.45]}]
@@ -159,16 +160,21 @@ Un **`fascio`** è fatto di tracciati fra **gli stessi due pezzi** (liquido, gas
 unità): corrono paralleli a passo fisso e hanno una scritta sola. Non dichiarare fascio cavi che
 vanno in posti diversi — i bus a stella dalla centrale non sono un fascio.
 
-### Le forature, per la distinta: `attraversamenti`
+### Le forature: spente di base, `"forature": true` su richiesta
 
-`.tracciati.json` dice per ogni tratta `attraversamenti_di_parete`: le pareti **interne** che la
-tratta fora (fuori da un'apertura che lascia passare la sua quota) più il foro del pezzo a parete
-che è un suo capo (la bocchetta nella tramezza); i fori nel muro perimetrale stanno a parte
-(`fori_nel_perimetrale`), perché quello dell'unità esterna la distinta lo conta già con la sua
-posa. Li trovi tutti insieme in `per_il_grafo.attraversamenti`. **Riportali nel grafo**, fra le
-`properties` di una tubazione della tratta, come `attraversamenti`, e rifai la distinta: così conta
-le forature della pianta invece di assumerne una per ramo. Le linee frigo forano insieme: la
-distinta le conta sulla linea del gas.
+**Di base la tavola non dice le forature**: niente F1, F2…, niente elenco, niente dato per la
+distinta. In una tavola MEP non servono. L'instradatore le paga lo stesso — un muro si fora solo
+se non c'è un passaggio che costi meno —: cambia che cosa si scrive, non il percorso.
+
+Se il progettista le chiede, scrivi nella pianta `"forature": true`. Allora la tavola numera i
+fori e li elenca, e `.tracciati.json` dice per ogni tratta `attraversamenti_di_parete`: le pareti
+**interne** che la tratta fora (fuori da un'apertura che lascia passare la sua quota) più il foro
+del pezzo a parete che è un suo capo (la bocchetta nella tramezza); i fori nel muro perimetrale
+stanno a parte (`fori_nel_perimetrale`), perché quello dell'unità esterna la distinta lo conta già
+con la sua posa. Con `--grafo` il comando li scrive da sé sulla tubazione della tratta, come
+`attraversamenti` (§4, «Le lunghezze nel grafo»), e la distinta rifatta conta le forature della
+pianta invece di assumerne una per ramo. Le linee frigo forano insieme: la distinta le conta sulla
+linea del gas.
 
 ## 5. Che cosa la tavola garantisce — misurato, non promesso
 
@@ -183,8 +189,9 @@ Il comando stampa i controlli e li scrive in `.tracciati.json`:
   legenda**: un numero cerchiato accanto alla linea, il testo nella colonna;
 - **tratte non instradate**: dette una per una, e disegnate tratteggiate;
 - **sormonti**: contati ed elencati; il percorso li evita quando può, non sempre può;
-- **forature**: ogni muro passato fuori da un'apertura che lascia passare quella quota, numerata
-  F1, F2… sulla tavola e nella colonna. Un fascio che fora lo stesso muro fa un foro solo;
+- **forature**, se le accendi (`"forature": true`): ogni muro passato fuori da un'apertura che
+  lascia passare quella quota, numerata F1, F2… sulla tavola e nella colonna. Un fascio che fora
+  lo stesso muro fa un foro solo;
 - **fuori dall'edificio solo nelle zone esterne**: una tratta che esce altrove ha la **fascia rossa**
   ed è un rilievo bloccante (§4bis);
 - **pezzi sovrapposti solo se dichiarati** (§4ter), se no bloccante;

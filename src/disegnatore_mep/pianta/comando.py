@@ -8,15 +8,17 @@ Scrive nella cartella, col nome del JSON:
   `<nome>.png`, l'anteprima;
 - `<nome>.tracciati.json`: i percorsi in metri e, per tratta, la lunghezza del
   progettista, quella misurata, quella usata e quella da quotare (col conto),
-  le forature, i rilievi. Dove il progettista non ha dato la lunghezza, la
-  misura e' li': l'agente la riporta nel grafo dello schema, e la distinta
-  quota lo stesso numero della pianta. Per tratta anche gli
-  `attraversamenti_di_parete`: le pareti interne che la tratta fora (fuori da
-  un'apertura che lascia passare la sua quota) piu' il foro del pezzo a
-  parete a un suo capo (la bocchetta nella tramezza); a parte i fori nel
-  muro perimetrale. L'agente li riporta sulla
-  tubazione del grafo (`attraversamenti`), e la distinta conta le forature della
-  pianta invece di assumerle.
+  i rilievi. Dove il progettista non ha dato la lunghezza, la misura e' li', e
+  con `--grafo` il comando la scrive nel grafo dello schema (`nel_grafo.py`,
+  REL-026 B-4): la distinta quota lo stesso numero della pianta.
+
+**Le forature sono spente di base** (REL-026, B-3). Con `"forature": true` nella
+pianta la tavola le numera e le elenca, e i dati portano per tratta gli
+`attraversamenti_di_parete`: le pareti interne che la tratta fora (fuori da
+un'apertura che lascia passare la sua quota) piu' il foro del pezzo a parete a un
+suo capo (la bocchetta nella tramezza); a parte i fori nel muro perimetrale. Con
+`--grafo` vanno sulla tubazione del grafo (`attraversamenti`), e la distinta conta
+le forature della pianta invece di assumerle.
 
 Con `--distinta` e `--grafo` la pianta si confronta con le uscite degli altri
 comandi (`confronto.py`): sigle, numeri di tratta, capi e lunghezze.
@@ -244,6 +246,10 @@ def disegna_la_pianta(
     avvisi += [f"Discordanza: {voce}" for voce in confronto.avvisi]
     fori = forature(pianta, percorsi)
     dei_pezzi = fori_dei_pezzi(pianta, griglia)
+    # Le forature sono spente di base (REL-026, B-3): si contano, ma la tavola, i
+    # rilievi e i dati non le scrivono, se la pianta non le accende.
+    fori_scritti = fori if pianta.forature else []
+    dei_pezzi_scritti = dei_pezzi if pianta.forature else []
     pixel = None
     cartella.mkdir(parents=True, exist_ok=True)
     scritti: list[Path] = []
@@ -258,11 +264,12 @@ def disegna_la_pianta(
         scritti.append(copia)
     nome = sorgente.stem
     tavola, dettagli, rimandate = _la_tavola_e_i_dettagli(
-        pianta, percorsi, lunghe, fori, dei_pezzi, cartiglio, pixel, regola, avvisi, nome, confronto.nota
+        pianta, percorsi, lunghe, fori_scritti, dei_pezzi_scritti, cartiglio, pixel, regola, avvisi, nome,
+        confronto.nota,
     )
     rilievi = controlla(
         pianta, percorsi,
-        [f"{f.numero}: {' '.join(f.tratte)} nel muro {f.muro}" for f in fori],
+        [f"{f.numero}: {' '.join(f.tratte)} nel muro {f.muro}" for f in fori_scritti],
         tavola.scritte, tavola.linee, tavola.rettangoli, tavola.ammessi,
     )
     rilievi.misure_oltre_la_lunghezza = [
@@ -275,7 +282,8 @@ def disegna_la_pianta(
     tavole_dei_dettagli: list[tuple[Dettaglio, Tavola]] = []
     for dettaglio in dettagli:
         tavola_del_dettaglio = componi(
-            _pianta_del_dettaglio(pianta, dettaglio), percorsi, lunghe, fori, dei_pezzi, cartiglio, pixel,
+            _pianta_del_dettaglio(pianta, dettaglio), percorsi, lunghe, fori_scritti, dei_pezzi_scritti, cartiglio,
+            pixel,
             regola, avvisi, zona=dettaglio.rettangolo, ridotta=nome,
             nel_dettaglio=frozenset(c for c, i in rimandate.items() if i == dettaglio.id),
             controllo_delle_sigle=confronto.nota,
@@ -290,7 +298,8 @@ def disegna_la_pianta(
         scritti += _scrivi_la_tavola(tavola_del_dettaglio, cartella / f"{nome}-dettaglio-{dettaglio.id}.svg",
                                      _pianta_del_dettaglio(pianta, dettaglio), dxf, png)
     dati = cartella / f"{nome}.tracciati.json"
-    contenuto = _dati(pianta, percorsi, lunghe, fori, dei_pezzi, tavola, rilievi, regola, avvisi, confronto)
+    contenuto = _dati(pianta, percorsi, lunghe, fori_scritti, dei_pezzi_scritti, tavola, rilievi, regola, avvisi,
+                      confronto)
     contenuto["dettagli"] = [
         {"id": d.id, "rettangolo_m": list(d.rettangolo), "scala": f"1:{d.scala}",
          "tavola": f"{nome}-dettaglio-{d.id}", "automatico": pianta.dettagli is None}
@@ -426,14 +435,30 @@ def _dati(
     per_tratta = {lu.tratta: lu for lu in lunghe}
     pareti, perimetro = attraversamenti_per_tratta(pianta, percorsi, dei_pezzi)
     prese = confronto.lunghezze if confronto is not None else {}
+    accese = pianta.forature
 
     def data_da(t: Tracciato) -> str | None:
         if t.tratta in prese:
             return prese[t.tratta][1]
         return "pianta" if t.lunghezza_m is not None else None
 
+    def fori_della_tratta(t: Tracciato) -> dict[str, int]:
+        """Le pareti forate dalla tratta, per la distinta: solo a forature accese."""
+        if not accese:
+            return {}
+        return {"attraversamenti_di_parete": pareti[t.tratta], "fori_nel_perimetrale": perimetro[t.tratta]}
+
+    per_il_grafo: dict[str, object] = {
+        "per_il_grafo": {
+            "nota": "Le pareti interne forate da ogni tratta: da riportare nel grafo, fra le properties di una "
+                    "tubazione della tratta (attraversamenti), perche' la distinta conti le forature della pianta.",
+            "attraversamenti": {t.tratta: pareti[t.tratta] for t in pianta.tracciati},
+        },
+    } if accese else {}
+
     return {
         "tavola": {"formato": tavola.formato, "scala": f"1:{tavola.scala}", "avvisi": tavola.avvisi},
+        "forature_accese": accese,
         "avvisi": avvisi,
         "regola_delle_lunghezze": {
             "origine": regola.origine,
@@ -465,8 +490,7 @@ def _dati(
                 "curve": sum(max(0, len(linea) - 2) for linea in p.linee),
                 "fuori_dal_controsoffitto_m": p.fuori_dal_controsoffitto_m,
                 "fuori_dalle_zone_esterne_m": p.fuori_dalle_zone_m,
-                "attraversamenti_di_parete": pareti[t.tratta],
-                "fori_nel_perimetrale": perimetro[t.tratta],
+                **fori_della_tratta(t),
                 "punti_m": [list(q) for q in p.punti],
                 "tronchi_m": [[list(q) for q in linea] for linea in p.linee] if p.tronchi else None,
                 "attraversamenti": [
@@ -482,11 +506,7 @@ def _dati(
             for f in fori
         ],
         "fori_dei_pezzi": [{"pezzo": s, "muro": m} for s, m in dei_pezzi],
-        "per_il_grafo": {
-            "nota": "Le pareti interne forate da ogni tratta: da riportare nel grafo, fra le properties di una "
-                    "tubazione della tratta (attraversamenti), perche' la distinta conti le forature della pianta.",
-            "attraversamenti": {t.tratta: pareti[t.tratta] for t in pianta.tracciati},
-        },
+        **per_il_grafo,
         "confronto": None if confronto is None else {
             "con": confronto.fonti, "bloccanti": confronto.bloccanti, "avvisi": confronto.avvisi,
             "lunghezze_prese": {t: {"m": m, "da": da} for t, (m, da) in sorted(confronto.lunghezze.items())},
@@ -516,7 +536,9 @@ def riassunto(esito: Esito) -> list[str]:
         + (f" (scritte rimandate al dettaglio: {', '.join(r.scritte_nel_dettaglio)})" if r.scritte_nel_dettaglio else ""),
         f"Regola delle lunghezze: {esito.regola.origine if esito.regola else '?'}",
         f"Forature fuori dalle aperture: {len(r.fori_fuori_dalle_aperture)}"
-        + (f" (e {len(esito.fori_dei_pezzi)} fori per i pezzi a parete)" if esito.fori_dei_pezzi else ""),
+        + (f" (e {len(esito.fori_dei_pezzi)} fori per i pezzi a parete)" if esito.fori_dei_pezzi else "")
+        if esito.pianta.forature else
+        "Forature: spente, come di base (le accende \"forature\": true nella pianta)",
     ]
     for fascio, quota in sorted(r.fasci.items()):
         righe.append(f"Fascio «{fascio}»: {round(quota * 100)}% del percorso accanto a un compagno")

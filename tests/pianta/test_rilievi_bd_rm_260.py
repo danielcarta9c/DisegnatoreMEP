@@ -144,3 +144,69 @@ def test_muri_visibili_non_c_e(tmp_path: Path) -> None:
     rotta = _variante(CASI["corridoio"], tmp_path, lambda d: d["sfondo"].update(muri_visibili=False))
     with pytest.raises(ErroreDellaPianta, match="muri_visibili"):
         carica_pianta(rotta)
+
+
+# --- B-3. le forature spente di base ----------------------------------------------------------
+
+T3 = CASI["collaudo-t3"]
+
+
+def _scritte_delle_forature(esito: Esito) -> list[str]:
+    """Le sigle F1, F2… sulla tavola intera e nei riquadri di dettaglio."""
+    return [
+        s.testo for tavola in [esito.tavola, *(esito.dettagli or [])]
+        for chi, s in tavola.scritte if chi.startswith("foratura ")
+    ]
+
+
+def _svg(esito: Esito) -> str:
+    return next(p for p in esito.file if p.suffix == ".svg" and "dettaglio" not in p.name).read_text(encoding="utf-8")
+
+
+def _dati(esito: Esito) -> dict[str, Any]:
+    testo = next(p for p in esito.file if p.name.endswith(".tracciati.json")).read_text(encoding="utf-8")
+    return json.loads(testo)  # type: ignore[no-any-return]
+
+
+def test_di_base_le_forature_non_si_scrivono(esiti: dict[str, Esito]) -> None:
+    """Niente F1/F2 sulla tavola, niente elenco nella colonna, niente voce in legenda,
+    niente dato per il grafo: in una tavola MEP non servono (LEGGIMI B1)."""
+    esito = esiti["collaudo-t3"]
+    assert esito.pianta.forature is False
+    assert esito.forature  # il percorso fora lo stesso: il costo vale sempre
+    assert _scritte_delle_forature(esito) == []
+    svg = _svg(esito)
+    assert "FORATURE" not in svg and "Foratura (F1" not in svg and "Fori per i pezzi a parete" not in svg
+    assert esito.rilievi.fori_fuori_dalle_aperture == []
+    dati = _dati(esito)
+    assert dati["forature_accese"] is False and dati["forature"] == [] and dati["fori_dei_pezzi"] == []
+    assert "per_il_grafo" not in dati
+    assert all("attraversamenti_di_parete" not in t for t in dati["tratte"])
+
+
+def test_accese_le_forature_tornano_come_prima(tmp_path: Path, esiti: dict[str, Esito]) -> None:
+    """`"forature": true`: le sigle, l'elenco e i dati per la distinta tornano; il
+    percorso e le lunghezze sono gli stessi di quando sono spente."""
+    accese = _variante(T3, tmp_path, lambda d: d.update(forature=True))
+    esito = disegna_la_pianta(accese, tmp_path / "out", None, dxf=False, png=False)
+    spente = esiti["collaudo-t3"]
+    assert [p.punti for p in esito.percorsi] == [p.punti for p in spente.percorsi]
+    assert [lu.da_quotare_m for lu in esito.lunghezze] == [lu.da_quotare_m for lu in spente.lunghezze]
+    numeri = [f.numero for f in esito.forature]
+    # Nel dettaglio si riscrivono anche le sigle di quello che ci sta dentro: si
+    # confrontano gli insiemi.
+    assert numeri and set(_scritte_delle_forature(esito)) == set(numeri)
+    svg = _svg(esito)
+    assert "FORATURE" in svg and "Foratura (F1, F2…: elenco sotto)" in svg
+    assert len(esito.rilievi.fori_fuori_dalle_aperture) == len(numeri)
+    dati = _dati(esito)
+    assert dati["forature_accese"] is True and len(dati["forature"]) == len(numeri)
+    assert set(dati["per_il_grafo"]["attraversamenti"]) == {t.tratta for t in esito.pianta.tracciati}
+
+
+def test_il_riassunto_dice_che_le_forature_sono_spente(esiti: dict[str, Esito]) -> None:
+    from disegnatore_mep.pianta.comando import riassunto
+
+    righe = riassunto(esiti["collaudo-t3"])
+    assert any(r.startswith("Forature: spente") for r in righe)
+    assert not any(r.startswith("Forature fuori dalle aperture") for r in righe)
