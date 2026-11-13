@@ -10,11 +10,12 @@ erano: questo e' solo il posto di quello che prima apriva il dettaglio.
 - **Incolonnate.** A destra della pianta le scritte stanno allineate a sinistra, a
   sinistra allineate a destra, tutte alla stessa distanza dalla pianta e su una griglia
   a passo fisso (`PASSO_MM`). Sopra e sotto, dove il margine e' basso ma largo — una
-  scritta di tratta e' lunga 25-45 mm, e i margini di fianco su un A3 ne hanno 11-20 —,
+  scritta di tratta e' lunga 25-45 mm, e i margini di fianco su un A3 ne hanno 11-27 —,
   stanno su righe a passo fisso, ciascuna sopra (o sotto) il suo oggetto.
 - **Il richiamo e' ortogonale, con al piu' un gomito**: dritto quando il punto d'attacco
   puo' scorrere fino all'altezza della scritta (un tratto del tubo, il fianco del pezzo).
-  Parte dall'oggetto verso fuori, mai lungo una linea.
+  Parte dall'oggetto verso fuori; correre su una linea o un muro, o accanto, costa al
+  millimetro (`COSTO_SOPRA`, `COSTO_ACCANTO`): si confonderebbe con loro.
 - **I richiami non si incrociano**: ne' fra loro ne' con i richiami corti; e non passano
   su un'altra scritta fuori. E' un vincolo. Sopra le scritte e i pezzi della pianta
   passano solo se non c'e' altro modo: costa molto, e il controllo li conta.
@@ -23,9 +24,11 @@ erano: questo e' solo il posto di quello che prima apriva il dettaglio.
   viene da se'; e siccome due richiami dritti sullo stesso lato sono paralleli, l'ordine
   delle scritte di una colonna e' quello dei loro punti d'attacco.
 
-Una scritta che non trova posto nemmeno fuori torna `None`: la tavola passa al formato
-successivo (`tavola.componi`, la stessa regola della colonna che non entra), e solo se un
-formato dopo non c'e' resta senza posto, e il controllo la conta.
+Una scritta che non trova posto nemmeno fuori torna `None`. Allora, e quando un richiamo
+passa su una scritta o un pezzo o e' piu' lungo di `LUNGO_MM`, la tavola prova a spostare
+la pianta sul foglio; se non basta, passa al formato successivo (`tavola.componi`, la
+stessa regola della colonna che non entra); e solo se un formato dopo non c'e' la scritta
+resta senza posto, e il controllo la conta.
 
 Tutto in millimetri di carta, come `scritte.py`. Deterministico: a parita' di costo vince
 il primo nell'ordine fisso dei lati, dei posti e dei punti.
