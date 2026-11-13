@@ -146,20 +146,33 @@ Nel caso fitto: T01/T02 (fascio del primario) e T03/T04, T07/T08 (fasci dichiara
 - la prima scritta posata che prendeva il posto che serviva alla seconda (TZ-03 sotto T16 nel T3): i giri di
   miglioria e l'ordine inverso.
 
+E uno che non si vedeva sulle tavole ma sul tempo della suite: una prova con la pianta spostata che non bastava
+tornava a provare il formato dopo, che a sua volta si spostava — fino a 69 composizioni per una pianta coi pezzi
+sovrapposti (la prova del T3 senza `sovrapposto_a` durava minuti, ora 14 s). Il formato dopo lo decide solo la
+pianta al centro (commit `397167f`); le tavole dei cinque casi non cambiano (SVG confrontati).
+
 ## 3. I controlli
 
 ```
-$ .venv/bin/python -m pytest -q -p no:cacheprovider
-[NUMERI DELLA SUITE]
-$ .venv/bin/ruff check src tests scripts skill/scripts
+$ .venv/bin/python -m pytest -q -p no:cacheprovider --durations=15      # a 397167f
+3112 passed, 15 skipped, 11 xfailed in 339.59s (0:05:39)
+$ .venv/bin/ruff check src tests scripts skill/scripts                   # a 4a4b9e3
 All checks passed!
 $ .venv/bin/python -m mypy
 Success: no issues found in 129 source files
 $ .venv/bin/python -m pytest -q -p no:cacheprovider tests/test_il_banco.py tests/test_le_release.py
-[NUMERI DEL BANCO]
+37 passed in 24.31s
 ```
 
-Base misurata su `ff89e30`: `3054 passed, 15 skipped, 11 xfailed in 248.32s`.
+Base misurata su `ff89e30`: `3054 passed, 15 skipped, 11 xfailed in 248.32s`. Le 58 in più sono le prove nuove (quelle
+di `test_scritte_fuori.py`, molte parametrizzate sugli otto casi della pianta, e il caso fitto nelle prove
+parametrizzate che c'erano); skip e xfail sono gli stessi. Dopo `397167f` c'è solo un commit di testo nella
+descrizione di `fuori_pianta.py` (`4a4b9e3`), con ruff, mypy, banco e release rifatti dopo.
+
+**Il tempo della suite sale di un terzo** (248 → 340 s). Le prove più lente: la preparazione dei casi comuni della
+pianta (29 s, c'è il caso fitto), il T3 senza zona esterna (19 s) e senza `sovrapposto_a` (14 s), le due varianti del
+caso fitto di C-2 (14 s l'una). Un primo giro della suite ci aveva messo 484 s: una pianta coi pezzi sovrapposti
+faceva fino a 69 composizioni (§2, l'ultimo punto).
 
 Le prove nuove (`tests/pianta/test_scritte_fuori.py`; il caso fitto entra fra i casi comuni di
 `tests/pianta/conftest.py`, quindi passa anche per le prove parametrizzate: niente diagonali, niente scritte su
