@@ -257,8 +257,9 @@ richiamo più corto e più pulito. Il richiamo è ortogonale, con al più un gom
 gli altri richiami**.
 
 Se fuori non c'è posto per tutte, o un richiamo passa sopra una scritta o un pezzo, o attraversa
-mezza tavola (oltre 12 cm), la pianta **si sposta sul foglio** verso il lato opposto, e il margine
-dalla parte delle scritte raddoppia; se nemmeno così ci stanno, la tavola passa al **formato
+mezza tavola (oltre 12 cm), la pianta **si sposta sul foglio**, lontano dal lato dove stanno quegli
+oggetti, e il margine da quella parte raddoppia (la prova si tiene se i richiami vengono meglio);
+se nemmeno così ci stanno, la tavola passa al **formato
 successivo** con la stessa scala (come quando la colonna non entra). Il foglio non cresce per
 questo se lo spazio c'è già.
 
