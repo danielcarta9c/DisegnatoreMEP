@@ -16,6 +16,12 @@ una tramezza e mezzo corridoio). Un richiamo piu' lungo di
 una scritta o piu' di una linea, ferma la consegna; quello che attraversa una
 linea sola si conta e si dice.
 
+**I richiami delle scritte fuori dalla pianta** (REL-026, C-1) hanno regole loro:
+sono lunghi per forza ed escono dall'edificio passando i muri. Si misurano a parte:
+non si incrociano fra loro ne' con i richiami corti (se lo fanno, ferma la consegna);
+sopra una scritta o un pezzo della pianta passano solo se non c'era altro modo, e si
+contano e si dicono.
+
 **Una linea non passa sopra un pezzo che non e' un suo capo** (ne' un organo in
 linea suo, ne' un pezzo dichiarato sovrapposto a un suo capo): ferma la consegna.
 
@@ -72,7 +78,16 @@ class Rilievi:
     scritte_in_legenda: list[str] = field(default_factory=list)
     linee_sui_pezzi: list[str] = field(default_factory=list)
     scritte_nel_dettaglio: list[str] = field(default_factory=list)
-    """Le scritte che a 1:50 non stanno e si posano nel riquadro di dettaglio."""
+    """Le scritte che a 1:50 non stanno e si posano nel riquadro di dettaglio che il
+    progettista ha chiesto."""
+    scritte_fuori_pianta: list[str] = field(default_factory=list)
+    """Le scritte che in pianta non stanno e vanno fuori, col richiamo (REL-026, C-1)."""
+    richiamo_fuori_piu_lungo_mm: float = 0.0
+    richiami_che_si_incrociano: list[str] = field(default_factory=list)
+    """Due richiami che si incrociano, uno almeno di una scritta fuori: bloccante."""
+    richiami_fuori_sopra: list[str] = field(default_factory=list)
+    """Il richiamo di una scritta fuori che passa sopra una scritta o un pezzo della
+    pianta: ammesso dove non c'era altro modo, e contato."""
     misure_oltre_la_lunghezza: list[str] = field(default_factory=list)
     """La misura in pianta supera la lunghezza del progettista di oltre lo
     scarto ammesso: non ferma, ma si dice sulla tavola e in console."""
@@ -88,9 +103,11 @@ class Rilievi:
     def unisci_le_scritte(self, altri: Rilievi, dove: str) -> None:
         """Le scritte e i richiami di un'altra tavola (il dettaglio), col posto davanti."""
         for nome in ("scritte_su_linee", "scritte_su_scritte", "richiami", "richiami_lunghi",
-                     "richiami_che_attraversano", "richiami_su_una_linea", "scritte_in_legenda"):
+                     "richiami_che_attraversano", "richiami_su_una_linea", "scritte_in_legenda",
+                     "scritte_fuori_pianta", "richiami_che_si_incrociano", "richiami_fuori_sopra"):
             getattr(self, nome).extend(f"{dove}: {voce}" for voce in getattr(altri, nome))
         self.richiamo_piu_lungo_mm = max(self.richiamo_piu_lungo_mm, altri.richiamo_piu_lungo_mm)
+        self.richiamo_fuori_piu_lungo_mm = max(self.richiamo_fuori_piu_lungo_mm, altri.richiamo_fuori_piu_lungo_mm)
 
     @property
     def bloccanti(self) -> list[str]:
@@ -100,6 +117,8 @@ class Rilievi:
         if self.richiami_che_attraversano:
             out.append(f"{len(self.richiami_che_attraversano)} richiami che attraversano muri, pezzi, "
                        "scritte o piu' di una linea")
+        if self.richiami_che_si_incrociano:
+            out.append(f"{len(self.richiami_che_si_incrociano)} richiami che si incrociano")
         if self.linee_sui_pezzi:
             out.append(f"{len(self.linee_sui_pezzi)} linee sopra un pezzo che non e' un loro capo")
         if self.diagonali:
@@ -141,6 +160,10 @@ class Rilievi:
             "linee_sui_pezzi": len(self.linee_sui_pezzi),
             "misure_oltre_la_lunghezza": len(self.misure_oltre_la_lunghezza),
             "scritte_nel_dettaglio": len(self.scritte_nel_dettaglio),
+            "scritte_fuori_pianta": len(self.scritte_fuori_pianta),
+            "richiamo_fuori_piu_lungo_mm": round(self.richiamo_fuori_piu_lungo_mm, 1),
+            "richiami_che_si_incrociano": len(self.richiami_che_si_incrociano),
+            "richiami_fuori_sopra_scritte_o_pezzi": len(self.richiami_fuori_sopra),
             "fuori_dalle_zone_esterne": len(self.fuori_dalle_zone_esterne),
             "pezzi_sovrapposti": len(self.pezzi_sovrapposti),
             "discordanze_con_distinta_e_grafo": len(self.confronto) + len(self.confronto_bloccante),
@@ -161,6 +184,9 @@ class Rilievi:
                 "linee_sui_pezzi": self.linee_sui_pezzi,
                 "misure_oltre_la_lunghezza": self.misure_oltre_la_lunghezza,
                 "scritte_nel_dettaglio": self.scritte_nel_dettaglio,
+                "scritte_fuori_pianta": self.scritte_fuori_pianta,
+                "richiami_che_si_incrociano": self.richiami_che_si_incrociano,
+                "richiami_fuori_sopra_scritte_o_pezzi": self.richiami_fuori_sopra,
                 "fuori_dalle_zone_esterne": self.fuori_dalle_zone_esterne,
                 "pezzi_sovrapposti": self.pezzi_sovrapposti,
                 "discordanze_con_distinta_e_grafo": [*self.confronto_bloccante, *self.confronto],
@@ -296,13 +322,15 @@ def controlla(
 
     rilievi.fori_fuori_dalle_aperture.extend(forature)
     _i_richiami(rilievi, pianta, scritte, linee_sulla_carta, rettangoli_sulla_carta, ammessi or {})
+    _i_richiami_fuori(rilievi, scritte, rettangoli_sulla_carta, ammessi or {})
     _le_linee_sui_pezzi(rilievi, pianta, linee_sulla_carta, rettangoli_sulla_carta)
 
     for indice, (chi, scritta) in enumerate(scritte):
         r = scritta.riquadro
+        # I richiami delle scritte fuori si misurano a parte (`_i_richiami_fuori`).
         toccate = [
             di for di, s in linee_sulla_carta
-            if di != f"richiamo:{chi}" and _segmento_tocca(s, r)
+            if di != f"richiamo:{chi}" and not di.startswith("richiamo fuori:") and _segmento_tocca(s, r)
         ]
         suoi = (ammessi or {}).get(chi, set())
         toccate += [di for di, q in rettangoli_sulla_carta if di != chi and di not in suoi and _sovrapposti(q, r)]
@@ -377,6 +405,61 @@ def _i_richiami(
             rilievi.richiami_che_attraversano.append(f"{nome} attraversa: {', '.join(ostacoli + attraversate)}")
         elif attraversate:
             rilievi.richiami_su_una_linea.append(f"{nome} attraversa: {attraversate[0]}")
+
+
+def _i_richiami_fuori(
+    rilievi: Rilievi, scritte: Sequence[tuple[str, ScrittaPosata]], rettangoli: Sequence[tuple[str, Rettangolo]],
+    ammessi: dict[str, set[str]],
+) -> None:
+    """I richiami delle scritte fuori dalla pianta (REL-026, C-1): quanti e quanto lunghi,
+    se ne incrociano un altro (fra loro o con un richiamo corto: bloccante), se passano
+    sopra una scritta o un pezzo della pianta (contato). Il primo pezzo si misura dal
+    bordo del suo oggetto in fuori: il pezzo da cui parte non conta, e nemmeno quelli
+    `ammessi` (i pezzi sotto la linea della scritta)."""
+    tutti: list[tuple[str, tuple[float, float, float, float, float]]] = []
+    for chi, posata in scritte:
+        if posata.richiamo is not None:
+            tutti.append((chi, (*posata.richiamo, 0.09)))
+        if posata.richiamo_fuori is not None:
+            punti = posata.richiamo_fuori
+            tutti += [(chi, (a[0], a[1], b[0], b[1], 0.09)) for a, b in zip(punti, punti[1:], strict=False)]
+    for chi, posata in scritte:
+        if posata.richiamo_fuori is None:
+            continue
+        punti = posata.richiamo_fuori
+        lungo = sum(abs(b[0] - a[0]) + abs(b[1] - a[1]) for a, b in zip(punti, punti[1:], strict=False))
+        rilievi.richiamo_fuori_piu_lungo_mm = max(rilievi.richiamo_fuori_piu_lungo_mm, lungo)
+        nome = f"«{posata.testo}» ({chi})"
+        gomiti = len(punti) - 2
+        rilievi.scritte_fuori_pianta.append(
+            f"{nome}: richiamo {lungo:.1f} mm" + (f", {gomiti} gomito" if gomiti == 1 else "")
+            + (f", {gomiti} gomiti" if gomiti > 1 else "")
+        )
+        if gomiti > 1:
+            rilievi.richiami_che_attraversano.append(f"{nome}: {gomiti} gomiti")
+        sopra: set[str] = set()
+        incrociati: set[str] = set()
+        for indice, (a, b) in enumerate(zip(punti, punti[1:], strict=False)):
+            inizio = a
+            if indice == 0:  # dal bordo dell'oggetto in fuori
+                verso = (1 if b[0] > a[0] else -1, 0) if abs(a[1] - b[1]) < EPS else (0, 1 if b[1] > a[1] else -1)
+                inizio = (a[0] + verso[0] * 0.6, a[1] + verso[1] * 0.6)
+            riquadro = _riquadro_del_segmento((inizio[0], inizio[1], b[0], b[1], 0.09))
+            sopra |= {f"scritta {di}" for di, s in scritte if di != chi and _sovrapposti(riquadro, s.riquadro)}
+            sopra |= {
+                di for di, r in rettangoli
+                if di.startswith("pezzo ") and di != chi and di not in ammessi.get(chi, set())
+                and _sovrapposti(riquadro, r)
+            }
+            incrociati |= {
+                di for di, s in tutti if di != chi and _sovrapposti(riquadro, _riquadro_del_segmento(s))
+            }
+        if sopra:
+            rilievi.richiami_fuori_sopra.append(f"{nome} passa sopra: {', '.join(sorted(sopra))}")
+        if incrociati:
+            rilievi.richiami_che_si_incrociano.append(
+                f"{nome} incrocia i richiami di: {', '.join(sorted(incrociati))}"
+            )
 
 
 def _le_linee_sui_pezzi(

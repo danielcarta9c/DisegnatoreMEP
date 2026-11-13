@@ -163,7 +163,7 @@
     },
     "Dettaglio": {
       "additionalProperties": false,
-      "description": "Un riquadro di dettaglio: una zona della pianta disegnata a scala\nmaggiore su una tavola a parte, quando a 1:50 e' troppo fitta per le sue\nscritte.",
+      "description": "Un riquadro di dettaglio: una zona della pianta disegnata a scala\nmaggiore su una tavola a parte, quando il progettista lo chiede. La tavola\nnon ne apre da sola: le scritte che a 1:50 non stanno vanno fuori dalla\npianta, col richiamo.",
       "properties": {
         "id": {
           "pattern": "^[A-Z0-9]{1,3}$",

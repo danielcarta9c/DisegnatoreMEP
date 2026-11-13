@@ -46,7 +46,7 @@ from .modello import Dettaglio, Foglio, Pianta, Tracciato, carica_pianta
 from .nel_grafo import Aggiornamento, aggiorna
 from .nel_grafo import Tratta as TrattaNelGrafo
 from .scritte import RICHIAMO_MASSIMO_MM
-from .tavola import Foratura, Tavola, componi, estensione, scrivi_dxf, scrivi_svg
+from .tavola import Foratura, Tavola, componi, scrivi_dxf, scrivi_svg
 
 VICINE_M = 0.5
 """Due forature dello stesso fascio sullo stesso muro, piu' vicine di cosi',
@@ -345,7 +345,7 @@ def disegna_la_pianta(
     contenuto["grafo"] = None if nel_grafo is None else nel_grafo.come_dati()
     contenuto["dettagli"] = [
         {"id": d.id, "rettangolo_m": list(d.rettangolo), "scala": f"1:{d.scala}",
-         "tavola": f"{nome}-dettaglio-{d.id}", "automatico": pianta.dettagli is None}
+         "tavola": f"{nome}-dettaglio-{d.id}"}
         for d, _ in tavole_dei_dettagli
     ]
     dati.write_text(json.dumps(contenuto, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -377,13 +377,7 @@ def tratte_per_il_grafo(
     ]
 
 
-MARGINE_DEL_DETTAGLIO_M = 0.6
-"""Quanto il riquadro automatico esce oltre le scritte che a 1:50 non stanno."""
-
 GIRI_DEI_DETTAGLI = 4
-
-VICINI_M = 0.5
-"""Due zone fitte piu' vicine di cosi' stanno nello stesso riquadro di dettaglio."""
 
 
 def _pianta_del_dettaglio(pianta: Pianta, dettaglio: Dettaglio) -> Pianta:
@@ -401,26 +395,23 @@ def _la_tavola_e_i_dettagli(
     dei_pezzi: list[tuple[str, str]], cartiglio: Cartiglio | None, pixel: tuple[int, int] | None,
     regola: Regola, avvisi: list[str], nome: str, controllo_delle_sigle: str = "",
 ) -> tuple[Tavola, list[Dettaglio], dict[str, str]]:
-    """La tavola intera e i riquadri di dettaglio.
+    """La tavola intera e i riquadri di dettaglio **che la pianta chiede**.
 
     Una scritta che a 1:50 non trova posto — ne' accanto, ne' con un richiamo
-    corto, ne' come numero in legenda — e che cade in un dettaglio, si posa
-    nel dettaglio e non sulla tavola intera. Se la pianta non dichiara
-    `dettagli`, il riquadro lo fa la tavola: attorno alle scritte che non
-    stanno, con un margine; e lo dice."""
+    corto, ne' come numero in legenda — va fuori dalla pianta, col suo richiamo
+    (`fuori_pianta.py`). Se il suo oggetto cade in un riquadro di dettaglio che il
+    progettista ha dichiarato in `dettagli`, si posa invece nel dettaglio, come
+    prima. **I riquadri non nascono piu' da soli** (REL-026, C-1; LEGGIMI M2 di
+    BD.RM.260: il dettaglio B della commessa era un A3 con due tubi e le parole
+    mandata e ritorno): senza `dettagli`, o con `[]`, non ce n'e' nessuno."""
     dettagli = list(pianta.dettagli or [])
-    automatico = pianta.dettagli is None
-    xmin, ymin, xmax, ymax = estensione(pianta, percorsi)
     rimandate: dict[str, str] = {}
 
     def nota() -> list[str]:
         if not dettagli:
             return []
         elenco = ", ".join(f"{d.id} 1:{d.scala}" for d in dettagli)
-        return [
-            f"Dettagli {elenco} (zone incorniciate): tavole {nome}-dettaglio-<lettera>"
-            + (", perche' a 1:50 le scritte non ci stanno." if automatico else ".")
-        ]
+        return [f"Dettagli {elenco} (zone incorniciate): tavole {nome}-dettaglio-<lettera>."]
 
     def componi_la_tavola() -> Tavola:
         return componi(pianta, percorsi, lunghe, fori, dei_pezzi, cartiglio, pixel, regola, [*avvisi, *nota()],
@@ -429,43 +420,25 @@ def _la_tavola_e_i_dettagli(
                        controllo_delle_sigle=controllo_delle_sigle)
 
     tavola = componi_la_tavola()
-    for _ in range(GIRI_DEI_DETTAGLI):
-        fallite = [(chi, posata) for chi, posata in tavola.scritte if not posata.libera]
-        if not fallite:
-            break
+    for _ in range(GIRI_DEI_DETTAGLI if dettagli else 0):
         cambiato = False
-        for chi, posata in fallite:
-            x0, y0, x1, y1 = tavola.in_metri(posata.riquadro)
-            centro = ((x0 + x1) / 2, (y0 + y1) / 2)
+        for chi, posata in tavola.scritte:
+            if chi in rimandate or (posata.libera and posata.richiamo_fuori is None):
+                continue
+            # Dove sta l'oggetto: il punto d'attacco del richiamo fuori; per una scritta
+            # rimasta senza posto, il posto provato, accanto all'oggetto.
+            if posata.richiamo_fuori is not None:
+                px, py = posata.richiamo_fuori[0]
+                x0, y0, _, _ = tavola.in_metri((px, py, px, py))
+                centro = (x0, y0)
+            else:
+                x0, y0, x1, y1 = tavola.in_metri(posata.riquadro)
+                centro = ((x0 + x1) / 2, (y0 + y1) / 2)
             dentro = [
                 d for d in dettagli
                 if d.rettangolo[0] <= centro[0] <= d.rettangolo[2] and d.rettangolo[1] <= centro[1] <= d.rettangolo[3]
             ]
-            if not dentro and automatico:
-                m = MARGINE_DEL_DETTAGLIO_M
-                zona = (
-                    round(max(xmin, math.floor((x0 - m) * 20) / 20), 2),
-                    round(max(ymin, math.floor((y0 - m) * 20) / 20), 2),
-                    round(min(xmax, math.ceil((x1 + m) * 20) / 20), 2),
-                    round(min(ymax, math.ceil((y1 + m) * 20) / 20), 2),
-                )
-                # Si unisce al riquadro vicino, o ne apre uno nuovo: un
-                # riquadro solo per due nodi lontani sarebbe mezza pianta.
-                vicino = next((
-                    indice for indice, d in enumerate(dettagli)
-                    if zona[0] <= d.rettangolo[2] + VICINI_M and d.rettangolo[0] <= zona[2] + VICINI_M
-                    and zona[1] <= d.rettangolo[3] + VICINI_M and d.rettangolo[1] <= zona[3] + VICINI_M
-                ), None)
-                if vicino is not None:
-                    vecchia = dettagli[vicino].rettangolo
-                    zona = (min(zona[0], vecchia[0]), min(zona[1], vecchia[1]),
-                            max(zona[2], vecchia[2]), max(zona[3], vecchia[3]))
-                    dettagli[vicino] = dettagli[vicino].model_copy(update={"rettangolo": zona})
-                else:
-                    dettagli.append(Dettaglio(id="ABCDEFGH"[min(len(dettagli), 7)], rettangolo=zona))
-                    vicino = len(dettagli) - 1
-                dentro = [dettagli[vicino]]
-            if dentro and chi not in rimandate:
+            if dentro:
                 rimandate[chi] = dentro[0].id
                 cambiato = True
         if not cambiato:
@@ -596,6 +569,10 @@ def riassunto(esito: Esito) -> list[str]:
         f"{RICHIAMO_MASSIMO_MM:g} mm); lunghi: {len(r.richiami_lunghi)}; che attraversano muri, pezzi, "
         f"scritte o piu' linee: {len(r.richiami_che_attraversano)}; su una linea: {len(r.richiami_su_una_linea)}",
         f"Scritte in legenda (numerate): {len(r.scritte_in_legenda)}",
+        f"Scritte fuori dalla pianta, col richiamo: {len(r.scritte_fuori_pianta)}"
+        + (f" (il richiamo piu' lungo {r.richiamo_fuori_piu_lungo_mm:.1f} mm); richiami che si incrociano: "
+           f"{len(r.richiami_che_si_incrociano)}; sopra scritte o pezzi: {len(r.richiami_fuori_sopra)}"
+           if r.scritte_fuori_pianta else ""),
         f"Linee sopra un pezzo non loro: {len(r.linee_sui_pezzi)}",
         f"Tratte fuori dall'edificio, fuori dalle zone esterne dichiarate: {len(r.fuori_dalle_zone_esterne)}",
         f"Pezzi sovrapposti senza dichiararlo: {len(r.pezzi_sovrapposti)}",
@@ -622,7 +599,8 @@ def riassunto(esito: Esito) -> list[str]:
     righe += [f"Avviso: {a}" for a in [*esito.tavola.avvisi, *(esito.avvisi or [])]]
     for elenco in (r.diagonali, r.sovrapposizioni, r.scritte_su_linee, r.scritte_su_scritte, r.tratte_cedute,
                    r.richiami_lunghi, r.richiami_che_attraversano, r.richiami_su_una_linea,
-                   r.scritte_in_legenda, r.linee_sui_pezzi):
+                   r.scritte_in_legenda, r.scritte_fuori_pianta, r.richiami_che_si_incrociano,
+                   r.richiami_fuori_sopra, r.linee_sui_pezzi):
         righe += [f"  - {voce}" for voce in elenco]
     righe += [f"BLOCCANTE: {b}" for b in r.bloccanti]
     return righe

@@ -270,8 +270,13 @@ def test_la_base_standard_sulla_tavola(esiti: dict[str, Esito]) -> None:
     assert len(muri) < len(esiti["appartamento"].pianta.muri)
     finestre = [p for p in tavola.primitive if isinstance(p, Area) and p.layer == LAYER_FINESTRE]
     assert len(finestre) == len([a for a in esiti["appartamento"].pianta.aperture if a.tipo == "finestra"])
-    nomi = [s for chi, s in tavola.scritte if chi.startswith("stanza")]
-    assert nomi and all("m²" in s.testo for s in nomi)
+    nomi: dict[str, list[str]] = {}
+    for chi, s in tavola.scritte:
+        if chi.startswith("stanza"):
+            nomi.setdefault(chi, []).append(s.testo)
+    # Ogni locale ha i suoi mq: su una riga, o su due dove una linea gli toglie il posto.
+    assert nomi and all("m²" in " ".join(righe) for righe in nomi.values())
+    assert any(len(righe) == 2 for righe in nomi.values())
 
 
 def test_la_base_e_deterministica(esiti: dict[str, Esito]) -> None:
