@@ -1056,10 +1056,11 @@ def componi(
                     spostata_meglio = spostata
             if spostata_meglio is not None:
                 return spostata_meglio
-        if any(f is None for f in fuori):
+        if any(f is None for f in fuori) and spostamento == (0, 0):
             # Fuori non c'e' posto per tutte nemmeno spostando la pianta: il formato
             # successivo, con la stessa scala; se nemmeno li' ci stanno si resta qui, e si
-            # contano.
+            # contano. Solo dalla pianta al centro: una prova spostata che non basta torna
+            # qui e basta, se no le prove si moltiplicherebbero per ogni formato.
             tavola_dopo = _sul_formato_dopo(pianta, formato, scala, percorsi, lunghe, forature, fori_dei_pezzi,
                                             cartiglio, pixel_dello_sfondo, regola, avvisi_della_colonna, zona,
                                             rimandate, riquadri, ridotta, nel_dettaglio, controllo_delle_sigle)
@@ -1119,7 +1120,11 @@ def componi(
     # La colonna.
     c = colonna(pianta, percorsi, lunghe, forature, fori_dei_pezzi, scala, formato, regola,
                 ingombri.legenda, avvisi_della_colonna, ridotta, controllo_delle_sigle)
-    if c.y + 6.0 > frame.legend_rect_mm.height_mm:
+    if c.y + 6.0 > frame.legend_rect_mm.height_mm and spostamento != (0, 0):
+        # Una prova con la pianta spostata in cui la colonna non entra non si tiene: il
+        # formato dopo lo decide la pianta al centro.
+        costo_fuori = math.inf
+    elif c.y + 6.0 > frame.legend_rect_mm.height_mm:
         # Le scritte in legenda e gli avvisi si sanno solo dopo la posa: se la
         # colonna non entra, si rifa' la tavola sul formato successivo.
         tavola_dopo = _sul_formato_dopo(pianta, formato, scala, percorsi, lunghe, forature, fori_dei_pezzi,
