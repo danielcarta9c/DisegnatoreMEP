@@ -15,10 +15,10 @@
   },
   "collaudo-t3-rel012": {
    "sintesi-1": "Formato A2 · tratte 18 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 4 · sormonti 0 · avvisi e regole: DRAWING_TOUCHES_THE_BORDER x1, SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x1, TAG_OMITTED x1",
-   "pianta/pianta-dettaglio-A.svg": "89313787e6d111084d9f33e1c669b71dec3d0ed4b292c1b7fac78aaae131b4d3",
-   "pianta/pianta-dettaglio-B.svg": "5b9aeee2e205dfd608c5bb7c8f63d84d50f4b5c7493c8d84882ae4b3c29fdd95",
-   "pianta/pianta-dettaglio-C.svg": "34efa1f83c34433c7791fef7ddae18bf9f5ce35aa049a659bc4e5711c616d760",
-   "pianta/pianta.svg": "b5320f2a03ebff22e2fdd6f2ba359f2ca568412c612878931bbb36efd62fc949",
+   "pianta/pianta-dettaglio-A.svg": "1bd0f975ac4f192f62bfc5618ee675878d910d619a4938d16c3b25a68a5f37e0",
+   "pianta/pianta-dettaglio-B.svg": "ac99df7670a914a3d9349f47a9520bd73e904f0c193270c2d33330cb10c03c93",
+   "pianta/pianta-dettaglio-C.svg": "f2837923c5b7ea600bbf1a6462cd8852f66f97c04404af3c6a9fd74cfb9ba556",
+   "pianta/pianta.svg": "29b09a498dd1a1378f39631ac6812d984addc402f5725fd0cc09004659ff446a",
    "pianta/pianta.tracciati.json": "ee2111ab6f366fb53101bca715c6f4e373ed3cddcf10222eab0fb27d82e3394d",
    "tavola/canalizzato-appartamento-secondo-piano-t1-rilievi.md": "b3dbcb324b6e90ebc42d19086682d340741d5cba886b056ba5cab2f3a0c38ff5",
    "tavola/canalizzato-appartamento-secondo-piano-t1.svg": "fa3404f87f22574f28023489ed5b1110c67c521189284e0f0881bf3fae0e39b8"
