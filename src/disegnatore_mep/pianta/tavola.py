@@ -106,15 +106,17 @@ CORPO_COLONNA_PT = CORPO_MINIMO_PT
 CORPO_TITOLETTI_PT = CORPO_DELLE_SCRITTE_PT
 CORPO_TITOLO_PT = 11.0
 
-COLORE_STANZE = "#1c2e4a"
-COLORE_MURI = {"perimetrale": "#8c8c8c", "portante": "#8c8c8c", "tramezza": "#b3b3b3"}
-COLORE_APERTURE = "#555555"
+COLORE_STANZE = "#8a8a8a"
+"""Il nome dei locali con i mq: in mezzatinta, come la base (REL-026, C-3; lo stesso grigio
+di `base.GRIGIO_DEI_LOCALI`, dove stanno i colori della base)."""
 
 FORMATI: dict[str, GraphicStandard] = {"A3": A3_LANDSCAPE, "A2": A2_LANDSCAPE, "A1": A1_LANDSCAPE}
 SCALE = (50, 100)
 
 LAYER_MURI = "A-WALL"
 LAYER_APERTURE = "A-DOOR"
+LAYER_FINESTRE = "A-GLAZ"
+LAYER_BALCONI = "A-FLOR-OTLN"
 LAYER_STANZE = "A-AREA-IDEN"
 LAYER_PEZZI = "M-EQPM"
 LAYER_FORATURE = "A-WALL-HOLE"
@@ -127,8 +129,10 @@ LAYER_FUORI = "M-ANNO-NCSF"
 
 DESCRIZIONE_DEI_LAYER: dict[str, str] = {
     LAYER_MURI: "Muri della planimetria",
-    LAYER_APERTURE: "Porte, finestre, varchi e fori dichiarati",
-    LAYER_STANZE: "Nomi delle stanze",
+    LAYER_APERTURE: "Porte e fori dichiarati",
+    LAYER_FINESTRE: "Finestre",
+    LAYER_BALCONI: "Balconi e terrazzi: contorno",
+    LAYER_STANZE: "Nomi dei locali con i mq",
     LAYER_PEZZI: "Pezzi posati: ingombro in pianta",
     LAYER_FORATURE: "Forature da eseguire",
     LAYER_SIGLE: "Sigle, scritte dei tracciati e richiami",
@@ -177,6 +181,9 @@ class Area:
     colore: str
     layer: str
     opacita: float = 1.0
+    buchi: tuple[tuple[Punto, ...], ...] = ()
+    """Gli anelli dei buchi (pari e dispari): un muro perimetrale chiuso e' un anello con
+    un buco, e si campisce come una cosa sola (REL-026, C-3)."""
 
 
 @dataclass(frozen=True)
@@ -318,86 +325,33 @@ def _angoli_del_tratto(muro: Muro, s0: float, s1: float, P: Callable[[float, flo
 
 # --- la base: muri e aperture ----------------------------------------------------------
 #
-# Il disegno della planimetria sotto l'impianto. Sta in due funzioni perche' cambiera'
-# (REL-026, C-3): la base standard — muri grigio chiaro, finestre celesti, porte a tratto
-# fine — si scrivera' qui, senza toccare la composizione.
-
-COLORE_DELLE_SAGOME = COLORE_MURI["perimetrale"]
-"""Il retino delle `sagome_muri`: una sagoma non dice il tipo del muro, e prende il grigio
-del muro perimetrale, quello della copia di BD.RM.260."""
+# Il disegno della planimetria sotto l'impianto: la base standard di REL-026 C-3 — muri
+# grigio chiaro, finestre celesti, porte a tratto fine, balconi — sta in `base.py`, con i
+# suoi colori. Qui le due chiamate, perche' la composizione non cambi.
 
 
 def retino_dei_muri(pianta: Pianta, P: Callable[[float, float], Punto], velo: float) -> list[Primitiva]:
-    """Il retino dei muri: sulle `sagome_muri`, se la pianta le da' (BD.RM.260: con il
-    disegno di base sotto, i rettangoli asse-spessore si sovrapponevano negli angoli e
-    sporgevano alle estremita'); se no un rettangolo per ogni tratto pieno di muro,
-    aperture tolte."""
-    if pianta.sagome_muri:
-        return [
-            Area(tuple(P(*q) for q in sagoma), COLORE_DELLE_SAGOME, LAYER_MURI, velo)
-            for sagoma in pianta.sagome_muri
-        ]
-    return [
-        Area(_angoli_del_tratto(muro, s0, s1, P), COLORE_MURI[muro.tipo], LAYER_MURI, velo)
-        for muro, s0, s1 in pezzi_dei_muri(pianta)
-    ]
+    """I muri della base standard (`base.muri_della_base`): sulle `sagome_muri`, se la pianta
+    le da' (B-2), se no sui `muri` con gli angoli raccordati, in un contorno solo."""
+    from .base import muri_della_base
+
+    return muri_della_base(pianta, P, velo)
 
 
 def disegno_delle_aperture(
     pianta: Pianta, P: Callable[[float, float], Punto], k: float,
 ) -> tuple[list[Primitiva], list[tuple[str, Segmento]]]:
-    """Porte, finestre e fori sulla carta; e, per le scritte, i tratti che non devono
-    toccare (le tre linee della finestra, l'anta e l'arco della porta come otto corde)."""
-    primitive: list[Primitiva] = []
-    tratti: list[tuple[str, Segmento]] = []
-    muri = {m.id: m for m in pianta.muri}
-    for apertura in pianta.aperture:
-        muro = muri[apertura.muro]
-        ux, uy, _ = _asse(muro)
-        centro = (apertura.centro[0] - muro.da[0]) * ux + (apertura.centro[1] - muro.da[1]) * uy
-        s0, s1 = centro - apertura.larghezza / 2, centro + apertura.larghezza / 2
-        h = muro.spessore / 2
-        if apertura.tipo == "finestra":
-            for d in (-h, 0.0, h):
-                a, b = P(*_sull_asse(muro, s0, d)), P(*_sull_asse(muro, s1, d))
-                primitive.append(Linea((a, b), COLORE_APERTURE, 0.18, LAYER_APERTURE))
-                tratti.append((f"finestra {apertura.id}", (a[0], a[1], b[0], b[1], 0.09)))
-        elif apertura.tipo == "foro":
-            angoli = _angoli_del_tratto(muro, s0, s1, P)
-            primitive.append(Linea((*angoli, angoli[0]), COLORE_APERTURE, 0.18, LAYER_APERTURE, "1 0.6"))
-        elif apertura.tipo == "porta":
-            verso = {"sopra": (0.0, -1.0), "sotto": (0.0, 1.0), "sinistra": (-1.0, 0.0), "destra": (1.0, 0.0)}
-            normale = (-uy, ux)
-            segno = 1.0
-            if apertura.apre_verso is not None:
-                v = verso[apertura.apre_verso]
-                segno = 1.0 if normale[0] * v[0] + normale[1] * v[1] >= 0 else -1.0
-            cerniera = _sull_asse(muro, s0, segno * h)
-            anta = _sull_asse(muro, s0, segno * (h + apertura.larghezza))
-            stipite = _sull_asse(muro, s1, segno * h)
-            primitive.append(Linea((P(*cerniera), P(*anta)), COLORE_APERTURE, 0.18, LAYER_APERTURE))
-            a_cerniera = math.atan2(anta[1] - cerniera[1], anta[0] - cerniera[0])
-            a_stipite = math.atan2(stipite[1] - cerniera[1], stipite[0] - cerniera[0])
-            orario = (a_stipite - a_cerniera) % (2 * math.pi) < math.pi
-            primitive.append(Arco(P(*cerniera), apertura.larghezza * k, P(*anta), P(*stipite), orario,
-                                  COLORE_APERTURE, 0.18, LAYER_APERTURE))
-            centro_arco = P(*cerniera)
-            raggio = apertura.larghezza * k
-            passo_angolo = ((a_stipite - a_cerniera + math.pi) % (2 * math.pi) - math.pi) / 8
-            corde = [
-                (centro_arco[0] + raggio * math.cos(a_cerniera + i * passo_angolo),
-                 centro_arco[1] + raggio * math.sin(a_cerniera + i * passo_angolo))
-                for i in range(9)
-            ]
-            for a, b in [(P(*cerniera), P(*anta)), *zip(corde, corde[1:], strict=False)]:
-                tratti.append((f"porta {apertura.id}", (a[0], a[1], b[0], b[1], 0.09)))
-    return primitive, tratti
+    """Finestre, porte, fori e balconi della base standard (`base.aperture_della_base`); e,
+    per le scritte, i tratti che non devono toccare."""
+    from .base import aperture_della_base
+
+    return aperture_della_base(pianta, P, k)
 
 
 def estensione(pianta: Pianta, percorsi: Sequence[Percorso]) -> tuple[float, float, float, float]:
     xs: list[float] = []
     ys: list[float] = []
-    for sagoma in pianta.sagome_muri:
+    for sagoma in [*pianta.sagome_muri, *(b.poligono for b in pianta.balconi)]:
         xs += [p[0] for p in sagoma]
         ys += [p[1] for p in sagoma]
     for muro in pianta.muri:
@@ -758,15 +712,17 @@ def componi(
     rettangoli: list[tuple[str, Rettangolo]] = []
     ammessi: dict[str, set[str]] = {}
 
-    # Lo sfondo (non nel dettaglio: un'immagine non si ritaglia).
-    if pianta.sfondo is not None and pixel_dello_sfondo is not None and zona is None:
+    # Lo sfondo (non nel dettaglio: un'immagine non si ritaglia), solo se va sulla tavola:
+    # quando la base e' ridisegnata, la planimetria d'origine serve al controllo a vista,
+    # non alla tavola consegnata (REL-026, C-3).
+    if pianta.sfondo is not None and pianta.sfondo_sulla_tavola and pixel_dello_sfondo is not None and zona is None:
         sf = pianta.sfondo
         x0, y0 = P(-sf.origine_px[0] / sf.px_per_m, -sf.origine_px[1] / sf.px_per_m)
         primitive.append(
             Immagine(Path(sf.file).name, x0, y0, pixel_dello_sfondo[0] / sf.px_per_m * k,
                      pixel_dello_sfondo[1] / sf.px_per_m * k, sf.opacita, pixel_dello_sfondo)
         )
-    velo = 0.55 if pianta.sfondo is not None else 1.0
+    velo = 0.55 if pianta.sfondo_sulla_tavola else 1.0
 
     # Le zone esterne praticabili: un contorno tratteggiato, sotto i muri.
     for zona_esterna in pianta.zone_esterne:
@@ -998,21 +954,21 @@ def componi(
                               (foro[0] - 0.9, foro[1] - 0.9, foro[0] + 0.9, foro[1] + 0.9), ingombri, sopra=muro_del_foro)
         ammessi[f"foratura {foratura.numero}"] = {f"muro {foratura.muro}"}
         scritte.append((f"foratura {foratura.numero}", posata))
-    for stanza in pianta.stanze:
-        superficie = _superficie(stanza.poligono)
-        testo = " · ".join(
-            v for v in (stanza.nome, stanza.zona, f"{metri(superficie)} m²") if v
-        )
+    # I nomi dei locali — stanze e balconi (REL-026, C-3) — con i mq dal poligono.
+    from .base import locali_con_nome
+
+    for chi_del_locale, parti, poligono in locali_con_nome(pianta):
         posata_o_niente = posa_dentro(
-            testo, CORPO_STANZE_PT, False,
-            (P(*p) for p in _punti_dentro(stanza.poligono)), ingombri,
+            " · ".join(parti), CORPO_STANZE_PT, False,
+            (P(*p) for p in _punti_dentro(poligono)), ingombri,
         )
         if posata_o_niente is not None:
-            scritte.append((f"stanza {stanza.id}", posata_o_niente))
+            scritte.append((chi_del_locale, posata_o_niente))
 
     for chi, posata in scritte:
-        colore = COLORE_STANZE if chi.startswith("stanza") else "#000000"
-        layer = LAYER_STANZE if chi.startswith("stanza") else LAYER_SIGLE
+        del_locale = chi.startswith(("stanza", "balcone"))
+        colore = COLORE_STANZE if del_locale else "#000000"
+        layer = LAYER_STANZE if del_locale else LAYER_SIGLE
         if chi.startswith(("tratta", "fascio")):
             colore = stile(tracciati[chi.split()[1]].fluido)[0]
         if posata.numero is not None:
@@ -1147,7 +1103,9 @@ def ritaglia(p: Primitiva, r: Rettangolo) -> list[Primitiva]:
                 for pezzo in ritaglia_le_linee([p.punti], r)]
     if isinstance(p, Area):
         punti = _ritaglia_poligono(p.punti, r)
-        return [Area(tuple(punti), p.colore, p.layer, p.opacita)] if len(punti) >= 3 else []
+        # Pari e dispari: ritagliare ogni anello per conto suo da' la stessa campitura.
+        buchi = tuple(tuple(b) for b in (_ritaglia_poligono(buco, r) for buco in p.buchi) if len(b) >= 3)
+        return [Area(tuple(punti), p.colore, p.layer, p.opacita, buchi)] if len(punti) >= 3 else []
     if isinstance(p, Arco):
         dentro = all(r[0] - 1e-6 <= q[0] <= r[2] + 1e-6 and r[1] - 1e-6 <= q[1] <= r[3] + 1e-6
                      for q in (p.centro, p.da, p.a))
@@ -1191,7 +1149,8 @@ def _sposta(p: Primitiva, dx: float, dy: float) -> Primitiva:
     if isinstance(p, Linea):
         return Linea(tuple(m(q) for q in p.punti), p.colore, p.spessore, p.layer, p.tratto)
     if isinstance(p, Area):
-        return Area(tuple(m(q) for q in p.punti), p.colore, p.layer, p.opacita)
+        return Area(tuple(m(q) for q in p.punti), p.colore, p.layer, p.opacita,
+                    tuple(tuple(m(q) for q in b) for b in p.buchi))
     if isinstance(p, Cerchio):
         return Cerchio(m(p.centro), p.raggio, p.colore, p.spessore, p.riempimento, p.layer)
     return p
@@ -1258,14 +1217,6 @@ def _incrocio_stretto(s: tuple[Punto, Punto], t: tuple[Punto, Punto]) -> Punto |
         dentro_s = min(a[1], b[1]) < y < max(a[1], b[1])
         dentro_t = min(c[0], d[0]) < x < max(c[0], d[0])
     return (x, y) if dentro_s and dentro_t else None
-
-
-def _superficie(poligono: Sequence[Punto]) -> float:
-    doppia = sum(
-        a[0] * b[1] - b[0] * a[1]
-        for a, b in zip(poligono, [*poligono[1:], poligono[0]], strict=True)
-    )
-    return abs(doppia) / 2
 
 
 def _punti_dentro(poligono: Sequence[Punto]) -> list[Punto]:
@@ -1336,8 +1287,13 @@ def scrivi_svg(tavola: Tavola) -> str:
 
 def _svg(p: Primitiva) -> str:
     if isinstance(p, Area):
-        punti = " ".join(f"{_n(x)},{_n(y)}" for x, y in p.punti)
         velo = "" if p.opacita == 1 else f' fill-opacity="{p.opacita:g}"'
+        if p.buchi:
+            d = " ".join(
+                "M" + " L".join(f"{_n(x)} {_n(y)}" for x, y in anello) + " Z" for anello in (p.punti, *p.buchi)
+            )
+            return f'<path d="{d}" fill="{p.colore}"{velo} fill-rule="evenodd" stroke="none"/>'
+        punti = " ".join(f"{_n(x)},{_n(y)}" for x, y in p.punti)
         return f'<polygon points="{punti}" fill="{p.colore}"{velo} stroke="none"/>'
     if isinstance(p, Linea):
         punti = " ".join(f"{_n(x)},{_n(y)}" for x, y in p.punti)
@@ -1413,6 +1369,9 @@ def scrivi_dxf(tavola: Tavola, destinazione: Path, titolo: str) -> list[Path]:
                 campitura = msp.add_hatch(dxfattribs={"layer": p.layer})
                 campitura.set_solid_fill(color=aci_vicino(rgb(p.colore)), rgb=RGB(*rgb(p.colore)))
                 campitura.paths.add_polyline_path([t.p(*q) for q in p.punti], is_closed=True)
+                for buco in p.buchi:
+                    campitura.paths.add_polyline_path([t.p(*q) for q in buco], is_closed=True,
+                                                      flags=const.BOUNDARY_PATH_DEFAULT)
                 if p.opacita < 1:
                     campitura.transparency = 1 - p.opacita
             elif isinstance(p, Linea):
