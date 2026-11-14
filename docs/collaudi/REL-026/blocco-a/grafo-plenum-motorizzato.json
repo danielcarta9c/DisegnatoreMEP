@@ -1,0 +1,500 @@
+{
+ "schema_version": "1.1.0",
+ "metadata": {
+  "project_id": "rel026-canalizzato-plenum-motorizzato",
+  "client": "Committente (dati omessi)",
+  "project_name": "Ventilconvettore canalizzato idronico con plenum motorizzato di zona",
+  "commission_code": "PROVA-B",
+  "revision": "00",
+  "issue_date": "2026-11-13",
+  "address": "Indirizzo omesso",
+  "sheet_title": "Schema funzionale — ventilconvettori canalizzati idronici",
+  "sheet_number": "M.02",
+  "drawn_by": "Nove C",
+  "header_note": "Caso di prova REL-026"
+ },
+ "plant_regime": "up_to_35_kw",
+ "diametri": {
+  "reti": [
+   "impianto"
+  ]
+ },
+ "networks": [
+  {
+   "id": "impianto",
+   "name": "Circuito del ventilconvettore",
+   "domain": "hydronic",
+   "medium": "heating_water"
+  },
+  {
+   "id": "mandata-aria-1",
+   "name": "Mandata aria 1",
+   "domain": "aeraulic",
+   "medium": "supply_air"
+  },
+  {
+   "id": "ripresa-aria-1",
+   "name": "Ripresa aria 1",
+   "domain": "aeraulic",
+   "medium": "return_air"
+  },
+  {
+   "id": "condensa-1",
+   "name": "Scarico condensa 1",
+   "domain": "condensate",
+   "medium": "condensate"
+  },
+  {
+   "id": "linea-pdc",
+   "name": "Alimentazione pompa di calore",
+   "domain": "control",
+   "medium": "power_supply"
+  },
+  {
+   "id": "linea-fc-1",
+   "name": "Alimentazione ventilconvettore",
+   "domain": "control",
+   "medium": "power_supply"
+  },
+  {
+   "id": "linea-centrale",
+   "name": "Alimentazione centrale di zona",
+   "domain": "control",
+   "medium": "power_supply"
+  },
+  {
+   "id": "serrande",
+   "name": "Comando motori serrande",
+   "domain": "control",
+   "medium": "control_bus"
+  },
+  {
+   "id": "bus-zona",
+   "name": "Bus della centrale ai termostati",
+   "domain": "control",
+   "medium": "control_bus"
+  },
+  {
+   "id": "bus-fc",
+   "name": "Collegamento centrale-ventilconvettore",
+   "domain": "control",
+   "medium": "control_bus"
+  }
+ ],
+ "components": [
+  {
+   "id": "pdc",
+   "definition_id": "heat-pump-air-water",
+   "properties": {
+    "power_kw": 5,
+    "delta_t_k": 5,
+    "tipo": "monoblocco, all'esterno",
+    "volume_minimo": "verificato"
+   }
+  },
+  {
+   "id": "fc-1",
+   "definition_id": "fan-coil-ducted-air",
+   "properties": {
+    "marca": "Marca di prova",
+    "modello": "FCC-50 di prova",
+    "power_kw": 5,
+    "delta_t_k": 5
+   }
+  },
+  {
+   "id": "plz-1",
+   "definition_id": "zoning-plenum-4",
+   "properties": {
+    "marca": "Marca di prova",
+    "modello": "plenum motorizzato a 4 serrande"
+   }
+  },
+  {
+   "id": "centrale",
+   "definition_id": "zone-controller",
+   "properties": {
+    "marca": "Marca di prova",
+    "modello": "centrale di zona",
+    "compreso_in": "plz-1"
+   }
+  },
+  {
+   "id": "quadro",
+   "definition_id": "electrical-panel",
+   "properties": {
+    "etichetta": "quadro elettrico esistente"
+   }
+  },
+  {
+   "id": "tz-1",
+   "definition_id": "room-thermostat",
+   "properties": {
+    "etichetta": "Z1"
+   }
+  },
+  {
+   "id": "tz-2",
+   "definition_id": "room-thermostat",
+   "properties": {
+    "etichetta": "Z2"
+   }
+  },
+  {
+   "id": "tz-3",
+   "definition_id": "room-thermostat",
+   "properties": {
+    "etichetta": "Z3"
+   }
+  },
+  {
+   "id": "tz-4",
+   "definition_id": "room-thermostat",
+   "properties": {
+    "etichetta": "Z4"
+   }
+  },
+  {
+   "id": "ra-1",
+   "definition_id": "return-air-terminal",
+   "properties": {
+    "etichetta": "ripresa con filtro"
+   }
+  },
+  {
+   "id": "sif-1",
+   "definition_id": "condensate-trap",
+   "properties": {}
+  },
+  {
+   "id": "sc-1",
+   "definition_id": "condensate-outlet",
+   "properties": {
+    "etichetta": "allaccio allo scarico"
+   }
+  },
+  {
+   "id": "b-1-1",
+   "definition_id": "air-supply-terminal",
+   "properties": {
+    "etichetta": "Camera 1",
+    "dimensione": "300×150"
+   }
+  },
+  {
+   "id": "b-1-2",
+   "definition_id": "air-supply-terminal",
+   "properties": {
+    "etichetta": "Camera 2",
+    "dimensione": "300×150"
+   }
+  },
+  {
+   "id": "b-1-3",
+   "definition_id": "air-supply-terminal",
+   "properties": {
+    "etichetta": "Soggiorno",
+    "dimensione": "300×150"
+   }
+  },
+  {
+   "id": "b-1-4",
+   "definition_id": "air-supply-terminal",
+   "properties": {
+    "etichetta": "Studio",
+    "dimensione": "300×150"
+   }
+  }
+ ],
+ "connections": [
+  {
+   "id": "m1",
+   "network_id": "impianto",
+   "endpoint_a": {
+    "component_id": "pdc",
+    "port_id": "water_supply"
+   },
+   "endpoint_b": {
+    "component_id": "fc-1",
+    "port_id": "in"
+   },
+   "lunghezza_m": 8,
+   "properties": {}
+  },
+  {
+   "id": "r1",
+   "network_id": "impianto",
+   "endpoint_a": {
+    "component_id": "fc-1",
+    "port_id": "out"
+   },
+   "endpoint_b": {
+    "component_id": "pdc",
+    "port_id": "water_return"
+   },
+   "lunghezza_m": 8,
+   "properties": {}
+  },
+  {
+   "id": "rip-1",
+   "network_id": "ripresa-aria-1",
+   "endpoint_a": {
+    "component_id": "ra-1",
+    "port_id": "a"
+   },
+   "endpoint_b": {
+    "component_id": "fc-1",
+    "port_id": "return"
+   },
+   "lunghezza_m": 0,
+   "properties": {}
+  },
+  {
+   "id": "cd-1a",
+   "network_id": "condensa-1",
+   "endpoint_a": {
+    "component_id": "fc-1",
+    "port_id": "drain"
+   },
+   "endpoint_b": {
+    "component_id": "sif-1",
+    "port_id": "a"
+   },
+   "sezione": "Ø32",
+   "lunghezza_m": 3,
+   "properties": {}
+  },
+  {
+   "id": "cd-1b",
+   "network_id": "condensa-1",
+   "endpoint_a": {
+    "component_id": "sif-1",
+    "port_id": "b"
+   },
+   "endpoint_b": {
+    "component_id": "sc-1",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "ma-1",
+   "network_id": "mandata-aria-1",
+   "endpoint_a": {
+    "component_id": "fc-1",
+    "port_id": "supply"
+   },
+   "endpoint_b": {
+    "component_id": "plz-1",
+    "port_id": "in"
+   },
+   "lunghezza_m": 0,
+   "properties": {}
+  },
+  {
+   "id": "ma-1-1",
+   "network_id": "mandata-aria-1",
+   "endpoint_a": {
+    "component_id": "plz-1",
+    "port_id": "out_1"
+   },
+   "endpoint_b": {
+    "component_id": "b-1-1",
+    "port_id": "a"
+   },
+   "sezione": "Ø160",
+   "lunghezza_m": 3.0,
+   "properties": {}
+  },
+  {
+   "id": "ma-1-2",
+   "network_id": "mandata-aria-1",
+   "endpoint_a": {
+    "component_id": "plz-1",
+    "port_id": "out_2"
+   },
+   "endpoint_b": {
+    "component_id": "b-1-2",
+    "port_id": "a"
+   },
+   "sezione": "Ø160",
+   "lunghezza_m": 4.0,
+   "properties": {}
+  },
+  {
+   "id": "ma-1-3",
+   "network_id": "mandata-aria-1",
+   "endpoint_a": {
+    "component_id": "plz-1",
+    "port_id": "out_3"
+   },
+   "endpoint_b": {
+    "component_id": "b-1-3",
+    "port_id": "a"
+   },
+   "sezione": "Ø160",
+   "lunghezza_m": 5.0,
+   "properties": {}
+  },
+  {
+   "id": "ma-1-4",
+   "network_id": "mandata-aria-1",
+   "endpoint_a": {
+    "component_id": "plz-1",
+    "port_id": "out_4"
+   },
+   "endpoint_b": {
+    "component_id": "b-1-4",
+    "port_id": "a"
+   },
+   "sezione": "Ø160",
+   "lunghezza_m": 6.0,
+   "properties": {}
+  },
+  {
+   "id": "e-pdc",
+   "network_id": "linea-pdc",
+   "endpoint_a": {
+    "component_id": "quadro",
+    "port_id": "out_1"
+   },
+   "endpoint_b": {
+    "component_id": "pdc",
+    "port_id": "power"
+   },
+   "sezione": "3G2,5",
+   "lunghezza_m": 12,
+   "properties": {}
+  },
+  {
+   "id": "e-fc-1",
+   "network_id": "linea-fc-1",
+   "endpoint_a": {
+    "component_id": "quadro",
+    "port_id": "out_2"
+   },
+   "endpoint_b": {
+    "component_id": "fc-1",
+    "port_id": "power"
+   },
+   "sezione": "3G1,5",
+   "lunghezza_m": 9,
+   "properties": {}
+  },
+  {
+   "id": "e-centrale",
+   "network_id": "linea-centrale",
+   "endpoint_a": {
+    "component_id": "quadro",
+    "port_id": "out_3"
+   },
+   "endpoint_b": {
+    "component_id": "centrale",
+    "port_id": "power"
+   },
+   "sezione": "3G1,5",
+   "lunghezza_m": 9,
+   "properties": {}
+  },
+  {
+   "id": "e-serrande",
+   "network_id": "serrande",
+   "endpoint_a": {
+    "component_id": "plz-1",
+    "port_id": "motori"
+   },
+   "endpoint_b": {
+    "component_id": "centrale",
+    "port_id": "serrande"
+   },
+   "lunghezza_m": 0,
+   "scritta": "di fabbrica",
+   "properties": {}
+  },
+  {
+   "id": "b-fc",
+   "network_id": "bus-fc",
+   "endpoint_a": {
+    "component_id": "centrale",
+    "port_id": "p1p2"
+   },
+   "endpoint_b": {
+    "component_id": "fc-1",
+    "port_id": "bus"
+   },
+   "sezione": "bus",
+   "lunghezza_m": 2,
+   "properties": {}
+  },
+  {
+   "id": "b-tz-1",
+   "network_id": "bus-zona",
+   "endpoint_a": {
+    "component_id": "centrale",
+    "port_id": "bus_1"
+   },
+   "endpoint_b": {
+    "component_id": "tz-1",
+    "port_id": "a"
+   },
+   "sezione": "bus",
+   "lunghezza_m": 6,
+   "properties": {}
+  },
+  {
+   "id": "b-tz-2",
+   "network_id": "bus-zona",
+   "endpoint_a": {
+    "component_id": "centrale",
+    "port_id": "bus_2"
+   },
+   "endpoint_b": {
+    "component_id": "tz-2",
+    "port_id": "a"
+   },
+   "sezione": "bus",
+   "lunghezza_m": 6,
+   "properties": {}
+  },
+  {
+   "id": "b-tz-3",
+   "network_id": "bus-zona",
+   "endpoint_a": {
+    "component_id": "centrale",
+    "port_id": "bus_3"
+   },
+   "endpoint_b": {
+    "component_id": "tz-3",
+    "port_id": "a"
+   },
+   "sezione": "bus",
+   "lunghezza_m": 6,
+   "properties": {}
+  },
+  {
+   "id": "b-tz-4",
+   "network_id": "bus-zona",
+   "endpoint_a": {
+    "component_id": "centrale",
+    "port_id": "bus_4"
+   },
+   "endpoint_b": {
+    "component_id": "tz-4",
+    "port_id": "a"
+   },
+   "sezione": "bus",
+   "lunghezza_m": 6,
+   "properties": {}
+  }
+ ],
+ "assumptions": [
+  {
+   "id": "a1",
+   "text": "La centrale di zona del catalogo ha la sola porta P1-P2 verso la macchina, quella delle unita' interne ad espansione diretta: col ventilconvettore idronico il collegamento e' scritto sul bus del ventilconvettore, da confermare col progettista.",
+   "status": "proposed"
+  }
+ ],
+ "rule_applications": [],
+ "subsystems": [],
+ "sheets": []
+}

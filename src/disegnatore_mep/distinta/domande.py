@@ -63,8 +63,8 @@ DATI: dict[str, DatoInParole] = {
         "«sezione» del tratto",
     ),
     "volume_l": DatoInParole(
-        "La taglia del vaso d'espansione, in litri: per il vaso dell'impianto la scrive il comando vaso, per il "
-        "vaso sanitario la dà il progettista",
+        "La taglia del vaso d'espansione, in litri: la scrive il comando vaso, per il vaso dell'impianto e, con "
+        "--sanitario, per il vaso sanitario; o la dà il progettista",
         "«volume_l»",
     ),
     "tubi": DatoInParole(

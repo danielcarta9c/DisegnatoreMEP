@@ -1,0 +1,25 @@
+Girati dalla deduzione:
+  - tee-drain-connection-cold-bollitore-cold-in 0->180
+  - sonda-acs 0->90
+  - sonda-volano 0->270
+  - inlet-mixing-valve-thermostatic-bollitore-dhw-out 0->90 specchiato
+  - utenze 0->0 specchiato
+  - inlet-filling-unit-pdc-water-return 0->90 specchiato
+  - tee-pressure-gauge-pdc-water-return 0->180
+  - confluenza-ritorno 0->180
+Area del disegno dell'A3: 350 x 235 mm, con la tabella delle apparecchiature in alto a sinistra (155 x 43.75 mm) e le note di posa alla sua destra (187.5 x 40 mm); la posa ne occupa 300 x 152.5.
+
+Le regole del piano
+  - la tavola t1: fra pavimento e volano la mandata e il ritorno corrono insieme per 40.0 mm ma tengono 2 interassi diversi (10, 15 mm): la coppia si apre, e mandata e ritorno corrono sempre insieme (B11, PO 20 settembre 2026)
+    codice: SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER · t1, pavimento, volano
+
+Cartiglio: campi da definire: COMMITTENTE, INDIRIZZO, TITOLO TAVOLA, COMMESSA, TAVOLA — nella casella c'e' «DA DEFINIRE» e la tavola esce in bozza (D-025)
+
+File scritti:
+  - docs/collaudi/REL-026/blocco-a/vaso-sanitario/tavola/villetta-pdc-volano-bollitore-idraulica-t1.pdf
+  - docs/collaudi/REL-026/blocco-a/vaso-sanitario/tavola/villetta-pdc-volano-bollitore-idraulica-t1.svg
+  - docs/collaudi/REL-026/blocco-a/vaso-sanitario/tavola/villetta-pdc-volano-bollitore-idraulica-t1.dxf
+  - docs/collaudi/REL-026/blocco-a/vaso-sanitario/tavola/Cartiglio_NoveC_A3-logo.jpg
+  - docs/collaudi/REL-026/blocco-a/vaso-sanitario/tavola/villetta-pdc-volano-bollitore-idraulica-t1-rilievi.md
+
+Formato A3 · tratte 29 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 7 · sormonti 1 · avvisi e regole: SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x1

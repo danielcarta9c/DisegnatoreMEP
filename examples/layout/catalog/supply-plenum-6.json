@@ -1,0 +1,69 @@
+{
+  "id": "supply-plenum-6",
+  "version": "1.0.0",
+  "name": "Plenum di mandata a sei uscite",
+  "functions": [
+    "air_distribution"
+  ],
+  "traits": [
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
+  "symbol_id": "supply-plenum-6",
+  "composite": false,
+  "ports": [
+    {
+      "id": "in",
+      "domain": "aeraulic",
+      "medium": "supply_air",
+      "flow": "in",
+      "required": true
+    },
+    {
+      "id": "out_1",
+      "domain": "aeraulic",
+      "medium": "supply_air",
+      "flow": "out",
+      "required": true
+    },
+    {
+      "id": "out_2",
+      "domain": "aeraulic",
+      "medium": "supply_air",
+      "flow": "out",
+      "required": true
+    },
+    {
+      "id": "out_3",
+      "domain": "aeraulic",
+      "medium": "supply_air",
+      "flow": "out",
+      "required": true
+    },
+    {
+      "id": "out_4",
+      "domain": "aeraulic",
+      "medium": "supply_air",
+      "flow": "out",
+      "required": true
+    },
+    {
+      "id": "out_5",
+      "domain": "aeraulic",
+      "medium": "supply_air",
+      "flow": "out",
+      "required": true
+    },
+    {
+      "id": "out_6",
+      "domain": "aeraulic",
+      "medium": "supply_air",
+      "flow": "out",
+      "required": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION",
+    "proposta della sessione del 13/11/2026 (REL-026, I-300): la voce del plenum motorizzato di zona senza le serrande e senza i motori, una per numero di uscite; da approvare dal PO sulla tavola"
+  ]
+}

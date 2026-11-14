@@ -35,6 +35,54 @@ edizione vigente (la ricerca SRC-028 dice che l'edizione 2014 non e' stata letta
 costanti con un nome, da correggere in un punto solo se la norma letta dice altro. La serie
 delle taglie e' quella tipica dei vasi da riscaldamento; quella vera e' del catalogo del
 fornitore.
+
+## Il vaso sanitario (REL-026, I-300)
+
+Il vaso del bollitore dell'acqua calda sanitaria, sull'acqua fredda in ingresso
+(`dimensiona_il_vaso_sanitario`). Il metodo e' quello del focus tecnico Caleffi «Il
+dimensionamento degli impianti idrosanitari — Vasi d'espansione e accumuli» (documento
+0851415, © 2015), letto il 13 novembre 2026, p. 4:
+
+- **il volume d'espansione** ``Ve = e · VB``: si conta **solo l'acqua del bollitore** — la
+  rete di distribuzione e il ricircolo si trascurano, perche' basta un prelievo per far
+  scendere la pressione —, ``e`` il coefficiente d'espansione fra la temperatura dell'acqua
+  fredda in ingresso e la massima di accumulo, dalla densita' come per il riscaldamento (la
+  tabella di Caleffi, riferita a 4 °C, da' gli stessi valori al decimillesimo);
+- **la pressione iniziale** ``pa`` e' quella di alimentazione del bollitore: la taratura del
+  riduttore di pressione, o la massima della rete;
+- **la precarica** ``p0 = pa − 0,2 bar`` (I-301: il PO ha rimesso la scelta alla sessione).
+  Caleffi la formula la scrive con la pressione di alimentazione e la precarica non la
+  nomina; la dice il catalogo tecnico Reflex «Reflex, Refix — Expansion vessels» (RE1884en,
+  letto il 13 novembre 2026), pp. 48, 49 e 53, che richiama la DIN 4807-5: «the supply
+  pressure p0 in the expansion vessel must be at least 0.2 bar less than the minimum flow
+  pressure», ``p0 = pa − 0.2 bar``, e fino a 1 bar in meno se il vaso e' lontano dal
+  riduttore. Sotto la rete, perche' il vaso tenga sempre un po' d'acqua e la membrana non
+  batta a ogni prelievo. **La DIN 4807-5 non e' stata letta**: e' citata dal catalogo;
+- **la pressione finale**: la taratura della valvola di sicurezza diminuita del 10 % «che ne
+  previene l'apertura», sopra i 5 bar (Caleffi, p. 4: ``Pe = 0,9 Pvs + 1`` in pressioni
+  assolute). Fino a 5 bar lo scarto e' quello del vaso di riscaldamento, 0,5 bar, che a 5
+  bar da' lo stesso numero: Caleffi, nelle pagine lette, il caso sotto i 5 bar non lo scrive;
+- **il volume nominale** ``Vn = Ve · (pe + 1) (pa + 1) / [(p0 + 1) (pe − pa)]``, pressioni
+  relative: e' la legge del gas col vaso precaricato a ``p0``, che parte da ``pa`` e arriva a
+  ``pe``. Con ``p0 = pa`` e' la formula di Caleffi, ``Vv = VB (eB − e0) / (1 − Pa/Pe)``; con
+  ``pe = psv − 0,5`` e' quella di Reflex, p. 49, ``Vn = VSp · n · (psv + 0,5)(p0 + 1,2) /
+  [100 (p0 + 1)(psv − p0 − 0,7)]``. Il fattore ``(pa + 1)/(p0 + 1)`` e' l'acqua che il vaso
+  tiene gia' a freddo: con 0,2 bar di scarto vale circa il 5 % in piu'. **Senza riserva
+  d'acqua**: il circuito sanitario si ricarica dalla rete a ogni prelievo;
+- **la taglia**: la prima della serie che non sia sotto ``Vn``.
+
+Le prove del metodo (`tests/vaso`): l'esempio di Caleffi, p. 5 — bollitore da 1000 l, acqua
+fredda a 10 °C, accumulo a 80 °C, rete a 3 bar, valvola a 7 bar: 63,49 l con la precarica
+uguale alla rete, che e' la sua ipotesi — e l'esempio di Reflex, p. 46: 900 l, espansione
+1,7 %, riduttore a 4,2 bar, precarica 4,0 bar, valvola a 10 bar: 31,5 l.
+
+**Fonti e limiti.** La temperatura dell'acqua fredda e' 10 °C (Caleffi, p. 2: 10÷12 °C
+nell'Italia settentrionale, 12÷15 al centro, 15÷18 al sud; il piu' freddo da' il vaso piu'
+grande). La serie delle taglie sanitarie **e' quella d'uso comune, non letta su un
+catalogo**: quella vera e' del fornitore (Reflex, p. 46, ha 8, 12, 18, 25, 33, 60, 80, 100 l).
+Per la pressione finale Reflex raccomanda ``pe ≤ psv − 0,5 bar`` (p. 45), e nella stessa
+pagina riporta dalla norma uno scarto del 20 % della taratura: qui resta il 10 % di Caleffi
+sopra i 5 bar e 0,5 bar fino a 5. Nessuna norma e' stata letta per il sanitario.
 """
 
 from dataclasses import dataclass
@@ -61,6 +109,9 @@ RISERVA_DI_CARICAMENTO_BAR = 0.3
 """A freddo l'impianto si carica sopra la precarica di questo tanto: e' la riserva d'acqua
 che entra nel vaso."""
 
+SALTO_MINIMO_BAR = 0.3
+"""Sotto questo salto fra precarica e pressione finale il vaso diventa enorme: si avvisa."""
+
 SERIE_DEI_VASI_L: tuple[int, ...] = (
     8, 12, 18, 24, 35, 50, 80, 100, 150, 200, 250, 300, 400, 500, 600, 750, 1000,
 )
@@ -81,10 +132,12 @@ def densita_dell_acqua(temperatura_c: float) -> float:
     return numeratore / (1.0 + 16.879850e-3 * t)
 
 
-def coefficiente_di_espansione(temperatura_massima_c: float) -> float:
-    """Di quanto cresce il volume dell'acqua da 10 °C alla temperatura massima: 0,0142 a
-    55 °C, 0,0224 a 70 °C."""
-    return densita_dell_acqua(TEMPERATURA_DI_RIEMPIMENTO_C) / densita_dell_acqua(temperatura_massima_c) - 1.0
+def coefficiente_di_espansione(
+    temperatura_massima_c: float, temperatura_iniziale_c: float = TEMPERATURA_DI_RIEMPIMENTO_C
+) -> float:
+    """Di quanto cresce il volume dell'acqua da 10 °C — o dalla temperatura iniziale data,
+    l'acqua fredda del sanitario — alla temperatura massima: 0,0142 a 55 °C, 0,0224 a 70 °C."""
+    return densita_dell_acqua(temperatura_iniziale_c) / densita_dell_acqua(temperatura_massima_c) - 1.0
 
 
 @dataclass(frozen=True)
@@ -167,7 +220,7 @@ def dimensiona_il_vaso(dati: DatiDelVaso) -> Vaso:
     precarica = _per_eccesso(max(statica + MARGINE_SULLA_STATICA_BAR, dati.pressione_minima_bar))
     finale = dati.taratura_sicurezza_bar - SCARTO_DI_CHIUSURA_BAR
     avvisi: list[str] = []
-    if finale - precarica < 0.3:
+    if finale - precarica < SALTO_MINIMO_BAR:
         avvisi.append(
             f"fra precarica ({_bar(precarica)} bar) e pressione finale ({_bar(finale)} bar) resta meno di 0,3 bar: "
             "l'edificio e' troppo alto per questa valvola di sicurezza, il vaso diventa enorme. Va rivisto col "
@@ -201,11 +254,162 @@ def dimensiona_il_vaso(dati: DatiDelVaso) -> Vaso:
     )
 
 
+# --- il vaso sanitario (REL-026, I-300) ------------------------------------------------
+
+TEMPERATURA_DELL_ACQUA_FREDDA_C = 10.0
+"""L'acqua fredda che entra nel bollitore. Caleffi, focus tecnico 0851415, p. 2: 10÷12 °C
+nell'Italia settentrionale, 12÷15 al centro, 15÷18 al sud; l'esempio di p. 5 usa 10 °C. Il
+valore piu' basso da' il vaso piu' grande."""
+
+SCARTO_SANITARIO_FRAZIONE = 0.10
+"""Sopra `SOGLIA_DELLO_SCARTO_BAR` la pressione finale sta il 10 % sotto la taratura della
+valvola di sicurezza, «che ne previene l'apertura»: Caleffi, focus tecnico 0851415, p. 4
+(``Pe = 0,9 Pvs + 1``, assolute)."""
+
+SOGLIA_DELLO_SCARTO_BAR = 5.0
+"""Fino a 5 bar di taratura lo scarto e' quello del vaso di riscaldamento
+(`SCARTO_DI_CHIUSURA_BAR`, 0,5 bar: per il sanitario e' la raccomandazione di Reflex,
+RE1884en p. 45, ``pe ≤ psv − 0,5 bar``); sopra, il 10 % di Caleffi. A 5 bar i due danno la
+stessa pressione finale, 4,5 bar."""
+
+SCARTO_DELLA_PRECARICA_SANITARIA_BAR = 0.2
+"""Quanto la precarica del vaso sanitario sta sotto la pressione di alimentazione (la
+taratura del riduttore): Reflex, «Reflex, Refix — Expansion vessels» (RE1884en), pp. 48, 49
+e 53, ``p0 = pa − 0.2 bar``, che richiama la DIN 4807-5 (non letta). Lo stesso catalogo
+porta lo scarto fino a 1 bar quando il vaso e' lontano dal riduttore: quello lo decide chi
+installa, e qui resta il minimo. Scelta rimessa dal PO alla sessione (I-301)."""
+
+SERIE_DEI_VASI_SANITARI_L: tuple[int, ...] = (
+    2, 5, 8, 12, 18, 24, 35, 50, 60, 80, 100, 150, 200, 300, 500,
+)
+"""Le taglie dei vasi sanitari, in litri: **la serie d'uso comune, non letta su un
+catalogo**; quella vera e' del fornitore. Oltre 500 l il calcolatore non sceglie: lo dice."""
+
+
+@dataclass(frozen=True)
+class DatiDelVasoSanitario:
+    """I dati del vaso sanitario, che l'agente raccoglie in sessione (REL-026, I-300)."""
+
+    volume_bollitore_l: float
+    """L'acqua del bollitore: e' la sola che si conta (Caleffi, p. 4)."""
+    temperatura_massima_c: float
+    """La massima di accumulo dell'acqua calda (anche quella dei cicli antilegionella)."""
+    pressione_di_rete_bar: float
+    """La pressione di alimentazione del bollitore: la taratura del riduttore, se c'e', o la
+    massima della rete."""
+    taratura_sicurezza_bar: float
+    """La valvola di sicurezza del bollitore (il gruppo di sicurezza sanitario)."""
+    temperatura_acqua_fredda_c: float = TEMPERATURA_DELL_ACQUA_FREDDA_C
+
+
+@dataclass(frozen=True)
+class VasoSanitario:
+    """Il risultato: quanto serve, che taglia, a che pressioni."""
+
+    coefficiente: float
+    volume_di_espansione_l: float
+    precarica_bar: float
+    """La pressione del gas a vaso vuoto: la rete meno `SCARTO_DELLA_PRECARICA_SANITARIA_BAR`."""
+    pressione_finale_bar: float
+    volume_nominale_l: float
+    taglia_l: int | None
+    avvisi: tuple[str, ...]
+    pressione_di_rete_bar: float = 0.0
+    """La pressione di alimentazione da cui la precarica e' ricavata."""
+
+    def caratteristiche(self, esecutivo: bool) -> str:
+        """La cella «caratteristiche» della tabella, come quella del vaso di riscaldamento:
+        il volume sempre, la precarica solo nell'esecutivo (D-221, D-224)."""
+        parti = [f"{self.taglia_l} l" if self.taglia_l else f"oltre {SERIE_DEI_VASI_SANITARI_L[-1]} l"]
+        if esecutivo:
+            parti.append(f"precarica {_bar(self.precarica_bar)} bar")
+        return " · ".join(parti)
+
+
+def pressione_finale_sanitaria(taratura_bar: float) -> float:
+    """La pressione finale del vaso sanitario per la taratura della valvola di sicurezza: il
+    10 % sotto la taratura sopra i 5 bar, 0,5 bar sotto fino a 5 bar."""
+    if taratura_bar > SOGLIA_DELLO_SCARTO_BAR:
+        return round(taratura_bar * (1.0 - SCARTO_SANITARIO_FRAZIONE), 6)
+    return taratura_bar - SCARTO_DI_CHIUSURA_BAR
+
+
+def volume_nominale_sanitario(
+    volume_di_espansione_l: float, rete_bar: float, precarica_bar: float, finale_bar: float,
+) -> float:
+    """Il volume nominale del vaso sanitario, pressioni relative: il gas precaricato a
+    `precarica_bar` parte da `rete_bar` e arriva a `finale_bar`. Con la precarica uguale alla
+    rete e' la formula di Caleffi; con la finale 0,5 bar sotto la valvola e' quella di Reflex."""
+    return (
+        volume_di_espansione_l * (finale_bar + 1.0) * (rete_bar + 1.0)
+        / ((precarica_bar + 1.0) * (finale_bar - rete_bar))
+    )
+
+
+def dimensiona_il_vaso_sanitario(dati: DatiDelVasoSanitario) -> VasoSanitario:
+    """Il vaso sanitario per questi dati. Non inventa: se i dati non bastano, solleva."""
+    if dati.volume_bollitore_l <= 0:
+        raise ValueError(f"il volume del bollitore deve essere positivo: {dati.volume_bollitore_l} l")
+    if dati.temperatura_massima_c <= dati.temperatura_acqua_fredda_c:
+        raise ValueError(
+            f"la temperatura di accumulo ({dati.temperatura_massima_c:g} °C) non sta sopra quella "
+            f"dell'acqua fredda ({dati.temperatura_acqua_fredda_c:g} °C)"
+        )
+    if dati.pressione_di_rete_bar <= 0:
+        raise ValueError(f"la pressione di rete deve essere positiva: {dati.pressione_di_rete_bar} bar")
+    if dati.taratura_sicurezza_bar <= SCARTO_DI_CHIUSURA_BAR:
+        raise ValueError(f"taratura della valvola di sicurezza troppo bassa: {dati.taratura_sicurezza_bar} bar")
+    coefficiente = coefficiente_di_espansione(dati.temperatura_massima_c, dati.temperatura_acqua_fredda_c)
+    volume_di_espansione = coefficiente * dati.volume_bollitore_l
+    rete = _per_eccesso(dati.pressione_di_rete_bar)
+    if rete <= SCARTO_DELLA_PRECARICA_SANITARIA_BAR:
+        raise ValueError(
+            f"la pressione di rete ({_bar(rete)} bar) e' troppo bassa per precaricare il vaso "
+            f"{_bar(SCARTO_DELLA_PRECARICA_SANITARIA_BAR)} bar sotto"
+        )
+    precarica = round(rete - SCARTO_DELLA_PRECARICA_SANITARIA_BAR, 6)
+    finale = pressione_finale_sanitaria(dati.taratura_sicurezza_bar)
+    if finale <= rete:
+        raise ValueError(
+            f"la pressione di rete ({_bar(rete)} bar) non sta sotto la pressione finale ({_bar(finale)} bar, "
+            f"dalla valvola a {_bar(dati.taratura_sicurezza_bar)} bar): nessun vaso basta, serve un riduttore di "
+            "pressione sull'acqua fredda"
+        )
+    avvisi: list[str] = []
+    if finale - rete < SALTO_MINIMO_BAR:
+        avvisi.append(
+            f"fra la pressione di rete ({_bar(rete)} bar) e la pressione finale ({_bar(finale)} bar) resta meno "
+            "di 0,3 bar: il vaso diventa enorme. Va rivisto col progettista (un riduttore di pressione, o un'altra "
+            "taratura della valvola)."
+        )
+    nominale = volume_nominale_sanitario(volume_di_espansione, rete, precarica, finale)
+    taglia = next((t for t in SERIE_DEI_VASI_SANITARI_L if t >= nominale - 1e-9), None)
+    if taglia is None:
+        avvisi.append(f"servono {nominale:.0f} l: oltre la serie d'uso comune, si sceglie sul catalogo del fornitore")
+    return VasoSanitario(
+        coefficiente=coefficiente,
+        volume_di_espansione_l=volume_di_espansione,
+        precarica_bar=precarica,
+        pressione_finale_bar=finale,
+        volume_nominale_l=nominale,
+        taglia_l=taglia,
+        avvisi=tuple(avvisi),
+        pressione_di_rete_bar=rete,
+    )
+
+
 __all__ = [
     "SERIE_DEI_VASI_L",
+    "SCARTO_DELLA_PRECARICA_SANITARIA_BAR",
+    "SERIE_DEI_VASI_SANITARI_L",
     "DatiDelVaso",
+    "DatiDelVasoSanitario",
     "Vaso",
+    "VasoSanitario",
     "coefficiente_di_espansione",
     "densita_dell_acqua",
     "dimensiona_il_vaso",
+    "dimensiona_il_vaso_sanitario",
+    "volume_nominale_sanitario",
+    "pressione_finale_sanitaria",
 ]

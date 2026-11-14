@@ -1,0 +1,18 @@
+{
+ "formato": "A3",
+ "vista": "elettrico",
+ "note": [
+  "Piano scritto a mano per il caso di prova del blocco A di REL-026: e' materiale di collaudo, non prodotto (D-155).",
+  "La tavola dell'elettrico e del comando dello stesso grafo: la pompa di calore e i tre ventilconvettori in riga, i termostati a sinistra di ciascuno sulla quota del consenso, il quadro sotto."
+ ],
+ "pezzi": {
+  "pdc": {"x": 0, "y": 40},
+  "fc-1": {"x": 100, "y": 40},
+  "fc-2": {"x": 180, "y": 40},
+  "fc-3": {"x": 260, "y": 40},
+  "tz-1": {"x": 77.5, "y": 60, "rotazione": 180},
+  "tz-2": {"x": 157.5, "y": 60, "rotazione": 180},
+  "tz-3": {"x": 237.5, "y": 60, "rotazione": 180},
+  "quadro": {"x": 2.5, "y": 120}
+ }
+}

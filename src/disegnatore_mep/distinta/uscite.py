@@ -25,6 +25,7 @@ from pathlib import Path
 from typing import Any
 
 from .calcolo import DA_DEFINIRE, Distinta, Voce
+from .grafo import Tratta
 from .lunghezze import in_parole
 
 FORMATO_DELLA_DISTINTA = "disegnatore-mep/distinta"
@@ -68,6 +69,17 @@ def data_del_cartiglio(progetto: Mapping[str, Any]) -> str:
 PER_IL_FOGLIO = (("≥ ", "min. "), ("≤ ", "max. "), ("≥", "min."), ("≤", "max."), ("→", "-"))
 """Il writer PDF del motore e' WinAnsi: «≥», «≤», «→» diventerebbero «?» (kit AA-01,
 RAPPORTO §6 punto 5). Sul foglio si scrivono come li scriveva il kit."""
+
+
+def _lunghezza_dalla_pianta(tratta: Tratta) -> bool:
+    """La lunghezza del tratto e' la misura che la pianta ha scritto nel grafo (REL-026,
+    B-4): ogni sua tubazione con una lunghezza porta il segno della pianta. Il comando
+    `pianta`, letto questo file, non la prende per la lunghezza del progettista. Si
+    scrive solo quando e' vero: le distinte di prima restano uguali."""
+    from disegnatore_mep.pianta.nel_grafo import LUNGHEZZA_DALLA_PIANTA, dalla_pianta
+
+    con = [t for t in tratta.tubazioni if t.dati.get("lunghezza_m") not in (None, "")]
+    return bool(con) and all(dalla_pianta(t.dati.get("lunghezza_m"), t.dati.get(LUNGHEZZA_DALLA_PIANTA)) for t in con)
 
 
 def _q(valore: float | None) -> int | float | None:
@@ -132,6 +144,7 @@ def distinta_in_json(distinta: Distinta) -> dict[str, Any]:
                 "lunghezza_da_quotare_m": _q(t.da_quotare_m),
                 "calcolo": t.calcolo_della_lunghezza,
                 "raccordo_diretto": t.diretta,
+                **({"lunghezza_dalla_pianta": True} if _lunghezza_dalla_pianta(t) else {}),
             }
             for t in distinta.tratte_in_tabella
         ],

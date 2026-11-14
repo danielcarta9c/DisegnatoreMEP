@@ -1,0 +1,12 @@
+Area del disegno dell'A3: 350 x 235 mm, con la tabella delle apparecchiature in alto a sinistra (155 x 56.25 mm); la posa ne occupa 300 x 95.
+
+Le regole del piano: nessuna violazione.
+
+File scritti:
+  - docs/collaudi/REL-026/blocco-a/plenum-di-mandata/tavola/rel026-canalizzati-plenum-di-mandata-elettrico-t1.pdf
+  - docs/collaudi/REL-026/blocco-a/plenum-di-mandata/tavola/rel026-canalizzati-plenum-di-mandata-elettrico-t1.svg
+  - docs/collaudi/REL-026/blocco-a/plenum-di-mandata/tavola/rel026-canalizzati-plenum-di-mandata-elettrico-t1.dxf
+  - docs/collaudi/REL-026/blocco-a/plenum-di-mandata/tavola/Cartiglio_NoveC_A3-logo.jpg
+  - docs/collaudi/REL-026/blocco-a/plenum-di-mandata/tavola/rel026-canalizzati-plenum-di-mandata-elettrico-t1-rilievi.md
+
+Formato A3 · tratte 7 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 5 · sormonti 0 · avvisi e regole: nessuno

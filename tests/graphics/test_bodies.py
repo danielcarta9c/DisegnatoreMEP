@@ -116,7 +116,9 @@ def test_the_libraries_are_not_empty() -> None:
     # 93 da REL-017: il termostato ambiente a contatto sulla linea del circolatore (I-269).
     # 94 da REL-017: la riduzione all'attacco della macchina (I-281, D-233).
     # 95 da REL-018: l'interruttore magnetotermico differenziale della linea (I-278).
-    assert len(published()) == 95
+    # 101 da REL-026 (I-300): il plenum di mandata da due a sei uscite e il
+    # ventilconvettore canalizzato col lato aria.
+    assert len(published()) == 101
 
 
 @pytest.mark.parametrize("symbol", published(), ids=lambda item: item.manifest.id)

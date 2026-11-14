@@ -7,7 +7,7 @@ compatibility: Richiede l'esecuzione del codice (claude.ai, Claude Cowork o Clau
 
 # Disegnatore MEP
 
-**Versione 2.0.0** — 7 novembre 2026.
+**Versione 2.1.0** — 13 novembre 2026.
 
 Il progettista ha già deciso e dimensionato l'impianto, e te lo descrive a parole. Tu ne fai la
 **tavola dello schema funzionale**: la leggi, chiedi quello che manca, la fai approvare, la componi e
@@ -196,7 +196,9 @@ python3 scripts/mep.py vaso $L/grafo-completo.json --contenuto <l> --tmax <°C> 
 Scrive la taglia sulla riga del vaso in tabella e, nell'esecutivo, la precarica, la taratura
 accanto alle valvole di sicurezza e la pressione di carica accanto al gruppo di riempimento. Con
 le Shenling usa la loro pressione minima (1,5 bar) e di riempimento (2,0 bar). Con il glicole
-passa `--coefficiente` della miscela, dalla sua scheda.
+passa `--coefficiente` della miscela, dalla sua scheda. **Il vaso sanitario** del bollitore:
+`vaso --sanitario --tmax <°C di accumulo> --rete <bar> --taratura <bar della valvola>
+[--bollitore <l>]` (i dati e il metodo in `capire.md` §3; senza `--bollitore`, il `volume_l` del bollitore).
 
 ### 4. L'approvazione — l'unico cancello
 
@@ -388,13 +390,16 @@ PREZZARE»: non la stimi.
 
 ### Su richiesta — la pianta dei posizionamenti e dei tracciati
 
-Solo se il progettista l'ha chiesta e ti ha dato la planimetria. Leggi **per intero**
-[riferimenti/pianta.md](riferimenti/pianta.md): dici tu muri, aperture e pezzi in un JSON, in
-metri; il comando instrada i tracciati **ortogonali**, lungo i muri, pagando curve e sormonti, e
-misura le lunghezze.
+Solo se il progettista l'ha chiesta e ti ha dato la planimetria. **La planimetria la legge un
+sub-agente** con [riferimenti/base.md](riferimenti/base.md) (il §2 dice che cosa passargli): torna
+`base.json`, la base in dati — muri, aperture, stanze, balconi — e la sovrapposizione, che guardi.
+Poi leggi **per intero** [riferimenti/pianta.md](riferimenti/pianta.md): nella base metti pezzi e
+tracciati; il comando instrada i tracciati **ortogonali**, lungo i muri, pagando curve e sormonti, e
+misura le lunghezze: con `--grafo` le scrive nel grafo (quelle del progettista restano), non a mano.
+Poi rifai schema e distinta.
 
 ```bash
-python3 scripts/mep.py pianta $L/pianta.json --out $L/pianta
+python3 scripts/mep.py pianta $L/pianta.json --out $L/pianta --grafo $L/grafo-completo.json
 ```
 
 Le sigle e i numeri di tratta sono quelli dello schema funzionale. Guarda la tavola come al
@@ -447,6 +452,7 @@ così basta un sì. Un messaggio per passo, non uno per domanda.
 | [riferimenti/distinta.md](riferimenti/distinta.md) | la distinta materiali per l'installatore | solo se il progettista la chiede |
 | [riferimenti/listino-minuteria.md](riferimenti/listino-minuteria.md) | il listino interno della minuteria, con data e fonte dei prezzi | solo se il progettista chiede un costo |
 | [riferimenti/pianta.md](riferimenti/pianta.md) | la pianta dei posizionamenti e dei tracciati | solo se il progettista la chiede |
+| [riferimenti/base.md](riferimenti/base.md) | leggere la planimetria e trascriverne la base, per un sub-agente | con la pianta, a chi legge la planimetria |
 | `dati/` | simboli, catalogo, regole degli accessori e della distinta — un file ciascuno —, nomi, cartiglio, lo schema e un esempio della pianta | li legge il comando; una voce e un manifesto si leggono con `catalogo <id>` e `simbolo <id>` |
 | `scripts/mep.py` | il comando | si esegue, non si legge |
 

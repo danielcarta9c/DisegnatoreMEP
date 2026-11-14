@@ -18,7 +18,12 @@ from .conftest import ROOT
 
 LISTINO = ROOT / "skill" / "distinta" / "LISTINO-MINUTERIA.md"
 CATALOGO = ROOT / "examples" / "layout" / "catalog"
-SENZA_CORREDO = {"outdoor-temperature-probe", "plant-controller", "solar-collector"}
+SENZA_CORREDO = {
+    "outdoor-temperature-probe", "plant-controller", "solar-collector",
+    # REL-026 (I-300): il corredo del ventilconvettore canalizzato col lato aria e del plenum di
+    # mandata non e' deciso dal PO, e la distinta non lo inventa.
+    "fan-coil-ducted-air", *(f"supply-plenum-{n}" for n in range(2, 7)),
+}
 """Le voci del catalogo che la distinta ancora non sa comprare: lo dice la sezione X."""
 
 

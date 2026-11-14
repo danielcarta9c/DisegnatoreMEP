@@ -1,0 +1,967 @@
+{
+ "schema_version": "1.1.0",
+ "metadata": {
+  "project_id": "rel026-canalizzati-plenum-di-mandata",
+  "client": "Committente (dati omessi)",
+  "project_name": "Tre ventilconvettori canalizzati idronici con plenum di mandata",
+  "commission_code": "PROVA-A",
+  "revision": "00",
+  "issue_date": "2026-11-13",
+  "address": "Indirizzo omesso",
+  "sheet_title": "Schema funzionale — ventilconvettori canalizzati idronici",
+  "sheet_number": "M.01",
+  "drawn_by": "Nove C",
+  "header_note": "Caso di prova REL-026"
+ },
+ "plant_regime": "up_to_35_kw",
+ "diametri": {
+  "reti": [
+   "impianto"
+  ]
+ },
+ "networks": [
+  {
+   "id": "impianto",
+   "name": "Circuito dei ventilconvettori",
+   "domain": "hydronic",
+   "medium": "heating_water"
+  },
+  {
+   "id": "mandata-aria-1",
+   "name": "Mandata aria 1",
+   "domain": "aeraulic",
+   "medium": "supply_air"
+  },
+  {
+   "id": "ripresa-aria-1",
+   "name": "Ripresa aria 1",
+   "domain": "aeraulic",
+   "medium": "return_air"
+  },
+  {
+   "id": "condensa-1",
+   "name": "Scarico condensa 1",
+   "domain": "condensate",
+   "medium": "condensate"
+  },
+  {
+   "id": "mandata-aria-2",
+   "name": "Mandata aria 2",
+   "domain": "aeraulic",
+   "medium": "supply_air"
+  },
+  {
+   "id": "ripresa-aria-2",
+   "name": "Ripresa aria 2",
+   "domain": "aeraulic",
+   "medium": "return_air"
+  },
+  {
+   "id": "condensa-2",
+   "name": "Scarico condensa 2",
+   "domain": "condensate",
+   "medium": "condensate"
+  },
+  {
+   "id": "mandata-aria-3",
+   "name": "Mandata aria 3",
+   "domain": "aeraulic",
+   "medium": "supply_air"
+  },
+  {
+   "id": "ripresa-aria-3",
+   "name": "Ripresa aria 3",
+   "domain": "aeraulic",
+   "medium": "return_air"
+  },
+  {
+   "id": "condensa-3",
+   "name": "Scarico condensa 3",
+   "domain": "condensate",
+   "medium": "condensate"
+  },
+  {
+   "id": "linea-pdc",
+   "name": "Alimentazione pompa di calore",
+   "domain": "control",
+   "medium": "power_supply"
+  },
+  {
+   "id": "linea-fc-1",
+   "name": "Alimentazione ventilconvettore 1",
+   "domain": "control",
+   "medium": "power_supply"
+  },
+  {
+   "id": "linea-fc-2",
+   "name": "Alimentazione ventilconvettore 2",
+   "domain": "control",
+   "medium": "power_supply"
+  },
+  {
+   "id": "linea-fc-3",
+   "name": "Alimentazione ventilconvettore 3",
+   "domain": "control",
+   "medium": "power_supply"
+  },
+  {
+   "id": "consenso-1",
+   "name": "Consenso del termostato 1",
+   "domain": "control",
+   "medium": "control_bus"
+  },
+  {
+   "id": "consenso-2",
+   "name": "Consenso del termostato 2",
+   "domain": "control",
+   "medium": "control_bus"
+  },
+  {
+   "id": "consenso-3",
+   "name": "Consenso del termostato 3",
+   "domain": "control",
+   "medium": "control_bus"
+  }
+ ],
+ "components": [
+  {
+   "id": "pdc",
+   "definition_id": "heat-pump-air-water",
+   "properties": {
+    "power_kw": 9,
+    "delta_t_k": 5,
+    "tipo": "monoblocco, all'esterno",
+    "volume_minimo": "verificato"
+   }
+  },
+  {
+   "id": "rip-m1",
+   "definition_id": "tee-split",
+   "properties": {}
+  },
+  {
+   "id": "rip-m2",
+   "definition_id": "tee-split",
+   "properties": {}
+  },
+  {
+   "id": "conf-r1",
+   "definition_id": "tee-junction",
+   "properties": {}
+  },
+  {
+   "id": "conf-r2",
+   "definition_id": "tee-junction",
+   "properties": {}
+  },
+  {
+   "id": "fc-1",
+   "definition_id": "fan-coil-ducted-air",
+   "properties": {
+    "marca": "Marca di prova",
+    "modello": "FCC-30 di prova",
+    "power_kw": 3,
+    "delta_t_k": 5,
+    "etichetta": "zona notte"
+   }
+  },
+  {
+   "id": "fc-2",
+   "definition_id": "fan-coil-ducted-air",
+   "properties": {
+    "marca": "Marca di prova",
+    "modello": "FCC-30 di prova",
+    "power_kw": 3,
+    "delta_t_k": 5,
+    "etichetta": "zona studio"
+   }
+  },
+  {
+   "id": "fc-3",
+   "definition_id": "fan-coil-ducted-air",
+   "properties": {
+    "power_kw": 3,
+    "delta_t_k": 5,
+    "etichetta": "zona giorno"
+   }
+  },
+  {
+   "id": "pl-1",
+   "definition_id": "supply-plenum-2",
+   "properties": {}
+  },
+  {
+   "id": "pl-2",
+   "definition_id": "supply-plenum-3",
+   "properties": {}
+  },
+  {
+   "id": "pl-3",
+   "definition_id": "supply-plenum-6",
+   "properties": {}
+  },
+  {
+   "id": "quadro",
+   "definition_id": "electrical-panel",
+   "properties": {
+    "etichetta": "quadro elettrico esistente"
+   }
+  },
+  {
+   "id": "tz-1",
+   "definition_id": "room-thermostat",
+   "properties": {
+    "etichetta": "zona 1"
+   }
+  },
+  {
+   "id": "tz-2",
+   "definition_id": "room-thermostat",
+   "properties": {
+    "etichetta": "zona 2"
+   }
+  },
+  {
+   "id": "tz-3",
+   "definition_id": "room-thermostat",
+   "properties": {
+    "etichetta": "zona 3"
+   }
+  },
+  {
+   "id": "ra-1",
+   "definition_id": "return-air-terminal",
+   "properties": {
+    "etichetta": "ripresa con filtro"
+   }
+  },
+  {
+   "id": "sif-1",
+   "definition_id": "condensate-trap",
+   "properties": {}
+  },
+  {
+   "id": "sc-1",
+   "definition_id": "condensate-outlet",
+   "properties": {
+    "etichetta": "allaccio allo scarico"
+   }
+  },
+  {
+   "id": "b-1-1",
+   "definition_id": "air-supply-terminal",
+   "properties": {
+    "etichetta": "Camera 1",
+    "dimensione": "300×150"
+   }
+  },
+  {
+   "id": "b-1-2",
+   "definition_id": "air-supply-terminal",
+   "properties": {
+    "etichetta": "Camera 2",
+    "dimensione": "300×150"
+   }
+  },
+  {
+   "id": "ra-2",
+   "definition_id": "return-air-terminal",
+   "properties": {
+    "etichetta": "ripresa con filtro"
+   }
+  },
+  {
+   "id": "sif-2",
+   "definition_id": "condensate-trap",
+   "properties": {}
+  },
+  {
+   "id": "sc-2",
+   "definition_id": "condensate-outlet",
+   "properties": {
+    "etichetta": "allaccio allo scarico"
+   }
+  },
+  {
+   "id": "b-2-1",
+   "definition_id": "air-supply-terminal",
+   "properties": {
+    "etichetta": "Studio",
+    "dimensione": "300×150"
+   }
+  },
+  {
+   "id": "b-2-2",
+   "definition_id": "air-supply-terminal",
+   "properties": {
+    "etichetta": "Bagno",
+    "dimensione": "300×150"
+   }
+  },
+  {
+   "id": "b-2-3",
+   "definition_id": "air-supply-terminal",
+   "properties": {
+    "etichetta": "Disimpegno",
+    "dimensione": "300×150"
+   }
+  },
+  {
+   "id": "ra-3",
+   "definition_id": "return-air-terminal",
+   "properties": {
+    "etichetta": "ripresa con filtro"
+   }
+  },
+  {
+   "id": "sif-3",
+   "definition_id": "condensate-trap",
+   "properties": {}
+  },
+  {
+   "id": "sc-3",
+   "definition_id": "condensate-outlet",
+   "properties": {
+    "etichetta": "allaccio allo scarico"
+   }
+  },
+  {
+   "id": "b-3-1",
+   "definition_id": "air-supply-terminal",
+   "properties": {
+    "etichetta": "Soggiorno 1",
+    "dimensione": "300×150"
+   }
+  },
+  {
+   "id": "b-3-2",
+   "definition_id": "air-supply-terminal",
+   "properties": {
+    "etichetta": "Soggiorno 2",
+    "dimensione": "300×150"
+   }
+  },
+  {
+   "id": "b-3-3",
+   "definition_id": "air-supply-terminal",
+   "properties": {
+    "etichetta": "Cucina",
+    "dimensione": "300×150"
+   }
+  },
+  {
+   "id": "b-3-4",
+   "definition_id": "air-supply-terminal",
+   "properties": {
+    "etichetta": "Pranzo",
+    "dimensione": "300×150"
+   }
+  },
+  {
+   "id": "b-3-5",
+   "definition_id": "air-supply-terminal",
+   "properties": {
+    "etichetta": "Ingresso",
+    "dimensione": "300×150"
+   }
+  },
+  {
+   "id": "b-3-6",
+   "definition_id": "air-supply-terminal",
+   "properties": {
+    "etichetta": "Corridoio",
+    "dimensione": "300×150"
+   }
+  }
+ ],
+ "connections": [
+  {
+   "id": "m1",
+   "network_id": "impianto",
+   "endpoint_a": {
+    "component_id": "pdc",
+    "port_id": "water_supply"
+   },
+   "endpoint_b": {
+    "component_id": "rip-m1",
+    "port_id": "a"
+   },
+   "lunghezza_m": 6,
+   "properties": {}
+  },
+  {
+   "id": "m2",
+   "network_id": "impianto",
+   "endpoint_a": {
+    "component_id": "rip-m1",
+    "port_id": "c"
+   },
+   "endpoint_b": {
+    "component_id": "fc-1",
+    "port_id": "in"
+   },
+   "lunghezza_m": 4,
+   "properties": {}
+  },
+  {
+   "id": "m3",
+   "network_id": "impianto",
+   "endpoint_a": {
+    "component_id": "rip-m1",
+    "port_id": "b"
+   },
+   "endpoint_b": {
+    "component_id": "rip-m2",
+    "port_id": "a"
+   },
+   "lunghezza_m": 3,
+   "properties": {}
+  },
+  {
+   "id": "m4",
+   "network_id": "impianto",
+   "endpoint_a": {
+    "component_id": "rip-m2",
+    "port_id": "c"
+   },
+   "endpoint_b": {
+    "component_id": "fc-2",
+    "port_id": "in"
+   },
+   "lunghezza_m": 4,
+   "properties": {}
+  },
+  {
+   "id": "m5",
+   "network_id": "impianto",
+   "endpoint_a": {
+    "component_id": "rip-m2",
+    "port_id": "b"
+   },
+   "endpoint_b": {
+    "component_id": "fc-3",
+    "port_id": "in"
+   },
+   "lunghezza_m": 5,
+   "properties": {}
+  },
+  {
+   "id": "r5",
+   "network_id": "impianto",
+   "endpoint_a": {
+    "component_id": "fc-3",
+    "port_id": "out"
+   },
+   "endpoint_b": {
+    "component_id": "conf-r2",
+    "port_id": "a"
+   },
+   "lunghezza_m": 5,
+   "properties": {}
+  },
+  {
+   "id": "r4",
+   "network_id": "impianto",
+   "endpoint_a": {
+    "component_id": "fc-2",
+    "port_id": "out"
+   },
+   "endpoint_b": {
+    "component_id": "conf-r2",
+    "port_id": "c"
+   },
+   "lunghezza_m": 4,
+   "properties": {}
+  },
+  {
+   "id": "r3",
+   "network_id": "impianto",
+   "endpoint_a": {
+    "component_id": "conf-r2",
+    "port_id": "b"
+   },
+   "endpoint_b": {
+    "component_id": "conf-r1",
+    "port_id": "a"
+   },
+   "lunghezza_m": 3,
+   "properties": {}
+  },
+  {
+   "id": "r2",
+   "network_id": "impianto",
+   "endpoint_a": {
+    "component_id": "fc-1",
+    "port_id": "out"
+   },
+   "endpoint_b": {
+    "component_id": "conf-r1",
+    "port_id": "c"
+   },
+   "lunghezza_m": 4,
+   "properties": {}
+  },
+  {
+   "id": "r1",
+   "network_id": "impianto",
+   "endpoint_a": {
+    "component_id": "conf-r1",
+    "port_id": "b"
+   },
+   "endpoint_b": {
+    "component_id": "pdc",
+    "port_id": "water_return"
+   },
+   "lunghezza_m": 6,
+   "properties": {}
+  },
+  {
+   "id": "rip-1",
+   "network_id": "ripresa-aria-1",
+   "endpoint_a": {
+    "component_id": "ra-1",
+    "port_id": "a"
+   },
+   "endpoint_b": {
+    "component_id": "fc-1",
+    "port_id": "return"
+   },
+   "lunghezza_m": 0,
+   "properties": {}
+  },
+  {
+   "id": "cd-1a",
+   "network_id": "condensa-1",
+   "endpoint_a": {
+    "component_id": "fc-1",
+    "port_id": "drain"
+   },
+   "endpoint_b": {
+    "component_id": "sif-1",
+    "port_id": "a"
+   },
+   "sezione": "Ø32",
+   "lunghezza_m": 3,
+   "properties": {}
+  },
+  {
+   "id": "cd-1b",
+   "network_id": "condensa-1",
+   "endpoint_a": {
+    "component_id": "sif-1",
+    "port_id": "b"
+   },
+   "endpoint_b": {
+    "component_id": "sc-1",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "ma-1",
+   "network_id": "mandata-aria-1",
+   "endpoint_a": {
+    "component_id": "fc-1",
+    "port_id": "supply"
+   },
+   "endpoint_b": {
+    "component_id": "pl-1",
+    "port_id": "in"
+   },
+   "lunghezza_m": 0,
+   "properties": {}
+  },
+  {
+   "id": "ma-1-1",
+   "network_id": "mandata-aria-1",
+   "endpoint_a": {
+    "component_id": "pl-1",
+    "port_id": "out_1"
+   },
+   "endpoint_b": {
+    "component_id": "b-1-1",
+    "port_id": "a"
+   },
+   "sezione": "Ø160",
+   "lunghezza_m": 3.0,
+   "properties": {}
+  },
+  {
+   "id": "ma-1-2",
+   "network_id": "mandata-aria-1",
+   "endpoint_a": {
+    "component_id": "pl-1",
+    "port_id": "out_2"
+   },
+   "endpoint_b": {
+    "component_id": "b-1-2",
+    "port_id": "a"
+   },
+   "sezione": "Ø160",
+   "lunghezza_m": 4.0,
+   "properties": {}
+  },
+  {
+   "id": "rip-2",
+   "network_id": "ripresa-aria-2",
+   "endpoint_a": {
+    "component_id": "ra-2",
+    "port_id": "a"
+   },
+   "endpoint_b": {
+    "component_id": "fc-2",
+    "port_id": "return"
+   },
+   "lunghezza_m": 0,
+   "properties": {}
+  },
+  {
+   "id": "cd-2a",
+   "network_id": "condensa-2",
+   "endpoint_a": {
+    "component_id": "fc-2",
+    "port_id": "drain"
+   },
+   "endpoint_b": {
+    "component_id": "sif-2",
+    "port_id": "a"
+   },
+   "sezione": "Ø32",
+   "lunghezza_m": 3,
+   "properties": {}
+  },
+  {
+   "id": "cd-2b",
+   "network_id": "condensa-2",
+   "endpoint_a": {
+    "component_id": "sif-2",
+    "port_id": "b"
+   },
+   "endpoint_b": {
+    "component_id": "sc-2",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "ma-2",
+   "network_id": "mandata-aria-2",
+   "endpoint_a": {
+    "component_id": "fc-2",
+    "port_id": "supply"
+   },
+   "endpoint_b": {
+    "component_id": "pl-2",
+    "port_id": "in"
+   },
+   "lunghezza_m": 0,
+   "properties": {}
+  },
+  {
+   "id": "ma-2-1",
+   "network_id": "mandata-aria-2",
+   "endpoint_a": {
+    "component_id": "pl-2",
+    "port_id": "out_1"
+   },
+   "endpoint_b": {
+    "component_id": "b-2-1",
+    "port_id": "a"
+   },
+   "sezione": "Ø160",
+   "lunghezza_m": 3.0,
+   "properties": {}
+  },
+  {
+   "id": "ma-2-2",
+   "network_id": "mandata-aria-2",
+   "endpoint_a": {
+    "component_id": "pl-2",
+    "port_id": "out_2"
+   },
+   "endpoint_b": {
+    "component_id": "b-2-2",
+    "port_id": "a"
+   },
+   "sezione": "Ø160",
+   "lunghezza_m": 4.0,
+   "properties": {}
+  },
+  {
+   "id": "ma-2-3",
+   "network_id": "mandata-aria-2",
+   "endpoint_a": {
+    "component_id": "pl-2",
+    "port_id": "out_3"
+   },
+   "endpoint_b": {
+    "component_id": "b-2-3",
+    "port_id": "a"
+   },
+   "sezione": "Ø160",
+   "lunghezza_m": 5.0,
+   "properties": {}
+  },
+  {
+   "id": "rip-3",
+   "network_id": "ripresa-aria-3",
+   "endpoint_a": {
+    "component_id": "ra-3",
+    "port_id": "a"
+   },
+   "endpoint_b": {
+    "component_id": "fc-3",
+    "port_id": "return"
+   },
+   "lunghezza_m": 0,
+   "properties": {}
+  },
+  {
+   "id": "cd-3a",
+   "network_id": "condensa-3",
+   "endpoint_a": {
+    "component_id": "fc-3",
+    "port_id": "drain"
+   },
+   "endpoint_b": {
+    "component_id": "sif-3",
+    "port_id": "a"
+   },
+   "sezione": "Ø32",
+   "lunghezza_m": 3,
+   "properties": {}
+  },
+  {
+   "id": "cd-3b",
+   "network_id": "condensa-3",
+   "endpoint_a": {
+    "component_id": "sif-3",
+    "port_id": "b"
+   },
+   "endpoint_b": {
+    "component_id": "sc-3",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "ma-3",
+   "network_id": "mandata-aria-3",
+   "endpoint_a": {
+    "component_id": "fc-3",
+    "port_id": "supply"
+   },
+   "endpoint_b": {
+    "component_id": "pl-3",
+    "port_id": "in"
+   },
+   "lunghezza_m": 0,
+   "properties": {}
+  },
+  {
+   "id": "ma-3-1",
+   "network_id": "mandata-aria-3",
+   "endpoint_a": {
+    "component_id": "pl-3",
+    "port_id": "out_1"
+   },
+   "endpoint_b": {
+    "component_id": "b-3-1",
+    "port_id": "a"
+   },
+   "sezione": "Ø160",
+   "lunghezza_m": 3.0,
+   "properties": {}
+  },
+  {
+   "id": "ma-3-2",
+   "network_id": "mandata-aria-3",
+   "endpoint_a": {
+    "component_id": "pl-3",
+    "port_id": "out_2"
+   },
+   "endpoint_b": {
+    "component_id": "b-3-2",
+    "port_id": "a"
+   },
+   "sezione": "Ø160",
+   "lunghezza_m": 4.0,
+   "properties": {}
+  },
+  {
+   "id": "ma-3-3",
+   "network_id": "mandata-aria-3",
+   "endpoint_a": {
+    "component_id": "pl-3",
+    "port_id": "out_3"
+   },
+   "endpoint_b": {
+    "component_id": "b-3-3",
+    "port_id": "a"
+   },
+   "sezione": "Ø160",
+   "lunghezza_m": 5.0,
+   "properties": {}
+  },
+  {
+   "id": "ma-3-4",
+   "network_id": "mandata-aria-3",
+   "endpoint_a": {
+    "component_id": "pl-3",
+    "port_id": "out_4"
+   },
+   "endpoint_b": {
+    "component_id": "b-3-4",
+    "port_id": "a"
+   },
+   "sezione": "Ø160",
+   "lunghezza_m": 6.0,
+   "properties": {}
+  },
+  {
+   "id": "ma-3-5",
+   "network_id": "mandata-aria-3",
+   "endpoint_a": {
+    "component_id": "pl-3",
+    "port_id": "out_5"
+   },
+   "endpoint_b": {
+    "component_id": "b-3-5",
+    "port_id": "a"
+   },
+   "sezione": "Ø160",
+   "lunghezza_m": 7.0,
+   "properties": {}
+  },
+  {
+   "id": "ma-3-6",
+   "network_id": "mandata-aria-3",
+   "endpoint_a": {
+    "component_id": "pl-3",
+    "port_id": "out_6"
+   },
+   "endpoint_b": {
+    "component_id": "b-3-6",
+    "port_id": "a"
+   },
+   "sezione": "Ø160",
+   "lunghezza_m": 8.0,
+   "properties": {}
+  },
+  {
+   "id": "e-pdc",
+   "network_id": "linea-pdc",
+   "endpoint_a": {
+    "component_id": "quadro",
+    "port_id": "out_1"
+   },
+   "endpoint_b": {
+    "component_id": "pdc",
+    "port_id": "power"
+   },
+   "sezione": "3G2,5",
+   "lunghezza_m": 12,
+   "properties": {}
+  },
+  {
+   "id": "e-fc-1",
+   "network_id": "linea-fc-1",
+   "endpoint_a": {
+    "component_id": "quadro",
+    "port_id": "out_2"
+   },
+   "endpoint_b": {
+    "component_id": "fc-1",
+    "port_id": "power"
+   },
+   "sezione": "3G1,5",
+   "lunghezza_m": 9.0,
+   "properties": {}
+  },
+  {
+   "id": "e-fc-2",
+   "network_id": "linea-fc-2",
+   "endpoint_a": {
+    "component_id": "quadro",
+    "port_id": "out_3"
+   },
+   "endpoint_b": {
+    "component_id": "fc-2",
+    "port_id": "power"
+   },
+   "sezione": "3G1,5",
+   "lunghezza_m": 10.0,
+   "properties": {}
+  },
+  {
+   "id": "e-fc-3",
+   "network_id": "linea-fc-3",
+   "endpoint_a": {
+    "component_id": "quadro",
+    "port_id": "out_4"
+   },
+   "endpoint_b": {
+    "component_id": "fc-3",
+    "port_id": "power"
+   },
+   "sezione": "3G1,5",
+   "lunghezza_m": 11.0,
+   "properties": {}
+  },
+  {
+   "id": "b-tz-1",
+   "network_id": "consenso-1",
+   "endpoint_a": {
+    "component_id": "tz-1",
+    "port_id": "a"
+   },
+   "endpoint_b": {
+    "component_id": "fc-1",
+    "port_id": "consenso_in"
+   },
+   "sezione": "2×0,75",
+   "lunghezza_m": 6,
+   "properties": {}
+  },
+  {
+   "id": "b-tz-2",
+   "network_id": "consenso-2",
+   "endpoint_a": {
+    "component_id": "tz-2",
+    "port_id": "a"
+   },
+   "endpoint_b": {
+    "component_id": "fc-2",
+    "port_id": "consenso_in"
+   },
+   "sezione": "2×0,75",
+   "lunghezza_m": 6,
+   "properties": {}
+  },
+  {
+   "id": "b-tz-3",
+   "network_id": "consenso-3",
+   "endpoint_a": {
+    "component_id": "tz-3",
+    "port_id": "a"
+   },
+   "endpoint_b": {
+    "component_id": "fc-3",
+    "port_id": "consenso_in"
+   },
+   "sezione": "2×0,75",
+   "lunghezza_m": 6,
+   "properties": {}
+  }
+ ],
+ "assumptions": [
+  {
+   "id": "a1",
+   "text": "Caso di prova anonimo: la distribuzione ai tre ventilconvettori e' scritta con le ripartizioni e le confluenze a T, il ritorno che specchia la mandata. Il volume minimo della pompa di calore e' dichiarato verificato: il caso non porta il volano.",
+   "status": "approved"
+  }
+ ],
+ "rule_applications": [],
+ "subsystems": [],
+ "sheets": []
+}

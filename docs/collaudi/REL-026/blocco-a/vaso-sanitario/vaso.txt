@@ -1,0 +1,5 @@
+Vaso sanitario: coefficiente 0.0168, espansione 3.4 l; precarica 2,8 bar (0,2 bar sotto la rete a 3 bar), finale 5,4 bar; nominale 9.4 l → 12 l.
+Livello del progetto: esecutivo. Scritto sul grafo:
+  - volume del bollitore dal grafo: bollitore, 200 l
+  - dhw-safety-group-bollitore-cold-in: «6 bar»
+  - expansion-connection-dhw-bollitore-cold-in: 12 l · precarica 2,8 bar

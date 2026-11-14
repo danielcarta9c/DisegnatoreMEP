@@ -1387,7 +1387,14 @@ def _pianta(args: argparse.Namespace, cartelle: Cartelle) -> int:
     from disegnatore_mep.pianta.comando import esegui
 
     return esegui(args.pianta, args.out, cartelle.cartiglio, not args.senza_dxf, distinta=args.distinta,
-                  grafo=args.grafo, catalogo=cartelle.catalogo, nomi=cartelle.naming)
+                  grafo=args.grafo, catalogo=cartelle.catalogo, nomi=cartelle.naming,
+                  grafo_in_sola_lettura=args.grafo_in_sola_lettura)
+
+
+def _base(args: argparse.Namespace, cartelle: Cartelle) -> int:
+    from disegnatore_mep.pianta.sovrapposizione import esegui as esegui_la_base
+
+    return esegui_la_base(args.planimetria, args.out, args.pagina, args.dpi, args.zona)
 
 
 # --- il comando ---------------------------------------------------------------
@@ -1462,7 +1469,27 @@ def costruisci_il_parser() -> argparse.ArgumentParser:
         "lunghezza ai tracciati che non l'hanno",
     )
     pianta.add_argument(
-        "--grafo", type=Path, help="il grafo completo: controlla sigle, tubazioni e lunghezze dei tracciati"
+        "--grafo", type=Path,
+        help="il grafo completo: controlla sigle, tubazioni e lunghezze dei tracciati, e ci scrive le lunghezze "
+        "misurate (quelle del progettista restano)",
+    )
+    pianta.add_argument(
+        "--grafo-in-sola-lettura", action="store_true",
+        help="con --grafo, solo il confronto: il grafo non si scrive (la console dice che cosa cambierebbe)",
+    )
+
+    base = comandi.add_parser(
+        "base",
+        help="la base della pianta (REL-026): con la planimetria, la pagina con la griglia in pixel per la "
+        "taratura; con la pianta, la base trascritta sopra la planimetria d'origine (controllo a vista)",
+    )
+    base.add_argument("planimetria", type=Path, help="la planimetria (PDF, JPEG, PNG) o il JSON della pianta")
+    base.add_argument("--out", type=Path, required=True, help="la cartella del lavoro")
+    base.add_argument("--pagina", type=int, default=1, help="con un PDF: la pagina, dalla prima")
+    base.add_argument("--dpi", type=int, default=150, help="con un PDF: la risoluzione della pagina resa")
+    base.add_argument(
+        "--zona",
+        help="ingrandisce un riquadro x0,y0,x1,y1: in pixel della pagina con la planimetria, in metri con la pianta",
     )
 
     finale = comandi.add_parser(
@@ -1520,13 +1547,26 @@ def costruisci_il_parser() -> argparse.ArgumentParser:
     vaso = comandi.add_parser(
         "vaso",
         help="dimensiona il vaso d'espansione sul grafo completo e lo scrive in tabella (D-220); nell'esecutivo "
-        "anche precarica, taratura della sicurezza e pressione di carica",
+        "anche precarica, taratura della sicurezza e pressione di carica. Con --sanitario il vaso del bollitore",
     )
     vaso.add_argument("grafo", type=Path, help="il grafo completo (dopo completa)")
-    vaso.add_argument("--contenuto", type=float, required=True, help="litri d'acqua che il vaso vede: tutto il circuito")
-    vaso.add_argument("--tmax", type=float, required=True, help="temperatura massima di mandata, °C")
-    vaso.add_argument("--dislivello", type=float, required=True, help="metri dal vaso al punto piu' alto dell'impianto")
-    vaso.add_argument("--taratura", type=float, default=3.0, help="taratura della valvola di sicurezza, bar (3)")
+    vaso.add_argument("--contenuto", type=float, help="litri d'acqua che il vaso vede: tutto il circuito")
+    vaso.add_argument("--tmax", type=float, help="temperatura massima di mandata, °C; col sanitario, di accumulo")
+    vaso.add_argument("--dislivello", type=float, help="metri dal vaso al punto piu' alto dell'impianto")
+    vaso.add_argument(
+        "--taratura", type=float,
+        help="taratura della valvola di sicurezza, bar (3 sul riscaldamento; col sanitario va data)",
+    )
+    vaso.add_argument(
+        "--sanitario", action="store_true",
+        help="il vaso sanitario del bollitore (REL-026): --tmax, --rete, --taratura e --bollitore",
+    )
+    vaso.add_argument(
+        "--bollitore", type=float, help="col sanitario: litri del bollitore (se no, il volume_l del bollitore nel grafo)"
+    )
+    vaso.add_argument(
+        "--rete", type=float, help="col sanitario: pressione di rete, bar (la taratura del riduttore, se c'e')"
+    )
     vaso.add_argument("--pressione-minima", type=float, help="minima di esercizio del generatore, bar (Shenling 1,5)")
     vaso.add_argument("--riempimento", type=float, help="pressione di riempimento del costruttore, bar (Shenling 2,0)")
     vaso.add_argument("--coefficiente", type=float, help="coefficiente d'espansione della miscela, con il glicole")
@@ -1538,7 +1578,26 @@ def costruisci_il_parser() -> argparse.ArgumentParser:
 
 def _vaso(args: argparse.Namespace, cartelle: Cartelle) -> int:
     from disegnatore_mep.vaso.comando import esegui as esegui_il_vaso
+    from disegnatore_mep.vaso.comando import esegui_sanitario
 
+    def mancano(*nomi: str) -> list[str]:
+        return [f"--{nome}" for nome in nomi if getattr(args, nome) is None]
+
+    if args.sanitario:
+        if mancano("tmax", "rete", "taratura"):
+            raise ValueError(f"il vaso sanitario vuole anche {', '.join(mancano('tmax', 'rete', 'taratura'))}")
+        return esegui_sanitario(
+            args.grafo,
+            args.out,
+            _Dati(cartelle).catalogo,
+            temperatura_massima_c=args.tmax,
+            pressione_di_rete_bar=args.rete,
+            taratura_bar=args.taratura,
+            volume_bollitore_l=args.bollitore,
+            vaso_id=args.vaso,
+        )
+    if mancano("contenuto", "tmax", "dislivello"):
+        raise ValueError(f"il vaso d'impianto vuole anche {', '.join(mancano('contenuto', 'tmax', 'dislivello'))}")
     dati = _Dati(cartelle)
     return esegui_il_vaso(
         args.grafo,
@@ -1548,7 +1607,7 @@ def _vaso(args: argparse.Namespace, cartelle: Cartelle) -> int:
         temperatura_massima_c=args.tmax,
         dislivello_m=args.dislivello,
         vaso_id=args.vaso,
-        taratura_bar=args.taratura,
+        taratura_bar=3.0 if args.taratura is None else args.taratura,
         pressione_minima_bar=args.pressione_minima,
         riempimento_bar=args.riempimento,
         coefficiente=args.coefficiente,
@@ -1601,6 +1660,7 @@ def main(argv: Sequence[str] | None, cartelle: Cartelle) -> int:
             "distinta": _distinta,
             "vaso": _vaso,
             "pianta": _pianta,
+            "base": _base,
         }
         return comando[args.comando](args, cartelle)
     except (OSError, ValidationError, ValueError, RuleError) as errore:

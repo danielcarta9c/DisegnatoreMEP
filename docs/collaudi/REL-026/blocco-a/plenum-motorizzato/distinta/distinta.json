@@ -1,0 +1,1449 @@
+{
+ "formato": "disegnatore-mep/distinta",
+ "versione": 1,
+ "stato": "proposta (D-213, REL-013): il PO non ha ancora deciso se la skill fa la distinta; finché non decide, la distinta si fa solo col comando esplicito `mep.py distinta`",
+ "progetto": {
+  "client": "Committente (dati omessi)",
+  "address": "Indirizzo omesso",
+  "project_name": "Ventilconvettore canalizzato idronico con plenum motorizzato di zona",
+  "commission_code": "PROVA-B",
+  "revision": "00",
+  "issue_date": "2026-11-13",
+  "sheet_number": "M.02",
+  "sheet_title": "Schema funzionale — ventilconvettori canalizzati idronici"
+ },
+ "regole": {
+  "versioni": {
+   "distinta": "1.3.0",
+   "lunghezze": "1.1.0",
+   "fluidi": "1.3.0",
+   "corredo": "1.7.0",
+   "attivita": "1.2.0",
+   "verifica": "1.1.0"
+  },
+  "impronta": "13d6f4ef01e2a96a"
+ },
+ "intestazione": [
+  "Offerta richiesta: PREZZO A CORPO, FISSO E INVARIABILE, per l'impianto finito e funzionante, in euro oltre IVA: un importo a corpo per le voci da quotare, le attività G e le voci H; per le varianti V solo il prezzo unitario, fuori dal corpo.",
+  "Le quantità sono INDICATIVE e già maggiorate: sono la base comune delle offerte, non un elenco da prezzare voce per voce.",
+  "SOPRALLUOGO OBBLIGATORIO prima dell'offerta: l'installatore verifica le quantità e ne risponde; quanto manca per l'impianto finito lo aggiunge fra le voci H.",
+  "Le forniture escluse da questa offerta (colonna Fornitura: Nove C, Committente) non si quotano; le voci DA DEFINIRE aspettano un dato del progettista.",
+  "La distinta non progetta: lunghezze, sezioni, portate e protezioni sono del progettista; la distinta le conta e le maggiora con regole scritte, ciascuna con la sua fonte."
+ ],
+ "sezioni": [
+  {
+   "lettera": "A",
+   "titolo": "Apparecchiature (posa dell'installatore; chi le fornisce: colonna Fornitura)",
+   "voci": [
+    {
+     "rif": "A.1",
+     "testo": "Pompa di calore aria-acqua: marca e modello DA DEFINIRE",
+     "um": "n",
+     "quantita": 1,
+     "fornitura": "Nove C",
+     "note": "GT-01; 5 kW",
+     "da_definire": true,
+     "domande": [
+      "GT-01 (Pompa di calore aria-acqua): marca e modello li dà il progettista."
+     ],
+     "regola": "corredo/heat-pump-air-water/apparecchiatura",
+     "calcolo": "1 nello schema (GT-01)",
+     "fonte": "proposta Nove C sul corredo idronico (da confermare)",
+     "perche": "La pompa di calore la compra Nove C a parte: la distinta conta gli attacchi, le staffe e il trattamento dell'acqua. Sugli attacchi della macchina si avvitano il giunto antivibrante e la riduzione: il raccordo al tubo lo porta il giunto (collaudo T1 di REL-021)."
+    },
+    {
+     "rif": "A.2",
+     "testo": "Plenum motorizzato di zona a quattro serrande: Marca di prova plenum motorizzato a 4 serrande",
+     "um": "n",
+     "quantita": 1,
+     "fornitura": "Nove C",
+     "note": "PLZ-01; comprende CZ-01 (Centrale di zona)",
+     "da_definire": false,
+     "domande": [],
+     "regola": "corredo/zoning-plenum-4/apparecchiatura",
+     "calcolo": "1 nello schema (PLZ-01)",
+     "fonte": "regola Nove C per la posa del plenum di zona",
+     "perche": "Il plenum di zona è appeso accanto alla macchina e si ispeziona per i motori delle serrande."
+    },
+    {
+     "rif": "A.3",
+     "testo": "Termostato di zona: marca e modello DA DEFINIRE",
+     "um": "n",
+     "quantita": 4,
+     "fornitura": "Nove C",
+     "note": "TZ-01, TZ-02, TZ-03, TZ-04",
+     "da_definire": true,
+     "domande": [
+      "TZ-01, TZ-02, TZ-03, TZ-04 (Termostato di zona): marca e modello li dà il progettista."
+     ],
+     "regola": "corredo/room-thermostat/apparecchiatura",
+     "calcolo": "4 nello schema (TZ-01, TZ-02, TZ-03, TZ-04)",
+     "fonte": "regola Nove C per gli apparecchi a parete",
+     "perche": "Un apparecchio a parete: scatola e traccia per il cavo."
+    }
+   ]
+  },
+  {
+   "lettera": "S",
+   "titolo": "Staffaggi e sospensioni delle apparecchiature",
+   "voci": [
+    {
+     "rif": "S.1",
+     "testo": "Basamento a terra per l'unità esterna con supporti antivibranti",
+     "um": "n",
+     "quantita": 1,
+     "fornitura": "installatore",
+     "note": "GT-01",
+     "da_definire": false,
+     "domande": [],
+     "regola": "corredo/heat-pump-air-water/basamento-pdc",
+     "calcolo": "GT-01: 1",
+     "fonte": "disposizione del PO (I-288): i dati di cantiere vengono dalla chat",
+     "perche": "Di regola la pompa di calore si posa a terra (I-288), su supporti antivibranti; le staffe solo se il progettista le chiede."
+    },
+    {
+     "rif": "S.2",
+     "testo": "Sospensione del plenum motorizzato (flangiato sulla mandata dell'unità interna): 4 barre filettate M10 con ancoranti, dadi e antivibranti",
+     "um": "kit",
+     "quantita": 1,
+     "fornitura": "installatore",
+     "note": "PLZ-01",
+     "da_definire": false,
+     "domande": [],
+     "regola": "corredo/zoning-plenum-4/sospensione-plenum-di-zona",
+     "calcolo": "PLZ-01: 1",
+     "fonte": "regola Nove C rivista su una commessa aria-aria",
+     "perche": "Il plenum (1140 mm nel caso) non si regge sulla bocca della macchina."
+    },
+    {
+     "rif": "S.3",
+     "testo": "Sospensione del plenum di ripresa: 2 barre filettate M8 con ancoranti e dadi",
+     "um": "kit",
+     "quantita": 1,
+     "fornitura": "installatore",
+     "note": "RA-01",
+     "da_definire": false,
+     "domande": [],
+     "regola": "corredo/return-air-terminal/sospensione-plenum-di-ripresa",
+     "calcolo": "RA-01: 1",
+     "fonte": "regola Nove C rivista su una commessa aria-aria",
+     "perche": "Il plenum di ripresa si appende per conto suo, sul lato libero."
+    }
+   ]
+  },
+  {
+   "lettera": "B",
+   "titolo": "Distribuzione aria",
+   "voci": [
+    {
+     "rif": "B.1",
+     "testo": "Condotto flessibile coibentato Ø160 (isolamento 25 mm, barriera vapore), confezione da 10 m",
+     "um": "conf.",
+     "quantita": 4,
+     "fornitura": "installatore",
+     "note": "26,5 m in 4 tratti interi: 5 + 6 + 7 + 8,5 m",
+     "da_definire": false,
+     "domande": [],
+     "regola": "fluidi/supply_air/flessibile-in-confezioni",
+     "calcolo": "4 pezzi interi, 26,5 m: in confezioni da 10 m (utili 9,5) ne servono 4 [8,5] [7] [6] [5]; riserva 25%: 26,5 × 1,25 = 33,12 m → 4; si prende il maggiore: 4",
+     "fonte": "regola Nove C per i canali flessibili",
+     "perche": "Ogni ramo è un pezzo intero, senza giunte: le giunte del flessibile perdono aria e rumore. I pezzi si mettono nelle confezioni dal più lungo (first-fit decreasing); la riserva del 25% copre i tagli sbagliati e la ricollocazione di una bocchetta."
+    },
+    {
+     "rif": "B.2",
+     "testo": "Manicotto di giunzione Ø160",
+     "um": "n",
+     "quantita": 2,
+     "fornitura": "installatore",
+     "note": "",
+     "da_definire": false,
+     "domande": [],
+     "regola": "fluidi/supply_air/manicotto-di-riserva",
+     "calcolo": "2 per sezione",
+     "fonte": "regola Nove C per i canali flessibili",
+     "perche": "Riserva per una riparazione o un ramo da allungare in cantiere."
+    },
+    {
+     "rif": "B.3",
+     "testo": "Fascetta di serraggio Ø160 (anima e mantello)",
+     "um": "n",
+     "quantita": 16,
+     "fornitura": "installatore",
+     "note": "",
+     "da_definire": false,
+     "domande": [],
+     "regola": "fluidi/supply_air/fascette",
+     "calcolo": "4 tratti × 4 = 16",
+     "fonte": "regola Nove C per i canali flessibili",
+     "perche": "Per ramo: le due estremità del flessibile, ciascuna con una fascetta sull'anima e una sul mantello isolante: 2 × 2 = 4."
+    },
+    {
+     "rif": "B.4",
+     "testo": "Nastro alluminio rinforzato 50 mm",
+     "um": "rotolo",
+     "quantita": 2,
+     "fornitura": "installatore",
+     "note": "",
+     "da_definire": false,
+     "domande": [],
+     "regola": "fluidi/supply_air/nastro-alluminio",
+     "calcolo": "26,5 m / 20 m per eccesso, almeno 1 = 2",
+     "fonte": "stima Nove C (un rotolo ogni 20 m di flessibile)",
+     "perche": "La sigillatura di giunzioni, raccordi e plenum."
+    },
+    {
+     "rif": "B.5",
+     "testo": "Sostegno per flessibile (fascia o collare con pendino), passo ≤ 1,2 m",
+     "um": "n",
+     "quantita": 28,
+     "fornitura": "installatore",
+     "note": "",
+     "da_definire": false,
+     "domande": [],
+     "regola": "fluidi/supply_air/sostegni",
+     "calcolo": "T01 6 + T02 6 + T03 7 + T04 9 = 28 (L / 1,2 m per eccesso +1 per tratto)",
+     "fonte": "regola Nove C per i canali flessibili",
+     "perche": "Un flessibile che si imbarca fra due sostegni perde portata e fa condensa nelle anse: un sostegno ogni 1,2 m per tratto, più uno vicino all'attacco."
+    },
+    {
+     "rif": "B.6",
+     "testo": "Plenum porta-bocchetta coibentato per bocchetta 300×150, attacco Ø160 laterale",
+     "um": "n",
+     "quantita": 4,
+     "fornitura": "installatore",
+     "note": "TA-01, TA-02, TA-03, TA-04",
+     "da_definire": false,
+     "domande": [],
+     "regola": "corredo/air-supply-terminal/plenum-porta-bocchetta",
+     "calcolo": "4 pezzi × 1 = 4 (TA-01, TA-02, TA-03, TA-04)",
+     "fonte": "regola Nove C rivista su una commessa aria-aria",
+     "perche": "Con velette da 30 cm l'attacco dall'alto non entra: plenum, isolamento e curva del flessibile superano 45 cm."
+    },
+    {
+     "rif": "B.7",
+     "testo": "Isolamento elastomerico adesivo 13 mm per manicotti, raccordi, derivazione e plenum",
+     "um": "rotolo",
+     "quantita": 2,
+     "fornitura": "installatore",
+     "note": "PLZ-01",
+     "da_definire": false,
+     "domande": [],
+     "regola": "corredo/zoning-plenum-4/isolamento-raccordi-plenum",
+     "calcolo": "PLZ-01: 2",
+     "fonte": "regola Nove C rivista su una commessa aria-aria",
+     "perche": "I raccordi rigidi fra macchina, plenum e derivazione fanno condensa se non si isolano."
+    },
+    {
+     "rif": "B.8",
+     "testo": "Plenum di ripresa in lamiera zincata, non coibentato, con filtro ispezionabile, bocca DA DEFINIRE (sezione), sulla bocca di aspirazione dell'unità interna; filtro unico: l'eventuale filtro di serie dell'unità interna si toglie",
+     "um": "n",
+     "quantita": 1,
+     "fornitura": "installatore",
+     "note": "RA-01",
+     "da_definire": true,
+     "domande": [
+      "RA-01 (Griglia di ripresa con plenum e filtro): su che tubo sta? Il tubo del suo tratto non c'e': i diametri non sono chiesti su quella rete, o il calcolo non ne ha la portata. Serve la `sezione` del tratto (es. «MS 32×3»)."
+     ],
+     "regola": "corredo/return-air-terminal/plenum-di-ripresa",
+     "calcolo": "RA-01: 1",
+     "fonte": "regola Nove C rivista su una commessa aria-aria",
+     "perche": "Un filtro solo, ispezionabile: due filtri in serie (plenum e griglia) raddoppiano la perdita."
+    }
+   ]
+  },
+  {
+   "lettera": "D",
+   "titolo": "Scarichi condensa (unità interna e unità esterna)",
+   "voci": [
+    {
+     "rif": "D.1",
+     "testo": "Tubo PVC rigido Ø32",
+     "um": "m",
+     "quantita": 10,
+     "fornitura": "installatore",
+     "note": "T05 stimati 3 m",
+     "da_definire": false,
+     "domande": [],
+     "regola": "fluidi/condensate/tubo-pvc",
+     "calcolo": "T05 10 m",
+     "fonte": "regola Nove C per lo scarico della condensa",
+     "perche": "Lo scarico della condensa, a metro, con la lunghezza da quotare."
+    },
+    {
+     "rif": "D.2",
+     "testo": "Curva 87°-90° Ø32",
+     "um": "n",
+     "quantita": 6,
+     "fornitura": "installatore",
+     "note": "",
+     "da_definire": false,
+     "domande": [],
+     "regola": "fluidi/condensate/curve-condensa",
+     "calcolo": "T05 6 (L / 2 m per eccesso +1 per tratto)",
+     "fonte": "stima Nove C (una curva ogni 2 m)",
+     "perche": "Il percorso in controsoffitto con la pendenza cambia spesso direzione: una curva ogni 2 m più quella della discesa."
+    },
+    {
+     "rif": "D.3",
+     "testo": "Manicotto Ø32",
+     "um": "n",
+     "quantita": 3,
+     "fornitura": "installatore",
+     "note": "",
+     "da_definire": false,
+     "domande": [],
+     "regola": "fluidi/condensate/manicotti-condensa",
+     "calcolo": "T05 3 (L / 3 m per eccesso -1 per tratto)",
+     "fonte": "stima Nove C (barre da 3 m)",
+     "perche": "Una giunzione fra due barre."
+    },
+    {
+     "rif": "D.4",
+     "testo": "Collare per tubo condensa",
+     "um": "n",
+     "quantita": 10,
+     "fornitura": "installatore",
+     "note": "",
+     "da_definire": false,
+     "domande": [],
+     "regola": "fluidi/condensate/collari-condensa",
+     "calcolo": "T05 10 (L / 1 m per eccesso per tratto)",
+     "fonte": "regola Nove C per lo scarico della condensa",
+     "perche": "Il tubo piccolo in pendenza si sostiene fitto, o la pendenza si perde fra due collari."
+    },
+    {
+     "rif": "D.5",
+     "testo": "Isolamento anticondensa 9 mm per il tubo della condensa",
+     "um": "m",
+     "quantita": 10,
+     "fornitura": "installatore",
+     "note": "T05 stimati 3 m",
+     "da_definire": false,
+     "domande": [],
+     "regola": "fluidi/condensate/isolamento-anticondensa",
+     "calcolo": "T05 10 m",
+     "fonte": "regola Nove C per lo scarico della condensa",
+     "perche": "La condensa fredda in controsoffitto gocciola fuori dal tubo. Su tutta la lunghezza, in dubbio per eccesso: la parte in controsoffitto la sa solo la pianta."
+    },
+    {
+     "rif": "D.6",
+     "testo": "Collante e pulitore PVC",
+     "um": "n",
+     "quantita": 1,
+     "fornitura": "installatore",
+     "note": "",
+     "da_definire": false,
+     "domande": [],
+     "regola": "fluidi/condensate/collante-pvc",
+     "calcolo": "1 per fluido",
+     "fonte": "regola Nove C per lo scarico della condensa",
+     "perche": "Una confezione per lo scarico."
+    },
+    {
+     "rif": "D.7",
+     "testo": "Innesto sullo scarico esistente con braga 45° Ø40, a valle del sifone dell'apparecchio",
+     "um": "n",
+     "quantita": 1,
+     "fornitura": "installatore",
+     "note": "AL-01",
+     "da_definire": false,
+     "domande": [],
+     "regola": "corredo/condensate-outlet/innesto-sullo-scarico",
+     "calcolo": "AL-01: 1",
+     "fonte": "regola Nove C rivista su una commessa aria-aria",
+     "perche": "L'allaccio della condensa a uno scarico esistente."
+    },
+    {
+     "rif": "D.8",
+     "testo": "Sifone ispezionabile per condensa",
+     "um": "n",
+     "quantita": 1,
+     "fornitura": "installatore",
+     "note": "SIF-01",
+     "da_definire": false,
+     "domande": [],
+     "regola": "corredo/condensate-trap/sifone",
+     "calcolo": "SIF-01: 1",
+     "fonte": "regola Nove C per lo scarico della condensa",
+     "perche": "Senza sifone l'odore dello scarico risale nella macchina."
+    }
+   ]
+  },
+  {
+   "lettera": "I",
+   "titolo": "Circuito idraulico (tubazioni, valvolame e accessori, con il loro corredo di posa)",
+   "voci": [
+    {
+     "rif": "I.1",
+     "testo": "Tubo della rete «Circuito del ventilconvettore»: diametro, metri e isolamento DA DEFINIRE",
+     "um": "m",
+     "quantita": null,
+     "fornitura": "installatore",
+     "note": "",
+     "da_definire": true,
+     "domande": [
+      "Rete «Circuito del ventilconvettore»: quanti metri di tubo, di che diametro e come isolato (preisolato, o nudo con guaina e il suo spessore)? Si scrivono nel blocco «distinta» del grafo."
+     ],
+     "regola": "fluidi/heating_water/tubo",
+     "calcolo": "mancano i metri della rete",
+     "fonte": "dato del progettista (I-288)",
+     "perche": "I metri dei tubi d'acqua non si ricavano dal grafo: li dice il progettista."
+    },
+    {
+     "rif": "I.2",
+     "testo": "Defangatore magnetico ¾\"",
+     "um": "n",
+     "quantita": 1,
+     "fornitura": "installatore",
+     "note": "DEF-01",
+     "da_definire": false,
+     "domande": [],
+     "regola": "corredo/dirt-separator/pezzo",
+     "calcolo": "DEF-01: 1",
+     "fonte": "proposta Nove C sul corredo idronico (da confermare)",
+     "perche": "Il defangatore magnetico sul ritorno al generatore, del pollice del tubo."
+    },
+    {
+     "rif": "I.3",
+     "testo": "Vaso di espansione chiuso a membrana per riscaldamento DA DEFINIRE (volume_l) l, con attacco e staffa",
+     "um": "n",
+     "quantita": 1,
+     "fornitura": "installatore",
+     "note": "VE-01",
+     "da_definire": true,
+     "domande": [
+      "VE-01 (Vaso di espansione): manca il dato «volume_l» per «Vaso di espansione chiuso a membrana per riscaldamento DA DEFINIRE (volume_l) l, con attacco e staffa»."
+     ],
+     "regola": "corredo/expansion-connection/pezzo",
+     "calcolo": "VE-01: 1",
+     "fonte": "proposta Nove C sul corredo idronico (da confermare)",
+     "perche": "Il vaso della taglia calcolata."
+    },
+    {
+     "rif": "I.4",
+     "testo": "Giunto antivibrante ¾\"",
+     "um": "n",
+     "quantita": 2,
+     "fornitura": "installatore",
+     "note": "GA-02, GA-01",
+     "da_definire": false,
+     "domande": [],
+     "regola": "corredo/flexible-joint/pezzo",
+     "calcolo": "2 pezzi × 1 = 2 (GA-02, GA-01)",
+     "fonte": "proposta Nove C sul corredo idronico (da confermare)",
+     "perche": "Il giunto antivibrante sull'attacco della macchina: stacca le vibrazioni dalla tubazione."
+    },
+    {
+     "rif": "I.5",
+     "testo": "Pulitore per impianti nuovi o recenti, 1 l",
+     "um": "n",
+     "quantita": 1,
+     "fornitura": "installatore",
+     "note": "GT-01",
+     "da_definire": false,
+     "domande": [],
+     "regola": "corredo/heat-pump-air-water/pulitore",
+     "calcolo": "GT-01: 1",
+     "fonte": "proposta Nove C sul corredo idronico (da confermare)",
+     "perche": "Il lavaggio dell'impianto prima del riempimento (specifica Nove C: acqua pulita sulla pompa di calore)."
+    },
+    {
+     "rif": "I.6",
+     "testo": "Filmante e inibitore per impianti, 1 l",
+     "um": "n",
+     "quantita": 1,
+     "fornitura": "installatore",
+     "note": "GT-01",
+     "da_definire": false,
+     "domande": [],
+     "regola": "corredo/heat-pump-air-water/filmante",
+     "calcolo": "GT-01: 1",
+     "fonte": "proposta Nove C sul corredo idronico (da confermare)",
+     "perche": "La protezione dell'acqua dell'impianto dopo il lavaggio."
+    },
+    {
+     "rif": "I.7",
+     "testo": "Manometro 0-6 bar attacco ½\"",
+     "um": "n",
+     "quantita": 1,
+     "fornitura": "installatore",
+     "note": "MN-01",
+     "da_definire": false,
+     "domande": [],
+     "regola": "corredo/pressure-gauge/pezzo",
+     "calcolo": "MN-01: 1",
+     "fonte": "proposta Nove C sul corredo idronico (da confermare)",
+     "perche": "Il manometro del circuito."
+    },
+    {
+     "rif": "I.8",
+     "testo": "Filtro a Y ¾\" FF, maglia 500 µm",
+     "um": "n",
+     "quantita": 1,
+     "fornitura": "installatore",
+     "note": "FIL-01",
+     "da_definire": false,
+     "domande": [],
+     "regola": "corredo/strainer/pezzo",
+     "calcolo": "FIL-01: 1",
+     "fonte": "proposta Nove C sul corredo idronico (da confermare)",
+     "perche": "Il filtro a Y in ottone, del pollice del tubo."
+    },
+    {
+     "rif": "I.9",
+     "testo": "Tee a pressare tubo multistrato MS 26×3",
+     "um": "n",
+     "quantita": 3,
+     "fornitura": "installatore",
+     "note": "DER-03, DER-02, DER-01",
+     "da_definire": false,
+     "domande": [],
+     "regola": "corredo/tee-branch/tee",
+     "calcolo": "3 pezzi × 1 = 3 (DER-03, DER-02, DER-01)",
+     "fonte": "proposta Nove C sul corredo idronico (da confermare)",
+     "perche": "La derivazione sul multistrato è un tee a pressare del tubo della linea."
+    },
+    {
+     "rif": "I.10",
+     "testo": "Rubinetto portamanometro a tre vie ½\"",
+     "um": "n",
+     "quantita": 1,
+     "fornitura": "installatore",
+     "note": "RM-01",
+     "da_definire": false,
+     "domande": [],
+     "regola": "corredo/valve-gauge-cock-3way/pezzo",
+     "calcolo": "RM-01: 1",
+     "fonte": "proposta Nove C sul corredo idronico (da confermare)",
+     "perche": "Il rubinetto del manometro; non è nel listino."
+    },
+    {
+     "rif": "I.11",
+     "testo": "Valvola a sfera a passaggio totale ¾\" FF, con leva",
+     "um": "n",
+     "quantita": 3,
+     "fornitura": "installatore",
+     "note": "VI-02, VI-03, VI-01",
+     "da_definire": false,
+     "domande": [],
+     "regola": "corredo/valve-isolation/pezzo",
+     "calcolo": "3 pezzi × 1 = 3 (VI-02, VI-03, VI-01)",
+     "fonte": "proposta Nove C sul corredo idronico (da confermare)",
+     "perche": "La valvola a sfera FF a passaggio totale, del pollice del tubo su cui sta (I-279)."
+    },
+    {
+     "rif": "I.12",
+     "testo": "Valvola a sfera a passaggio totale DA DEFINIRE (pollice) FF, con leva",
+     "um": "n",
+     "quantita": 1,
+     "fornitura": "installatore",
+     "note": "VIB-01",
+     "da_definire": true,
+     "domande": [
+      "VIB-01 (Valvola di intercettazione bloccabile aperta): su che tubo sta? Il tubo del suo tratto non c'e': i diametri non sono chiesti su quella rete, o il calcolo non ne ha la portata. Serve la `sezione` del tratto (es. «MS 32×3»)."
+     ],
+     "regola": "corredo/valve-isolation-locked-open/pezzo",
+     "calcolo": "VIB-01: 1",
+     "fonte": "proposta Nove C sul corredo idronico (da confermare)",
+     "perche": "La valvola a sfera FF a passaggio totale, del pollice del tubo su cui sta (I-279)."
+    },
+    {
+     "rif": "I.13",
+     "testo": "Valvola di sicurezza ½\" MF 3 bar, con scarico convogliato",
+     "um": "n",
+     "quantita": 1,
+     "fornitura": "installatore",
+     "note": "VS-01",
+     "da_definire": false,
+     "domande": [],
+     "regola": "corredo/valve-safety/pezzo",
+     "calcolo": "VS-01: 1",
+     "fonte": "proposta Nove C sul corredo idronico (da confermare)",
+     "perche": "La valvola di sicurezza del generatore o dell'accumulo, con lo scarico visibile."
+    },
+    {
+     "rif": "I.14",
+     "testo": "Raccordo diritto a pressare M ¾\" × tubo multistrato MS 26×3",
+     "um": "n",
+     "quantita": 10,
+     "fornitura": "installatore",
+     "note": "",
+     "da_definire": false,
+     "domande": [],
+     "regola": "corredo/giunzioni/raccordo",
+     "calcolo": "10 giunzioni: GA-01 (GA-01 – DER-01); VI-01 (DER-01 – VI-01); VI-01 (VI-01 – TE-01); VI-02 (TE-01 – VI-02); VI-03 (VI-03 – DER-02); FIL-01 (DER-03 – FIL-01); FIL-01 (FIL-01 – GA-02); GA-02 (FIL-01 – GA-02); VIB-01 (DER-03 – VIB-01); RM-01 (DER-02 – RM-01)",
+     "fonte": "regola del PO sulle giunzioni (I-291)",
+     "perche": "Dove un pezzo filettato incontra il tubo multistrato, un raccordo a pressare."
+    },
+    {
+     "rif": "I.15",
+     "testo": "Raccordo diritto a pressare M × tubo multistrato MS 26×3, all'attacco",
+     "um": "n",
+     "quantita": 2,
+     "fornitura": "installatore",
+     "note": "",
+     "da_definire": false,
+     "domande": [],
+     "regola": "corredo/giunzioni/raccordo-all-attacco",
+     "calcolo": "2 giunzioni: TE-01 (VI-01 – TE-01); TE-01 (TE-01 – VI-02)",
+     "fonte": "regola del PO sulle giunzioni (I-291)",
+     "perche": "Il tubo che arriva a un attacco filettato (macchina, accumulo, collettore, terminale, rete esistente) finisce con un raccordo a pressare."
+    },
+    {
+     "rif": "I.16",
+     "testo": "Nipplo ¾\" M × M",
+     "um": "n",
+     "quantita": 2,
+     "fornitura": "installatore",
+     "note": "",
+     "da_definire": false,
+     "domande": [],
+     "regola": "corredo/giunzioni/nipplo",
+     "calcolo": "2 giunzioni: VI-02 – DEF-01; DEF-01 – VI-03",
+     "fonte": "regola del PO sulle giunzioni (I-291)",
+     "perche": "Due pezzi filettati che si toccano si avvitano con un nipplo."
+    }
+   ]
+  },
+  {
+   "lettera": "E",
+   "titolo": "Elettrico, comando e regolazione",
+   "voci": [
+    {
+     "rif": "E.1",
+     "testo": "Cavo FG16OR16 3G1,5, Alimentazione centrale di zona, Alimentazione ventilconvettore",
+     "um": "m",
+     "quantita": 23,
+     "fornitura": "installatore",
+     "note": "T06 stimati 9 m; T08 stimati 9 m",
+     "da_definire": false,
+     "domande": [],
+     "regola": "fluidi/power_supply/cavo-di-alimentazione",
+     "calcolo": "T06 11,5 + T08 11,5 = 23 m",
+     "fonte": "regola Nove C per le linee elettriche dedicate",
+     "perche": "Una riga per sezione di cavo, a metro, con la lunghezza da quotare."
+    },
+    {
+     "rif": "E.2",
+     "testo": "Cavo FG16OR16 3G2,5, Alimentazione pompa di calore",
+     "um": "m",
+     "quantita": 15,
+     "fornitura": "installatore",
+     "note": "T07 stimati 12 m",
+     "da_definire": false,
+     "domande": [],
+     "regola": "fluidi/power_supply/cavo-di-alimentazione",
+     "calcolo": "T07 15 m",
+     "fonte": "regola Nove C per le linee elettriche dedicate",
+     "perche": "Una riga per sezione di cavo, a metro, con la lunghezza da quotare."
+    },
+    {
+     "rif": "E.3",
+     "testo": "DA DEFINIRE (protezione), linea dedicata: Alimentazione centrale di zona, Alimentazione ventilconvettore",
+     "um": "n",
+     "quantita": 2,
+     "fornitura": "installatore",
+     "note": "",
+     "da_definire": true,
+     "domande": [
+      "T06 (Alimentazione centrale di zona): manca `protezione` sul tratto.",
+      "T08 (Alimentazione ventilconvettore): manca `protezione` sul tratto."
+     ],
+     "regola": "fluidi/power_supply/protezione-della-linea",
+     "calcolo": "una per tratto: T06, T08",
+     "fonte": "targa della macchina (dato del progettista)",
+     "perche": "Ogni linea dedicata ha la sua protezione nel quadro. La taglia dipende dalla targa della macchina: è un dato del progettista (`protezione` del tratto); se manca, la voce è DA DEFINIRE. Una linea che attraversa l'interruttore magnetotermico differenziale (`circuit-breaker-rcbo`, REL-018) non la conta: la protezione è quel pezzo, con la sua voce. Solo sulle linee che partono dal quadro: un cavo di comando che parte dall'uscita della scheda di una macchina non ha una protezione nel quadro (collaudi T2 e T4 di REL-021)."
+    },
+    {
+     "rif": "E.4",
+     "testo": "DA DEFINIRE (protezione), linea dedicata: Alimentazione pompa di calore",
+     "um": "n",
+     "quantita": 1,
+     "fornitura": "installatore",
+     "note": "",
+     "da_definire": true,
+     "domande": [
+      "T07 (Alimentazione pompa di calore): manca `protezione` sul tratto."
+     ],
+     "regola": "fluidi/power_supply/protezione-della-linea",
+     "calcolo": "una per tratto: T07",
+     "fonte": "targa della macchina (dato del progettista)",
+     "perche": "Ogni linea dedicata ha la sua protezione nel quadro. La taglia dipende dalla targa della macchina: è un dato del progettista (`protezione` del tratto); se manca, la voce è DA DEFINIRE. Una linea che attraversa l'interruttore magnetotermico differenziale (`circuit-breaker-rcbo`, REL-018) non la conta: la protezione è quel pezzo, con la sua voce. Solo sulle linee che partono dal quadro: un cavo di comando che parte dall'uscita della scheda di una macchina non ha una protezione nel quadro (collaudi T2 e T4 di REL-021)."
+    },
+    {
+     "rif": "E.5",
+     "testo": "Scatola di derivazione IP55",
+     "um": "n",
+     "quantita": 3,
+     "fornitura": "installatore",
+     "note": "",
+     "da_definire": false,
+     "domande": [],
+     "regola": "fluidi/power_supply/scatola-di-derivazione",
+     "calcolo": "3 tratti × 1 = 3",
+     "fonte": "regola Nove C per le linee elettriche dedicate",
+     "perche": "Una scatola per linea, all'uscita dal controsoffitto o all'ingresso nella macchina."
+    },
+    {
+     "rif": "E.6",
+     "testo": "Tubo corrugato Ø25 per le linee di alimentazione",
+     "um": "m",
+     "quantita": 40,
+     "fornitura": "installatore",
+     "note": "",
+     "da_definire": false,
+     "domande": [],
+     "regola": "fluidi/power_supply/corrugato-di-potenza",
+     "calcolo": "T06 11,5 + T07 15 + T08 11,5 = 38 m × 1, per eccesso a 10 m = 40 m",
+     "fonte": "stima Nove C (corrugato a decine di metri)",
+     "perche": "Ogni metro di cavo di potenza corre in corrugato; si compra a decine di metri."
+    },
+    {
+     "rif": "E.7",
+     "testo": "Cavo bus, Collegamento centrale-ventilconvettore, Bus della centrale ai termostati",
+     "um": "m",
+     "quantita": 39,
+     "fornitura": "installatore",
+     "note": "T09 stimati 2 m; T10 stimati 6 m; T11 stimati 6 m; T12 stimati 6 m; T13 stimati 6 m",
+     "da_definire": false,
+     "domande": [],
+     "regola": "fluidi/control_bus/cavo-di-bus",
+     "calcolo": "T09 5 + T10 8,5 + T11 8,5 + T12 8,5 + T13 8,5 = 39 m",
+     "fonte": "regola Nove C per i bus e le linee di comando",
+     "perche": "Una riga per tipo di cavo (la `sezione` del tratto: «2×0,75 (P1-P2)», «bus Airzone, schermato»), a metro."
+    },
+    {
+     "rif": "E.8",
+     "testo": "Tubo corrugato Ø20 per bus e linee di comando",
+     "um": "m",
+     "quantita": 40,
+     "fornitura": "installatore",
+     "note": "",
+     "da_definire": false,
+     "domande": [],
+     "regola": "fluidi/control_bus/corrugato-di-bus",
+     "calcolo": "T09 5 + T10 8,5 + T11 8,5 + T12 8,5 + T13 8,5 = 39 m × 1, per eccesso a 10 m = 40 m",
+     "fonte": "stima Nove C (corrugato a decine di metri)",
+     "perche": "Il bus corre separato dalle linee di potenza, nel suo corrugato."
+    },
+    {
+     "rif": "E.9",
+     "testo": "Aggiornamento dello schema del quadro elettrico",
+     "um": "a corpo",
+     "quantita": 1,
+     "fornitura": "installatore",
+     "note": "QE-01",
+     "da_definire": false,
+     "domande": [],
+     "regola": "corredo/electrical-panel/aggiornamento-schema-quadro",
+     "calcolo": "QE-01: 1",
+     "fonte": "regola Nove C per le linee elettriche dedicate",
+     "perche": "Una protezione nuova nel quadro cambia lo schema, che va aggiornato e allegato alla dichiarazione di conformità."
+    },
+    {
+     "rif": "E.10",
+     "testo": "Scatola 503 per termostati e comandi a parete",
+     "um": "n",
+     "quantita": 4,
+     "fornitura": "installatore",
+     "note": "TZ-01, TZ-02, TZ-03, TZ-04",
+     "da_definire": false,
+     "domande": [],
+     "regola": "corredo/room-thermostat/scatola-503",
+     "calcolo": "4 pezzi × 1 = 4 (TZ-01, TZ-02, TZ-03, TZ-04)",
+     "fonte": "regola Nove C per gli apparecchi a parete",
+     "perche": "Il termostato si monta su una scatola da incasso."
+    }
+   ]
+  },
+  {
+   "lettera": "F",
+   "titolo": "Assistenze murarie (aperture comprese)",
+   "voci": [
+    {
+     "rif": "F.1",
+     "testo": "Foratura di tramezza Ø300 (o vano 470×270) per flessibili coibentati e plenum di bocchetta",
+     "um": "n",
+     "quantita": 4,
+     "fornitura": "installatore",
+     "note": "assunti 1 per T01, T02, T03, T04 (attraversamenti non dati)",
+     "da_definire": false,
+     "domande": [],
+     "regola": "fluidi/supply_air/foratura-per-flessibile",
+     "calcolo": "T01 1 + T02 1 + T03 1 + T04 1 = 4",
+     "fonte": "regola Nove C rivista su una commessa aria-aria",
+     "perche": "Il flessibile Ø200 con 25 mm di isolamento e il mantello misura circa 255-260 mm: in un foro Ø250 l'isolamento si schiaccia."
+    },
+    {
+     "rif": "F.2",
+     "testo": "Foratura per lo scarico della condensa (tramezze e parete del bagno)",
+     "um": "n",
+     "quantita": 1,
+     "fornitura": "installatore",
+     "note": "assunto 1 per T05 (attraversamenti non dati)",
+     "da_definire": false,
+     "domande": [],
+     "regola": "fluidi/condensate/foratura-condensa",
+     "calcolo": "T05 1",
+     "fonte": "regola Nove C rivista su una commessa aria-aria",
+     "perche": "Lo scarico sta in un altro locale (il bagno più vicino): il progettista scrive le pareti passate; se non lo scrive, se ne conta una."
+    },
+    {
+     "rif": "F.3",
+     "testo": "Tracce per le linee dal quadro al controsoffitto",
+     "um": "m",
+     "quantita": 7.5,
+     "fornitura": "installatore",
+     "note": "QE-01",
+     "da_definire": false,
+     "domande": [],
+     "regola": "corredo/electrical-panel/tracce-dal-quadro",
+     "calcolo": "QE-01: 7,5",
+     "fonte": "stima Nove C (2,5 m di traccia per linea)",
+     "perche": "Ogni linea dedicata scende dal controsoffitto al quadro in traccia."
+    },
+    {
+     "rif": "F.4",
+     "testo": "Traccia per la condensa fino allo scarico",
+     "um": "m",
+     "quantita": 3,
+     "fornitura": "installatore",
+     "note": "AL-01",
+     "da_definire": false,
+     "domande": [],
+     "regola": "corredo/condensate-outlet/traccia-condensa",
+     "calcolo": "AL-01: 3",
+     "fonte": "stima Nove C (3 m di traccia fino allo scarico)",
+     "perche": "La discesa dal controsoffitto allo scarico è in traccia."
+    },
+    {
+     "rif": "F.5",
+     "testo": "Traccia per termostati e comandi a parete, dal controsoffitto alla scatola",
+     "um": "m",
+     "quantita": 5.6,
+     "fornitura": "installatore",
+     "note": "TZ-01, TZ-02, TZ-03, TZ-04",
+     "da_definire": false,
+     "domande": [],
+     "regola": "corredo/room-thermostat/traccia-per-apparecchio-a-parete",
+     "calcolo": "4 pezzi × 1,4 = 5,6 (TZ-01, TZ-02, TZ-03, TZ-04)",
+     "fonte": "regola Nove C rivista su una commessa aria-aria",
+     "perche": "Il cavo scende dal controsoffitto alla scatola in traccia."
+    }
+   ]
+  },
+  {
+   "lettera": "X",
+   "titolo": "Pezzi e linee senza regola di distinta (DA DEFINIRE)",
+   "voci": [
+    {
+     "rif": "X.1",
+     "testo": "Ventilconvettore canalizzato: fornitura e corredo di posa DA DEFINIRE",
+     "um": "n",
+     "quantita": 1,
+     "fornitura": "DA DEFINIRE",
+     "note": "TE-01",
+     "da_definire": true,
+     "domande": [
+      "«Ventilconvettore canalizzato» (TE-01) non ha corredo di posa nelle regole della distinta: chi lo fornisce e che cosa porta con se'? Si scrive nelle regole della distinta (corredo)."
+     ],
+     "regola": "corredo/fan-coil-ducted-air (manca)",
+     "calcolo": "1 nello schema (TE-01)",
+     "fonte": "nessuna: la distinta non ha il corredo di questo pezzo",
+     "perche": "Senza regola la distinta non inventa il corredo: conta i pezzi del grafo e chiede."
+    }
+   ]
+  },
+  {
+   "lettera": "Z",
+   "titolo": "Opere del Committente (escluse dall'offerta, da coordinare)",
+   "voci": [
+    {
+     "rif": "Z.1",
+     "testo": "Velette o controsoffitti per le bocchette, altezza utile ≥ 30 cm",
+     "um": "a corpo",
+     "quantita": 1,
+     "fornitura": "committente",
+     "note": "",
+     "da_definire": false,
+     "domande": [],
+     "regola": "fluidi/supply_air/velette-per-le-bocchette",
+     "calcolo": "1 per fluido",
+     "fonte": "regola Nove C per le bocchette in controsoffitto",
+     "perche": "Il plenum porta-bocchetta con l'attacco del flessibile ha bisogno di 30 cm: se manca la veletta, la bocchetta non si monta."
+    },
+    {
+     "rif": "Z.2",
+     "testo": "Bocchetta di mandata 300×150 a doppio filare con serranda",
+     "um": "n",
+     "quantita": 4,
+     "fornitura": "committente",
+     "note": "TA-01, TA-02, TA-03, TA-04",
+     "da_definire": false,
+     "domande": [],
+     "regola": "corredo/air-supply-terminal/bocchetta-di-mandata",
+     "calcolo": "4 pezzi × 1 = 4 (TA-01, TA-02, TA-03, TA-04)",
+     "fonte": "regola Nove C per le bocchette di mandata",
+     "perche": "Chi fornisce le bocchette è una scelta dell'offerta (`distinta.json`, fornitura «bocchette_e_griglie»): nelle offerte Nove C sono del Committente."
+    },
+    {
+     "rif": "Z.3",
+     "testo": "Griglia di transito o luce sotto porta per il ritorno dell'aria dal locale servito",
+     "um": "n",
+     "quantita": 4,
+     "fornitura": "committente",
+     "note": "Camera 1, Camera 2, Soggiorno, Studio",
+     "da_definire": false,
+     "domande": [],
+     "regola": "corredo/air-supply-terminal/griglia-di-transito",
+     "calcolo": "4: 4 locali serviti (Camera 1, Camera 2, Soggiorno, Studio); il locale e' letto dall'etichetta della bocchetta",
+     "fonte": "regola Nove C per il ritorno dell'aria",
+     "perche": "Senza un passaggio, l'aria immessa non torna alla ripresa: la portata cala e cresce il rumore. Una per locale servito, non per bocchetta: due bocchette nello stesso locale ne vogliono una sola, e un locale con un varco aperto verso la ripresa nessuna. Il locale è il dato `locale` della bocchetta (o, se manca, la sua etichetta senza le parentesi); il varco è `varco` sulla bocchetta. L'area efficace minima per locale è nella verifica dell'aria."
+    },
+    {
+     "rif": "Z.4",
+     "testo": "Botola di ispezione ≥ 600×600 sotto la macchina (filtro, pompa, scheda)",
+     "um": "n",
+     "quantita": 1,
+     "fornitura": "committente",
+     "note": "PLZ-01",
+     "da_definire": false,
+     "domande": [],
+     "regola": "corredo/zoning-plenum-4/botola-di-ispezione",
+     "calcolo": "PLZ-01: 1",
+     "fonte": "regola Nove C per la posa del plenum di zona",
+     "perche": "I motori delle serrande e la centrale si raggiungono da sotto."
+    },
+    {
+     "rif": "Z.5",
+     "testo": "Copertura Wi-Fi in zona plenum e centrale di zona, per la configurazione e l'app",
+     "um": "a corpo",
+     "quantita": 1,
+     "fornitura": "committente",
+     "note": "PLZ-01",
+     "da_definire": false,
+     "domande": [],
+     "regola": "corredo/zoning-plenum-4/copertura-wifi",
+     "calcolo": "PLZ-01: 1",
+     "fonte": "regola Nove C rivista su una commessa aria-aria",
+     "perche": "La centrale di zona si configura e si comanda da app via Wi-Fi."
+    },
+    {
+     "rif": "Z.6",
+     "testo": "Griglia di ripresa DA DEFINIRE (sezione) senza filtro, apribile per accedere al filtro",
+     "um": "n",
+     "quantita": 1,
+     "fornitura": "committente",
+     "note": "RA-01",
+     "da_definire": true,
+     "domande": [
+      "RA-01 (Griglia di ripresa con plenum e filtro): su che tubo sta? Il tubo del suo tratto non c'e': i diametri non sono chiesti su quella rete, o il calcolo non ne ha la portata. Serve la `sezione` del tratto (es. «MS 32×3»)."
+     ],
+     "regola": "corredo/return-air-terminal/griglia-di-ripresa",
+     "calcolo": "RA-01: 1",
+     "fonte": "regola Nove C per la ripresa dell'aria",
+     "perche": "Apribile: il filtro sta dietro."
+    },
+    {
+     "rif": "Z.7",
+     "testo": "Chiusura e ripristino di fori, tracce e passaggi",
+     "um": "a corpo",
+     "quantita": 1,
+     "fornitura": "committente",
+     "note": "",
+     "da_definire": false,
+     "domande": [],
+     "regola": "attivita/chiusure-e-ripristini",
+     "calcolo": "sempre",
+     "fonte": "regola Nove C per le offerte a corpo (aperture all'installatore, chiusure a chi fa le opere edili)",
+     "perche": "Le aperture sono dell'installatore, chiusure e ripristini del committente: va scritto, o diventa una lite."
+    }
+   ]
+  },
+  {
+   "lettera": "G",
+   "titolo": "Attività da quotare a corpo (manodopera, mezzi, prove, documenti)",
+   "voci": [
+    {
+     "rif": "G.1",
+     "testo": "Distribuzione aria: 4 rami flessibili interi dal plenum alle bocchette, senza curve rigide: curve del flessibile ampie (raggio in asse non inferiore a un diametro), senza schiacciamenti né anse; UI e plenum arretrati verso il portico quanto serve a curvare ampi all'uscita delle serrande; plenum porta-bocchetta, sostegni e sigillature; bocche protette fino alla posa delle bocchette.",
+     "um": "a corpo",
+     "quantita": 1,
+     "fornitura": "installatore",
+     "note": "",
+     "da_definire": false,
+     "domande": [],
+     "regola": "attivita/distribuzione-aria",
+     "calcolo": "nell'impianto: aria di mandata",
+     "fonte": "regola Nove C rivista su una commessa aria-aria",
+     "perche": "Le bocche aperte in cantiere si riempiono di polvere, che poi esce dalle bocchette."
+    },
+    {
+     "rif": "G.2",
+     "testo": "Scarico condensa con sifone e allaccio allo scarico; prova di scarico e della pompa prima della chiusura del controsoffitto.",
+     "um": "a corpo",
+     "quantita": 1,
+     "fornitura": "installatore",
+     "note": "",
+     "da_definire": false,
+     "domande": [],
+     "regola": "attivita/scarico-condensa-e-prova",
+     "calcolo": "nell'impianto: condensa",
+     "fonte": "regola Nove C per le offerte a corpo",
+     "perche": "Come la tenuta: la condensa si prova a controsoffitto aperto."
+    },
+    {
+     "rif": "G.3",
+     "testo": "Linee elettriche dedicate dal quadro, collegamento fra le unità, linee di comando e bus; posa di termostati e comandi a parete.",
+     "um": "a corpo",
+     "quantita": 1,
+     "fornitura": "installatore",
+     "note": "",
+     "da_definire": false,
+     "domande": [],
+     "regola": "attivita/linee-elettriche-e-comandi",
+     "calcolo": "nell'impianto: alimentazione elettrica, bus di comando",
+     "fonte": "regola Nove C per le offerte a corpo",
+     "perche": "La posa e i collegamenti del materiale della sezione E."
+    },
+    {
+     "rif": "G.4",
+     "testo": "Dichiarazione di conformità D.M. 37/2008, art. 1 lettera a) (impianti elettrici), con lo schema del quadro aggiornato e gli allegati.",
+     "um": "a corpo",
+     "quantita": 1,
+     "fornitura": "installatore",
+     "note": "",
+     "da_definire": false,
+     "domande": [],
+     "regola": "attivita/dico-elettrico",
+     "calcolo": "nell'impianto: alimentazione elettrica",
+     "fonte": "D.M. 37/2008",
+     "perche": "Le linee dedicate sono un impianto elettrico: la sua dichiarazione è distinta da quella della climatizzazione."
+    },
+    {
+     "rif": "G.5",
+     "testo": "Dichiarazione di conformità D.M. 37/2008, art. 1 lettera c) (impianti di climatizzazione), con allegati; documenti per libretto di impianto, catasto regionale e F-Gas.",
+     "um": "a corpo",
+     "quantita": 1,
+     "fornitura": "installatore",
+     "note": "",
+     "da_definire": false,
+     "domande": [],
+     "regola": "attivita/dico-climatizzazione",
+     "calcolo": "nell'impianto: aria di mandata",
+     "fonte": "D.M. 37/2008",
+     "perche": "Come sopra."
+    },
+    {
+     "rif": "G.6",
+     "testo": "Cantiere: POS e oneri della sicurezza (presenza dell'impresa del Committente), trabattello e mezzi di sollevamento.",
+     "um": "a corpo",
+     "quantita": 1,
+     "fornitura": "installatore",
+     "note": "",
+     "da_definire": false,
+     "domande": [],
+     "regola": "attivita/cantiere",
+     "calcolo": "sempre",
+     "fonte": "regola Nove C per le offerte a corpo",
+     "perche": "Mancavano nella prima stesura del kit: sono costi veri dell'installatore, e se non sono a corpo diventano extra."
+    },
+    {
+     "rif": "G.7",
+     "testo": "Trasporto, ricevimento e custodia delle apparecchiature fornite da Nove C fino al collaudo; protezioni delle macchine e delle bocche durante le opere edili.",
+     "um": "a corpo",
+     "quantita": 1,
+     "fornitura": "installatore",
+     "note": "",
+     "da_definire": false,
+     "domande": [],
+     "regola": "attivita/custodia-e-protezioni",
+     "calcolo": "nell'impianto: Plenum motorizzato di zona a quattro serrande",
+     "fonte": "regola Nove C per le offerte a corpo",
+     "perche": "Le macchine di Nove C stanno in cantiere settimane prima della posa."
+    },
+    {
+     "rif": "G.8",
+     "testo": "Pulizia finale e smaltimento di imballi e residui di lavorazione.",
+     "um": "a corpo",
+     "quantita": 1,
+     "fornitura": "installatore",
+     "note": "",
+     "da_definire": false,
+     "domande": [],
+     "regola": "attivita/pulizia-e-smaltimenti",
+     "calcolo": "sempre",
+     "fonte": "regola Nove C per le offerte a corpo",
+     "perche": "Come sopra."
+    }
+   ]
+  },
+  {
+   "lettera": "H",
+   "titolo": "Voci aggiunte dall'installatore dopo il sopralluogo (necessarie per l'impianto finito)",
+   "righe_vuote": 6,
+   "voci": []
+  },
+  {
+   "lettera": "V",
+   "titolo": "Prezzi unitari per varianti (fuori dal prezzo a corpo, solo se Nove C le ordina per iscritto)",
+   "voci": [
+    {
+     "rif": "V.1",
+     "testo": "Flessibile posato oltre la quantità di computo, con fascette e sostegni",
+     "um": "m",
+     "quantita": null,
+     "fornitura": "installatore",
+     "note": "",
+     "da_definire": false,
+     "domande": [],
+     "regola": "attivita/variante-flessibile",
+     "calcolo": "nell'impianto: aria di mandata; solo prezzo unitario",
+     "fonte": "regola Nove C per le varianti a prezzo unitario",
+     "perche": "Come sopra."
+    },
+    {
+     "rif": "V.2",
+     "testo": "Cavo di alimentazione in corrugato oltre la quantità di computo, stessa sezione",
+     "um": "m",
+     "quantita": null,
+     "fornitura": "installatore",
+     "note": "",
+     "da_definire": false,
+     "domande": [],
+     "regola": "attivita/variante-cavo",
+     "calcolo": "nell'impianto: alimentazione elettrica; solo prezzo unitario",
+     "fonte": "regola Nove C per le varianti a prezzo unitario",
+     "perche": "La posizione del quadro si conferma in sopralluogo."
+    },
+    {
+     "rif": "V.3",
+     "testo": "Accesso aggiuntivo in cantiere (oltre i due previsti)",
+     "um": "n",
+     "quantita": null,
+     "fornitura": "installatore",
+     "note": "",
+     "da_definire": false,
+     "domande": [],
+     "regola": "attivita/variante-accesso",
+     "calcolo": "sempre; solo prezzo unitario",
+     "fonte": "regola Nove C per le varianti a prezzo unitario",
+     "perche": "Il prezzo a corpo vale per due accessi: posa con le prove, poi messa in servizio."
+    },
+    {
+     "rif": "V.4",
+     "testo": "Centralino aggiuntivo 8 moduli, se il quadro non ha i moduli liberi per le protezioni nuove",
+     "um": "n",
+     "quantita": null,
+     "fornitura": "installatore",
+     "note": "",
+     "da_definire": false,
+     "domande": [],
+     "regola": "attivita/variante-centralino",
+     "calcolo": "nell'impianto: Quadro elettrico; solo prezzo unitario",
+     "fonte": "regola Nove C per le varianti a prezzo unitario",
+     "perche": "Lo spazio nel quadro esistente si vede solo in sopralluogo."
+    },
+    {
+     "rif": "V.5",
+     "testo": "Staffe a muro per la pompa di calore al posto del basamento a terra, se il progettista le chiede",
+     "um": "n",
+     "quantita": null,
+     "fornitura": "installatore",
+     "note": "",
+     "da_definire": false,
+     "domande": [],
+     "regola": "attivita/variante-staffe-pdc",
+     "calcolo": "nell'impianto: Pompa di calore aria-acqua; solo prezzo unitario",
+     "fonte": "disposizione del PO (I-288): i dati di cantiere vengono dalla chat",
+     "perche": "Di regola la pompa di calore va a terra (I-288): le staffe sono una variante."
+    },
+    {
+     "rif": "V.6",
+     "testo": "Cavo scaldante autoregolante sul tratto esterno dello scarico dell'unità esterna, con collegamento elettrico",
+     "um": "m",
+     "quantita": null,
+     "fornitura": "installatore",
+     "note": "",
+     "da_definire": false,
+     "domande": [],
+     "regola": "attivita/variante-cavo-scaldante",
+     "calcolo": "sempre; solo prezzo unitario",
+     "fonte": "regola Nove C rivista su una commessa aria-aria",
+     "perche": "Il prezzo a corpo vale per due accessi: posa con le prove, poi messa in servizio."
+    }
+   ]
+  }
+ ],
+ "tratte": [
+  {
+   "num": "T01",
+   "rete": "Mandata aria 1",
+   "fluido": "supply_air",
+   "da_a": "PLZ-01 - TA-01",
+   "tubazioni": [
+    "ma-1-1"
+   ],
+   "sezione": "Ø160",
+   "materiale": "flessibile coibentato",
+   "portata_m3h": null,
+   "lunghezza_stimata_m": 3,
+   "lunghezza_da_quotare_m": 5,
+   "calcolo": "(3 + 1) × 1,15 = 4,6 → 5 m",
+   "raccordo_diretto": false
+  },
+  {
+   "num": "T02",
+   "rete": "Mandata aria 1",
+   "fluido": "supply_air",
+   "da_a": "PLZ-01 - TA-02",
+   "tubazioni": [
+    "ma-1-2"
+   ],
+   "sezione": "Ø160",
+   "materiale": "flessibile coibentato",
+   "portata_m3h": null,
+   "lunghezza_stimata_m": 4,
+   "lunghezza_da_quotare_m": 6,
+   "calcolo": "(4 + 1) × 1,15 = 5,75 → 6 m",
+   "raccordo_diretto": false
+  },
+  {
+   "num": "T03",
+   "rete": "Mandata aria 1",
+   "fluido": "supply_air",
+   "da_a": "PLZ-01 - TA-03",
+   "tubazioni": [
+    "ma-1-3"
+   ],
+   "sezione": "Ø160",
+   "materiale": "flessibile coibentato",
+   "portata_m3h": null,
+   "lunghezza_stimata_m": 5,
+   "lunghezza_da_quotare_m": 7,
+   "calcolo": "(5 + 1) × 1,15 = 6,9 → 7 m",
+   "raccordo_diretto": false
+  },
+  {
+   "num": "T04",
+   "rete": "Mandata aria 1",
+   "fluido": "supply_air",
+   "da_a": "PLZ-01 - TA-04",
+   "tubazioni": [
+    "ma-1-4"
+   ],
+   "sezione": "Ø160",
+   "materiale": "flessibile coibentato",
+   "portata_m3h": null,
+   "lunghezza_stimata_m": 6,
+   "lunghezza_da_quotare_m": 8.5,
+   "calcolo": "(6 + 1) × 1,15 = 8,05 → 8,5 m",
+   "raccordo_diretto": false
+  },
+  {
+   "num": "T05",
+   "rete": "Scarico condensa 1",
+   "fluido": "condensate",
+   "da_a": "TE-01 - SIF-01 - AL-01",
+   "tubazioni": [
+    "cd-1a",
+    "cd-1b"
+   ],
+   "sezione": "Ø32",
+   "materiale": "PVC rigido, pendenza ≥ 1%",
+   "portata_m3h": null,
+   "lunghezza_stimata_m": 3,
+   "lunghezza_da_quotare_m": 10,
+   "calcolo": "(3 + 1) × 1,15 = 4,6 → 5 m; minimo condensa 10 m → 10 m",
+   "raccordo_diretto": false
+  },
+  {
+   "num": "T06",
+   "rete": "Alimentazione centrale di zona",
+   "fluido": "power_supply",
+   "da_a": "QE-01 - CZ-01",
+   "tubazioni": [
+    "e-centrale"
+   ],
+   "sezione": "3G1,5",
+   "materiale": "FG16OR16",
+   "portata_m3h": null,
+   "lunghezza_stimata_m": 9,
+   "lunghezza_da_quotare_m": 11.5,
+   "calcolo": "(9 + 1) × 1,15 = 11,5 → 11,5 m",
+   "raccordo_diretto": false
+  },
+  {
+   "num": "T07",
+   "rete": "Alimentazione pompa di calore",
+   "fluido": "power_supply",
+   "da_a": "QE-01 - GT-01",
+   "tubazioni": [
+    "e-pdc"
+   ],
+   "sezione": "3G2,5",
+   "materiale": "FG16OR16",
+   "portata_m3h": null,
+   "lunghezza_stimata_m": 12,
+   "lunghezza_da_quotare_m": 15,
+   "calcolo": "(12 + 1) × 1,15 = 14,95 → 15 m",
+   "raccordo_diretto": false
+  },
+  {
+   "num": "T08",
+   "rete": "Alimentazione ventilconvettore",
+   "fluido": "power_supply",
+   "da_a": "QE-01 - TE-01",
+   "tubazioni": [
+    "e-fc-1"
+   ],
+   "sezione": "3G1,5",
+   "materiale": "FG16OR16",
+   "portata_m3h": null,
+   "lunghezza_stimata_m": 9,
+   "lunghezza_da_quotare_m": 11.5,
+   "calcolo": "(9 + 1) × 1,15 = 11,5 → 11,5 m",
+   "raccordo_diretto": false
+  },
+  {
+   "num": "T09",
+   "rete": "Collegamento centrale-ventilconvettore",
+   "fluido": "control_bus",
+   "da_a": "CZ-01 - TE-01",
+   "tubazioni": [
+    "b-fc"
+   ],
+   "sezione": "bus",
+   "materiale": "cavo di bus",
+   "portata_m3h": null,
+   "lunghezza_stimata_m": 2,
+   "lunghezza_da_quotare_m": 5,
+   "calcolo": "(2 + 1) × 1,15 = 3,45 → 3,5 m; minimo bus 5 m → 5 m",
+   "raccordo_diretto": false
+  },
+  {
+   "num": "T10",
+   "rete": "Bus della centrale ai termostati",
+   "fluido": "control_bus",
+   "da_a": "CZ-01 - TZ-01",
+   "tubazioni": [
+    "b-tz-1"
+   ],
+   "sezione": "bus",
+   "materiale": "cavo di bus",
+   "portata_m3h": null,
+   "lunghezza_stimata_m": 6,
+   "lunghezza_da_quotare_m": 8.5,
+   "calcolo": "(6 + 1) × 1,15 = 8,05 → 8,5 m",
+   "raccordo_diretto": false
+  },
+  {
+   "num": "T11",
+   "rete": "Bus della centrale ai termostati",
+   "fluido": "control_bus",
+   "da_a": "CZ-01 - TZ-02",
+   "tubazioni": [
+    "b-tz-2"
+   ],
+   "sezione": "bus",
+   "materiale": "cavo di bus",
+   "portata_m3h": null,
+   "lunghezza_stimata_m": 6,
+   "lunghezza_da_quotare_m": 8.5,
+   "calcolo": "(6 + 1) × 1,15 = 8,05 → 8,5 m",
+   "raccordo_diretto": false
+  },
+  {
+   "num": "T12",
+   "rete": "Bus della centrale ai termostati",
+   "fluido": "control_bus",
+   "da_a": "CZ-01 - TZ-03",
+   "tubazioni": [
+    "b-tz-3"
+   ],
+   "sezione": "bus",
+   "materiale": "cavo di bus",
+   "portata_m3h": null,
+   "lunghezza_stimata_m": 6,
+   "lunghezza_da_quotare_m": 8.5,
+   "calcolo": "(6 + 1) × 1,15 = 8,05 → 8,5 m",
+   "raccordo_diretto": false
+  },
+  {
+   "num": "T13",
+   "rete": "Bus della centrale ai termostati",
+   "fluido": "control_bus",
+   "da_a": "CZ-01 - TZ-04",
+   "tubazioni": [
+    "b-tz-4"
+   ],
+   "sezione": "bus",
+   "materiale": "cavo di bus",
+   "portata_m3h": null,
+   "lunghezza_stimata_m": 6,
+   "lunghezza_da_quotare_m": 8.5,
+   "calcolo": "(6 + 1) × 1,15 = 8,05 → 8,5 m",
+   "raccordo_diretto": false
+  }
+ ],
+ "verifica": [
+  {
+   "dove": "T01",
+   "controllo": "velocità",
+   "valore": "manca la portata (`portata_m3h`)",
+   "soglia": "≤ 3 m/s",
+   "esito": "non verificabile",
+   "fonte": "regola Nove C per il comfort acustico (mandata fino a 3 m/s)"
+  },
+  {
+   "dove": "T02",
+   "controllo": "velocità",
+   "valore": "manca la portata (`portata_m3h`)",
+   "soglia": "≤ 3 m/s",
+   "esito": "non verificabile",
+   "fonte": "regola Nove C per il comfort acustico (mandata fino a 3 m/s)"
+  },
+  {
+   "dove": "T03",
+   "controllo": "velocità",
+   "valore": "manca la portata (`portata_m3h`)",
+   "soglia": "≤ 3 m/s",
+   "esito": "non verificabile",
+   "fonte": "regola Nove C per il comfort acustico (mandata fino a 3 m/s)"
+  },
+  {
+   "dove": "T04",
+   "controllo": "velocità",
+   "valore": "manca la portata (`portata_m3h`)",
+   "soglia": "≤ 3 m/s",
+   "esito": "non verificabile",
+   "fonte": "regola Nove C per il comfort acustico (mandata fino a 3 m/s)"
+  }
+ ],
+ "note": [
+  "«L da quotare» = (L stimata + 1 m) × 1,15, per eccesso a 0,5 m; minimi: fluido frigorigeno in fase liquida, fluido frigorigeno in fase gassosa 12 m; condensa 10 m; bus di comando 5 m; aria di mandata, aria di ripresa 2 m. La L stimata è un dato del progettista, scritta su ogni tratto.",
+  "Quantità indicative per un prezzo a corpo, fisso e invariabile: l'installatore le verifica nel sopralluogo obbligatorio prima dell'offerta; le varianti hanno solo il prezzo unitario.",
+  "Fornitura da confermare: apparecchiature fornite da Nove C; bocchette e griglie, opere edili del Committente; messa in servizio con Nove C.",
+  "La distinta non progetta: lunghezze, sezioni, portate, protezioni, marca e modello sono dati del progettista; la distinta li maggiora e ne conta il corredo con regole scritte, ciascuna con la sua fonte."
+ ],
+ "avvisi": [
+  "T05 (Scarico condensa 1: TE-01 - SIF-01 - AL-01): la tubazione SIF-01 - AL-01 senza lunghezza; si considera compresa nei 3 m dati sul tratto.",
+  "T01, T02, T03, T04 (aria di mandata): attraversamenti di parete non dati, assunti 1 per tratto (regola Nove C: una parete per ramo, se il progettista non dice quante).",
+  "T05 (condensa): attraversamenti di parete non dati, assunti 1 per tratto (regola Nove C: una parete, se il progettista non dice quante)."
+ ],
+ "domande": [
+  "GT-01 (Pompa di calore aria-acqua): marca e modello li dà il progettista.",
+  "TZ-01, TZ-02, TZ-03, TZ-04 (Termostato di zona): marca e modello li dà il progettista.",
+  "RA-01 (Griglia di ripresa con plenum e filtro): su che tubo sta? Il tubo del suo tratto non c'e': i diametri non sono chiesti su quella rete, o il calcolo non ne ha la portata. Serve la `sezione` del tratto (es. «MS 32×3»).",
+  "Rete «Circuito del ventilconvettore»: quanti metri di tubo, di che diametro e come isolato (preisolato, o nudo con guaina e il suo spessore)? Si scrivono nel blocco «distinta» del grafo.",
+  "VE-01 (Vaso di espansione): manca il dato «volume_l» per «Vaso di espansione chiuso a membrana per riscaldamento DA DEFINIRE (volume_l) l, con attacco e staffa».",
+  "VIB-01 (Valvola di intercettazione bloccabile aperta): su che tubo sta? Il tubo del suo tratto non c'e': i diametri non sono chiesti su quella rete, o il calcolo non ne ha la portata. Serve la `sezione` del tratto (es. «MS 32×3»).",
+  "T06 (Alimentazione centrale di zona): manca `protezione` sul tratto.",
+  "T08 (Alimentazione ventilconvettore): manca `protezione` sul tratto.",
+  "T07 (Alimentazione pompa di calore): manca `protezione` sul tratto.",
+  "«Ventilconvettore canalizzato» (TE-01) non ha corredo di posa nelle regole della distinta: chi lo fornisce e che cosa porta con se'? Si scrive nelle regole della distinta (corredo)."
+ ],
+ "da_confermare": [
+  "Fornitura: apparecchiature fornite da Nove C; bocchette e griglie del Committente; opere edili del Committente; messa in servizio con Nove C — come da regole predefinite di Nove C; confermare per questa offerta."
+ ]
+}

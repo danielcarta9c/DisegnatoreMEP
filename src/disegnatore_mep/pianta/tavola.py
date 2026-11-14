@@ -42,18 +42,25 @@ from disegnatore_mep.graphics.standard import (
 )
 from disegnatore_mep.layout.legend import MEDIUM_NAMES, MEDIUM_STYLES, a_capo
 
+from .fuori_pianta import SPESSORE_MM as SPESSORE_DEL_RICHIAMO_FUORI_MM
+from .fuori_pianta import Richiesta, posa_fuori
 from .instrada import ORDINE_DEI_FLUIDI, Percorso, chiave_della_tratta, ordine_di_instradamento
 from .lunghezze import Lunghezza, Regola, la_regola, metri
 from .modello import Foglio, Muro, Pianta
 from .scritte import (
+    CORRONO_INSIEME,
     RAGGIO_DEL_NUMERO_MM,
     Ingombri,
     Rettangolo,
     ScrittaPosata,
     Segmento,
+    affiancate,
+    ingombro_su_due_righe,
     misura,
+    occupa,
     posa_accanto,
     posa_dentro,
+    posa_dentro_su_due_righe,
     posa_intorno,
     posa_nel_pezzo,
 )
@@ -106,15 +113,17 @@ CORPO_COLONNA_PT = CORPO_MINIMO_PT
 CORPO_TITOLETTI_PT = CORPO_DELLE_SCRITTE_PT
 CORPO_TITOLO_PT = 11.0
 
-COLORE_STANZE = "#1c2e4a"
-COLORE_MURI = {"perimetrale": "#8c8c8c", "portante": "#8c8c8c", "tramezza": "#b3b3b3"}
-COLORE_APERTURE = "#555555"
+COLORE_STANZE = "#8a8a8a"
+"""Il nome dei locali con i mq: in mezzatinta, come la base (REL-026, C-3; lo stesso grigio
+di `base.GRIGIO_DEI_LOCALI`, dove stanno i colori della base)."""
 
 FORMATI: dict[str, GraphicStandard] = {"A3": A3_LANDSCAPE, "A2": A2_LANDSCAPE, "A1": A1_LANDSCAPE}
 SCALE = (50, 100)
 
 LAYER_MURI = "A-WALL"
 LAYER_APERTURE = "A-DOOR"
+LAYER_FINESTRE = "A-GLAZ"
+LAYER_BALCONI = "A-FLOR-OTLN"
 LAYER_STANZE = "A-AREA-IDEN"
 LAYER_PEZZI = "M-EQPM"
 LAYER_FORATURE = "A-WALL-HOLE"
@@ -127,8 +136,10 @@ LAYER_FUORI = "M-ANNO-NCSF"
 
 DESCRIZIONE_DEI_LAYER: dict[str, str] = {
     LAYER_MURI: "Muri della planimetria",
-    LAYER_APERTURE: "Porte, finestre, varchi e fori dichiarati",
-    LAYER_STANZE: "Nomi delle stanze",
+    LAYER_APERTURE: "Porte e fori dichiarati",
+    LAYER_FINESTRE: "Finestre",
+    LAYER_BALCONI: "Balconi e terrazzi: contorno",
+    LAYER_STANZE: "Nomi dei locali con i mq",
     LAYER_PEZZI: "Pezzi posati: ingombro in pianta",
     LAYER_FORATURE: "Forature da eseguire",
     LAYER_SIGLE: "Sigle, scritte dei tracciati e richiami",
@@ -177,6 +188,9 @@ class Area:
     colore: str
     layer: str
     opacita: float = 1.0
+    buchi: tuple[tuple[Punto, ...], ...] = ()
+    """Gli anelli dei buchi (pari e dispari): un muro perimetrale chiuso e' un anello con
+    un buco, e si campisce come una cosa sola (REL-026, C-3)."""
 
 
 @dataclass(frozen=True)
@@ -262,6 +276,8 @@ class Tavola:
     """Per scritta, i rettangoli su cui puo' stare: il muro della foratura."""
     trasforma: tuple[float, float, float, float, float] = (0.0, 0.0, 0.0, 0.0, 1.0)
     """ox, oy, xmin, ymin, k: dalla carta ai metri, x_m = (x_mm - ox) / k + xmin."""
+    costo_fuori: float = 0.0
+    """Quanto costano i richiami delle scritte fuori dalla pianta (`fuori_pianta.Fuori`)."""
 
     def in_metri(self, r: Rettangolo) -> tuple[float, float, float, float]:
         ox, oy, xmin, ymin, k = self.trasforma
@@ -310,9 +326,43 @@ def pezzi_dei_muri(pianta: Pianta) -> list[tuple[Muro, float, float]]:
     return out
 
 
+def _angoli_del_tratto(muro: Muro, s0: float, s1: float, P: Callable[[float, float], Punto]) -> tuple[Punto, ...]:
+    """I quattro angoli, sulla carta, del tratto pieno di un muro da s0 a s1 dell'asse."""
+    h = muro.spessore / 2
+    return tuple(P(*_sull_asse(muro, s, d)) for s, d in ((s0, -h), (s1, -h), (s1, h), (s0, h)))
+
+
+# --- la base: muri e aperture ----------------------------------------------------------
+#
+# Il disegno della planimetria sotto l'impianto: la base standard di REL-026 C-3 — muri
+# grigio chiaro, finestre celesti, porte a tratto fine, balconi — sta in `base.py`, con i
+# suoi colori. Qui le due chiamate, perche' la composizione non cambi.
+
+
+def retino_dei_muri(pianta: Pianta, P: Callable[[float, float], Punto], velo: float) -> list[Primitiva]:
+    """I muri della base standard (`base.muri_della_base`): sulle `sagome_muri`, se la pianta
+    le da' (B-2), se no sui `muri` con gli angoli raccordati, in un contorno solo."""
+    from .base import muri_della_base
+
+    return muri_della_base(pianta, P, velo)
+
+
+def disegno_delle_aperture(
+    pianta: Pianta, P: Callable[[float, float], Punto], k: float,
+) -> tuple[list[Primitiva], list[tuple[str, Segmento]]]:
+    """Finestre, porte, fori e balconi della base standard (`base.aperture_della_base`); e,
+    per le scritte, i tratti che non devono toccare."""
+    from .base import aperture_della_base
+
+    return aperture_della_base(pianta, P, k)
+
+
 def estensione(pianta: Pianta, percorsi: Sequence[Percorso]) -> tuple[float, float, float, float]:
     xs: list[float] = []
     ys: list[float] = []
+    for sagoma in [*pianta.sagome_muri, *(b.poligono for b in pianta.balconi)]:
+        xs += [p[0] for p in sagoma]
+        ys += [p[1] for p in sagoma]
     for muro in pianta.muri:
         _, _, lunghezza = _asse(muro)
         h = muro.spessore / 2
@@ -422,7 +472,8 @@ def colonna(
     c.stacco(STACCO_MM)
 
     if ridotta is not None:
-        c.riga(f"Tratte, lunghezze, forature e avvisi: tavola {ridotta}.", CORPO_COLONNA_PT, True)
+        cose = "Tratte, lunghezze, forature e avvisi" if pianta.forature else "Tratte, lunghezze e avvisi"
+        c.riga(f"{cose}: tavola {ridotta}.", CORPO_COLONNA_PT, True)
         c.stacco(STACCO_MM)
     else:
         _tratte_e_avvisi(c, pianta, lunghe, forature, fori_dei_pezzi, regola, avvisi)
@@ -457,15 +508,36 @@ def colonna(
     return c
 
 
+COLONNE_DELLE_TRATTE: tuple[tuple[str, float, str], ...] = (
+    ("Tratta", 0.0, "start"), ("Fluido", 11.0, "start"), ("Da", 38.0, "start"),
+    ("A", 53.0, "start"), ("Dim.", 68.0, "start"), ("L prog.", 98.0, "end"),
+    ("L mis.", 111.0, "end"), ("L quot.", 124.0, "end"),
+)
+"""Le colonne della tabella delle tratte: il titolo, la x in millimetri, l'ancora."""
+
+NOMI_CORTI_DEI_FLUIDI: dict[str, str] = {
+    "supply_air": "Aria di mandata", "return_air": "Aria di ripresa",
+    "refrigerant_liquid": "Frigo, liquido", "refrigerant_gas": "Frigo, gas",
+    "interconnection": "Cavo UI-UE", "power_supply": "Alimentazione", "control_bus": "Bus",
+    "condensate": "Condensa",
+    # BD.RM.260 (REL-026, B-1): la scritta lunga dei fluidi idronici finiva sulla colonna «Da».
+    "heating_water": "Acqua risc.", "domestic_hot_water": "ACS", "cold_water": "AFS",
+}
+"""Il nome del fluido nella colonna «Fluido» della tabella delle tratte, quando quello
+della legenda non ci sta. Gli altri fluidi hanno il nome della legenda."""
+
+
+def nome_corto_del_fluido(fluido: str) -> str:
+    return NOMI_CORTI_DEI_FLUIDI.get(fluido, nome_del_fluido(fluido))
+
+
 def _tratte_e_avvisi(
     c: _Colonna, pianta: Pianta, lunghe: Sequence[Lunghezza], forature: Sequence[Foratura],
     fori_dei_pezzi: Sequence[tuple[str, str]], regola: Regola | None, avvisi: Sequence[str],
 ) -> None:
     corpo_mm = CORPO_COLONNA_PT * PT_MM
     c.riga("TRATTE", CORPO_TITOLETTI_PT, True)
-    colonne = (("Tratta", 0.0, "start"), ("Fluido", 11.0, "start"), ("Da", 38.0, "start"),
-               ("A", 53.0, "start"), ("Dim.", 68.0, "start"), ("L prog.", 98.0, "end"),
-               ("L mis.", 111.0, "end"), ("L quot.", 124.0, "end"))
+    colonne = COLONNE_DELLE_TRATTE
     c.stacco(1.0)
     c.y += corpo_mm * 1.2
     for testo, x, ancora in colonne:
@@ -474,17 +546,11 @@ def _tratte_e_avvisi(
     c.primitive.append(Linea(((0.0, c.y + 1.0), (c.larghezza, c.y + 1.0)), "#000000", 0.18, LAYER_COLONNA))
     c.stacco(1.0)
     per_tratta = {lu.tratta: lu for lu in lunghe}
-    corta = {
-        "supply_air": "Aria di mandata", "return_air": "Aria di ripresa",
-        "refrigerant_liquid": "Frigo, liquido", "refrigerant_gas": "Frigo, gas",
-        "interconnection": "Cavo UI-UE", "power_supply": "Alimentazione", "control_bus": "Bus",
-        "condensate": "Condensa",
-    }
     for tracciato in sorted(pianta.tracciati, key=lambda t: chiave_della_tratta(t.tratta)):
         lu = per_tratta[tracciato.tratta]
         c.y += corpo_mm * 1.25
         valori = (
-            tracciato.tratta, corta.get(tracciato.fluido, nome_del_fluido(tracciato.fluido)),
+            tracciato.tratta, nome_corto_del_fluido(tracciato.fluido),
             tracciato.estremo_da.pezzo, tracciato.estremo_a.pezzo, tracciato.dimensione or "",
             "—" if lu.data_m is None else metri(lu.data_m),
             metri(lu.misurata_m) + ("!" if lu.oltre_lo_scarto else ""),
@@ -617,6 +683,7 @@ def componi(
     ridotta: str | None = None,
     nel_dettaglio: frozenset[str] = frozenset(),
     controllo_delle_sigle: str = "",
+    spostamento: tuple[int, int] = (0, 0),
 ) -> Tavola:
     """La tavola intera; con `zona` (in metri) solo quella zona, alla scala del
     foglio della pianta: e' il riquadro di dettaglio. `rimandate` sono le
@@ -637,8 +704,13 @@ def componi(
     area = frame.drawing_rect_mm
     larghezza, altezza = (xmax - xmin) * k, (ymax - ymin) * k
     libera_h = area.height_mm - FASCIA_DELLA_SCALA_MM
-    ox = area.x_mm + max(MARGINE_MM, (area.width_mm - larghezza) / 2)
-    oy = area.y_mm + max(MARGINE_MM, (libera_h - altezza) / 2)
+    # La pianta sta al centro del suo campo. Se le scritte fuori non ci stanno, si sposta
+    # tutta da una parte (`spostamento`, -1, 0 o 1 per asse), e dall'altra il margine
+    # raddoppia: lo spazio del foglio si usa prima di passare al formato dopo (C-1).
+    gioco_x = max(0.0, (area.width_mm - larghezza) / 2 - MARGINE_MM)
+    gioco_y = max(0.0, (libera_h - altezza) / 2 - MARGINE_MM)
+    ox = area.x_mm + max(MARGINE_MM, (area.width_mm - larghezza) / 2) + spostamento[0] * gioco_x
+    oy = area.y_mm + max(MARGINE_MM, (libera_h - altezza) / 2) + spostamento[1] * gioco_y
 
     def P(x: float, y: float) -> Punto:
         return (round(ox + (x - xmin) * k, 4), round(oy + (y - ymin) * k, 4))
@@ -655,15 +727,18 @@ def componi(
     rettangoli: list[tuple[str, Rettangolo]] = []
     ammessi: dict[str, set[str]] = {}
 
-    # Lo sfondo (non nel dettaglio: un'immagine non si ritaglia).
-    if pianta.sfondo is not None and pixel_dello_sfondo is not None and zona is None:
+    # Lo sfondo (non nel dettaglio: un'immagine non si ritaglia), solo se va sulla tavola:
+    # quando la base e' ridisegnata, la planimetria d'origine serve al controllo a vista,
+    # non alla tavola consegnata (REL-026, C-3).
+    if pianta.sfondo is not None and pianta.sfondo_sulla_tavola and pixel_dello_sfondo is not None and zona is None:
         sf = pianta.sfondo
-        x0, y0 = P(-sf.origine_px[0] / sf.px_per_m, -sf.origine_px[1] / sf.px_per_m)
+        py_per_m = sf.px_per_m_y or sf.px_per_m
+        x0, y0 = P(-sf.origine_px[0] / sf.px_per_m, -sf.origine_px[1] / py_per_m)
         primitive.append(
             Immagine(Path(sf.file).name, x0, y0, pixel_dello_sfondo[0] / sf.px_per_m * k,
-                     pixel_dello_sfondo[1] / sf.px_per_m * k, sf.opacita, pixel_dello_sfondo)
+                     pixel_dello_sfondo[1] / py_per_m * k, sf.opacita, pixel_dello_sfondo)
         )
-    velo = 0.55 if pianta.sfondo is not None else 1.0
+    velo = 0.55 if pianta.sfondo_sulla_tavola else 1.0
 
     # Le zone esterne praticabili: un contorno tratteggiato, sotto i muri.
     for zona_esterna in pianta.zone_esterne:
@@ -672,63 +747,23 @@ def componi(
         angoli_z = ((a[0], a[1]), (b[0], a[1]), (b[0], b[1]), (a[0], b[1]), (a[0], a[1]))
         primitive.append(Linea(angoli_z, COLORE_ZONE_ESTERNE, 0.25, LAYER_STANZE, TRATTO_ZONE_ESTERNE))
 
-    # I muri.
+    # I muri: il retino (sulle sagome vere, se la pianta le da'), poi gli ingombri,
+    # che per le scritte e i controlli restano i rettangoli asse-spessore dei muri,
+    # come per l'instradamento.
+    primitive += retino_dei_muri(pianta, P, velo)
     for muro, s0, s1 in pezzi_dei_muri(pianta):
-        h = muro.spessore / 2
-        angoli = tuple(P(*_sull_asse(muro, s, d)) for s, d in ((s0, -h), (s1, -h), (s1, h), (s0, h)))
-        primitive.append(Area(angoli, COLORE_MURI[muro.tipo], LAYER_MURI, velo))
+        angoli = _angoli_del_tratto(muro, s0, s1, P)
         r = (min(p[0] for p in angoli), min(p[1] for p in angoli),
              max(p[0] for p in angoli), max(p[1] for p in angoli))
         ingombri.metti_rettangolo(r, muro=True)
         rettangoli.append((f"muro {muro.id}", r))
 
-    # Le aperture.
-    muri = {m.id: m for m in pianta.muri}
-    for apertura in pianta.aperture:
-        muro = muri[apertura.muro]
-        ux, uy, _ = _asse(muro)
-        centro = (apertura.centro[0] - muro.da[0]) * ux + (apertura.centro[1] - muro.da[1]) * uy
-        s0, s1 = centro - apertura.larghezza / 2, centro + apertura.larghezza / 2
-        h = muro.spessore / 2
-        if apertura.tipo == "finestra":
-            for d in (-h, 0.0, h):
-                a, b = P(*_sull_asse(muro, s0, d)), P(*_sull_asse(muro, s1, d))
-                primitive.append(Linea((a, b), COLORE_APERTURE, 0.18, LAYER_APERTURE))
-                segmento = (a[0], a[1], b[0], b[1], 0.09)
-                ingombri.metti_segmento(segmento)
-                linee.append((f"finestra {apertura.id}", segmento))
-        elif apertura.tipo == "foro":
-            angoli = tuple(P(*_sull_asse(muro, s, d)) for s, d in ((s0, -h), (s1, -h), (s1, h), (s0, h)))
-            primitive.append(Linea((*angoli, angoli[0]), COLORE_APERTURE, 0.18, LAYER_APERTURE, "1 0.6"))
-        elif apertura.tipo == "porta":
-            verso = {"sopra": (0.0, -1.0), "sotto": (0.0, 1.0), "sinistra": (-1.0, 0.0), "destra": (1.0, 0.0)}
-            normale = (-uy, ux)
-            segno = 1.0
-            if apertura.apre_verso is not None:
-                v = verso[apertura.apre_verso]
-                segno = 1.0 if normale[0] * v[0] + normale[1] * v[1] >= 0 else -1.0
-            cerniera = _sull_asse(muro, s0, segno * h)
-            anta = _sull_asse(muro, s0, segno * (h + apertura.larghezza))
-            stipite = _sull_asse(muro, s1, segno * h)
-            primitive.append(Linea((P(*cerniera), P(*anta)), COLORE_APERTURE, 0.18, LAYER_APERTURE))
-            a_cerniera = math.atan2(anta[1] - cerniera[1], anta[0] - cerniera[0])
-            a_stipite = math.atan2(stipite[1] - cerniera[1], stipite[0] - cerniera[0])
-            orario = (a_stipite - a_cerniera) % (2 * math.pi) < math.pi
-            primitive.append(Arco(P(*cerniera), apertura.larghezza * k, P(*anta), P(*stipite), orario,
-                                  COLORE_APERTURE, 0.18, LAYER_APERTURE))
-            # Anta e arco, per le scritte: l'arco come otto corde.
-            centro_arco = P(*cerniera)
-            raggio = apertura.larghezza * k
-            passo_angolo = ((a_stipite - a_cerniera + math.pi) % (2 * math.pi) - math.pi) / 8
-            corde = [
-                (centro_arco[0] + raggio * math.cos(a_cerniera + i * passo_angolo),
-                 centro_arco[1] + raggio * math.sin(a_cerniera + i * passo_angolo))
-                for i in range(9)
-            ]
-            for a, b in [(P(*cerniera), P(*anta)), *zip(corde, corde[1:], strict=False)]:
-                segmento = (a[0], a[1], b[0], b[1], 0.09)
-                ingombri.metti_segmento(segmento)
-                linee.append((f"porta {apertura.id}", segmento))
+    # Le aperture: il disegno, e i tratti che le scritte non devono toccare.
+    disegno, tratti_delle_aperture = disegno_delle_aperture(pianta, P, k)
+    primitive += disegno
+    for di, segmento in tratti_delle_aperture:
+        ingombri.metti_segmento(segmento)
+        linee.append((di, segmento))
 
     # I tracciati: sotto quelli instradati dopo, interrotti dove passa sopra uno di prima.
     tracciati = {t.tratta: t for t in pianta.tracciati}
@@ -848,6 +883,9 @@ def componi(
     # dentro il pezzo non toglie posto a nessuno.
     scritte: list[tuple[str, ScrittaPosata]] = []
     dentro_ai_pezzi: set[str] = set()
+    oggetti: dict[str, Richiesta] = {}
+    """Per scritta, l'oggetto a cui si attacca se va fuori dalla pianta (REL-026, C-1)."""
+    proprie_di: dict[str, frozenset[Segmento]] = {}
     def da_scrivere(chi: str, r: Rettangolo) -> bool:
         """Sulla tavola intera, tutte salvo le rimandate; nel dettaglio, le
         rimandate e quelle degli oggetti tutti dentro la zona."""
@@ -871,7 +909,7 @@ def componi(
             scritte.append((f"pezzo {pezzo.sigla}", posata_dentro))
             dentro_ai_pezzi.add(pezzo.sigla)
     lunghe_per_tratta = {lu.tratta: lu for lu in lunghe}
-    for gruppo in _gruppi_delle_scritte(pianta, percorsi, priorita):
+    for gruppo in _gruppi_delle_scritte(pianta, percorsi, priorita, lunghe_per_tratta):
         primo = tracciati[gruppo[0]]
         if len(gruppo) == 1:
             testo = primo.etichetta or " · ".join(
@@ -884,22 +922,19 @@ def componi(
             # Un fascio fra gli stessi due pezzi ha una scritta sola, accanto al
             # tracciato di mezzo e lontana quanto il fascio e' largo: tre
             # scritte per tre linee a due millimetri l'una dall'altra non si
-            # leggono. Le dimensioni di ciascuno stanno nella tabella; la
-            # lunghezza e' quella del progettista, come sullo schema: una se e'
-            # la stessa per tutti, se no tutte, nell'ordine dei numeri.
+            # leggono. La dimensione una volta se e' la stessa per tutti, se no
+            # stanno nella tabella; la lunghezza e' quella del progettista, come
+            # sullo schema: una se e' la stessa per tutti, se no tutte, nell'ordine
+            # dei numeri. Lo stesso per due tratte che corrono insieme senza
+            # essere un fascio (REL-026, C-2): la scritta sta accanto a una delle
+            # due, dal lato libero.
             membri = [tracciati[t] for t in gruppo]
-            nomi = sorted((m.tratta for m in membri), key=chiave_della_tratta)
-            numeri = [chiave_della_tratta(n) for n in nomi]
-            di_fila = all(
-                b[0] == a[0] and b[1] == a[1] + 1 for a, b in zip(numeri, numeri[1:], strict=False)
-            )
-            testo = (f"{nomi[0]}–{nomi[-1]}" if di_fila else "+".join(nomi)) + " · " + scritta_del_fascio(
-                [lunghe_per_tratta[n] for n in nomi]
-            )
-            guida = gruppo[len(gruppo) // 2]
+            testo = scritta_del_gruppo(membri, lunghe_per_tratta)
+            nel_fascio = primo.fascio is not None and all(m.fascio == primo.fascio for m in membri)
+            guida = gruppo[len(gruppo) // 2] if nel_fascio else gruppo[0]
             mezzo = (len(gruppo) - 1) / 2 * pianta.parametri.passo_fascio_m * k + max(
                 spessore(m.fluido) for m in membri
-            ) / 2
+            ) / 2 if nel_fascio else spessore(primo.fluido) / 2
         chi = f"tratta {guida}" if len(gruppo) == 1 else f"fascio {' '.join(gruppo)}"
         if not carta[guida] or not da_scrivere(chi, ingombro_della_tratta(gruppo)):
             continue
@@ -913,6 +948,9 @@ def componi(
         posata = posa_accanto(testo, CORPO_TRATTE_PT, False, carta[guida], proprie, ingombri, mezzo,
                               sotto=[carta_dei_pezzi[c] for c in sotto_la_linea])
         scritte.append((chi, posata))
+        oggetti[chi] = Richiesta(chi, testo, CORPO_TRATTE_PT, False, linee=tuple(tuple(q) for q in carta[guida]),
+                                 sotto=tuple(carta_dei_pezzi[c] for c in sotto_la_linea))
+        proprie_di[chi] = frozenset(proprie)
     for pezzo in pianta.pezzi:
         if pezzo.sigla in dentro_ai_pezzi:
             continue
@@ -923,6 +961,8 @@ def componi(
         posata = posa_intorno(pezzo.sigla, CORPO_SIGLE_PT, True, (a[0], a[1], b[0], b[1]), ingombri,
                               dentro=True, sopra=[carta_dei_pezzi[c] for c in sotto_la_sigla.get(pezzo.sigla, [])])
         scritte.append((f"pezzo {pezzo.sigla}", posata))
+        oggetti[f"pezzo {pezzo.sigla}"] = Richiesta(f"pezzo {pezzo.sigla}", pezzo.sigla, CORPO_SIGLE_PT, True,
+                                                    rettangolo=(a[0], a[1], b[0], b[1]))
     for foratura in forature:
         foro = P(*foratura.punto)
         if not da_scrivere(f"foratura {foratura.numero}", (foro[0], foro[1], foro[0], foro[1])):
@@ -935,21 +975,112 @@ def componi(
                               (foro[0] - 0.9, foro[1] - 0.9, foro[0] + 0.9, foro[1] + 0.9), ingombri, sopra=muro_del_foro)
         ammessi[f"foratura {foratura.numero}"] = {f"muro {foratura.muro}"}
         scritte.append((f"foratura {foratura.numero}", posata))
-    for stanza in pianta.stanze:
-        superficie = _superficie(stanza.poligono)
-        testo = " · ".join(
-            v for v in (stanza.nome, stanza.zona, f"{metri(superficie)} m²") if v
+        oggetti[f"foratura {foratura.numero}"] = Richiesta(
+            f"foratura {foratura.numero}", foratura.numero, CORPO_TRATTE_PT, True,
+            rettangolo=(foro[0] - 0.9, foro[1] - 0.9, foro[0] + 0.9, foro[1] + 0.9),
         )
-        posata_o_niente = posa_dentro(
-            testo, CORPO_STANZE_PT, False,
-            (P(*p) for p in _punti_dentro(stanza.poligono)), ingombri,
-        )
-        if posata_o_niente is not None:
-            scritte.append((f"stanza {stanza.id}", posata_o_niente))
 
+    # Le scritte che in pianta non hanno trovato posto — ne' accanto, ne' col richiamo
+    # corto, ne' come numero in legenda — vanno fuori dalla pianta, nello spazio bianco
+    # attorno, col loro richiamo (REL-026, C-1): prima aprivano un riquadro di dettaglio.
+    # Prima dei nomi delle stanze, che poi non vanno sopra i richiami.
+    senza_posto = [indice for indice, (_, posata) in enumerate(scritte) if not posata.libera]
+    costo_fuori = 0.0
+    if senza_posto:
+        intorno = carta_della_zona or (*P(xmin, ymin), *P(xmax, ymax))
+        esito_fuori = posa_fuori(
+            [oggetti[scritte[indice][0]] for indice in senza_posto], ingombri, intorno,
+            (area.x_mm + 2.0, area.y_mm + 2.0, area.right_mm - 2.0, area.y_mm + libera_h),
+            frozenset(s for di, s in linee if di.startswith("tratta ")),
+            [(*p.richiamo, 0.1) for _, p in scritte if p.richiamo is not None], proprie_di,
+        )
+        fuori, costo_fuori = esito_fuori.posate, esito_fuori.totale
+        da_migliorare = esito_fuori.da_migliorare()
+        if da_migliorare and spostamento == (0, 0):
+            # Una scritta fuori senza posto, o col richiamo sopra una scritta o un pezzo, o
+            # lungo mezza tavola: la pianta si sposta sul foglio, verso il lato opposto a
+            # quello di quelle scritte, e la prova si tiene se tutte hanno posto e i
+            # richiami costano meno. Lo spazio del foglio si usa prima di cambiare formato.
+            senza = [oggetti[scritte[senza_posto[i]][0]] for i in da_migliorare]
+            spostata_meglio: Tavola | None = None
+            for verso in _versi_dello_spostamento(senza, intorno, gioco_x, gioco_y):
+                spostata = componi(pianta, percorsi, lunghe, forature, fori_dei_pezzi, cartiglio,
+                                   pixel_dello_sfondo, regola, avvisi_della_colonna, zona, rimandate, riquadri,
+                                   ridotta, nel_dettaglio, controllo_delle_sigle, spostamento=verso)
+                migliore = costo_fuori if spostata_meglio is None else spostata_meglio.costo_fuori
+                if (
+                    spostata.formato == formato and all(p.libera for _, p in spostata.scritte)
+                    and spostata.costo_fuori < migliore - 1e-6
+                ):
+                    spostata_meglio = spostata
+            if spostata_meglio is not None:
+                return spostata_meglio
+        if any(f is None for f in fuori) and spostamento == (0, 0):
+            # Fuori non c'e' posto per tutte nemmeno spostando la pianta: il formato
+            # successivo, con la stessa scala; se nemmeno li' ci stanno si resta qui, e si
+            # contano. Solo dalla pianta al centro: una prova spostata che non basta torna
+            # qui e basta, se no le prove si moltiplicherebbero per ogni formato.
+            tavola_dopo = _sul_formato_dopo(pianta, formato, scala, percorsi, lunghe, forature, fori_dei_pezzi,
+                                            cartiglio, pixel_dello_sfondo, regola, avvisi_della_colonna, zona,
+                                            rimandate, riquadri, ridotta, nel_dettaglio, controllo_delle_sigle)
+            if tavola_dopo is not None and all(p.libera for _, p in tavola_dopo.scritte):
+                return tavola_dopo
+        for indice, posata_fuori in zip(senza_posto, fuori, strict=True):
+            if posata_fuori is None:
+                occupa(scritte[indice][1], ingombri)
+            else:
+                scritte[indice] = (scritte[indice][0], posata_fuori)
+    # I nomi dei locali — stanze e balconi (REL-026, C-3) — con i mq dal poligono, tutti
+    # dentro il loro locale: il nome di un bagno stretto non esce dalla porta.
+    from .base import dentro as dentro_al_poligono
+    from .base import locali_con_nome
+
+    for chi_del_locale, parti, poligono in locali_con_nome(pianta):
+        carta_del_locale = [P(*q) for q in poligono]
+        # Un locale stretto (un bagno di 1,3 m, un balcone), o attraversato da una linea, non
+        # prende la scritta intera su una riga: si prova su due righe (il nome sopra, zona e mq
+        # sotto), poi piu' piccola, e solo alla fine il nome senza i mq.
+        intera, resto = " · ".join(parti), " · ".join(parti[1:])
+        posate_del_locale: tuple[ScrittaPosata, ...] = ()
+        for testo_del_locale, corpo_del_locale, su_due_righe in (
+            (intera, CORPO_STANZE_PT, False), (intera, CORPO_STANZE_PT, True),
+            (intera, CORPO_TRATTE_PT, False), (intera, CORPO_TRATTE_PT, True),
+            (parti[0], CORPO_TRATTE_PT, False),
+        ):
+            if su_due_righe and not resto:
+                continue
+            if su_due_righe:
+                largo, alto = ingombro_su_due_righe(parti[0], resto, corpo_del_locale)
+            else:
+                largo, sale, scende = misura(testo_del_locale, corpo_del_locale, False)
+                alto = sale + scende
+            centri = [
+                c for c in (P(*p) for p in _punti_dentro(poligono))
+                if all(dentro_al_poligono((c[0] + dx * (largo / 2 + 0.5), c[1] + dy * (alto / 2 + 0.3)),
+                                          carta_del_locale)
+                       for dx in (-1, 1) for dy in (-1, 1))
+            ]
+            if su_due_righe:
+                posate_del_locale = posa_dentro_su_due_righe(
+                    parti[0], resto, corpo_del_locale, centri, ingombri) or ()
+            else:
+                una = posa_dentro(testo_del_locale, corpo_del_locale, False, centri, ingombri)
+                posate_del_locale = (una,) if una is not None else ()
+            if posate_del_locale:
+                break
+        scritte.extend((chi_del_locale, posata) for posata in posate_del_locale)
+
+    richiami_fuori: list[Primitiva] = []
+    """I richiami delle scritte fuori: escono dalla zona del dettaglio, e non si ritagliano."""
     for chi, posata in scritte:
-        colore = COLORE_STANZE if chi.startswith("stanza") else "#000000"
-        layer = LAYER_STANZE if chi.startswith("stanza") else LAYER_SIGLE
+        if posata.richiamo_fuori is not None:
+            richiami_fuori.append(Linea(posata.richiamo_fuori, "#000000", SPESSORE_DEL_RICHIAMO_FUORI_MM, LAYER_SIGLE))
+            richiami_fuori.append(Cerchio(posata.richiamo_fuori[0], 0.35, "#000000", 0.1, "#000000", LAYER_SIGLE))
+            for a, b in zip(posata.richiamo_fuori, posata.richiamo_fuori[1:], strict=False):
+                linee.append((f"richiamo fuori:{chi}", (a[0], a[1], b[0], b[1], SPESSORE_DEL_RICHIAMO_FUORI_MM / 2)))
+        del_locale = chi.startswith(("stanza", "balcone"))
+        colore = COLORE_STANZE if del_locale else "#000000"
+        layer = LAYER_STANZE if del_locale else LAYER_SIGLE
         if chi.startswith(("tratta", "fascio")):
             colore = stile(tracciati[chi.split()[1]].fluido)[0]
         if posata.numero is not None:
@@ -969,6 +1100,7 @@ def componi(
         x0z, y0z, x1z, y1z = carta_della_zona
         primitive.append(Linea(((x0z, y0z), (x1z, y0z), (x1z, y1z), (x0z, y1z), (x0z, y0z)), "#000000", 0.25,
                                LAYER_SIGLE, "4 1 1 1"))
+    primitive += richiami_fuori
 
     # La scala.
     primitive += _barra_della_scala(area.x_mm + MARGINE_MM, area.y_mm + area.height_mm - 4.0, k, scala)
@@ -976,18 +1108,18 @@ def componi(
     # La colonna.
     c = colonna(pianta, percorsi, lunghe, forature, fori_dei_pezzi, scala, formato, regola,
                 ingombri.legenda, avvisi_della_colonna, ridotta, controllo_delle_sigle)
-    if c.y + 6.0 > frame.legend_rect_mm.height_mm:
+    if c.y + 6.0 > frame.legend_rect_mm.height_mm and spostamento != (0, 0):
+        # Una prova con la pianta spostata in cui la colonna non entra non si tiene: il
+        # formato dopo lo decide la pianta al centro.
+        costo_fuori = math.inf
+    elif c.y + 6.0 > frame.legend_rect_mm.height_mm:
         # Le scritte in legenda e gli avvisi si sanno solo dopo la posa: se la
         # colonna non entra, si rifa' la tavola sul formato successivo.
-        nomi = list(FORMATI)
-        if pianta.foglio.formato is None and nomi.index(formato) + 1 < len(nomi):
-            piu_grande = pianta.model_copy(
-                update={"foglio": Foglio(formato=nomi[nomi.index(formato) + 1], scala=scala)}
-            )
-            tavola = componi(piu_grande, percorsi, lunghe, forature, fori_dei_pezzi, cartiglio,
-                             pixel_dello_sfondo, regola, avvisi_della_colonna, zona, rimandate, riquadri,
-                             ridotta, nel_dettaglio, controllo_delle_sigle)
-            return tavola
+        tavola_dopo = _sul_formato_dopo(pianta, formato, scala, percorsi, lunghe, forature, fori_dei_pezzi,
+                                        cartiglio, pixel_dello_sfondo, regola, avvisi_della_colonna, zona,
+                                        rimandate, riquadri, ridotta, nel_dettaglio, controllo_delle_sigle)
+        if tavola_dopo is not None:
+            return tavola_dopo
         avvisi.append("la colonna non entra nel foglio: la tavola esce lo stesso, e va vista")
     bx, by = frame.legend_rect_mm.x_mm + 3.0, frame.legend_rect_mm.y_mm + 2.0
     primitive += [_sposta(p, bx, by) for p in c.primitive]
@@ -995,11 +1127,51 @@ def componi(
     return Tavola(
         frame=frame, formato=formato, scala=scala, primitive=primitive, scritte=scritte,
         linee=linee, rettangoli=rettangoli, avvisi=avvisi, ammessi=ammessi,
-        trasforma=(ox, oy, xmin, ymin, k),
+        trasforma=(ox, oy, xmin, ymin, k), costo_fuori=costo_fuori,
         cartiglio=None if cartiglio is None else CartiglioDellaTavola(
             cartiglio=cartiglio, valori=valori_del_cartiglio(pianta, scala)
         ),
     )
+
+
+def _versi_dello_spostamento(
+    senza: Sequence[Richiesta], intorno: Rettangolo, gioco_x: float, gioco_y: float,
+) -> list[tuple[int, int]]:
+    """Da che parte spostare la pianta perche' le scritte da migliorare trovino posto:
+    lontano dai loro oggetti (se stanno a sinistra, la pianta va a destra e il margine
+    sinistro raddoppia), di fianco, in alto o in basso, o in diagonale; solo dove c'e'
+    gioco. Verso i loro oggetti no: il margine dalla loro parte si stringerebbe."""
+    punti: list[Punto] = []
+    for richiesta in senza:
+        if richiesta.rettangolo is not None:
+            x0, y0, x1, y1 = richiesta.rettangolo
+            punti.append(((x0 + x1) / 2, (y0 + y1) / 2))
+        punti += [q for linea in richiesta.linee for q in linea]
+    cx = sum(q[0] for q in punti) / len(punti) if punti else 0.0
+    cy = sum(q[1] for q in punti) / len(punti) if punti else 0.0
+    dx = 1 if cx < (intorno[0] + intorno[2]) / 2 else -1
+    dy = 1 if cy < (intorno[1] + intorno[3]) / 2 else -1
+    versi = [(dx, 0), (0, dy), (dx, dy)]
+    return [(vx, vy) for vx, vy in versi if (vx == 0 or gioco_x > 1.0) and (vy == 0 or gioco_y > 1.0)]
+
+
+def _sul_formato_dopo(
+    pianta: Pianta, formato: str, scala: int, percorsi: Sequence[Percorso], lunghe: Sequence[Lunghezza],
+    forature: Sequence[Foratura], fori_dei_pezzi: Sequence[tuple[str, str]], cartiglio: Cartiglio | None,
+    pixel_dello_sfondo: tuple[int, int] | None, regola: Regola | None, avvisi_della_colonna: Sequence[str],
+    zona: tuple[float, float, float, float] | None, rimandate: frozenset[str],
+    riquadri: Sequence[tuple[str, tuple[float, float, float, float], int]], ridotta: str | None,
+    nel_dettaglio: frozenset[str], controllo_delle_sigle: str,
+) -> Tavola | None:
+    """La tavola rifatta sul formato successivo, con la stessa scala, quando sul suo non
+    entra quello che si sa solo dopo la posa: la colonna, o le scritte fuori dalla pianta
+    (REL-026, C-1). None se il formato e' fissato dalla pianta o e' gia' l'ultimo."""
+    nomi = list(FORMATI)
+    if pianta.foglio.formato is not None or nomi.index(formato) + 1 >= len(nomi):
+        return None
+    piu_grande = pianta.model_copy(update={"foglio": Foglio(formato=nomi[nomi.index(formato) + 1], scala=scala)})
+    return componi(piu_grande, percorsi, lunghe, forature, fori_dei_pezzi, cartiglio, pixel_dello_sfondo, regola,
+                   avvisi_della_colonna, zona, rimandate, riquadri, ridotta, nel_dettaglio, controllo_delle_sigle)
 
 
 def _sovrapposti_stretti(a: Rettangolo, b: Rettangolo) -> bool:
@@ -1084,7 +1256,9 @@ def ritaglia(p: Primitiva, r: Rettangolo) -> list[Primitiva]:
                 for pezzo in ritaglia_le_linee([p.punti], r)]
     if isinstance(p, Area):
         punti = _ritaglia_poligono(p.punti, r)
-        return [Area(tuple(punti), p.colore, p.layer, p.opacita)] if len(punti) >= 3 else []
+        # Pari e dispari: ritagliare ogni anello per conto suo da' la stessa campitura.
+        buchi = tuple(tuple(b) for b in (_ritaglia_poligono(buco, r) for buco in p.buchi) if len(b) >= 3)
+        return [Area(tuple(punti), p.colore, p.layer, p.opacita, buchi)] if len(punti) >= 3 else []
     if isinstance(p, Arco):
         dentro = all(r[0] - 1e-6 <= q[0] <= r[2] + 1e-6 and r[1] - 1e-6 <= q[1] <= r[3] + 1e-6
                      for q in (p.centro, p.da, p.a))
@@ -1097,10 +1271,15 @@ def ritaglia(p: Primitiva, r: Rettangolo) -> list[Primitiva]:
 
 
 def _gruppi_delle_scritte(
-    pianta: Pianta, percorsi: Sequence[Percorso], priorita: dict[str, int]
+    pianta: Pianta, percorsi: Sequence[Percorso], priorita: dict[str, int],
+    lunghe: dict[str, Lunghezza] | None = None,
 ) -> list[list[str]]:
     """Le tratte che hanno una scritta in comune: i fasci fra gli stessi due
-    pezzi, tutti instradati. Le altre, una per una."""
+    pezzi, tutti instradati; e le **coppie che corrono insieme** (REL-026, C-2: la
+    mandata e il ritorno, «M1/R1»), anche senza fascio: fra gli stessi due pezzi,
+    stesso fluido, stessa dimensione, stessa lunghezza scritta e quotata, una accanto
+    all'altra (a non piu' di due passi del fascio) per almeno l'80 % del percorso
+    (`scritte.CORRONO_INSIEME`). Le altre, una per una."""
     instradate = {p.tratta for p in percorsi if not p.ceduto}
     gruppi: dict[tuple[str, ...], list[str]] = {}
     tutti: list[list[str]] = []
@@ -1115,7 +1294,71 @@ def _gruppi_delle_scritte(
             tutti.append(gruppo)
         else:
             tutti.append(sorted(gruppo, key=lambda t: priorita[t]))
+    if lunghe is not None:
+        tutti = _con_le_coppie(pianta, percorsi, priorita, lunghe, tutti, instradate)
     return sorted(tutti, key=lambda g: priorita[g[0]])
+
+
+def _con_le_coppie(
+    pianta: Pianta, percorsi: Sequence[Percorso], priorita: dict[str, int], lunghe: dict[str, Lunghezza],
+    gruppi: list[list[str]], instradate: set[str],
+) -> list[list[str]]:
+    """Le tratte sole che corrono insieme a due a due diventano un gruppo (C-2). Non si
+    uniscono tratte con dimensione o lunghezza diverse: la scritta ne direbbe una sola."""
+    tracciati = {t.tratta: t for t in pianta.tracciati}
+    linee = {p.tratta: p.linee for p in percorsi}
+    sole = [g[0] for g in gruppi if len(g) == 1 and g[0] in instradate and tracciati[g[0]].etichetta is None]
+    entro = 2 * pianta.parametri.passo_fascio_m
+    coppie: list[tuple[float, int, int, str, str]] = []
+    for indice, a in enumerate(sole):
+        for b in sole[indice + 1:]:
+            ta, tb = tracciati[a], tracciati[b]
+            if (
+                {ta.estremo_da.pezzo, ta.estremo_a.pezzo} != {tb.estremo_da.pezzo, tb.estremo_a.pezzo}
+                or ta.fluido != tb.fluido or ta.dimensione != tb.dimensione
+                or _lunghezza_scritta(lunghe[a]) != _lunghezza_scritta(lunghe[b])
+                or lunghe[a].da_quotare_m != lunghe[b].da_quotare_m
+            ):
+                continue
+            quota = affiancate(linee[a], linee[b], entro, pianta.parametri.passo_m)
+            if quota >= CORRONO_INSIEME:
+                prima, dopo = sorted((priorita[a], priorita[b]))
+                coppie.append((-round(quota, 6), prima, dopo, a, b))
+    prese: dict[str, list[str]] = {}
+    for _, _, _, a, b in sorted(coppie):
+        if a not in prese and b not in prese:
+            prese[a] = prese[b] = sorted((a, b), key=lambda t: priorita[t])
+    out: list[list[str]] = []
+    for gruppo in gruppi:
+        coppia = prese.get(gruppo[0]) if len(gruppo) == 1 else None
+        if coppia is None:
+            out.append(gruppo)
+        elif coppia[0] == gruppo[0]:
+            out.append(coppia)
+    return out
+
+
+def _sigle_del_gruppo(nomi: Sequence[str]) -> str:
+    """«T03/T04» per una coppia (la mandata e il ritorno: «M1/R1», REL-026 C-2); per un
+    fascio di piu' tratte «T07–T09» se i numeri sono di fila, se no «T06+T07+T11»."""
+    if len(nomi) == 2:
+        return "/".join(nomi)
+    numeri = [chiave_della_tratta(n) for n in nomi]
+    di_fila = all(b[0] == a[0] and b[1] == a[1] + 1 for a, b in zip(numeri, numeri[1:], strict=False))
+    return f"{nomi[0]}–{nomi[-1]}" if di_fila else "+".join(nomi)
+
+
+def scritta_del_gruppo(membri: Sequence[Any], lunghe: dict[str, Lunghezza]) -> str:
+    """La scritta sola di un fascio o di una coppia: le sigle, la dimensione **una volta**
+    se e' la stessa per tutti (REL-026, C-2: «T03/T04 · MS 20 · L 6 m»; se no le
+    dimensioni stanno nella tabella), la lunghezza una volta se e' la stessa, se no tutte."""
+    nomi = sorted((m.tratta for m in membri), key=chiave_della_tratta)
+    dimensioni = {m.dimensione for m in membri}
+    parti = [_sigle_del_gruppo(nomi)]
+    if len(dimensioni) == 1 and None not in dimensioni:
+        parti.append(str(next(iter(dimensioni))))
+    parti.append(scritta_del_fascio([lunghe[n] for n in nomi]))
+    return " · ".join(parti)
 
 
 def _sposta(p: Primitiva, dx: float, dy: float) -> Primitiva:
@@ -1128,7 +1371,8 @@ def _sposta(p: Primitiva, dx: float, dy: float) -> Primitiva:
     if isinstance(p, Linea):
         return Linea(tuple(m(q) for q in p.punti), p.colore, p.spessore, p.layer, p.tratto)
     if isinstance(p, Area):
-        return Area(tuple(m(q) for q in p.punti), p.colore, p.layer, p.opacita)
+        return Area(tuple(m(q) for q in p.punti), p.colore, p.layer, p.opacita,
+                    tuple(tuple(m(q) for q in b) for b in p.buchi))
     if isinstance(p, Cerchio):
         return Cerchio(m(p.centro), p.raggio, p.colore, p.spessore, p.riempimento, p.layer)
     return p
@@ -1195,14 +1439,6 @@ def _incrocio_stretto(s: tuple[Punto, Punto], t: tuple[Punto, Punto]) -> Punto |
         dentro_s = min(a[1], b[1]) < y < max(a[1], b[1])
         dentro_t = min(c[0], d[0]) < x < max(c[0], d[0])
     return (x, y) if dentro_s and dentro_t else None
-
-
-def _superficie(poligono: Sequence[Punto]) -> float:
-    doppia = sum(
-        a[0] * b[1] - b[0] * a[1]
-        for a, b in zip(poligono, [*poligono[1:], poligono[0]], strict=True)
-    )
-    return abs(doppia) / 2
 
 
 def _punti_dentro(poligono: Sequence[Punto]) -> list[Punto]:
@@ -1273,8 +1509,13 @@ def scrivi_svg(tavola: Tavola) -> str:
 
 def _svg(p: Primitiva) -> str:
     if isinstance(p, Area):
-        punti = " ".join(f"{_n(x)},{_n(y)}" for x, y in p.punti)
         velo = "" if p.opacita == 1 else f' fill-opacity="{p.opacita:g}"'
+        if p.buchi:
+            d = " ".join(
+                "M" + " L".join(f"{_n(x)} {_n(y)}" for x, y in anello) + " Z" for anello in (p.punti, *p.buchi)
+            )
+            return f'<path d="{d}" fill="{p.colore}"{velo} fill-rule="evenodd" stroke="none"/>'
+        punti = " ".join(f"{_n(x)},{_n(y)}" for x, y in p.punti)
         return f'<polygon points="{punti}" fill="{p.colore}"{velo} stroke="none"/>'
     if isinstance(p, Linea):
         punti = " ".join(f"{_n(x)},{_n(y)}" for x, y in p.punti)
@@ -1350,6 +1591,9 @@ def scrivi_dxf(tavola: Tavola, destinazione: Path, titolo: str) -> list[Path]:
                 campitura = msp.add_hatch(dxfattribs={"layer": p.layer})
                 campitura.set_solid_fill(color=aci_vicino(rgb(p.colore)), rgb=RGB(*rgb(p.colore)))
                 campitura.paths.add_polyline_path([t.p(*q) for q in p.punti], is_closed=True)
+                for buco in p.buchi:
+                    campitura.paths.add_polyline_path([t.p(*q) for q in buco], is_closed=True,
+                                                      flags=const.BOUNDARY_PATH_DEFAULT)
                 if p.opacita < 1:
                     campitura.transparency = 1 - p.opacita
             elif isinstance(p, Linea):

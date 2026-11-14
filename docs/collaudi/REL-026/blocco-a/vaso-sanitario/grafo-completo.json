@@ -1,0 +1,2161 @@
+{
+  "schema_version": "1.1.0",
+  "metadata": {
+    "project_id": "villetta-pdc-volano-bollitore",
+    "client": "ND",
+    "project_name": "Villetta: sostituzione caldaia con pompa di calore, volano e bollitore ACS",
+    "commission_code": "ND",
+    "revision": "00",
+    "issue_date": "2026-11-05",
+    "livello": "esecutivo"
+  },
+  "plant_regime": "up_to_35_kw",
+  "diametri": {
+    "reti": [
+      "primario",
+      "secondario",
+      "acqua-fredda",
+      "acs"
+    ]
+  },
+  "distinta": {
+    "tubi": [
+      {
+        "rete": "primario",
+        "tubo": "MS 32×3",
+        "metri": 12.0,
+        "isolamento": "guaina 19 mm"
+      },
+      {
+        "rete": "secondario",
+        "tubo": "MS 32×3",
+        "metri": 6.5,
+        "isolamento": "guaina 19 mm"
+      },
+      {
+        "rete": "acs",
+        "tubo": "MS 26×3",
+        "metri": 2.5,
+        "isolamento": "guaina 19 mm"
+      }
+    ],
+    "gomiti": 20
+  },
+  "subsystems": [],
+  "networks": [
+    {
+      "id": "acqua-fredda",
+      "name": "Acqua fredda al bollitore",
+      "domain": "hydronic",
+      "medium": "cold_water",
+      "evidence": []
+    },
+    {
+      "id": "acqua-fredda-filling-unit-pdc-water-return",
+      "name": "Acqua fredda al bollitore",
+      "domain": "hydronic",
+      "medium": "cold_water",
+      "evidence": []
+    },
+    {
+      "id": "acqua-fredda-mixing-valve-thermostatic-bollitore-dhw-out",
+      "name": "Acqua fredda al bollitore",
+      "domain": "hydronic",
+      "medium": "cold_water",
+      "evidence": []
+    },
+    {
+      "id": "acs",
+      "name": "Acqua calda sanitaria",
+      "domain": "hydronic",
+      "medium": "domestic_hot_water",
+      "evidence": []
+    },
+    {
+      "id": "comando-deviatrice",
+      "name": "Comando valvola deviatrice ACS",
+      "domain": "control",
+      "medium": "power_supply",
+      "evidence": []
+    },
+    {
+      "id": "comando-rele",
+      "name": "Comando del rele' del circolatore pavimento",
+      "domain": "control",
+      "medium": "power_supply",
+      "evidence": []
+    },
+    {
+      "id": "linea-circolatore",
+      "name": "Alimentazione circolatore pavimento dal quadro, attraverso il rele'",
+      "domain": "control",
+      "medium": "power_supply",
+      "evidence": []
+    },
+    {
+      "id": "linea-pdc",
+      "name": "Alimentazione pompa di calore",
+      "domain": "control",
+      "medium": "power_supply",
+      "evidence": []
+    },
+    {
+      "id": "primario",
+      "name": "Circuito primario pompa di calore",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "evidence": []
+    },
+    {
+      "id": "secondario",
+      "name": "Circuito pavimento radiante",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "evidence": []
+    },
+    {
+      "id": "sonda-acs-cavo",
+      "name": "Sonda bollitore",
+      "domain": "control",
+      "medium": "control_bus",
+      "evidence": []
+    },
+    {
+      "id": "sonda-volano-cavo",
+      "name": "Sonda volano",
+      "domain": "control",
+      "medium": "control_bus",
+      "evidence": []
+    }
+  ],
+  "components": [
+    {
+      "id": "acquedotto",
+      "definition_id": "cold-water-inlet",
+      "tag": null,
+      "properties": {
+        "flow_rate_m3h": 0.9
+      },
+      "evidence": []
+    },
+    {
+      "id": "air-vent-volano-primary-out",
+      "definition_id": "air-vent",
+      "tag": null,
+      "properties": {},
+      "evidence": [
+        {
+          "kind": "rule",
+          "reference": "air-vent-on-the-stored-volume@1.0.0",
+          "note": "In una piccola centrale l'aria non vuole un separatore: si raccoglie da sola nel punto piu' alto, che e' il serbatoio, e li' basta una valvola di sfogo. Sta sull'attacco che il serbatoio dedica allo sfiato, come i costruttori lo dichiarano in legenda. Le macchine il proprio sfogo lo portano gia' a bordo, e non serve aggiungerne uno per generatore."
+        }
+      ]
+    },
+    {
+      "id": "bollitore",
+      "definition_id": "dhw-cylinder",
+      "tag": null,
+      "properties": {
+        "tipo": "a serpentino",
+        "volume_l": 200
+      },
+      "evidence": [],
+      "non_a_bordo": [
+        "expansion"
+      ]
+    },
+    {
+      "id": "circolatore",
+      "definition_id": "pump-circulator",
+      "tag": null,
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "confluenza-ritorno",
+      "definition_id": "tee-junction",
+      "tag": null,
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "deviatrice",
+      "definition_id": "diverting-valve-3way",
+      "tag": null,
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "dhw-safety-group-bollitore-cold-in",
+      "definition_id": "dhw-safety-group",
+      "tag": null,
+      "properties": {
+        "etichetta": "6 bar"
+      },
+      "evidence": [
+        {
+          "kind": "rule",
+          "reference": "safety-group-on-the-stored-volume@4.0.0",
+          "note": "Una riserva d'acqua che si scalda dilata, e il ritegno le ha appena tolto la via di ritorno verso la rete: senza uno scarico che si apra da solo la pressione sale fino alla rottura del serbatoio. Il gruppo sta sull'alimentazione fredda e dal lato del serbatoio rispetto a qualunque organo che si chiuda, perche' una via di scarico dietro un rubinetto chiuso non e' una via di scarico. Fra il gruppo e il serbatoio non c'e' niente che si chiuda, ne' lo scarico; ci puo' stare soltanto il vaso sanitario, che il PO vuole fra il dispositivo di non ritorno — quello che il gruppo porta dentro — e il bollitore (D-178), e che non chiude niente."
+        }
+      ]
+    },
+    {
+      "id": "dirt-separator-pdc-water-return",
+      "definition_id": "dirt-separator",
+      "tag": null,
+      "properties": {},
+      "evidence": [
+        {
+          "kind": "rule",
+          "reference": "dirt-separation-before-what-it-would-ruin@4.0.0",
+          "note": "L'acqua di un circuito chiuso continua a produrre fanghi e ossidi anche dopo il lavaggio, e sono cosi' fini che un filtro a rete non li trattiene: si separano rallentando l'acqua. Il defangatore e' uno solo per circuito e sta sul ritorno generale, a monte della prima ripartizione verso le macchine: li' passa tutta l'acqua che torna, quindi un pezzo solo protegge ogni generatore — uno per macchina e' un doppione, e uno su un circolatore non protegge niente che il ritorno generale non protegga gia'. Sul ritorno sta oltre il vaso, il gruppo di riempimento e il manometro, dalla parte dell'impianto (D-218): chiuse le sue valvole per pulirlo o cambiarlo, le macchine restano collegate al vaso, e chi carica legge la pressione nello stesso punto."
+        }
+      ]
+    },
+    {
+      "id": "drain-connection-cold-bollitore-cold-in",
+      "definition_id": "drain-connection-cold",
+      "tag": null,
+      "properties": {},
+      "evidence": [
+        {
+          "kind": "rule",
+          "reference": "let-what-holds-its-own-volume-empty@3.0.0",
+          "note": "Chi tiene una riserva d'acqua propria la deve poter svuotare da solo, senza scaricare l'impianto intero: un tratto di tubo si svuota con la tratta a cui appartiene, un serbatoio no. Lo scarico va sull'attacco che il serbatoio gli dedica; dove il serbatoio non lo dichiara — il bollitore sanitario non ce l'ha — la riserva si svuota da dove si riempie, con una derivazione sulla tubazione dell'acqua fredda in ingresso, mai su un circuito che attraversa il serbatoio scambiando calore. E sta dal lato del serbatoio rispetto all'organo che lo chiude, altrimenti a organo chiuso svuoterebbe la tratta di la'."
+        }
+      ]
+    },
+    {
+      "id": "drain-connection-volano-primary-in",
+      "definition_id": "drain-connection",
+      "tag": null,
+      "properties": {},
+      "evidence": [
+        {
+          "kind": "rule",
+          "reference": "let-what-holds-its-own-volume-empty@3.0.0",
+          "note": "Chi tiene una riserva d'acqua propria la deve poter svuotare da solo, senza scaricare l'impianto intero: un tratto di tubo si svuota con la tratta a cui appartiene, un serbatoio no. Lo scarico va sull'attacco che il serbatoio gli dedica; dove il serbatoio non lo dichiara — il bollitore sanitario non ce l'ha — la riserva si svuota da dove si riempie, con una derivazione sulla tubazione dell'acqua fredda in ingresso, mai su un circuito che attraversa il serbatoio scambiando calore. E sta dal lato del serbatoio rispetto all'organo che lo chiude, altrimenti a organo chiuso svuoterebbe la tratta di la'."
+        }
+      ]
+    },
+    {
+      "id": "expansion-connection-dhw-bollitore-cold-in",
+      "definition_id": "expansion-connection-dhw",
+      "tag": null,
+      "properties": {
+        "volume_l": 12,
+        "precarica_bar": 2.8
+      },
+      "evidence": [
+        {
+          "kind": "rule",
+          "reference": "expansion-on-the-stored-volume-feed@3.0.0",
+          "note": "Anche la riserva sanitaria si scalda e dilata, e il ritegno sull'alimentazione le ha tolto la via di ritorno verso la rete: senza un vaso suo la dilatazione apre la sicurezza a ogni ciclo. Il vaso sta sulla tubazione dell'acqua fredda in ingresso alla riserva, dal lato del serbatoio. Non e' pero' un pezzo che si aggiunge al buio: molti accumuli lo portano gia' dentro il mantello, e il catalogo puo' tacere. Dove il dato manca resta una domanda al progettista, non un vaso aggiunto per prudenza. Tranne dove la produzione di acqua calda e' centralizzata: li' il vaso si mette, fra il dispositivo di non ritorno e il bollitore, e mai sulla mandata calda. E' la disposizione del PO per gli impianti centralizzati, e il dato lo dice il progettista. Sta attaccato al serbatoio, e quindi fra lui e il dispositivo di non ritorno — il ritegno, o il gruppo di sicurezza che lo porta dentro —: e' li' che la dilatazione dell'acqua trova il vaso invece della sicurezza."
+        }
+      ]
+    },
+    {
+      "id": "expansion-connection-pdc-water-return",
+      "definition_id": "expansion-connection",
+      "tag": null,
+      "properties": {},
+      "evidence": [
+        {
+          "kind": "rule",
+          "reference": "expansion-on-closed-circuit@5.0.0",
+          "note": "L'acqua scaldata aumenta di volume, e in un volume chiuso quell'aumento diventa pressione. Il vaso e' lo spazio che quel volume in piu' trova invece della rottura, e ne basta uno per circuito perche' la pressione e' la stessa dappertutto. Sta sul ritorno generale, a monte della prima ripartizione verso chi scalda: e' il punto piu' freddo — la membrana dura di piu' dove l'acqua e' meno calda — ed e' il tratto che serve tutti i generatori insieme, cosi' con due in parallelo il vaso non finisce sul ramo di uno solo. La riserva sanitaria ha il proprio vaso sulla propria alimentazione: e' un'altra regola. Sul ritorno sta dalla parte delle macchine rispetto al defangatore, oltre il filtro di ciascuna (D-218): il vaso non si separa mai dalle macchine per una valvola che non sia loro, e vaso, gruppo di riempimento e manometro stanno insieme."
+        }
+      ]
+    },
+    {
+      "id": "filling-unit-pdc-water-return",
+      "definition_id": "filling-unit",
+      "tag": null,
+      "properties": {},
+      "evidence": [
+        {
+          "kind": "rule",
+          "reference": "filling-unit-on-return@6.0.0",
+          "note": "Un circuito chiuso non si alimenta da nessuna parte: va riempito e poi reintegrato quando cala, e a pressione controllata, altrimenti la rete idrica lo porterebbe alla propria. Il gruppo e' percio' un **ponte**: pesca dall'acqua fredda gia' dichiarata dal progettista e la immette nel circuito tecnico, con una derivazione da ciascuna parte. Si innesta sul ritorno generale, a monte della prima ripartizione: e' il punto piu' freddo del circuito, dove l'acqua di rete entra senza scaldarsi di colpo, ed e' il tratto comune, cosi' il reintegro serve tutte le macchine e non il ramo di una sola. Dove l'acqua fredda non e' stata dichiarata, il gruppo non si posa appeso a nulla: si chiede. Sul ritorno sta dalla parte delle macchine rispetto al defangatore, oltre il filtro di ciascuna (D-218): il vaso non si separa mai dalle macchine per una valvola che non sia loro, e vaso, gruppo di riempimento e manometro stanno insieme."
+        }
+      ]
+    },
+    {
+      "id": "flexible-joint-pdc-water-return",
+      "definition_id": "flexible-joint",
+      "tag": null,
+      "properties": {},
+      "evidence": [
+        {
+          "kind": "rule",
+          "reference": "absorb-vibration-at-the-machine@1.0.0",
+          "note": "Una macchina con un compressore e un ventilatore vibra, e con i tubi rigidi la vibrazione arriva nelle tubazioni e da li' nell'edificio: ronzio nelle stanze, raccordi che col tempo si allentano o perdono. Un tratto flessibile sulla mandata e uno sul ritorno, attaccati alla macchina, la fermano li'. E' il primo pezzo dopo la macchina: tutto il resto — la valvola di sicurezza, il ritegno, i rubinetti, il filtro — viene dopo, e il giunto non chiude niente, quindi la sicurezza resta collegata alla macchina. Gomma o flessibile inox si sceglie in distinta: sullo schema il segno e' lo stesso."
+        }
+      ]
+    },
+    {
+      "id": "flexible-joint-pdc-water-supply",
+      "definition_id": "flexible-joint",
+      "tag": null,
+      "properties": {},
+      "evidence": [
+        {
+          "kind": "rule",
+          "reference": "absorb-vibration-at-the-machine@1.0.0",
+          "note": "Una macchina con un compressore e un ventilatore vibra, e con i tubi rigidi la vibrazione arriva nelle tubazioni e da li' nell'edificio: ronzio nelle stanze, raccordi che col tempo si allentano o perdono. Un tratto flessibile sulla mandata e uno sul ritorno, attaccati alla macchina, la fermano li'. E' il primo pezzo dopo la macchina: tutto il resto — la valvola di sicurezza, il ritegno, i rubinetti, il filtro — viene dopo, e il giunto non chiude niente, quindi la sicurezza resta collegata alla macchina. Gomma o flessibile inox si sceglie in distinta: sullo schema il segno e' lo stesso."
+        }
+      ]
+    },
+    {
+      "id": "inlet-filling-unit-pdc-water-return",
+      "definition_id": "cold-water-inlet",
+      "tag": null,
+      "properties": {},
+      "evidence": [
+        {
+          "kind": "rule",
+          "reference": "filling-unit-on-return@6.0.0",
+          "note": "Un circuito chiuso non si alimenta da nessuna parte: va riempito e poi reintegrato quando cala, e a pressione controllata, altrimenti la rete idrica lo porterebbe alla propria. Il gruppo e' percio' un **ponte**: pesca dall'acqua fredda gia' dichiarata dal progettista e la immette nel circuito tecnico, con una derivazione da ciascuna parte. Si innesta sul ritorno generale, a monte della prima ripartizione: e' il punto piu' freddo del circuito, dove l'acqua di rete entra senza scaldarsi di colpo, ed e' il tratto comune, cosi' il reintegro serve tutte le macchine e non il ramo di una sola. Dove l'acqua fredda non e' stata dichiarata, il gruppo non si posa appeso a nulla: si chiede. Sul ritorno sta dalla parte delle macchine rispetto al defangatore, oltre il filtro di ciascuna (D-218): il vaso non si separa mai dalle macchine per una valvola che non sia loro, e vaso, gruppo di riempimento e manometro stanno insieme."
+        }
+      ]
+    },
+    {
+      "id": "inlet-mixing-valve-thermostatic-bollitore-dhw-out",
+      "definition_id": "cold-water-inlet",
+      "tag": null,
+      "properties": {},
+      "evidence": [
+        {
+          "kind": "rule",
+          "reference": "dhw-mixing-on-draw-off@4.0.0",
+          "note": "Una riserva d'acqua calda si tiene a temperatura alta per non far proliferare la legionella, ma a quella temperatura scotta. La miscelatrice sta sulla tubazione che esce verso le utenze, subito dopo la riserva: cosi' l'accumulo resta caldo e cio' che arriva ai rubinetti e' a temperatura di utilizzo. Per miscelare le serve l'acqua fredda, che entra dal suo terzo attacco: le arriva dal proprio ingresso di acqua fredda, con un tratto corto di tubazione, come al gruppo di riempimento — non da una derivazione sulla linea che alimenta un altro utente."
+        }
+      ]
+    },
+    {
+      "id": "mixing-valve-thermostatic-bollitore-dhw-out",
+      "definition_id": "mixing-valve-thermostatic",
+      "tag": null,
+      "properties": {},
+      "evidence": [
+        {
+          "kind": "rule",
+          "reference": "dhw-mixing-on-draw-off@4.0.0",
+          "note": "Una riserva d'acqua calda si tiene a temperatura alta per non far proliferare la legionella, ma a quella temperatura scotta. La miscelatrice sta sulla tubazione che esce verso le utenze, subito dopo la riserva: cosi' l'accumulo resta caldo e cio' che arriva ai rubinetti e' a temperatura di utilizzo. Per miscelare le serve l'acqua fredda, che entra dal suo terzo attacco: le arriva dal proprio ingresso di acqua fredda, con un tratto corto di tubazione, come al gruppo di riempimento — non da una derivazione sulla linea che alimenta un altro utente."
+        }
+      ]
+    },
+    {
+      "id": "pavimento",
+      "definition_id": "underfloor-panel",
+      "tag": null,
+      "properties": {
+        "delta_t_k": 5,
+        "etichetta": "collettore pavimento radiante esistente",
+        "power_kw": 12
+      },
+      "evidence": []
+    },
+    {
+      "id": "pdc",
+      "definition_id": "heat-pump-air-water",
+      "tag": null,
+      "properties": {
+        "alimentazione": "230 V 1~",
+        "cavo_minimo": "3G6",
+        "corrente_max_a": 30,
+        "delta_t_k": 5,
+        "marca": "Shenling",
+        "modello": "ThermaX R290 12 kW",
+        "power_kw": 12,
+        "tipo": "monoblocco, installata all'esterno"
+      },
+      "evidence": []
+    },
+    {
+      "id": "pipe-reducer-pdc-water-return",
+      "definition_id": "pipe-reducer",
+      "tag": null,
+      "properties": {
+        "attacco": "1¼\"",
+        "tubo": "1\""
+      },
+      "evidence": [
+        {
+          "kind": "rule",
+          "reference": "riduzione-all-attacco@1.0.0",
+          "note": "Il tubo scelto dalla velocita' ha il pollice piu' piccolo dell'attacco della macchina (D-233): fra l'attacco e il tubo ci vuole una riduzione. Sta subito dopo il giunto antivibrante, che resta grande quanto l'attacco; il resto del corredo sta sul tubo, oltre di lei. Il PO: «se facciamo riduzione fuori dalla PDC serve il simbolo» (I-281)."
+        }
+      ]
+    },
+    {
+      "id": "pipe-reducer-pdc-water-supply",
+      "definition_id": "pipe-reducer",
+      "tag": null,
+      "properties": {
+        "attacco": "1¼\"",
+        "tubo": "1\""
+      },
+      "evidence": [
+        {
+          "kind": "rule",
+          "reference": "riduzione-all-attacco@1.0.0",
+          "note": "Il tubo scelto dalla velocita' ha il pollice piu' piccolo dell'attacco della macchina (D-233): fra l'attacco e il tubo ci vuole una riduzione. Sta subito dopo il giunto antivibrante, che resta grande quanto l'attacco; il resto del corredo sta sul tubo, oltre di lei. Il PO: «se facciamo riduzione fuori dalla PDC serve il simbolo» (I-281)."
+        }
+      ]
+    },
+    {
+      "id": "pressure-gauge-pdc-water-return",
+      "definition_id": "pressure-gauge",
+      "tag": null,
+      "properties": {},
+      "evidence": [
+        {
+          "kind": "rule",
+          "reference": "gauge-where-the-plant-is-charged@4.0.0",
+          "note": "La pressione di un circuito chiuso e' la spia della sua salute: se cala, perde; se sale, il vaso non lavora. Va letta sul posto, e ne basta un punto per circuito perche' la pressione e' la stessa dappertutto. Sta sul ritorno generale, accanto al punto in cui il circuito si riempie, cosi' chi reintegra legge mentre carica — e sul tratto comune, non sul ramo di una macchina. Sul ritorno sta dalla parte delle macchine rispetto al defangatore, oltre il filtro di ciascuna (D-218): il vaso non si separa mai dalle macchine per una valvola che non sia loro, e vaso, gruppo di riempimento e manometro stanno insieme."
+        }
+      ]
+    },
+    {
+      "id": "qf-pdc",
+      "definition_id": "circuit-breaker-rcbo",
+      "tag": null,
+      "properties": {
+        "alta_velocita": true,
+        "curva": "C",
+        "idn_ma": 30,
+        "in_a": 32,
+        "poli": "2P",
+        "tipo_differenziale": "A"
+      },
+      "evidence": []
+    },
+    {
+      "id": "quadro",
+      "definition_id": "electrical-panel",
+      "tag": null,
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "rele-circolatore",
+      "definition_id": "interface-relay",
+      "tag": null,
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "sonda-acs",
+      "definition_id": "temperature-probe-dhw",
+      "tag": null,
+      "properties": {
+        "etichetta": "bollitore"
+      },
+      "evidence": []
+    },
+    {
+      "id": "sonda-volano",
+      "definition_id": "temperature-probe",
+      "tag": null,
+      "properties": {
+        "etichetta": "volano"
+      },
+      "evidence": []
+    },
+    {
+      "id": "strainer-pdc-water-return",
+      "definition_id": "strainer",
+      "tag": null,
+      "properties": {},
+      "evidence": [
+        {
+          "kind": "rule",
+          "reference": "debris-guard-before-what-it-would-ruin@3.0.0",
+          "note": "Trucioli, sabbia e residui di montaggio restano in circolo per tutta la vita dell'impianto e intasano gli scambiatori stretti. Il filtro a Y sta sulla tubazione che entra in ogni generatore, sul suo ritorno: e' l'ultimo punto utile prima dello scambiatore, e ogni macchina vuole il proprio perche' protegge il proprio ingresso. Ai circolatori il filtro dedicato non serve: il ritorno generale ha gia' il defangatore, e la filtrazione sta solo sul primario."
+        }
+      ]
+    },
+    {
+      "id": "tee-drain-connection-cold-bollitore-cold-in",
+      "definition_id": "tee-branch-cold",
+      "tag": null,
+      "properties": {},
+      "evidence": [
+        {
+          "kind": "rule",
+          "reference": "let-what-holds-its-own-volume-empty@3.0.0",
+          "note": "Chi tiene una riserva d'acqua propria la deve poter svuotare da solo, senza scaricare l'impianto intero: un tratto di tubo si svuota con la tratta a cui appartiene, un serbatoio no. Lo scarico va sull'attacco che il serbatoio gli dedica; dove il serbatoio non lo dichiara — il bollitore sanitario non ce l'ha — la riserva si svuota da dove si riempie, con una derivazione sulla tubazione dell'acqua fredda in ingresso, mai su un circuito che attraversa il serbatoio scambiando calore. E sta dal lato del serbatoio rispetto all'organo che lo chiude, altrimenti a organo chiuso svuoterebbe la tratta di la'."
+        }
+      ]
+    },
+    {
+      "id": "tee-expansion-connection-dhw-bollitore-cold-in",
+      "definition_id": "tee-branch-cold",
+      "tag": null,
+      "properties": {},
+      "evidence": [
+        {
+          "kind": "rule",
+          "reference": "expansion-on-the-stored-volume-feed@3.0.0",
+          "note": "Anche la riserva sanitaria si scalda e dilata, e il ritegno sull'alimentazione le ha tolto la via di ritorno verso la rete: senza un vaso suo la dilatazione apre la sicurezza a ogni ciclo. Il vaso sta sulla tubazione dell'acqua fredda in ingresso alla riserva, dal lato del serbatoio. Non e' pero' un pezzo che si aggiunge al buio: molti accumuli lo portano gia' dentro il mantello, e il catalogo puo' tacere. Dove il dato manca resta una domanda al progettista, non un vaso aggiunto per prudenza. Tranne dove la produzione di acqua calda e' centralizzata: li' il vaso si mette, fra il dispositivo di non ritorno e il bollitore, e mai sulla mandata calda. E' la disposizione del PO per gli impianti centralizzati, e il dato lo dice il progettista. Sta attaccato al serbatoio, e quindi fra lui e il dispositivo di non ritorno — il ritegno, o il gruppo di sicurezza che lo porta dentro —: e' li' che la dilatazione dell'acqua trova il vaso invece della sicurezza."
+        }
+      ]
+    },
+    {
+      "id": "tee-expansion-connection-pdc-water-return",
+      "definition_id": "tee-branch",
+      "tag": null,
+      "properties": {},
+      "evidence": [
+        {
+          "kind": "rule",
+          "reference": "expansion-on-closed-circuit@5.0.0",
+          "note": "L'acqua scaldata aumenta di volume, e in un volume chiuso quell'aumento diventa pressione. Il vaso e' lo spazio che quel volume in piu' trova invece della rottura, e ne basta uno per circuito perche' la pressione e' la stessa dappertutto. Sta sul ritorno generale, a monte della prima ripartizione verso chi scalda: e' il punto piu' freddo — la membrana dura di piu' dove l'acqua e' meno calda — ed e' il tratto che serve tutti i generatori insieme, cosi' con due in parallelo il vaso non finisce sul ramo di uno solo. La riserva sanitaria ha il proprio vaso sulla propria alimentazione: e' un'altra regola. Sul ritorno sta dalla parte delle macchine rispetto al defangatore, oltre il filtro di ciascuna (D-218): il vaso non si separa mai dalle macchine per una valvola che non sia loro, e vaso, gruppo di riempimento e manometro stanno insieme."
+        }
+      ]
+    },
+    {
+      "id": "tee-filling-unit-pdc-water-return-b",
+      "definition_id": "tee-branch",
+      "tag": null,
+      "properties": {},
+      "evidence": [
+        {
+          "kind": "rule",
+          "reference": "filling-unit-on-return@6.0.0",
+          "note": "Un circuito chiuso non si alimenta da nessuna parte: va riempito e poi reintegrato quando cala, e a pressione controllata, altrimenti la rete idrica lo porterebbe alla propria. Il gruppo e' percio' un **ponte**: pesca dall'acqua fredda gia' dichiarata dal progettista e la immette nel circuito tecnico, con una derivazione da ciascuna parte. Si innesta sul ritorno generale, a monte della prima ripartizione: e' il punto piu' freddo del circuito, dove l'acqua di rete entra senza scaldarsi di colpo, ed e' il tratto comune, cosi' il reintegro serve tutte le macchine e non il ramo di una sola. Dove l'acqua fredda non e' stata dichiarata, il gruppo non si posa appeso a nulla: si chiede. Sul ritorno sta dalla parte delle macchine rispetto al defangatore, oltre il filtro di ciascuna (D-218): il vaso non si separa mai dalle macchine per una valvola che non sia loro, e vaso, gruppo di riempimento e manometro stanno insieme."
+        }
+      ]
+    },
+    {
+      "id": "tee-pressure-gauge-pdc-water-return",
+      "definition_id": "tee-branch",
+      "tag": null,
+      "properties": {},
+      "evidence": [
+        {
+          "kind": "rule",
+          "reference": "gauge-where-the-plant-is-charged@4.0.0",
+          "note": "La pressione di un circuito chiuso e' la spia della sua salute: se cala, perde; se sale, il vaso non lavora. Va letta sul posto, e ne basta un punto per circuito perche' la pressione e' la stessa dappertutto. Sta sul ritorno generale, accanto al punto in cui il circuito si riempie, cosi' chi reintegra legge mentre carica — e sul tratto comune, non sul ramo di una macchina. Sul ritorno sta dalla parte delle macchine rispetto al defangatore, oltre il filtro di ciascuna (D-218): il vaso non si separa mai dalle macchine per una valvola che non sia loro, e vaso, gruppo di riempimento e manometro stanno insieme."
+        }
+      ]
+    },
+    {
+      "id": "tee-valve-safety-pdc-water-supply",
+      "definition_id": "tee-branch",
+      "tag": null,
+      "properties": {},
+      "evidence": [
+        {
+          "kind": "rule",
+          "reference": "safety-relief-where-heat-enters-the-water@4.0.0",
+          "note": "Dove il calore entra nell'acqua la pressione puo' salire piu' in fretta di quanto il circuito riesca ad assorbire, e serve una via che si apra da sola prima del limite ammesso. Ogni generatore del circuito chiuso ha la sua, a qualunque potenza: sulla tubazione che esce, attaccata alla macchina, e fra lei e cio' che protegge non c'e' nulla che si possa chiudere — nemmeno i rubinetti della macchina, che vengono dopo di lei. Si mette anche quando la macchina ne porta una a bordo, e non ce n'e' una comune sulla mandata (D-182). La soglia dei 35 kW non cambia ne' quante sicurezze ci vanno ne' dove: decide il regime INAIL dei generatori a combustione. La riserva sanitaria che si scalda da se' ha il proprio gruppo sull'alimentazione fredda: e' un'altra regola."
+        }
+      ]
+    },
+    {
+      "id": "utenze",
+      "definition_id": "dhw-draw-off",
+      "tag": null,
+      "properties": {
+        "etichetta": "utenze esistenti",
+        "flow_rate_m3h": 0.9
+      },
+      "evidence": []
+    },
+    {
+      "id": "valve-gauge-cock-3way-pressure-gauge-pdc-water-return-a",
+      "definition_id": "valve-gauge-cock-3way",
+      "tag": null,
+      "properties": {},
+      "evidence": [
+        {
+          "kind": "rule",
+          "reference": "isolate-what-is-serviced@3.0.0",
+          "note": "Cio' che si smonta a impianto in funzione — una macchina come un accessorio — si toglie solo se prima si ferma l'acqua che lo raggiunge. Si isola pero' il **gruppo** che si manutiene insieme, senza duplicare organi consecutivi che chiudono lo stesso volume: la macchina e il filtro che le sta sul ritorno sono un gruppo, e sul ritorno basta l'organo lato rete oltre a quello sulla mandata; fra il filtro e la macchina non ne va un secondo. Ogni tubo che esce dal gruppo vuole il proprio organo di chiusura, uno per tratto: due pezzi affacciati sullo stesso tubo lo condividono. L'organo e' quello che il pezzo stesso pretende: comune per la maggior parte; bloccabile aperto per cio' che non deve mai restare escluso per distrazione; il rubinetto della propria presa per uno strumento indicatore, che si legge su una derivazione dedicata e non sulla condotta — quel rubinetto sta sullo stacco, porta la terza via per il manometro campione e non e' un organo di linea capace di dividere un dominio idraulico. Chi non si smonta in esercizio non riceve niente: un pressostato di sicurezza o di minima non si toglie a impianto in pressione, e fra lui e cio' che comanda non ci va nulla di chiudibile."
+        }
+      ]
+    },
+    {
+      "id": "valve-isolation-bollitore-coil-in",
+      "definition_id": "valve-isolation",
+      "tag": null,
+      "properties": {},
+      "evidence": [
+        {
+          "kind": "rule",
+          "reference": "isolate-what-is-serviced@3.0.0",
+          "note": "Cio' che si smonta a impianto in funzione — una macchina come un accessorio — si toglie solo se prima si ferma l'acqua che lo raggiunge. Si isola pero' il **gruppo** che si manutiene insieme, senza duplicare organi consecutivi che chiudono lo stesso volume: la macchina e il filtro che le sta sul ritorno sono un gruppo, e sul ritorno basta l'organo lato rete oltre a quello sulla mandata; fra il filtro e la macchina non ne va un secondo. Ogni tubo che esce dal gruppo vuole il proprio organo di chiusura, uno per tratto: due pezzi affacciati sullo stesso tubo lo condividono. L'organo e' quello che il pezzo stesso pretende: comune per la maggior parte; bloccabile aperto per cio' che non deve mai restare escluso per distrazione; il rubinetto della propria presa per uno strumento indicatore, che si legge su una derivazione dedicata e non sulla condotta — quel rubinetto sta sullo stacco, porta la terza via per il manometro campione e non e' un organo di linea capace di dividere un dominio idraulico. Chi non si smonta in esercizio non riceve niente: un pressostato di sicurezza o di minima non si toglie a impianto in pressione, e fra lui e cio' che comanda non ci va nulla di chiudibile."
+        }
+      ]
+    },
+    {
+      "id": "valve-isolation-bollitore-coil-out",
+      "definition_id": "valve-isolation",
+      "tag": null,
+      "properties": {},
+      "evidence": [
+        {
+          "kind": "rule",
+          "reference": "isolate-what-is-serviced@3.0.0",
+          "note": "Cio' che si smonta a impianto in funzione — una macchina come un accessorio — si toglie solo se prima si ferma l'acqua che lo raggiunge. Si isola pero' il **gruppo** che si manutiene insieme, senza duplicare organi consecutivi che chiudono lo stesso volume: la macchina e il filtro che le sta sul ritorno sono un gruppo, e sul ritorno basta l'organo lato rete oltre a quello sulla mandata; fra il filtro e la macchina non ne va un secondo. Ogni tubo che esce dal gruppo vuole il proprio organo di chiusura, uno per tratto: due pezzi affacciati sullo stesso tubo lo condividono. L'organo e' quello che il pezzo stesso pretende: comune per la maggior parte; bloccabile aperto per cio' che non deve mai restare escluso per distrazione; il rubinetto della propria presa per uno strumento indicatore, che si legge su una derivazione dedicata e non sulla condotta — quel rubinetto sta sullo stacco, porta la terza via per il manometro campione e non e' un organo di linea capace di dividere un dominio idraulico. Chi non si smonta in esercizio non riceve niente: un pressostato di sicurezza o di minima non si toglie a impianto in pressione, e fra lui e cio' che comanda non ci va nulla di chiudibile."
+        }
+      ]
+    },
+    {
+      "id": "valve-isolation-circolatore-b",
+      "definition_id": "valve-isolation",
+      "tag": null,
+      "properties": {},
+      "evidence": [
+        {
+          "kind": "rule",
+          "reference": "isolate-what-is-serviced@3.0.0",
+          "note": "Cio' che si smonta a impianto in funzione — una macchina come un accessorio — si toglie solo se prima si ferma l'acqua che lo raggiunge. Si isola pero' il **gruppo** che si manutiene insieme, senza duplicare organi consecutivi che chiudono lo stesso volume: la macchina e il filtro che le sta sul ritorno sono un gruppo, e sul ritorno basta l'organo lato rete oltre a quello sulla mandata; fra il filtro e la macchina non ne va un secondo. Ogni tubo che esce dal gruppo vuole il proprio organo di chiusura, uno per tratto: due pezzi affacciati sullo stesso tubo lo condividono. L'organo e' quello che il pezzo stesso pretende: comune per la maggior parte; bloccabile aperto per cio' che non deve mai restare escluso per distrazione; il rubinetto della propria presa per uno strumento indicatore, che si legge su una derivazione dedicata e non sulla condotta — quel rubinetto sta sullo stacco, porta la terza via per il manometro campione e non e' un organo di linea capace di dividere un dominio idraulico. Chi non si smonta in esercizio non riceve niente: un pressostato di sicurezza o di minima non si toglie a impianto in pressione, e fra lui e cio' che comanda non ci va nulla di chiudibile."
+        }
+      ]
+    },
+    {
+      "id": "valve-isolation-deviatrice-in",
+      "definition_id": "valve-isolation",
+      "tag": null,
+      "properties": {},
+      "evidence": [
+        {
+          "kind": "rule",
+          "reference": "isolate-what-is-serviced@3.0.0",
+          "note": "Cio' che si smonta a impianto in funzione — una macchina come un accessorio — si toglie solo se prima si ferma l'acqua che lo raggiunge. Si isola pero' il **gruppo** che si manutiene insieme, senza duplicare organi consecutivi che chiudono lo stesso volume: la macchina e il filtro che le sta sul ritorno sono un gruppo, e sul ritorno basta l'organo lato rete oltre a quello sulla mandata; fra il filtro e la macchina non ne va un secondo. Ogni tubo che esce dal gruppo vuole il proprio organo di chiusura, uno per tratto: due pezzi affacciati sullo stesso tubo lo condividono. L'organo e' quello che il pezzo stesso pretende: comune per la maggior parte; bloccabile aperto per cio' che non deve mai restare escluso per distrazione; il rubinetto della propria presa per uno strumento indicatore, che si legge su una derivazione dedicata e non sulla condotta — quel rubinetto sta sullo stacco, porta la terza via per il manometro campione e non e' un organo di linea capace di dividere un dominio idraulico. Chi non si smonta in esercizio non riceve niente: un pressostato di sicurezza o di minima non si toglie a impianto in pressione, e fra lui e cio' che comanda non ci va nulla di chiudibile."
+        }
+      ]
+    },
+    {
+      "id": "valve-isolation-dhw-acquedotto-a",
+      "definition_id": "valve-isolation-dhw",
+      "tag": null,
+      "properties": {},
+      "evidence": [
+        {
+          "kind": "rule",
+          "reference": "boundary-shutoff-at-the-edge-of-the-plant@1.0.0",
+          "note": "Dove l'impianto si attacca a qualcosa che non e' suo — la rete idrica, la distribuzione dell'edificio — si deve poter chiudere dal proprio lato, senza dipendere da un rubinetto che sta altrove e che qualcun altro governa. L'organo sta sul confine stesso, cosi' che tutto cio' che viene dopo resti lavorabile."
+        }
+      ]
+    },
+    {
+      "id": "valve-isolation-dhw-hot-bollitore-dhw-out",
+      "definition_id": "valve-isolation-dhw-hot",
+      "tag": null,
+      "properties": {},
+      "evidence": [
+        {
+          "kind": "rule",
+          "reference": "isolate-what-is-serviced@3.0.0",
+          "note": "Cio' che si smonta a impianto in funzione — una macchina come un accessorio — si toglie solo se prima si ferma l'acqua che lo raggiunge. Si isola pero' il **gruppo** che si manutiene insieme, senza duplicare organi consecutivi che chiudono lo stesso volume: la macchina e il filtro che le sta sul ritorno sono un gruppo, e sul ritorno basta l'organo lato rete oltre a quello sulla mandata; fra il filtro e la macchina non ne va un secondo. Ogni tubo che esce dal gruppo vuole il proprio organo di chiusura, uno per tratto: due pezzi affacciati sullo stesso tubo lo condividono. L'organo e' quello che il pezzo stesso pretende: comune per la maggior parte; bloccabile aperto per cio' che non deve mai restare escluso per distrazione; il rubinetto della propria presa per uno strumento indicatore, che si legge su una derivazione dedicata e non sulla condotta — quel rubinetto sta sullo stacco, porta la terza via per il manometro campione e non e' un organo di linea capace di dividere un dominio idraulico. Chi non si smonta in esercizio non riceve niente: un pressostato di sicurezza o di minima non si toglie a impianto in pressione, e fra lui e cio' che comanda non ci va nulla di chiudibile."
+        }
+      ]
+    },
+    {
+      "id": "valve-isolation-dhw-hot-utenze-a",
+      "definition_id": "valve-isolation-dhw-hot",
+      "tag": null,
+      "properties": {},
+      "evidence": [
+        {
+          "kind": "rule",
+          "reference": "boundary-shutoff-at-the-edge-of-the-plant@1.0.0",
+          "note": "Dove l'impianto si attacca a qualcosa che non e' suo — la rete idrica, la distribuzione dell'edificio — si deve poter chiudere dal proprio lato, senza dipendere da un rubinetto che sta altrove e che qualcun altro governa. L'organo sta sul confine stesso, cosi' che tutto cio' che viene dopo resti lavorabile."
+        }
+      ]
+    },
+    {
+      "id": "valve-isolation-dhw-inlet-mixing-valve-thermostatic-bollitore-dhw-out-a",
+      "definition_id": "valve-isolation-dhw",
+      "tag": null,
+      "properties": {},
+      "evidence": [
+        {
+          "kind": "rule",
+          "reference": "boundary-shutoff-at-the-edge-of-the-plant@1.0.0",
+          "note": "Dove l'impianto si attacca a qualcosa che non e' suo — la rete idrica, la distribuzione dell'edificio — si deve poter chiudere dal proprio lato, senza dipendere da un rubinetto che sta altrove e che qualcun altro governa. L'organo sta sul confine stesso, cosi' che tutto cio' che viene dopo resti lavorabile."
+        }
+      ]
+    },
+    {
+      "id": "valve-isolation-dirt-separator-pdc-water-return-a",
+      "definition_id": "valve-isolation",
+      "tag": null,
+      "properties": {},
+      "evidence": [
+        {
+          "kind": "rule",
+          "reference": "isolate-what-is-serviced@3.0.0",
+          "note": "Cio' che si smonta a impianto in funzione — una macchina come un accessorio — si toglie solo se prima si ferma l'acqua che lo raggiunge. Si isola pero' il **gruppo** che si manutiene insieme, senza duplicare organi consecutivi che chiudono lo stesso volume: la macchina e il filtro che le sta sul ritorno sono un gruppo, e sul ritorno basta l'organo lato rete oltre a quello sulla mandata; fra il filtro e la macchina non ne va un secondo. Ogni tubo che esce dal gruppo vuole il proprio organo di chiusura, uno per tratto: due pezzi affacciati sullo stesso tubo lo condividono. L'organo e' quello che il pezzo stesso pretende: comune per la maggior parte; bloccabile aperto per cio' che non deve mai restare escluso per distrazione; il rubinetto della propria presa per uno strumento indicatore, che si legge su una derivazione dedicata e non sulla condotta — quel rubinetto sta sullo stacco, porta la terza via per il manometro campione e non e' un organo di linea capace di dividere un dominio idraulico. Chi non si smonta in esercizio non riceve niente: un pressostato di sicurezza o di minima non si toglie a impianto in pressione, e fra lui e cio' che comanda non ci va nulla di chiudibile."
+        }
+      ]
+    },
+    {
+      "id": "valve-isolation-dirt-separator-pdc-water-return-b",
+      "definition_id": "valve-isolation",
+      "tag": null,
+      "properties": {},
+      "evidence": [
+        {
+          "kind": "rule",
+          "reference": "isolate-what-is-serviced@3.0.0",
+          "note": "Cio' che si smonta a impianto in funzione — una macchina come un accessorio — si toglie solo se prima si ferma l'acqua che lo raggiunge. Si isola pero' il **gruppo** che si manutiene insieme, senza duplicare organi consecutivi che chiudono lo stesso volume: la macchina e il filtro che le sta sul ritorno sono un gruppo, e sul ritorno basta l'organo lato rete oltre a quello sulla mandata; fra il filtro e la macchina non ne va un secondo. Ogni tubo che esce dal gruppo vuole il proprio organo di chiusura, uno per tratto: due pezzi affacciati sullo stesso tubo lo condividono. L'organo e' quello che il pezzo stesso pretende: comune per la maggior parte; bloccabile aperto per cio' che non deve mai restare escluso per distrazione; il rubinetto della propria presa per uno strumento indicatore, che si legge su una derivazione dedicata e non sulla condotta — quel rubinetto sta sullo stacco, porta la terza via per il manometro campione e non e' un organo di linea capace di dividere un dominio idraulico. Chi non si smonta in esercizio non riceve niente: un pressostato di sicurezza o di minima non si toglie a impianto in pressione, e fra lui e cio' che comanda non ci va nulla di chiudibile."
+        }
+      ]
+    },
+    {
+      "id": "valve-isolation-locked-open-dhw-expansion-connection-dhw-bollitore-cold-in-a",
+      "definition_id": "valve-isolation-locked-open-dhw",
+      "tag": null,
+      "properties": {},
+      "evidence": [
+        {
+          "kind": "rule",
+          "reference": "isolate-what-is-serviced@3.0.0",
+          "note": "Cio' che si smonta a impianto in funzione — una macchina come un accessorio — si toglie solo se prima si ferma l'acqua che lo raggiunge. Si isola pero' il **gruppo** che si manutiene insieme, senza duplicare organi consecutivi che chiudono lo stesso volume: la macchina e il filtro che le sta sul ritorno sono un gruppo, e sul ritorno basta l'organo lato rete oltre a quello sulla mandata; fra il filtro e la macchina non ne va un secondo. Ogni tubo che esce dal gruppo vuole il proprio organo di chiusura, uno per tratto: due pezzi affacciati sullo stesso tubo lo condividono. L'organo e' quello che il pezzo stesso pretende: comune per la maggior parte; bloccabile aperto per cio' che non deve mai restare escluso per distrazione; il rubinetto della propria presa per uno strumento indicatore, che si legge su una derivazione dedicata e non sulla condotta — quel rubinetto sta sullo stacco, porta la terza via per il manometro campione e non e' un organo di linea capace di dividere un dominio idraulico. Chi non si smonta in esercizio non riceve niente: un pressostato di sicurezza o di minima non si toglie a impianto in pressione, e fra lui e cio' che comanda non ci va nulla di chiudibile."
+        }
+      ]
+    },
+    {
+      "id": "valve-isolation-locked-open-expansion-connection-pdc-water-return-a",
+      "definition_id": "valve-isolation-locked-open",
+      "tag": null,
+      "properties": {},
+      "evidence": [
+        {
+          "kind": "rule",
+          "reference": "isolate-what-is-serviced@3.0.0",
+          "note": "Cio' che si smonta a impianto in funzione — una macchina come un accessorio — si toglie solo se prima si ferma l'acqua che lo raggiunge. Si isola pero' il **gruppo** che si manutiene insieme, senza duplicare organi consecutivi che chiudono lo stesso volume: la macchina e il filtro che le sta sul ritorno sono un gruppo, e sul ritorno basta l'organo lato rete oltre a quello sulla mandata; fra il filtro e la macchina non ne va un secondo. Ogni tubo che esce dal gruppo vuole il proprio organo di chiusura, uno per tratto: due pezzi affacciati sullo stesso tubo lo condividono. L'organo e' quello che il pezzo stesso pretende: comune per la maggior parte; bloccabile aperto per cio' che non deve mai restare escluso per distrazione; il rubinetto della propria presa per uno strumento indicatore, che si legge su una derivazione dedicata e non sulla condotta — quel rubinetto sta sullo stacco, porta la terza via per il manometro campione e non e' un organo di linea capace di dividere un dominio idraulico. Chi non si smonta in esercizio non riceve niente: un pressostato di sicurezza o di minima non si toglie a impianto in pressione, e fra lui e cio' che comanda non ci va nulla di chiudibile."
+        }
+      ]
+    },
+    {
+      "id": "valve-isolation-volano-primary-in",
+      "definition_id": "valve-isolation",
+      "tag": null,
+      "properties": {},
+      "evidence": [
+        {
+          "kind": "rule",
+          "reference": "isolate-what-is-serviced@3.0.0",
+          "note": "Cio' che si smonta a impianto in funzione — una macchina come un accessorio — si toglie solo se prima si ferma l'acqua che lo raggiunge. Si isola pero' il **gruppo** che si manutiene insieme, senza duplicare organi consecutivi che chiudono lo stesso volume: la macchina e il filtro che le sta sul ritorno sono un gruppo, e sul ritorno basta l'organo lato rete oltre a quello sulla mandata; fra il filtro e la macchina non ne va un secondo. Ogni tubo che esce dal gruppo vuole il proprio organo di chiusura, uno per tratto: due pezzi affacciati sullo stesso tubo lo condividono. L'organo e' quello che il pezzo stesso pretende: comune per la maggior parte; bloccabile aperto per cio' che non deve mai restare escluso per distrazione; il rubinetto della propria presa per uno strumento indicatore, che si legge su una derivazione dedicata e non sulla condotta — quel rubinetto sta sullo stacco, porta la terza via per il manometro campione e non e' un organo di linea capace di dividere un dominio idraulico. Chi non si smonta in esercizio non riceve niente: un pressostato di sicurezza o di minima non si toglie a impianto in pressione, e fra lui e cio' che comanda non ci va nulla di chiudibile."
+        }
+      ]
+    },
+    {
+      "id": "valve-isolation-volano-primary-out",
+      "definition_id": "valve-isolation",
+      "tag": null,
+      "properties": {},
+      "evidence": [
+        {
+          "kind": "rule",
+          "reference": "isolate-what-is-serviced@3.0.0",
+          "note": "Cio' che si smonta a impianto in funzione — una macchina come un accessorio — si toglie solo se prima si ferma l'acqua che lo raggiunge. Si isola pero' il **gruppo** che si manutiene insieme, senza duplicare organi consecutivi che chiudono lo stesso volume: la macchina e il filtro che le sta sul ritorno sono un gruppo, e sul ritorno basta l'organo lato rete oltre a quello sulla mandata; fra il filtro e la macchina non ne va un secondo. Ogni tubo che esce dal gruppo vuole il proprio organo di chiusura, uno per tratto: due pezzi affacciati sullo stesso tubo lo condividono. L'organo e' quello che il pezzo stesso pretende: comune per la maggior parte; bloccabile aperto per cio' che non deve mai restare escluso per distrazione; il rubinetto della propria presa per uno strumento indicatore, che si legge su una derivazione dedicata e non sulla condotta — quel rubinetto sta sullo stacco, porta la terza via per il manometro campione e non e' un organo di linea capace di dividere un dominio idraulico. Chi non si smonta in esercizio non riceve niente: un pressostato di sicurezza o di minima non si toglie a impianto in pressione, e fra lui e cio' che comanda non ci va nulla di chiudibile."
+        }
+      ]
+    },
+    {
+      "id": "valve-isolation-volano-secondary-in",
+      "definition_id": "valve-isolation",
+      "tag": null,
+      "properties": {},
+      "evidence": [
+        {
+          "kind": "rule",
+          "reference": "isolate-what-is-serviced@3.0.0",
+          "note": "Cio' che si smonta a impianto in funzione — una macchina come un accessorio — si toglie solo se prima si ferma l'acqua che lo raggiunge. Si isola pero' il **gruppo** che si manutiene insieme, senza duplicare organi consecutivi che chiudono lo stesso volume: la macchina e il filtro che le sta sul ritorno sono un gruppo, e sul ritorno basta l'organo lato rete oltre a quello sulla mandata; fra il filtro e la macchina non ne va un secondo. Ogni tubo che esce dal gruppo vuole il proprio organo di chiusura, uno per tratto: due pezzi affacciati sullo stesso tubo lo condividono. L'organo e' quello che il pezzo stesso pretende: comune per la maggior parte; bloccabile aperto per cio' che non deve mai restare escluso per distrazione; il rubinetto della propria presa per uno strumento indicatore, che si legge su una derivazione dedicata e non sulla condotta — quel rubinetto sta sullo stacco, porta la terza via per il manometro campione e non e' un organo di linea capace di dividere un dominio idraulico. Chi non si smonta in esercizio non riceve niente: un pressostato di sicurezza o di minima non si toglie a impianto in pressione, e fra lui e cio' che comanda non ci va nulla di chiudibile."
+        }
+      ]
+    },
+    {
+      "id": "valve-isolation-volano-secondary-out",
+      "definition_id": "valve-isolation",
+      "tag": null,
+      "properties": {},
+      "evidence": [
+        {
+          "kind": "rule",
+          "reference": "isolate-what-is-serviced@3.0.0",
+          "note": "Cio' che si smonta a impianto in funzione — una macchina come un accessorio — si toglie solo se prima si ferma l'acqua che lo raggiunge. Si isola pero' il **gruppo** che si manutiene insieme, senza duplicare organi consecutivi che chiudono lo stesso volume: la macchina e il filtro che le sta sul ritorno sono un gruppo, e sul ritorno basta l'organo lato rete oltre a quello sulla mandata; fra il filtro e la macchina non ne va un secondo. Ogni tubo che esce dal gruppo vuole il proprio organo di chiusura, uno per tratto: due pezzi affacciati sullo stesso tubo lo condividono. L'organo e' quello che il pezzo stesso pretende: comune per la maggior parte; bloccabile aperto per cio' che non deve mai restare escluso per distrazione; il rubinetto della propria presa per uno strumento indicatore, che si legge su una derivazione dedicata e non sulla condotta — quel rubinetto sta sullo stacco, porta la terza via per il manometro campione e non e' un organo di linea capace di dividere un dominio idraulico. Chi non si smonta in esercizio non riceve niente: un pressostato di sicurezza o di minima non si toglie a impianto in pressione, e fra lui e cio' che comanda non ci va nulla di chiudibile."
+        }
+      ]
+    },
+    {
+      "id": "valve-safety-pdc-water-supply",
+      "definition_id": "valve-safety",
+      "tag": null,
+      "properties": {},
+      "evidence": [
+        {
+          "kind": "rule",
+          "reference": "safety-relief-where-heat-enters-the-water@4.0.0",
+          "note": "Dove il calore entra nell'acqua la pressione puo' salire piu' in fretta di quanto il circuito riesca ad assorbire, e serve una via che si apra da sola prima del limite ammesso. Ogni generatore del circuito chiuso ha la sua, a qualunque potenza: sulla tubazione che esce, attaccata alla macchina, e fra lei e cio' che protegge non c'e' nulla che si possa chiudere — nemmeno i rubinetti della macchina, che vengono dopo di lei. Si mette anche quando la macchina ne porta una a bordo, e non ce n'e' una comune sulla mandata (D-182). La soglia dei 35 kW non cambia ne' quante sicurezze ci vanno ne' dove: decide il regime INAIL dei generatori a combustione. La riserva sanitaria che si scalda da se' ha il proprio gruppo sull'alimentazione fredda: e' un'altra regola."
+        }
+      ]
+    },
+    {
+      "id": "volano",
+      "definition_id": "buffer-four-port",
+      "tag": null,
+      "properties": {
+        "volume_l": 50
+      },
+      "evidence": []
+    }
+  ],
+  "connections": [
+    {
+      "id": "acs1-a-a-a",
+      "network_id": "acs",
+      "endpoint_a": {
+        "component_id": "bollitore",
+        "port_id": "dhw_out"
+      },
+      "endpoint_b": {
+        "component_id": "valve-isolation-dhw-hot-bollitore-dhw-out",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": [],
+      "lunghezza_m": 2.0
+    },
+    {
+      "id": "acs1-a-a-b",
+      "network_id": "acs",
+      "endpoint_a": {
+        "component_id": "valve-isolation-dhw-hot-bollitore-dhw-out",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "mixing-valve-thermostatic-bollitore-dhw-out",
+        "port_id": "hot_in"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "acs1-a-b",
+      "network_id": "acs",
+      "endpoint_a": {
+        "component_id": "mixing-valve-thermostatic-bollitore-dhw-out",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "valve-isolation-dhw-hot-utenze-a",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "acs1-b",
+      "network_id": "acs",
+      "endpoint_a": {
+        "component_id": "valve-isolation-dhw-hot-utenze-a",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "utenze",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "af1-a-1",
+      "network_id": "acqua-fredda",
+      "endpoint_a": {
+        "component_id": "acquedotto",
+        "port_id": "a"
+      },
+      "endpoint_b": {
+        "component_id": "valve-isolation-dhw-acquedotto-a",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": [],
+      "lunghezza_m": 3.0
+    },
+    {
+      "id": "af1-a-2",
+      "network_id": "acqua-fredda",
+      "endpoint_a": {
+        "component_id": "valve-isolation-dhw-acquedotto-a",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "tee-drain-connection-cold-bollitore-cold-in",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "af1-a-3",
+      "network_id": "acqua-fredda",
+      "endpoint_a": {
+        "component_id": "tee-drain-connection-cold-bollitore-cold-in",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "dhw-safety-group-bollitore-cold-in",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "af1-a-4",
+      "network_id": "acqua-fredda",
+      "endpoint_a": {
+        "component_id": "dhw-safety-group-bollitore-cold-in",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "tee-expansion-connection-dhw-bollitore-cold-in",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "af1-a-5",
+      "network_id": "acqua-fredda",
+      "endpoint_a": {
+        "component_id": "tee-expansion-connection-dhw-bollitore-cold-in",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "bollitore",
+        "port_id": "cold_in"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "c1",
+      "network_id": "acs",
+      "endpoint_a": {
+        "component_id": "bollitore",
+        "port_id": "probe"
+      },
+      "endpoint_b": {
+        "component_id": "sonda-acs",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": [],
+      "lunghezza_m": 0.0
+    },
+    {
+      "id": "c2",
+      "network_id": "sonda-acs-cavo",
+      "endpoint_a": {
+        "component_id": "sonda-acs",
+        "port_id": "signal"
+      },
+      "endpoint_b": {
+        "component_id": "pdc",
+        "port_id": "sonda_acs"
+      },
+      "properties": {},
+      "evidence": [],
+      "sezione": "2x0,75",
+      "lunghezza_m": 10.0
+    },
+    {
+      "id": "c3",
+      "network_id": "secondario",
+      "endpoint_a": {
+        "component_id": "volano",
+        "port_id": "probe"
+      },
+      "endpoint_b": {
+        "component_id": "sonda-volano",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": [],
+      "lunghezza_m": 0.0
+    },
+    {
+      "id": "c4",
+      "network_id": "sonda-volano-cavo",
+      "endpoint_a": {
+        "component_id": "sonda-volano",
+        "port_id": "signal"
+      },
+      "endpoint_b": {
+        "component_id": "pdc",
+        "port_id": "sonda_accumulo"
+      },
+      "properties": {},
+      "evidence": [],
+      "sezione": "2x0,75",
+      "lunghezza_m": 10.0
+    },
+    {
+      "id": "e1",
+      "network_id": "linea-pdc",
+      "endpoint_a": {
+        "component_id": "quadro",
+        "port_id": "out_1"
+      },
+      "endpoint_b": {
+        "component_id": "qf-pdc",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "e2",
+      "network_id": "linea-pdc",
+      "endpoint_a": {
+        "component_id": "qf-pdc",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "pdc",
+        "port_id": "power"
+      },
+      "properties": {},
+      "evidence": [],
+      "sezione": "3G6",
+      "lunghezza_m": 10.0
+    },
+    {
+      "id": "e3",
+      "network_id": "linea-circolatore",
+      "endpoint_a": {
+        "component_id": "quadro",
+        "port_id": "out_2"
+      },
+      "endpoint_b": {
+        "component_id": "rele-circolatore",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "e4",
+      "network_id": "linea-circolatore",
+      "endpoint_a": {
+        "component_id": "rele-circolatore",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "circolatore",
+        "port_id": "power"
+      },
+      "properties": {
+        "protezione": "Magnetotermico-differenziale 1P+N C10, Idn 30 mA, tipo A, 6 kA"
+      },
+      "evidence": [],
+      "sezione": "3G1,5",
+      "lunghezza_m": 4.0
+    },
+    {
+      "id": "e5",
+      "network_id": "comando-rele",
+      "endpoint_a": {
+        "component_id": "pdc",
+        "port_id": "out_pompa_zona_1"
+      },
+      "endpoint_b": {
+        "component_id": "rele-circolatore",
+        "port_id": "bobina"
+      },
+      "properties": {
+        "protezione": "nessuna nel quadro: uscita della scheda della pompa di calore, protetta a bordo"
+      },
+      "evidence": [],
+      "sezione": "2x1,5",
+      "lunghezza_m": 10.0
+    },
+    {
+      "id": "e6",
+      "network_id": "comando-deviatrice",
+      "endpoint_a": {
+        "component_id": "pdc",
+        "port_id": "out_acs"
+      },
+      "endpoint_b": {
+        "component_id": "deviatrice",
+        "port_id": "comando"
+      },
+      "properties": {
+        "protezione": "nessuna nel quadro: uscita della scheda della pompa di calore, protetta a bordo"
+      },
+      "evidence": [],
+      "sezione": "3G1,5",
+      "lunghezza_m": 10.0
+    },
+    {
+      "id": "inlet-filling-unit-pdc-water-return-a",
+      "network_id": "acqua-fredda-filling-unit-pdc-water-return",
+      "endpoint_a": {
+        "component_id": "inlet-filling-unit-pdc-water-return",
+        "port_id": "a"
+      },
+      "endpoint_b": {
+        "component_id": "filling-unit-pdc-water-return",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "inlet-mixing-valve-thermostatic-bollitore-dhw-out-cold_in-a",
+      "network_id": "acqua-fredda-mixing-valve-thermostatic-bollitore-dhw-out",
+      "endpoint_a": {
+        "component_id": "inlet-mixing-valve-thermostatic-bollitore-dhw-out",
+        "port_id": "a"
+      },
+      "endpoint_b": {
+        "component_id": "valve-isolation-dhw-inlet-mixing-valve-thermostatic-bollitore-dhw-out-a",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "inlet-mixing-valve-thermostatic-bollitore-dhw-out-cold_in-b",
+      "network_id": "acqua-fredda-mixing-valve-thermostatic-bollitore-dhw-out",
+      "endpoint_a": {
+        "component_id": "valve-isolation-dhw-inlet-mixing-valve-thermostatic-bollitore-dhw-out-a",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "mixing-valve-thermostatic-bollitore-dhw-out",
+        "port_id": "cold_in"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "p1-a",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "pdc",
+        "port_id": "water_supply"
+      },
+      "endpoint_b": {
+        "component_id": "flexible-joint-pdc-water-supply",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": [],
+      "lunghezza_m": 8.0
+    },
+    {
+      "id": "p1-b-a-a",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "flexible-joint-pdc-water-supply",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "pipe-reducer-pdc-water-supply",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "p1-b-a-b",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "pipe-reducer-pdc-water-supply",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "tee-valve-safety-pdc-water-supply",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "p1-b-b-a",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "tee-valve-safety-pdc-water-supply",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "valve-isolation-deviatrice-in",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "p1-b-b-b",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "valve-isolation-deviatrice-in",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "deviatrice",
+        "port_id": "in"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "p2-a",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "deviatrice",
+        "port_id": "out_a"
+      },
+      "endpoint_b": {
+        "component_id": "valve-isolation-volano-primary-in",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": [],
+      "lunghezza_m": 1.5
+    },
+    {
+      "id": "p2-b",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "valve-isolation-volano-primary-in",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "volano",
+        "port_id": "primary_in"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "p3-a",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "deviatrice",
+        "port_id": "out_b"
+      },
+      "endpoint_b": {
+        "component_id": "valve-isolation-bollitore-coil-in",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": [],
+      "lunghezza_m": 1.5
+    },
+    {
+      "id": "p3-b",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "valve-isolation-bollitore-coil-in",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "bollitore",
+        "port_id": "coil_in"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "p4-a",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "volano",
+        "port_id": "primary_out"
+      },
+      "endpoint_b": {
+        "component_id": "valve-isolation-volano-primary-out",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": [],
+      "lunghezza_m": 1.5
+    },
+    {
+      "id": "p4-b",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "valve-isolation-volano-primary-out",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "confluenza-ritorno",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "p5-a",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "bollitore",
+        "port_id": "coil_out"
+      },
+      "endpoint_b": {
+        "component_id": "valve-isolation-bollitore-coil-out",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": [],
+      "lunghezza_m": 1.5
+    },
+    {
+      "id": "p5-b",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "valve-isolation-bollitore-coil-out",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "confluenza-ritorno",
+        "port_id": "c"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "p6-a-a-1-a",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "confluenza-ritorno",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "valve-isolation-dirt-separator-pdc-water-return-a",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": [],
+      "lunghezza_m": 8.0
+    },
+    {
+      "id": "p6-a-a-1-b",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "valve-isolation-dirt-separator-pdc-water-return-a",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "dirt-separator-pdc-water-return",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "p6-a-a-2-a",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "dirt-separator-pdc-water-return",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "valve-isolation-dirt-separator-pdc-water-return-b",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "p6-a-a-2-b",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "valve-isolation-dirt-separator-pdc-water-return-b",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "tee-pressure-gauge-pdc-water-return",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "p6-a-a-3",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "tee-pressure-gauge-pdc-water-return",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "tee-filling-unit-pdc-water-return-b",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "p6-a-a-4",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "tee-filling-unit-pdc-water-return-b",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "tee-expansion-connection-pdc-water-return",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "p6-a-a-5",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "tee-expansion-connection-pdc-water-return",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "strainer-pdc-water-return",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "p6-a-a-6-a",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "strainer-pdc-water-return",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "pipe-reducer-pdc-water-return",
+        "port_id": "b"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "p6-a-a-6-b",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "pipe-reducer-pdc-water-return",
+        "port_id": "a"
+      },
+      "endpoint_b": {
+        "component_id": "flexible-joint-pdc-water-return",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "p6-b",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "flexible-joint-pdc-water-return",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "pdc",
+        "port_id": "water_return"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "s1-a",
+      "network_id": "secondario",
+      "endpoint_a": {
+        "component_id": "volano",
+        "port_id": "secondary_out"
+      },
+      "endpoint_b": {
+        "component_id": "valve-isolation-volano-secondary-out",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": [],
+      "lunghezza_m": 1.0
+    },
+    {
+      "id": "s1-b",
+      "network_id": "secondario",
+      "endpoint_a": {
+        "component_id": "valve-isolation-volano-secondary-out",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "circolatore",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "s2-a",
+      "network_id": "secondario",
+      "endpoint_a": {
+        "component_id": "circolatore",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "valve-isolation-circolatore-b",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": [],
+      "lunghezza_m": 6.0
+    },
+    {
+      "id": "s2-b",
+      "network_id": "secondario",
+      "endpoint_a": {
+        "component_id": "valve-isolation-circolatore-b",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "pavimento",
+        "port_id": "in"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "s3-a",
+      "network_id": "secondario",
+      "endpoint_a": {
+        "component_id": "pavimento",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "valve-isolation-volano-secondary-in",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": [],
+      "lunghezza_m": 6.0
+    },
+    {
+      "id": "s3-b",
+      "network_id": "secondario",
+      "endpoint_a": {
+        "component_id": "valve-isolation-volano-secondary-in",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "volano",
+        "port_id": "secondary_in"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "stub-air-vent-volano-primary-out",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "volano",
+        "port_id": "vent"
+      },
+      "endpoint_b": {
+        "component_id": "air-vent-volano-primary-out",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "stub-drain-connection-cold-bollitore-cold-in",
+      "network_id": "acqua-fredda",
+      "endpoint_a": {
+        "component_id": "tee-drain-connection-cold-bollitore-cold-in",
+        "port_id": "branch"
+      },
+      "endpoint_b": {
+        "component_id": "drain-connection-cold-bollitore-cold-in",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "stub-drain-connection-volano-primary-in",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "volano",
+        "port_id": "drain"
+      },
+      "endpoint_b": {
+        "component_id": "drain-connection-volano-primary-in",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "stub-expansion-connection-dhw-bollitore-cold-in-a",
+      "network_id": "acqua-fredda",
+      "endpoint_a": {
+        "component_id": "tee-expansion-connection-dhw-bollitore-cold-in",
+        "port_id": "branch"
+      },
+      "endpoint_b": {
+        "component_id": "valve-isolation-locked-open-dhw-expansion-connection-dhw-bollitore-cold-in-a",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "stub-expansion-connection-dhw-bollitore-cold-in-b",
+      "network_id": "acqua-fredda",
+      "endpoint_a": {
+        "component_id": "valve-isolation-locked-open-dhw-expansion-connection-dhw-bollitore-cold-in-a",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "expansion-connection-dhw-bollitore-cold-in",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "stub-expansion-connection-pdc-water-return-a",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "tee-expansion-connection-pdc-water-return",
+        "port_id": "branch"
+      },
+      "endpoint_b": {
+        "component_id": "valve-isolation-locked-open-expansion-connection-pdc-water-return-a",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "stub-expansion-connection-pdc-water-return-b",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "valve-isolation-locked-open-expansion-connection-pdc-water-return-a",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "expansion-connection-pdc-water-return",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "stub-filling-unit-pdc-water-return-b",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "filling-unit-pdc-water-return",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "tee-filling-unit-pdc-water-return-b",
+        "port_id": "branch"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "stub-pressure-gauge-pdc-water-return-a",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "tee-pressure-gauge-pdc-water-return",
+        "port_id": "branch"
+      },
+      "endpoint_b": {
+        "component_id": "valve-gauge-cock-3way-pressure-gauge-pdc-water-return-a",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "stub-pressure-gauge-pdc-water-return-b",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "valve-gauge-cock-3way-pressure-gauge-pdc-water-return-a",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "pressure-gauge-pdc-water-return",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": []
+    },
+    {
+      "id": "stub-valve-safety-pdc-water-supply",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "tee-valve-safety-pdc-water-supply",
+        "port_id": "branch"
+      },
+      "endpoint_b": {
+        "component_id": "valve-safety-pdc-water-supply",
+        "port_id": "a"
+      },
+      "properties": {},
+      "evidence": []
+    }
+  ],
+  "assumptions": [
+    {
+      "id": "a1",
+      "text": "Il testo dice 'volano da 50 l (due attacchi, disgiuntore)': un volano a due attacchi in serie non separa. Dato che dal volano parte un circuito con circolatore proprio, si e' disegnato il volano a quattro attacchi che fa da disgiuntore. Confermato dal progettista (ipotesi del collaudatore).",
+      "status": "approved",
+      "source_message_refs": []
+    },
+    {
+      "id": "a2",
+      "text": "Deviatrice: via dritta al volano, terza via al serpentino del bollitore (D-196).",
+      "status": "approved",
+      "source_message_refs": []
+    },
+    {
+      "id": "a3",
+      "text": "I ritorni del volano e del serpentino si uniscono con un raccordo a T prima della pompa di calore.",
+      "status": "approved",
+      "source_message_refs": []
+    },
+    {
+      "id": "a4",
+      "text": "Il circolatore del pavimento e' sulla mandata. Il pavimento radiante esistente, con il suo collettore, e' rappresentato da un solo pannello, esistente.",
+      "status": "approved",
+      "source_message_refs": []
+    },
+    {
+      "id": "a5",
+      "text": "Chi regola: la pompa di calore, con la regolazione a bordo. Sonde del bollitore e del volano cablate alla macchina, che comanda la deviatrice e, tramite rele' d'appoggio 10 A nel quadro, il circolatore.",
+      "status": "approved",
+      "source_message_refs": []
+    },
+    {
+      "id": "a6",
+      "text": "Dati di progetto dati dal progettista (ipotesi del collaudatore): salto termico 5 K sul primario e sul pavimento, potenza del pavimento 12 kW; portata di progetto ACS 0,9 m3/h (15 l/min); lunghezze in centrale 1,5 m per tratto, 1 m volano-circolatore; cavi in garage: circolatore 4 m dal quadro, comandi e sonde 10 m; linea PdC 3G6 da manuale.",
+      "status": "approved",
+      "source_message_refs": []
+    },
+    {
+      "id": "a7",
+      "text": "Livello: definitivo. Committente, commessa, indirizzo, titolo e numero della tavola: non dati (DA DEFINIRE). Marca e modello di circolatore, volano e bollitore non dati.",
+      "status": "approved",
+      "source_message_refs": []
+    },
+    {
+      "id": "a8",
+      "text": "Il bollitore non porta a bordo il vaso sanitario (risposta del progettista, ipotesi del collaudatore).",
+      "status": "approved",
+      "source_message_refs": []
+    },
+    {
+      "id": "a9",
+      "text": "Il pavimento radiante e il suo collettore sono esistenti, ma non si marcano 'esistente': altrimenti la distinta esclude le due tubazioni nuove da 6 m che li raggiungono (difetto trovato in collaudo).",
+      "status": "approved",
+      "source_message_refs": []
+    }
+  ],
+  "rule_applications": [
+    {
+      "id": "applied-air-vent-volano-primary-out",
+      "rule_id": "air-vent-on-the-stored-volume",
+      "rule_version": "1.0.0",
+      "category": "recommended",
+      "status": "approved",
+      "entity_ids": [
+        "air-vent-volano-primary-out",
+        "stub-air-vent-volano-primary-out"
+      ]
+    },
+    {
+      "id": "applied-dhw-safety-group-bollitore-cold-in",
+      "rule_id": "safety-group-on-the-stored-volume",
+      "rule_version": "4.0.0",
+      "category": "necessary",
+      "status": "approved",
+      "entity_ids": [
+        "dhw-safety-group-bollitore-cold-in",
+        "af1-b-b-b-a",
+        "af1-b-b-b-b"
+      ]
+    },
+    {
+      "id": "applied-dirt-separator-pdc-water-return",
+      "rule_id": "dirt-separation-before-what-it-would-ruin",
+      "rule_version": "4.0.0",
+      "category": "recommended",
+      "status": "approved",
+      "entity_ids": [
+        "dirt-separator-pdc-water-return",
+        "p6-a-b-a",
+        "p6-a-b-b"
+      ]
+    },
+    {
+      "id": "applied-drain-connection-cold-bollitore-cold-in",
+      "rule_id": "let-what-holds-its-own-volume-empty",
+      "rule_version": "3.0.0",
+      "category": "recommended",
+      "status": "approved",
+      "entity_ids": [
+        "drain-connection-cold-bollitore-cold-in",
+        "tee-drain-connection-cold-bollitore-cold-in",
+        "af1-b-b-a",
+        "af1-b-b-b",
+        "stub-drain-connection-cold-bollitore-cold-in"
+      ]
+    },
+    {
+      "id": "applied-drain-connection-volano-primary-in",
+      "rule_id": "let-what-holds-its-own-volume-empty",
+      "rule_version": "3.0.0",
+      "category": "recommended",
+      "status": "approved",
+      "entity_ids": [
+        "drain-connection-volano-primary-in",
+        "stub-drain-connection-volano-primary-in"
+      ]
+    },
+    {
+      "id": "applied-expansion-connection-dhw-bollitore-cold-in",
+      "rule_id": "expansion-on-the-stored-volume-feed",
+      "rule_version": "3.0.0",
+      "category": "recommended",
+      "status": "approved",
+      "entity_ids": [
+        "expansion-connection-dhw-bollitore-cold-in",
+        "tee-expansion-connection-dhw-bollitore-cold-in",
+        "af1-b-a",
+        "af1-b-b",
+        "stub-expansion-connection-dhw-bollitore-cold-in"
+      ]
+    },
+    {
+      "id": "applied-expansion-connection-pdc-water-return",
+      "rule_id": "expansion-on-closed-circuit",
+      "rule_version": "5.0.0",
+      "category": "necessary",
+      "status": "approved",
+      "entity_ids": [
+        "expansion-connection-pdc-water-return",
+        "tee-expansion-connection-pdc-water-return",
+        "p6-a-b-b-a",
+        "p6-a-b-b-b",
+        "stub-expansion-connection-pdc-water-return"
+      ]
+    },
+    {
+      "id": "applied-filling-unit-pdc-water-return",
+      "rule_id": "filling-unit-on-return",
+      "rule_version": "6.0.0",
+      "category": "necessary",
+      "status": "approved",
+      "entity_ids": [
+        "filling-unit-pdc-water-return",
+        "inlet-filling-unit-pdc-water-return",
+        "tee-filling-unit-pdc-water-return-b",
+        "inlet-filling-unit-pdc-water-return-a",
+        "acqua-fredda-filling-unit-pdc-water-return",
+        "p6-a-b-b-b-a",
+        "p6-a-b-b-b-b",
+        "stub-filling-unit-pdc-water-return-b"
+      ]
+    },
+    {
+      "id": "applied-flexible-joint-pdc-water-return",
+      "rule_id": "absorb-vibration-at-the-machine",
+      "rule_version": "1.0.0",
+      "category": "necessary",
+      "status": "approved",
+      "entity_ids": [
+        "flexible-joint-pdc-water-return",
+        "p6-a",
+        "p6-b"
+      ]
+    },
+    {
+      "id": "applied-flexible-joint-pdc-water-supply",
+      "rule_id": "absorb-vibration-at-the-machine",
+      "rule_version": "1.0.0",
+      "category": "necessary",
+      "status": "approved",
+      "entity_ids": [
+        "flexible-joint-pdc-water-supply",
+        "p1-a",
+        "p1-b"
+      ]
+    },
+    {
+      "id": "applied-mixing-valve-thermostatic-bollitore-dhw-out",
+      "rule_id": "dhw-mixing-on-draw-off",
+      "rule_version": "4.0.0",
+      "category": "necessary",
+      "status": "approved",
+      "entity_ids": [
+        "mixing-valve-thermostatic-bollitore-dhw-out",
+        "inlet-mixing-valve-thermostatic-bollitore-dhw-out",
+        "inlet-mixing-valve-thermostatic-bollitore-dhw-out-cold_in",
+        "acqua-fredda-mixing-valve-thermostatic-bollitore-dhw-out",
+        "acs1-a-a",
+        "acs1-a-b"
+      ]
+    },
+    {
+      "id": "applied-pressure-gauge-pdc-water-return",
+      "rule_id": "gauge-where-the-plant-is-charged",
+      "rule_version": "4.0.0",
+      "category": "necessary",
+      "status": "approved",
+      "entity_ids": [
+        "pressure-gauge-pdc-water-return",
+        "tee-pressure-gauge-pdc-water-return",
+        "p6-a-b-b-b-b-a",
+        "p6-a-b-b-b-b-b",
+        "stub-pressure-gauge-pdc-water-return"
+      ]
+    },
+    {
+      "id": "applied-strainer-pdc-water-return",
+      "rule_id": "debris-guard-before-what-it-would-ruin",
+      "rule_version": "3.0.0",
+      "category": "recommended",
+      "status": "approved",
+      "entity_ids": [
+        "strainer-pdc-water-return",
+        "p6-a-a",
+        "p6-a-b"
+      ]
+    },
+    {
+      "id": "applied-valve-gauge-cock-3way-pressure-gauge-pdc-water-return-a",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "category": "recommended",
+      "status": "approved",
+      "entity_ids": [
+        "valve-gauge-cock-3way-pressure-gauge-pdc-water-return-a",
+        "stub-pressure-gauge-pdc-water-return-a",
+        "stub-pressure-gauge-pdc-water-return-b"
+      ]
+    },
+    {
+      "id": "applied-valve-isolation-bollitore-coil-in",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "category": "recommended",
+      "status": "approved",
+      "entity_ids": [
+        "valve-isolation-bollitore-coil-in",
+        "p3-a",
+        "p3-b"
+      ]
+    },
+    {
+      "id": "applied-valve-isolation-bollitore-coil-out",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "category": "recommended",
+      "status": "approved",
+      "entity_ids": [
+        "valve-isolation-bollitore-coil-out",
+        "p5-a",
+        "p5-b"
+      ]
+    },
+    {
+      "id": "applied-valve-isolation-circolatore-b",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "category": "recommended",
+      "status": "approved",
+      "entity_ids": [
+        "valve-isolation-circolatore-b",
+        "s2-a",
+        "s2-b"
+      ]
+    },
+    {
+      "id": "applied-valve-isolation-deviatrice-in",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "category": "recommended",
+      "status": "approved",
+      "entity_ids": [
+        "valve-isolation-deviatrice-in",
+        "p1-b-b-a",
+        "p1-b-b-b"
+      ]
+    },
+    {
+      "id": "applied-valve-isolation-dhw-acquedotto-a",
+      "rule_id": "boundary-shutoff-at-the-edge-of-the-plant",
+      "rule_version": "1.0.0",
+      "category": "recommended",
+      "status": "approved",
+      "entity_ids": [
+        "valve-isolation-dhw-acquedotto-a",
+        "af1-a",
+        "af1-b"
+      ]
+    },
+    {
+      "id": "applied-valve-isolation-dhw-hot-bollitore-dhw-out",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "category": "recommended",
+      "status": "approved",
+      "entity_ids": [
+        "valve-isolation-dhw-hot-bollitore-dhw-out",
+        "acs1-a-a-a",
+        "acs1-a-a-b"
+      ]
+    },
+    {
+      "id": "applied-valve-isolation-dhw-hot-utenze-a",
+      "rule_id": "boundary-shutoff-at-the-edge-of-the-plant",
+      "rule_version": "1.0.0",
+      "category": "recommended",
+      "status": "approved",
+      "entity_ids": [
+        "valve-isolation-dhw-hot-utenze-a",
+        "acs1-a",
+        "acs1-b"
+      ]
+    },
+    {
+      "id": "applied-valve-isolation-dhw-inlet-mixing-valve-thermostatic-bollitore-dhw-out-a",
+      "rule_id": "boundary-shutoff-at-the-edge-of-the-plant",
+      "rule_version": "1.0.0",
+      "category": "recommended",
+      "status": "approved",
+      "entity_ids": [
+        "valve-isolation-dhw-inlet-mixing-valve-thermostatic-bollitore-dhw-out-a",
+        "inlet-mixing-valve-thermostatic-bollitore-dhw-out-cold_in-a",
+        "inlet-mixing-valve-thermostatic-bollitore-dhw-out-cold_in-b"
+      ]
+    },
+    {
+      "id": "applied-valve-isolation-dirt-separator-pdc-water-return-a",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "category": "recommended",
+      "status": "approved",
+      "entity_ids": [
+        "valve-isolation-dirt-separator-pdc-water-return-a",
+        "p6-a-a-1-a",
+        "p6-a-a-1-b"
+      ]
+    },
+    {
+      "id": "applied-valve-isolation-dirt-separator-pdc-water-return-b",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "category": "recommended",
+      "status": "approved",
+      "entity_ids": [
+        "valve-isolation-dirt-separator-pdc-water-return-b",
+        "p6-a-a-2-a",
+        "p6-a-a-2-b"
+      ]
+    },
+    {
+      "id": "applied-valve-isolation-locked-open-dhw-expansion-connection-dhw-bollitore-cold-in-a",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "category": "recommended",
+      "status": "approved",
+      "entity_ids": [
+        "valve-isolation-locked-open-dhw-expansion-connection-dhw-bollitore-cold-in-a",
+        "stub-expansion-connection-dhw-bollitore-cold-in-a",
+        "stub-expansion-connection-dhw-bollitore-cold-in-b"
+      ]
+    },
+    {
+      "id": "applied-valve-isolation-locked-open-expansion-connection-pdc-water-return-a",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "category": "recommended",
+      "status": "approved",
+      "entity_ids": [
+        "valve-isolation-locked-open-expansion-connection-pdc-water-return-a",
+        "stub-expansion-connection-pdc-water-return-a",
+        "stub-expansion-connection-pdc-water-return-b"
+      ]
+    },
+    {
+      "id": "applied-valve-isolation-volano-primary-in",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "category": "recommended",
+      "status": "approved",
+      "entity_ids": [
+        "valve-isolation-volano-primary-in",
+        "p2-a",
+        "p2-b"
+      ]
+    },
+    {
+      "id": "applied-valve-isolation-volano-primary-out",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "category": "recommended",
+      "status": "approved",
+      "entity_ids": [
+        "valve-isolation-volano-primary-out",
+        "p4-a",
+        "p4-b"
+      ]
+    },
+    {
+      "id": "applied-valve-isolation-volano-secondary-in",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "category": "recommended",
+      "status": "approved",
+      "entity_ids": [
+        "valve-isolation-volano-secondary-in",
+        "s3-a",
+        "s3-b"
+      ]
+    },
+    {
+      "id": "applied-valve-isolation-volano-secondary-out",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "category": "recommended",
+      "status": "approved",
+      "entity_ids": [
+        "valve-isolation-volano-secondary-out",
+        "s1-a",
+        "s1-b"
+      ]
+    },
+    {
+      "id": "applied-valve-safety-pdc-water-supply",
+      "rule_id": "safety-relief-where-heat-enters-the-water",
+      "rule_version": "4.0.0",
+      "category": "necessary",
+      "status": "approved",
+      "entity_ids": [
+        "valve-safety-pdc-water-supply",
+        "tee-valve-safety-pdc-water-supply",
+        "p1-b-a",
+        "p1-b-b",
+        "stub-valve-safety-pdc-water-supply"
+      ]
+    }
+  ],
+  "sheets": [],
+  "materiale_tubazioni": "multistrato"
+}

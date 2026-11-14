@@ -3819,6 +3819,7 @@
       "radiator",
       "fan-coil",
       "fan-coil-ducted",
+      "fan-coil-ducted-air",
       "ahu-coil",
       "existing-plant-inlet",
       "existing-plant-outlet",

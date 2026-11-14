@@ -1,0 +1,9 @@
+t3 prima: A3 50 1
+t3 dopo: A3 50 1
+sagome prima: A3 50 1
+sagome dopo: A3 50 1
+anonimo base standard: A3 50
+anonimo sovrapposizione: Base: 8 muri, 0 sagome, 10 aperture, 5 stanze, 1 balconi
+anonimo sovrapposizione: Porte: 4, luce mediana 0.80 m (di solito 0.70–0.95).
+anonimo sovrapposizione: Superfici: Soggiorno-cucina 22.7; Camera 18.9; Cameretta 8.9; Ingresso 10.8; Bagno 6.8; totale netto 68.0 m².
+anonimo impianto: A3 50, bloccanti 0

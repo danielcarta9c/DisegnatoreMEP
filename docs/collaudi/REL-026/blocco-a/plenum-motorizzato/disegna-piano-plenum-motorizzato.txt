@@ -1,0 +1,21 @@
+Girati dalla deduzione:
+  - ra-1 0->90
+  - tee-pressure-gauge-pdc-water-return 0->180
+Area del disegno dell'A3: 350 x 235 mm, con la tabella delle apparecchiature in alto a sinistra (197.5 x 37.5 mm); la posa ne occupa 315 x 187.5.
+
+Avvisi — la tavola si consegna, e si sa
+  - la tavola t1: il foglio e' pieno al 72%, sopra il 65% di D-140, e li' lo spazio per le sigle si stringe davvero. Resta una **misura** e non un difetto da chiudere (D-149): la posa non insegue piu' questo numero
+    codice: SHEET_TOO_FULL · t1
+  - la tavola t1: il disegno arriva a 5.0 mm dal bordo dell'area, e con il suo ingombro poteva starne 10.0: un disegno comodo non si disegna dal bordo a bordo (D-143)
+    codice: DRAWING_TOUCHES_THE_BORDER · t1
+
+Le regole del piano: nessuna violazione.
+
+File scritti:
+  - docs/collaudi/REL-026/blocco-a/plenum-motorizzato/tavola/rel026-canalizzato-plenum-motorizzato-t1.pdf
+  - docs/collaudi/REL-026/blocco-a/plenum-motorizzato/tavola/rel026-canalizzato-plenum-motorizzato-t1.svg
+  - docs/collaudi/REL-026/blocco-a/plenum-motorizzato/tavola/rel026-canalizzato-plenum-motorizzato-t1.dxf
+  - docs/collaudi/REL-026/blocco-a/plenum-motorizzato/tavola/Cartiglio_NoveC_A3-logo.jpg
+  - docs/collaudi/REL-026/blocco-a/plenum-motorizzato/tavola/rel026-canalizzato-plenum-motorizzato-t1-rilievi.md
+
+Formato A3 · tratte 24 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 11 · sormonti 0 · avvisi e regole: DRAWING_TOUCHES_THE_BORDER x1, SHEET_TOO_FULL x1

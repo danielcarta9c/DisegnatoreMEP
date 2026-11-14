@@ -314,8 +314,12 @@ def test_i_simboli_idronici_non_hanno_monconi_da_togliere() -> None:
     con_acqua = {
         voce.symbol_id for voce in catalogo().all() if any(p.domain is Domain.HYDRONIC for p in voce.ports)
     }
+    # Il ventilconvettore canalizzato col lato aria (REL-026, I-300) e' nato dopo, e porta
+    # l'aria e la condensa dell'unita' interna canalizzata: quei monconi, facoltativi,
+    # stanno nei loro gruppi come sull'unita' interna; quelli d'acqua no.
+    misti = {"fan-coil-ducted-air": frozenset({"supply", "return", "drain"})}
     for simbolo_id in con_acqua:
-        assert simboli().get(simbolo_id).porte_col_moncone == frozenset(), simbolo_id
+        assert simboli().get(simbolo_id).porte_col_moncone == misti.get(simbolo_id, frozenset()), simbolo_id
     for simbolo_id in ("split-outdoor-unit", "ducted-indoor-unit", "zone-controller", "electrical-panel",
                        "plant-controller", *(f"zoning-plenum-{n}" for n in range(2, 7))):
         manifesto = simboli().get(simbolo_id).manifest

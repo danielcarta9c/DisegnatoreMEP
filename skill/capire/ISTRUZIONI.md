@@ -251,7 +251,16 @@ Regole di forma:
   Sopra i 35 kW `completa` lo chiede (D-230).
 - **I dati che il vaso vuole** — il contenuto d'acqua dell'impianto, la temperatura
   massima, il dislivello fra il vaso e il punto più alto — non vanno nel grafo: li dai al
-  comando `vaso` dopo `completa`. Se il testo li dice, tienili per quel momento.
+  comando `vaso` dopo `completa`. Se il testo li dice, tienili per quel momento. Lo stesso
+  per **il vaso sanitario** (`vaso --sanitario`, REL-026): la temperatura massima di
+  accumulo, la pressione di rete (o la taratura del riduttore), la taratura della valvola di
+  sicurezza del bollitore; il volume del bollitore sì, quello va sul bollitore (`volume_l`).
+  Il comando conta la dilatazione della sola acqua del bollitore, dall'acqua fredda a 10 °C
+  alla massima di accumulo; **precarica 0,2 bar sotto la pressione di rete** (catalogo tecnico
+  Reflex RE1884en, pp. 48–49: `p0 = pa − 0,2 bar`; I-301); pressione finale il 10 % sotto la
+  taratura della valvola (0,5 bar sotto, fino a 5 bar); la taglia dalla serie d'uso comune
+  (focus tecnico Caleffi 0851415, p. 4). Se il vaso sta lontano dal riduttore, chi installa
+  può scendere fino a 1 bar sotto: lo dici al progettista, non lo decidi tu.
 - Il campo `evidence` che lo schema prevede puoi lasciarlo vuoto: la tracciabilità la
   dai con la tabella di rilettura (§8, passo 6). Nelle assunzioni puoi usare
   `source_message_refs` per citare la frase del testo da cui nasce la voce.
@@ -448,6 +457,14 @@ ci si attaccano — e l'ordine è una decisione di progetto:
   dalle utenze verso la sorgente — e il ritorno esce **rovesciato** senza che nessuno l'abbia
   deciso.
 
+**La via dritta del raccordo è `a`–`b`, e ci passa la dorsale.** In una catena di raccordi la
+dorsale entra da `a` ed esce da `b`; la macchina, o l'utenza, si attacca al **braccio `c`**.
+All'ultimo raccordo, dove la dorsale finisce, sulla via dritta va l'ultima utenza. Non stai
+decidendo il disegno: è l'unico modo perché chi compone possa disegnare il collettore come
+**una linea sola**. Una dorsale scritta sul braccio fa una piega a ogni raccordo, e nessuna
+giacitura del pezzo la raddrizza (visto su una tavola di REL-026: tre ventilconvettori, il
+ritorno col dente a ogni confluenza).
+
 Un **ritorno inverso** (Tichelmann), **due dorsali distinte**, un ordine diverso fra mandata
 e ritorno sono **scelte del progettista**. Si trascrivono **solo se il testo le dice**; se
 non le dice, la distribuzione è una sola e il ritorno specchia la mandata. **Non è una
@@ -637,6 +654,14 @@ all'uscita del quadro, sotto); termostato di zona `room-thermostat` (sul bus); t
 contatto `room-thermostat-contact` (in linea su un'alimentazione, sotto); comando a filo `wired-remote`. Una
 bocchetta per ogni bocchetta del testo: qui il terminale **non** è rappresentativo, perché
 ognuna ha il suo ramo, la sua portata e la sua lunghezza.
+
+**Il canalizzato idronico** (REL-026): un ventilconvettore canalizzato ad acqua con i canali
+dell'aria è `fan-coil-ducted-air` — l'acqua su `in` e `out` come ogni terminale, la mandata
+dell'aria da `supply`, la ripresa su `return`, la condensa da `drain`. Il plenum dopo di lui
+(e dopo un'unità interna) è **motorizzato** se il testo dice serrande, motori o la centrale di
+zona — `zoning-plenum-N`, come sopra —, **di mandata** se il testo lo dice senza serrande né
+motori — `supply-plenum-2` … `supply-plenum-6`; se dice solo «plenum», è una domanda (§6). In
+tutti e due N è il numero delle uscite collegate. Senza canali si resta a `fan-coil-ducted`.
 
 **Le reti e i fluidi.** Ogni linea è una rete, e il fluido dice di che linea si tratta:
 
@@ -944,7 +969,7 @@ resta alle regole.
 
 **Entrano anche, quando il testo li dice, l'aria-aria e l'elettrico e il comando** (§4.8),
 che non sono ferramenta di servizio: i mestieri `refrigerant_generation`,
-`direct_expansion_terminal`, `air_zoning`, `zone_control`, `air_terminal`, `air_return`,
+`direct_expansion_terminal`, `air_zoning`, `air_distribution`, `zone_control`, `air_terminal`, `air_return`,
 `condensate_trap`, `power_source`, `power_isolation`, `power_switching`, `room_contact_control`, `room_control`, `unit_control`,
 `plant_control`, `temperature_sensing`, `outdoor_temperature_sensing`. La **sonda a
 immersione** su una tubazione si appende come un termometro: un `tee-branch` in linea e dal

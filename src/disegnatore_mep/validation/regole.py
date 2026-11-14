@@ -1000,9 +1000,15 @@ def _coppia_in_linea(
     Si guardano le facce del **manifesto ruotato**, che e' come il pezzo sta
     davvero sulla tavola, e solo gli attacchi che il catalogo mette sul
     percorso. Piu' di una coppia non puo' esistere entro
-    `ATTACCHI_DI_UN_ORGANO_IN_LINEA_MAX`: con tre attacchi il terzo sta per
-    forza su una faccia perpendicolare, ed e' il «terzo attacco di lato» che
-    **D-154** nomina.
+    `ATTACCHI_DI_UN_ORGANO_IN_LINEA_MAX`.
+
+    **Il terzo attacco, se c'e', esce di lato**: e' il «terzo attacco di lato» che
+    **D-154** nomina, su una faccia perpendicolare alla coppia. Un pezzo che il
+    terzo attacco lo ha **sulla stessa faccia** di uno della coppia non e' una tre
+    vie: e' il plenum di mandata a due uscite (REL-026, I-300), con l'ingresso da
+    una parte e le due uscite affiancate dall'altra, e nessuna delle due e' «la via
+    dritta» dell'ingresso. Il PO, il 13 novembre 2026: il plenum non e' una tre vie,
+    e l'ingresso sta al centro delle uscite. Un pezzo cosi' non e' soggetto di B4.
     """
     attacchi = _attacchi_di_percorso(definition)
     if len(attacchi) > ATTACCHI_DI_UN_ORGANO_IN_LINEA_MAX:
@@ -1015,6 +1021,13 @@ def _coppia_in_linea(
     for indice, prima in enumerate(attacchi):
         for poi in attacchi[indice + 1 :]:
             if prima in facce and poi in facce and facce[prima] is facce[poi].opposite:
+                terzi = [
+                    facce[altro]
+                    for altro in attacchi
+                    if altro not in (prima, poi) and altro in facce
+                ]
+                if any(faccia in (facce[prima], facce[poi]) for faccia in terzi):
+                    return None
                 return (prima, poi)
     return None
 

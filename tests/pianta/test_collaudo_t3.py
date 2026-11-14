@@ -313,11 +313,13 @@ def test_gli_ingombri_da_confermare_li_scrive_la_tavola(esiti: dict[str, Esito])
 # --- 8. le forature della pianta per la distinta ---------------------------------------------
 
 
-def test_i_tracciati_dicono_gli_attraversamenti_per_il_grafo(esiti: dict[str, Esito]) -> None:
+def test_i_tracciati_dicono_gli_attraversamenti_per_il_grafo(tmp_path: Path) -> None:
     """Le pareti interne forate dal percorso, piu' il foro del pezzo a parete al
     capo (la bocchetta nella tramezza): il dato `attraversamenti` della
-    tubazione, che la distinta conta come pareti interne. Il perimetrale a parte."""
-    esito = esiti["collaudo-t3"]
+    tubazione, che la distinta conta come pareti interne. Il perimetrale a parte.
+    Solo a forature accese (REL-026, B-3): di base sono spente."""
+    accese = _variante(tmp_path, lambda d: d.update(forature=True))
+    esito = disegna_la_pianta(accese, tmp_path / "out", None, dxf=False, png=False)
     dati = _dati(esito)
     per_tratta = {t["tratta"]: t for t in dati["tratte"]}
     perimetrali = {m.id for m in esito.pianta.muri if m.tipo == "perimetrale"}

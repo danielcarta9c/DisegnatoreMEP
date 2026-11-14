@@ -74,6 +74,11 @@
       "name": "Plenum motorizzato di zona"
     },
     {
+      "function": "air_distribution",
+      "prefix": "PL",
+      "name": "Plenum di mandata"
+    },
+    {
       "function": "zone_control",
       "prefix": "CZ",
       "name": "Centrale di zona"

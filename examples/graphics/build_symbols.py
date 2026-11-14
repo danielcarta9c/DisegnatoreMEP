@@ -1843,6 +1843,72 @@ def zoning_plenum_ports(outlets: int) -> list[dict[str, Any]]:
 
 
 ZONING_PLENUM_PORTS = zoning_plenum_ports(5)
+
+
+SOURCE_REL026_SUPPLY_PLENUM = (
+    "proposta della sessione del 13/11/2026 (REL-026, I-300): il disegno del plenum motorizzato "
+    "di zona senza le serrande e senza i motori, con l'ingresso al centro delle uscite (il PO, "
+    "13/11/2026: il plenum non e' una tre vie); forma da approvare dal PO sulla tavola"
+)
+"""La fonte del plenum di mandata non motorizzato, da due a sei uscite."""
+
+SOURCE_REL026_DUCTED_FAN_COIL_AIR = (
+    "proposta della sessione del 13/11/2026 (REL-026, I-300), dall'estensione di lavoro di una "
+    "commessa del 12/11/2026: il corpo dell'unita' interna canalizzata (batteria, ventilatore, "
+    "vaschetta della condensa, collari dei canali) con gli attacchi d'acqua; forma da approvare "
+    "dal PO sulla tavola"
+)
+"""La fonte del ventilconvettore canalizzato col lato aria."""
+
+
+def supply_plenum_inlet(outlets: int) -> float:
+    """La quota dell'ingresso del plenum di mandata: **al centro delle uscite** (il PO, 13
+    novembre 2026, I-300: «il plenum non e' una tre vie»).
+
+    Con un numero dispari di uscite il centro cade sull'uscita di mezzo, e l'ingresso le
+    sta in asse. Con un numero pari cade a mezzo passo di griglia — il passo delle uscite,
+    12,5, e' di cinque passi da 2,5 —, e un attacco fuori griglia l'instradamento non lo
+    raggiunge (D-054): l'ingresso va sulla quota di griglia piu' vicina al centro, e fra
+    le due a pari distanza su quella che e' il centro del riquadro (10 nel plenum a due
+    uscite, 22,5 in quello a quattro, 35 in quello a sei)."""
+    uscite = zoning_plenum_outlets(outlets)
+    centro = (uscite[0] + uscite[-1]) / 2
+    meta_riquadro = zoning_plenum_size(outlets)[1] / 2
+    sotto = math.floor(round(centro / GRID_MM, 6)) * GRID_MM
+    candidate = (sotto, sotto + GRID_MM)
+    return min(candidate, key=lambda quota: (round(abs(quota - centro), 6), abs(quota - meta_riquadro)))
+
+
+def supply_plenum_ports(outlets: int) -> list[dict[str, Any]]:
+    """L'ingresso a sinistra al centro delle uscite, e le uscite a destra alle quote del
+    plenum di zona: i due plenum sono lo stesso riquadro."""
+    size = zoning_plenum_size(outlets)
+    return [
+        port_at("in", "left", supply_plenum_inlet(outlets), *size),
+        *(
+            port_at(f"out_{indice + 1}", "right", y, *size)
+            for indice, y in enumerate(zoning_plenum_outlets(outlets))
+        ),
+    ]
+
+
+DUCTED_FAN_COIL_AIR_PORTS = [
+    # Gli attacchi d'acqua alle quote delle linee frigorifere dell'unita' interna, il
+    # resto dove l'unita' interna li ha: le due macchine sono lo stesso riquadro.
+    port_at("in", "left", 7.5, *SPLIT_UNIT),
+    port_at("out", "left", 17.5, *SPLIT_UNIT),
+    port_at("supply", "right", 12.5, *SPLIT_UNIT),
+    port_at("return", "top", 20.0, *SPLIT_UNIT),
+    port_at("drain", "bottom", 22.5, *SPLIT_UNIT),
+]
+DUCTED_FAN_COIL_AIR_CONTROL_PORTS = [
+    port_at("consenso_in", "left", 25.0, *SPLIT_UNIT),
+    port_at("consenso", "right", 25.0, *SPLIT_UNIT),
+    port_at("power", "bottom", 7.5, *SPLIT_UNIT),
+    port_at("bus", "bottom", 32.5, *SPLIT_UNIT),
+]
+"""Le porte di comando del ventilconvettore canalizzato col lato aria: alimentazione e bus
+sotto, ai due lati dello scarico; il consenso in entrata a sinistra e in uscita a destra."""
 ZONE_CONTROLLER_PORTS = [
     port_at("serrande", "top", ZONE_CONTROLLER[0] / 2, *ZONE_CONTROLLER),
     port_at("p1p2", "left", 10.0, *ZONE_CONTROLLER),
@@ -2039,6 +2105,43 @@ def zoning_plenum_body(w: float, h: float, ports: list[dict[str, Any]]) -> str:
         )
     # La porta dei motori sta sul bordo inferiore del plenum: il bordo la tocca.
     return "".join(parts)
+
+
+def supply_plenum_body(w: float, h: float, ports: list[dict[str, Any]]) -> str:
+    """Plenum di mandata non motorizzato (REL-026, I-300): il plenum di zona senza le
+    serrande — l'ingresso con il suo collare, il collettore interno e, su ogni uscita, la
+    linea diritta fino alla faccia."""
+    porte = _by_id(ports)
+    ingresso = porte["in"]
+    collettore_x = w / 2
+    uscite = [item for item in ports if item["id"].startswith("out_")]
+    y_in = ingresso["y_mm"]
+    collettore = sorted((uscite[0]["y_mm"], uscite[-1]["y_mm"], y_in))
+    parts = [
+        f'<rect x="{n(MACHINE_SHELL_INSET)}" y="0" width="{n(w - 2 * MACHINE_SHELL_INSET)}" height="{n(h)}"/>',
+        _of_port(ingresso, _segment(0, y_in, MACHINE_SHELL_INSET, y_in) + _air_collar(ingresso, 3.0)),
+        _segment(MACHINE_SHELL_INSET, y_in, collettore_x, y_in),
+        _segment(collettore_x, collettore[0], collettore_x, collettore[-1]),
+    ]
+    for item in uscite:
+        y = item["y_mm"]
+        parts.append(
+            _segment(collettore_x, y, w - MACHINE_SHELL_INSET, y)
+            + _of_port(item, _segment(w - MACHINE_SHELL_INSET, y, w, y))
+        )
+    return "".join(parts)
+
+
+def ducted_fan_coil_air_body(w: float, h: float, ports: list[dict[str, Any]]) -> str:
+    """Ventilconvettore canalizzato col lato aria (REL-026, I-300): il corpo dell'unita'
+    interna canalizzata, e gli attacchi d'acqua al posto delle linee frigorifere.
+
+    I monconi d'aria e di condensa stanno nei loro gruppi `data-port` (facoltativi: una
+    porta libera non disegna niente); quelli d'acqua no, perche' sono obbligatori e
+    perche' la tavola dell'elettrico li toglie dalla loro marca (`data-moncone`)."""
+    acqua = [item for item in ports if item["id"] in ("in", "out")]
+    resto = [item for item in ports if item not in acqua]
+    return ducted_indoor_body(w, h, resto) + "".join(_stub(item, w, h, MACHINE_SHELL_INSET) for item in acqua)
 
 
 def _display(x: float, y: float) -> str:
@@ -3437,6 +3540,35 @@ SYMBOLS: list[SymbolSpec] = [
         )
         for uscite in ZONING_PLENUM_OUTLET_COUNTS
     ),
+    # --- REL-026, i rilievi d'uso della 2.0.0 (I-300): proposte, le approva il PO ---
+    # Il plenum di mandata non motorizzato da due a sei uscite: il riquadro e le uscite
+    # del plenum di zona, senza serrande e senza motori, l'ingresso al centro delle uscite.
+    *(
+        SymbolSpec(
+            id=f"supply-plenum-{uscite}",
+            name=f"Plenum di mandata a {NUMERI_IN_LETTERE[uscite]} uscite",
+            width_mm=zoning_plenum_size(uscite)[0],
+            height_mm=zoning_plenum_size(uscite)[1],
+            inline=False,
+            ports=supply_plenum_ports(uscite),
+            body=supply_plenum_body(*zoning_plenum_size(uscite), supply_plenum_ports(uscite)),
+            source=SOURCE_REL026_SUPPLY_PLENUM,
+            allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+        )
+        for uscite in ZONING_PLENUM_OUTLET_COUNTS
+    ),
+    SymbolSpec(
+        id="fan-coil-ducted-air",
+        name="Ventilconvettore canalizzato",
+        width_mm=SPLIT_UNIT[0],
+        height_mm=SPLIT_UNIT[1],
+        inline=False,
+        ports=DUCTED_FAN_COIL_AIR_PORTS,
+        body=ducted_fan_coil_air_body(*SPLIT_UNIT, DUCTED_FAN_COIL_AIR_PORTS),
+        source=SOURCE_REL026_DUCTED_FAN_COIL_AIR,
+        allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+        control_ports=DUCTED_FAN_COIL_AIR_CONTROL_PORTS,
+    ),
     SymbolSpec(
         id="zone-controller",
         name="Centrale di zona",
@@ -3666,6 +3798,11 @@ def corpo_coi_monconi_marcati(spec: SymbolSpec) -> str:
         return spec.body
     body = spec.body
     for porta in spec.ports:
+        if f'<g data-port="{porta["id"]}">' in body:
+            # Il moncone sta gia' nel suo gruppo `data-port` (il lato aria del
+            # ventilconvettore canalizzato, REL-026): un gruppo dentro l'altro il
+            # registro non lo accetta, e la porta libera si toglie gia' da li'.
+            continue
         px, py = porta["x_mm"], porta["y_mm"]
         for linea in re.findall(r"<line [^>]*/>", body):
             numeri = dict(re.findall(r'(x1|y1|x2|y2)="(-?[\d.]+)"', linea))

@@ -1,94 +1,104 @@
-# REL-024 — La 2.0: la skill che si consegna ai progettisti
+# REL-026 — La 2.1.0: i rilievi d'uso della 2.0.0 su una commessa
 
-> **Scritto il 6 novembre 2026**, dopo la 1.15.0. Il PO: «per me la 2.0 è consolidamento. Voglio iniziare a
-> distribuirla ai miei progettisti. fino adesso l'ho usata solo io» (I-295). La skill non cambia mestiere: cambia
-> chi la usa. Fino alla 1.15.0 l'ha usata una persona sola, che conosce ogni decisione; dalla 2.0 la usano
-> progettisti che non hanno letto niente di questo repository.
+> **Scritto il 13 novembre 2026.** Il PO ha usato la 2.0.0 su una commessa (BD.RM.260, tavola IM.03) e la sessione che
+> la usava ha lavorato su una copia della skill, annotando che cosa ha dovuto cambiare e che cosa manca (I-300). Gli
+> allegati sono in `docs/input-pm/2026-11-13-rilievi-bd-rm-260/`: `LEGGIMI.txt` (le richieste, con le priorità decise
+> dal PO il 12 novembre), `modifiche-alla-skill.diff` (il codice cambiato nella copia), `estendi_catalogo.py` (i pezzi
+> aggiunti al catalogo).
 
-**Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
-**Stato:** **IN CORSO** — la **2.0.0** è uscita il 7 novembre 2026 per i progettisti (I-299): è la 1.15.2 con il numero della 2.0. La fase 1 è chiusa; le fasi 2, 3 e 4 escono nelle 2.0.x, e la fase 5 diventa la raccolta dei rilievi dei progettisti sulla 2.0.0.
-**Base:** `main` dopo la 1.15.0 (PR #91).
-**Approvazione della fusione:** **del PO**, guardando le tavole (D-146, D-147), a ogni PR.
-**Il numero:** la **2.0.0** è uscita prima del previsto, su richiesta del PO (I-299: «dammi la 2.0 da dare ai progettisti»); quello che resta del consolidamento esce nelle 2.0.x, le funzioni nuove di I-297 nella 2.1 (`REL-025`). La convenzione resta di tre cifre.
+**Da svolgere:** l'agente unico (**D-147**) come PM; lo sviluppo esecutivo ad **agenti della sessione** (**D-152**),
+su disposizione del PO (I-300): quello che riferiscono non è una misura finché la sessione non l'ha rieseguito.
+**Stato:** **CONSEGNATO** — approvato dal PO il 14 novembre 2026, viste le tavole («Tutto perfetto fondi su main»),
+e fuso su `main` con la PR #95. **Non c'è un pacchetto attivo successivo**: lo sceglie il PO (`HANDOFF.md`, «Il
+prossimo»). Chi apre una sessione nuova, prima di lavorare, lo chiede.
+**Base:** `main` con la 2.0.0 (`a43e414`, PR #94). Ramo: `claude/magical-wright-ffrf86`.
+**Approvazione della fusione:** **del PO**, guardando le tavole (D-146, D-147) e una spiegazione in termini semplici.
+**Il numero:** **2.1.0** (I-300). Il contenuto di `REL-025` slitta alla 2.2. `REL-024` è sospeso
+(`docs/plans/pacchetti/REL-024.md`): le sue fasi 2, 3 e 4 riprendono dopo.
 
-## Il punto di partenza (misurato il 6 novembre 2026 su `main`, la 1.15.0)
+## Il caso di prova
 
-| controllo | esito |
-|---|---|
-| `pytest` | 2889 passed, 15 skipped, 11 xfailed |
-| `ruff check src tests` | verde; `ruff check .` 59 errori negli script di `docs/collaudi/`; 258 file non formattati |
-| `mypy` (strict, `pyproject.toml`) | **fermo sugli stub di numpy** prima di controllare; con `--python-version 3.13` **50 errori in 13 file** |
-| CI | **assente**: in `.github/` c'è solo il modello della PR |
-| build della skill | riproducibile: lo ZIP ricostruito ha lo sha256 di `releases/latest` (`56514abd…`), 150 file su 200 |
-| tag git | nessuno |
-| prova di fumo | lo ZIP della 1.15.0 in una cartella pulita, Python con il solo pydantic: T1 di `REL-023` dal grafo al PDF, A3, 0 cedute, 0 bloccanti; ezdxf **installato da PyPI al volo** |
-| valutazioni della skill | le tre di `skill/evals/`, da `REL-001` (settembre): mai rifatte sulle release dopo |
-| banco delle tavole | `docs/collaudi/REL-011/banco.py`: uno strumento di sessione, non una prova |
-| `skill/SKILL.md` | 459 righe su 500 |
+Il grafo e la pianta di BD.RM.260 **non entrano nel repository** (I-300: «solo in sessione»). Ogni voce si prova su
+un caso del repository (`examples/pianta/`, i casi del banco) o su un caso anonimo scritto apposta; dove la commessa
+vera serve a misurare (i 72 avvisi di `pianta --grafo`, il retino sulle sagome), la misura si fa in sessione sui file
+del PO, e il rapporto dice se è stata fatta.
 
-## Le cinque fasi
+## Che cosa si fa
 
-### Fase 1 — La messa in sicurezza (nessuna tavola cambia)
+Tre blocchi. I primi due non si toccano fra loro e si sviluppano in parallelo; il terzo viene dopo il secondo.
 
-1. **La CI** su GitHub Actions, a ogni PR e su `main`: `pytest`, `ruff check src tests`, `mypy`, la costruzione della
-   skill con `tests/test_le_release.py`. Una PR rossa non si fonde.
-2. **`mypy` verde davvero**: la configurazione che non si ferma sugli stub di terzi, e i 50 errori corretti nel codice,
-   non silenziati.
-3. **Il banco diventa una prova**: le tavole di riferimento (i cinque impianti, la villetta, il T1) rifatte a ogni
-   PR e confrontate con quelle registrate; una differenza non voluta è rossa, una voluta si registra con la tavola nella
-   PR.
-4. **La prova senza rete**: che cosa succede alla skill in un ambiente senza PyPI. O le dipendenze viaggiano nello ZIP
-   dentro il limite dei 200 file, o la skill lo dice al progettista con un messaggio chiaro, prima di cominciare.
+### Blocco A — catalogo, schema, vaso (fuori dalla pianta)
 
-### Fase 2 — La prova dell'agente, che resta agli atti
+| # | voce | origine |
+|---|---|---|
+| A-1 | **Tre pezzi nuovi**, simbolo e voce: il ventilconvettore canalizzato idronico con il lato aria (`fan-coil-ducted-air`), il plenum di mandata non motorizzato a 2 e a 3 uscite (`supply-plenum-2`, `supply-plenum-3`), la famiglia `air_distribution` con la sigla **PL**. Si parte da `estendi_catalogo.py`. Forma e sigla sono **proposte**, da giudicare sulla tavola. | LEGGIMI 1 |
+| A-2 | **Il plenum a due uscite ha l'ingresso centrato** fra le due uscite, come quello a tre (I-300, risposta del PO): il plenum non è una tre vie, e B4 non lo deve trattare da tale. Il plenum di zona motorizzato che c'è già **non si tocca**: se ha lo stesso difetto si scrive nel rapporto. | LEGGIMI B3 |
+| A-3 | **Le porte di comando non contano come attraversamento** nel calcolo delle portate: una pompa di calore con `power` e una sola uscita di comando collegata (`out_acs`) restava senza portata sul primario. Con la prova che lo riproduce. | LEGGIMI 2, diff |
+| A-4 | **I terminali con marca e modello entrano nella tabella delle apparecchiature**, con potenza e portata. | LEGGIMI 3, diff |
+| A-5 | **Il vaso sanitario**: il comando `vaso` dimensiona anche il vaso del bollitore ACS, da volume del bollitore, temperatura massima di accumulo, pressione di rete, taratura della valvola di sicurezza. Stesso impianto del vaso di riscaldamento (`vaso/calcolatore.py`): costanti con un nome, fonti dichiarate, e dove una fonte non è stata letta **lo dice**. Il metodo è una **proposta al PO**: il rapporto porta la formula, i margini e un esempio numerico. | LEGGIMI M1 |
+| A-6 | **La distinta con le voci nuove**: i tre pezzi di A-1 in una distinta, con la colonna Fornitura; le prove sulle modifiche di A-3 e A-4. | LEGGIMI B5 |
 
-5. **Sei impianti tipo in camera pulita**, con Opus e Sonnet, dal testo del progettista alla tavola: PdC piccola con
-   volano e bollitore, cascata, ibrido caldaia + PdC, aria-aria, l'elettrico, il costruito. Testi scritti **come li
-   scriverebbe un progettista che non conosce la skill**. Gli esiti — tavole, domande fatte, tempi — diventano il
-   riferimento con cui si giudica ogni release successiva (`skill/evals/`).
+### Blocco B — la pianta, prima parte
 
-### Fase 3 — Il debito di decisioni, chiuso col PO
+| # | voce | origine |
+|---|---|---|
+| B-1 | **Il nome corto dei fluidi idronici** nella tabella delle tratte (la scritta lunga finiva sulla colonna «Da»). | LEGGIMI 4, diff |
+| B-2 | **`sagome_muri`**: campo facoltativo della pianta, poligoni in metri. Se c'è, il retino dei muri si disegna sulle sagome e non sui rettangoli asse-spessore di `muri`, che restano per l'instradamento. Vale nei riquadri di dettaglio (sagome ritagliate) e nel DXF (HATCH sul layer dei muri). Lo schema `schemas/pianta.schema.json` e le istruzioni della pianta aggiornati. **`muri_visibili` non entra** (LEGGIMI B4: è rimasto dalla rev02 e non serve). | LEGGIMI 5, B4, diff |
+| B-3 | **Le forature spente di base**: niente F1/F2 sulla tavola, niente elenco, niente conteggio in distinta. Si accendono su richiesta del progettista, con un campo della pianta. Il costo della foratura nell'instradamento resta: è la scelta del percorso, non una scritta. | LEGGIMI B1 |
+| B-4 | **Le lunghezze dalla pianta al grafo, in un passaggio solo.** Con `--grafo`, dopo la pianta le lunghezze misurate si scrivono nel grafo, con l'elenco di che cosa è cambiato; quelle date a mano dal progettista **restano** e vengono segnalate quando la pianta misura altro. Il grafo deve quindi dire da dove viene una lunghezza. Solo le lunghezze (e gli attraversamenti, se le forature sono accese): **la connettività non si tocca** (`docs/ARCHITETTURA-DEL-PIANO.md` §2). Un'opzione lascia il grafo in sola lettura. Schema e distinta, rifatti dopo, leggono i numeri nuovi. | LEGGIMI A1 |
+| B-5 | **Il confronto con grafo e distinta non cambia il foglio.** Oggi `pianta --grafo` sulla commessa dà 72 avvisi e porta il foglio da A2 ad A1; `--distinta` lo porta in A1. Gli avvisi del confronto si riassumono sulla tavola e stanno per esteso nei dati; il formato lo decide il disegno, non l'elenco degli avvisi. | LEGGIMI A1, B2 |
 
-6. Una per una, con la domanda e la proposta: D-225 (sospesa), D-236 (proposta fusa, da confermare), il contenuto di
-   D-231; il glicole e il materiale sopra i 35 kW; le voci del canalizzato DA PREZZARE; il ritegno sul ricircolo; il
-   gruppo di riempimento nei soli riscaldamento. Quello che il PO non decide va in «limiti noti», non resta muto.
+### Blocco C — la pianta, seconda parte (dopo il blocco B)
 
-### Fase 4 — La skill per chi non l'ha scritta
+| # | voce | origine |
+|---|---|---|
+| C-1 | **Le scritte che non stanno in pianta vanno fuori**, nello spazio bianco attorno alla pianta, collegate al pezzo da una linea di richiamo, incolonnate e senza incroci. **Niente tavole di dettaglio aperte in automatico**: il riquadro di dettaglio si fa solo se il progettista lo chiede (`dettagli` nella pianta). I numeri cerchiati con il testo in legenda **restano**. | LEGGIMI M2 |
+| C-2 | **Una scritta sola per due tubi che corrono insieme** (M1/R1). | LEGGIMI M2 |
+| C-3 | **La base architettonica della tavola MEP** (vedi sotto). Sostituisce «le sagome lette dal disegno di base con un algoritmo»: il PO, il 13 novembre, ha mostrato cinque planimetrie vere e ha disposto chi fa che cosa. | LEGGIMI M3, 6; I-300 (seconda parte) |
 
-7. **La guida del progettista**: una pagina sola — che cosa chiedere, che cosa la skill domanda, che cosa consegna, che
-   cosa non fa mai, i modelli che funzionano (non Haiku).
-8. **I limiti noti** e le **note di release leggibili** (che cosa cambia per chi disegna, senza I- e D-).
-9. **I documenti interni riallineati**: `PROJECT_STATE.md` (fermo alla 1.5), `docs/ARCHITETTURA-DEL-PIANO.md` (il pezzo
-   3 dato per inesistente), `HANDOFF.md` accorciato davvero.
-10. **`skill/SKILL.md`** sotto le 400 righe, con il dettaglio nei riferimenti, per lasciare spazio alle 2.x.
+#### C-3, com'è disposta dal PO (I-300, 13 novembre)
 
-### Fase 5 — La release candidate
+> «a volte sono catastali ben fatti a volte disegni a mano altre volte foto di catastali. per questo dicevo che la parte
+> interpretativa va fatta da agente AI (con indicazioni di metodo dalla skill - magari la skill dice di usare un sub
+> agente in modo da non appesantire il contesto di lavoro) poi quello che va standardizzato è l'output della base
+> grafica. Colore appena sbiadito della planimetria come si fa con gli xref architettonici in ambito mep, muri
+> grigiolini, finestre celestine, rimuovere arredi e lasciare solo i nomi delle stanze con i loro mq.»
 
-11. **2.0.0-rc1** consegnata dal PO a due o tre progettisti su commesse vere; i loro rilievi raccolti in un posto solo;
-    le correzioni; la **2.0.0** con il tag git, la release su GitHub, `releases/latest/`. Poi la potatura dei rami
-    vecchi (una quarantina, già fusi).
+Le cinque planimetrie (in sessione, **mai nel repository**: portano nomi e codici fiscali): il vettoriale di un
+architetto con gli arredi; due catastali vettoriali, uno con tre piani sullo stesso foglio; un disegno a mano quotato,
+scansito; la fotografia di un catastale stampato.
 
-### Un difetto della distinta, dal progetto reale (I-297)
-
-12. **FATTO** (1.15.2) — **`compreso_in` vale per ogni pezzo, non solo per le macchine.** Oggi toglie soltanto la riga della sezione A
-    (`src/disegnatore_mep/distinta/calcolo.py`, `_apparecchiature`): un accessorio dichiarato compreso nella pompa di
-    calore — il filtro a Y, i pozzetti — resta in distinta con il suo corredo. È un'uscita sbagliata su un dato che il
-    progettista ha già dato: rientra nel consolidamento. Il resto di I-297 è la 2.1 (`docs/plans/pacchetti/REL-025.md`).
-
-## Le decisioni del PO sulla distribuzione (I-296, 6 novembre 2026)
-
-- **Il repository resta pubblico**, con i prezzi e le fatture della commessa PR.BG.017 («no problem»).
-- **I progettisti vedono i costi** della distinta (`distinta --costo`).
-- **La distribuzione, la skill `nove-c-report` e il canale dei rilievi dei progettisti li cura il PO**: la skill dei
-  report l'hanno già tutti. Per la fase 5 resta da sapere, al momento della rc, chi la prova e dove arrivano i rilievi.
+- **Leggere la planimetria è un pezzo AI**, con la forma di `skill/capire/` (`docs/ARCHITETTURA-DEL-PIANO.md` §3):
+  `skill/base/ISTRUZIONI.md` che bastano da sole, `CONSEGNA.md` che dice che cosa si restituisce e come si giudica, la
+  prova in camera pulita agli atti. La skill dice di affidarlo a **un sub-agente**, perché le immagini non pesino sul
+  contesto di chi disegna l'impianto. Il metodo comprende la **taratura** (la barra dei 10 metri del catastale, le
+  quote del disegno a mano, la scala dichiarata) e che cosa fare quando la planimetria non basta: una **domanda
+  dichiarata**, mai una misura inventata.
+- **Quello che l'agente consegna è la base in dati**, dentro il JSON della pianta: le sagome dei muri
+  (`sagome_muri`, B-2), le aperture con il loro tipo, le stanze con il nome. I mq li calcola il motore dal poligono.
+  Gli arredi non si trascrivono.
+- **Disegnare la base è deterministico, e la grafica è una sola** qualunque fosse l'ingresso: muri grigio chiaro,
+  finestre celesti, porte a tratto fine, nome del locale con i mq, tutto in mezzatinta sotto l'impianto. I colori sono
+  **proposte**, da giudicare sulla tavola.
+- **Il controllo è a vista**: un comando sovrappone la base ridisegnata alla planimetria d'origine, e l'agente (e il
+  PO) guardano se combacia. Gli aiuti deterministici — leggere i tratti di un PDF vettoriale — sono **aiuti** per
+  l'agente, non il lettore.
+- **La prova**: le cinque planimetrie del PO lette in camera pulita, in sessione; nel repository entra un caso
+  anonimo.
 
 ## Fuori
 
-Nessuna capacità nuova (quelle di I-297 sono la 2.1, `REL-025`): l'anello revisore → pianificatore (`DRAW-016` punti 2 e 3), l'espansione diretta e il VRV, le
-famiglie di `docs/DEFERRED.md` §1, il corredo standard di `REL-023` sono delle 2.x.
+La base vettoriale dell'architetto nel DXF (`base_e_retini_dxf.py`): resta uno script di commessa (LEGGIMI, «non
+richiesto»). Il contenuto di `REL-025` (la 2.2). Le fasi aperte di `REL-024`.
 
-## Criteri di accettazione, per ogni PR
+## Che cosa decide il PO, e non la sessione
 
-Le tavole per prime; suite a 0 failed senza skip o xfail nuovi; la CI verde; nessun dato di cliente nuovo nel diff;
-`tests/test_le_release.py` verde se c'è una release. Per la 2.0.0: le cinque fasi chiuse, ciascuna con il comando e il
-suo output nel rapporto (`docs/collaudi/REL-024/RAPPORTO.md`).
+La forma dei tre simboli nuovi e la sigla PL; il plenum a due uscite centrato; il metodo del vaso sanitario; come
+escono le scritte fuori pianta. Tutto si mostra sulla tavola o nella spiegazione, **prima** della fusione.
+
+## Criteri di accettazione
+
+Le tavole per prime; suite a 0 failed senza skip o xfail nuovi; `ruff check src tests` e `mypy` verdi; il banco verde,
+con le tavole cambiate **registrate e mostrate** (`scripts/banco.py --registra`); nessun dato di cliente nel diff; la
+2.1.0 costruita con `scripts/costruisci-skill.py` e `tests/test_le_release.py` verde; la CI verde sulla PR. Ogni
+criterio con il comando e il suo output in `docs/collaudi/REL-026/RAPPORTO.md`.

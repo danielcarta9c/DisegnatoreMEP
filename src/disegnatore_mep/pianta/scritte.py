@@ -19,6 +19,11 @@ Se nemmeno il richiamo corto trova posto, la scritta va **in legenda**: accanto
 alla linea (o al pezzo) un numero cerchiato, e il testo nella colonna, sotto
 lo stesso numero. Un richiamo lungo che attraversa mezza stanza non si legge
 (collaudo REL-012, t1): un numero si'.
+
+Se non c'e' posto nemmeno per il numero, la scritta torna **senza posto**
+(`libera=False`) e non occupa niente: la tavola la porta **fuori dalla pianta**,
+nello spazio bianco attorno, con il suo richiamo (`fuori_pianta.py`, REL-026 C-1).
+Fino alla 2.0 apriva da sola un riquadro di dettaglio.
 """
 
 from __future__ import annotations
@@ -79,6 +84,10 @@ class ScrittaPosata:
     il numero, `x` il bordo sinistro del cerchio), il testo intero sta nella
     colonna (`in_legenda`)."""
     in_legenda: str | None = None
+    richiamo_fuori: tuple[tuple[float, float], ...] | None = None
+    """Una scritta fuori dalla pianta (REL-026, C-1): il suo richiamo, dal punto
+    d'attacco sull'oggetto al bordo della scritta, due o tre punti (al piu' un
+    gomito). Allora `richiamo` e' None: il richiamo corto e' un'altra cosa."""
 
 
 def misura(testo: str, corpo_pt: float, grassetto: bool) -> tuple[float, float, float]:
@@ -139,6 +148,22 @@ class Ingombri:
     richiamo puo' attraversare: quelli sovrapposti a un suo capo, sotto cui la
     linea passa (il plenum, per il cavo dalla centrale che gli sta sopra)."""
     _indice: dict[tuple[int, int], list[tuple[str, int]]] = field(default_factory=dict)
+
+    def copia(self) -> Ingombri:
+        """Una copia da provare: le scritte fuori dalla pianta si provano in piu' ordini
+        (`fuori_pianta.py`), e si tiene il migliore."""
+        return Ingombri(
+            area=self.area, segmenti=list(self.segmenti), rettangoli=list(self.rettangoli),
+            scritte=list(self.scritte), legenda=list(self.legenda), muri=set(self.muri), ammessi=self.ammessi,
+            ammessi_al_richiamo=self.ammessi_al_richiamo,
+            _indice={cella: list(dentro) for cella, dentro in self._indice.items()},
+        )
+
+    def prendi(self, altri: Ingombri) -> None:
+        """Diventa `altri`: la prova che si tiene."""
+        for nome in ("area", "segmenti", "rettangoli", "scritte", "legenda", "muri", "ammessi",
+                     "ammessi_al_richiamo", "_indice"):
+            setattr(self, nome, getattr(altri, nome))
 
     def _indicizza(self, tipo: str, numero: int, r: Rettangolo) -> None:
         for cella in _celle(r):
@@ -379,9 +404,7 @@ def _posa_accanto(
     if numero is not None:
         return numero
     x, y = primo if primo is not None else tratti[0][0]
-    r = _riquadro(x, y, larghezza, salita, discesa)
-    ingombri.metti_scritta(r)
-    return ScrittaPosata(testo, x, y, corpo_pt, grassetto, r, libera=False)
+    return _senza_posto(testo, x, y, corpo_pt, grassetto, larghezza, salita, discesa)
 
 
 def _dentro_al_pezzo(
@@ -501,9 +524,24 @@ def _posa_intorno(
             return ScrittaPosata(str(numero_scritto), round(x, 3), round(y, 3), corpo_pt, True, r,
                                  numero=numero_scritto, in_legenda=testo)
     x, y = primo if primo is not None else (x1 + ARIA_MM, base_mezzo)
-    r = _riquadro(x, y, larghezza, salita, discesa)
-    ingombri.metti_scritta(r)
-    return ScrittaPosata(testo, x, y, corpo_pt, grassetto, r, libera=False)
+    return _senza_posto(testo, x, y, corpo_pt, grassetto, larghezza, salita, discesa)
+
+
+def _senza_posto(
+    testo: str, x: float, y: float, corpo_pt: float, grassetto: bool, larghezza: float, salita: float,
+    discesa: float,
+) -> ScrittaPosata:
+    """La scritta che in pianta non ha posto: il primo posto provato, `libera=False`, e
+    **non occupa niente** — la tavola la porta fuori dalla pianta (REL-026, C-1), e solo
+    se nemmeno fuori c'e' posto la rimette qui (`occupa`)."""
+    return ScrittaPosata(testo, x, y, corpo_pt, grassetto, _riquadro(x, y, larghezza, salita, discesa),
+                         libera=False)
+
+
+def occupa(posata: ScrittaPosata, ingombri: Ingombri) -> None:
+    """Una scritta senza posto ne' in pianta ne' fuori resta dove era stata provata, e
+    occupa quel posto: il controllo la conta (scritte su linee o su scritte)."""
+    ingombri.metti_scritta(posata.riquadro)
 
 
 def posa_dentro(
@@ -520,6 +558,82 @@ def posa_dentro(
         if ingombri.libero(r):
             return _posata(testo, x, y, corpo_pt, grassetto, r, ingombri)
     return None
+
+
+INTERLINEA_DEI_LOCALI_MM = 2 * ARIA_MM + 0.1
+"""Lo spazio fra le due righe del nome di un locale: l'aria delle due scritte e un filo,
+cosi' i loro riquadri non si toccano e il controllo non le conta una sopra l'altra."""
+
+
+def ingombro_su_due_righe(sopra: str, sotto: str, corpo_pt: float) -> tuple[float, float]:
+    """Larghezza e altezza del nome di un locale scritto su due righe, in millimetri."""
+    largo_sopra, salita, discesa = misura(sopra, corpo_pt, False)
+    largo_sotto, _, _ = misura(sotto, corpo_pt, False)
+    return max(largo_sopra, largo_sotto), 2 * (salita + discesa) + INTERLINEA_DEI_LOCALI_MM
+
+
+def posa_dentro_su_due_righe(
+    sopra: str, sotto: str, corpo_pt: float, candidati: Iterable[tuple[float, float]], ingombri: Ingombri,
+) -> tuple[ScrittaPosata, ScrittaPosata] | None:
+    """Il nome di un locale su due righe — il nome sopra, zona e mq sotto, centrate sullo
+    stesso punto — nel primo dei candidati dove tutte e due stanno libere (REL-026, C-3):
+    un locale attraversato da una linea tiene i suoi mq invece di perderli."""
+    largo_sopra, salita, discesa = misura(sopra, corpo_pt, False)
+    largo_sotto, _, _ = misura(sotto, corpo_pt, False)
+    passo = (salita + discesa + INTERLINEA_DEI_LOCALI_MM) / 2
+    for cx, cy in candidati:
+        righe = []
+        for testo, largo, centro_y in ((sopra, largo_sopra, cy - passo), (sotto, largo_sotto, cy + passo)):
+            x, y = cx - largo / 2, centro_y + (salita - discesa) / 2
+            righe.append((testo, x, y, _riquadro(x, y, largo, salita, discesa)))
+        if all(ingombri.libero(r) for _, _, _, r in righe):
+            prima, seconda = (_posata(testo, x, y, corpo_pt, False, r, ingombri) for testo, x, y, r in righe)
+            return prima, seconda
+    return None
+
+
+CORRONO_INSIEME = 0.8
+"""Due tratte corrono insieme se per almeno questa parte del loro percorso hanno
+l'altra accanto (REL-026, C-2): «(quasi) tutto il percorso»."""
+
+
+def affiancate(
+    a: Sequence[Sequence[tuple[float, float]]], b: Sequence[Sequence[tuple[float, float]]], entro: float,
+    campione: float,
+) -> float:
+    """La parte dei percorsi `a` e `b` (le spezzate, in metri) che ha l'altro accanto:
+    parallelo, a non piu' di `entro`, di fianco. Si misura a campioni ogni `campione`,
+    su tutti e due: 1 vuol dire che corrono insieme da un capo all'altro."""
+
+    def segmenti(linee: Sequence[Sequence[tuple[float, float]]]) -> list[tuple[tuple[float, float], tuple[float, float]]]:
+        return [(p, q) for punti in linee for p, q in zip(punti, punti[1:], strict=False) if p != q]
+
+    def accanto(punto: tuple[float, float], orizzontale: bool,
+                altri: list[tuple[tuple[float, float], tuple[float, float]]]) -> bool:
+        x, y = punto
+        for p, q in altri:
+            if orizzontale:
+                parallelo = abs(p[1] - q[1]) < 1e-9 and 1e-9 < abs(p[1] - y) <= entro + 1e-9
+                di_fianco = min(p[0], q[0]) - 1e-9 <= x <= max(p[0], q[0]) + 1e-9
+            else:
+                parallelo = abs(p[0] - q[0]) < 1e-9 and 1e-9 < abs(p[0] - x) <= entro + 1e-9
+                di_fianco = min(p[1], q[1]) - 1e-9 <= y <= max(p[1], q[1]) + 1e-9
+            if parallelo and di_fianco:
+                return True
+        return False
+
+    totale = vicini = 0
+    for mie, altre in ((segmenti(a), segmenti(b)), (segmenti(b), segmenti(a))):
+        for p, q in mie:
+            orizzontale = abs(p[1] - q[1]) < 1e-9
+            lunghezza = abs(q[0] - p[0]) + abs(q[1] - p[1])
+            passi = max(1, round(lunghezza / campione))
+            for indice in range(passi):
+                t = (indice + 0.5) / passi
+                totale += 1
+                if accanto((p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t), orizzontale, altre):
+                    vicini += 1
+    return vicini / totale if totale else 0.0
 
 
 def _posata(

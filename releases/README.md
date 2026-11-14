@@ -113,3 +113,7 @@ Il comando della skill li riapre da sé.
   con la PdC) non esce più in distinta (I-297). Tavole identiche alla 1.15.1. 150 file.
 - **2.0.0** — 7 novembre 2026 (`REL-024`, I-299): **la versione da dare ai progettisti** — la 1.15.2 con il numero della
   2.0, tavole identiche. Il consolidamento che resta esce nelle 2.0.x, le funzioni nuove di I-297 nella 2.1. 150 file.
+- **2.1.0** — 13 novembre 2026 (`REL-026`, I-300): **i rilievi d'uso della 2.0.0 su una commessa** — la base
+  architettonica letta da un sub-agente e ridisegnata in una grafica sola, le scritte fuori pianta col richiamo, le
+  lunghezze dalla pianta al grafo, il ventilconvettore canalizzato idronico e il plenum di mandata da 2 a 6 uscite,
+  il vaso sanitario. Nel banco cambia la sola pianta del collaudo T3. 155 file.

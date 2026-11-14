@@ -404,32 +404,48 @@ def test_il_controllo_trova_una_linea_sopra_un_pezzo() -> None:
     assert any("sopra un pezzo" in b for b in rilievi.bloccanti)
 
 
-def test_dove_1_50_e_troppo_fitto_c_e_il_dettaglio_a_1_20(esiti: dict[str, Esito]) -> None:
-    """Il nodo UI + plenum + centrale: le scritte che a 1:50 non stanno vanno in
-    un riquadro di dettaglio a 1:20, su una tavola a parte, e la tavola intera
-    incornicia la zona e lo dice."""
+def test_dove_1_50_e_troppo_fitto_le_scritte_vanno_fuori_e_nessun_dettaglio(esiti: dict[str, Esito]) -> None:
+    """Il nodo UI + plenum + centrale: la scritta che a 1:50 non sta nemmeno come numero
+    in legenda va fuori dalla pianta, col richiamo (REL-026, C-1). Fino alla 2.0 apriva
+    da sola un riquadro di dettaglio a 1:20: ora i riquadri si fanno solo se la pianta li
+    chiede, e questa non li chiede."""
     esito = esiti["collaudo"]
-    assert esito.dettagli and esito.dettagli[0].scala == 20
-    assert esito.rilievi.scritte_nel_dettaglio
-    nomi = {p.name for p in esito.file}
-    assert {"collaudo-t1-dettaglio-A.pdf", "collaudo-t1-dettaglio-A.svg", "collaudo-t1-dettaglio-A.png"} <= nomi
-    svg = next(p for p in esito.file if p.name == "collaudo-t1.svg").read_text(encoding="utf-8")
-    assert "Dettaglio A 1:20" in svg
-    # Le scritte rimandate stanno nel loro dettaglio, libere.
-    lettere = [d["id"] for d in json.loads(
-        next(p for p in esito.file if p.name == "collaudo-t1.tracciati.json").read_text()
-    )["dettagli"]]
-    for voce in esito.rilievi.scritte_nel_dettaglio:
-        chi, lettera = voce.removesuffix(")").split(" (dettaglio ")
-        dettaglio = esito.dettagli[lettere.index(lettera)]
-        assert chi in {c for c, s in dettaglio.scritte if s.libera}, voce
-
-
-def test_i_dettagli_si_possono_spegnere(tmp_path: Path) -> None:
-    dati = json.loads(CASI["collaudo"].read_text(encoding="utf-8"))
-    dati["dettagli"] = []
-    spenta = tmp_path / "senza-dettagli.json"
-    spenta.write_text(json.dumps(dati), encoding="utf-8")
-    esito = disegna_la_pianta(spenta, tmp_path, None, dxf=False, png=False)
+    assert esito.pianta.dettagli is None
     assert not esito.dettagli
-    assert esito.rilievi.bloccanti, "senza dettaglio il nodo fitto ferma la consegna, e lo dice"
+    assert not any("-dettaglio-" in p.name for p in esito.file)
+    assert esito.rilievi.scritte_fuori_pianta, "la scritta del nodo fitto sta fuori"
+    assert all(posata.libera for _, posata in esito.tavola.scritte)
+    assert "Dettaglio" not in next(p for p in esito.file if p.name == "collaudo-t1.svg").read_text(encoding="utf-8")
+
+
+def _con_il_dettaglio(tmp_path: Path, dettagli: list[dict[str, object]]) -> Esito:
+    dati = json.loads(CASI["collaudo"].read_text(encoding="utf-8"))
+    dati["dettagli"] = dettagli
+    sorgente = tmp_path / "con-dettagli.json"
+    sorgente.write_text(json.dumps(dati), encoding="utf-8")
+    return disegna_la_pianta(sorgente, tmp_path, None, dxf=False, png=False)
+
+
+def test_il_dettaglio_si_fa_se_il_progettista_lo_chiede(tmp_path: Path) -> None:
+    """Il riquadro dichiarato in `dettagli` si fa come prima: la zona incorniciata sulla
+    tavola intera, la tavola a parte a 1:20, e le scritte che a 1:50 non stanno e il cui
+    oggetto cade nella zona si posano li', libere, invece che fuori dalla pianta."""
+    esito = _con_il_dettaglio(tmp_path, [{"id": "A", "rettangolo": [4.0, 3.3, 7.6, 5.2], "scala": 20}])
+    assert esito.dettagli and esito.dettagli[0].scala == 20
+    assert {"con-dettagli-dettaglio-A.svg", "con-dettagli-dettaglio-A.pdf"} <= {p.name for p in esito.file}
+    assert "Dettaglio A 1:20" in (tmp_path / "con-dettagli.svg").read_text(encoding="utf-8")
+    assert esito.rilievi.scritte_nel_dettaglio
+    for voce in esito.rilievi.scritte_nel_dettaglio:
+        chi = voce.removesuffix(" (dettaglio A)")
+        assert chi in {c for c, s in esito.dettagli[0].scritte if s.libera}, voce
+        assert chi not in {c for c, _ in esito.tavola.scritte}, voce
+    assert esito.rilievi.bloccanti == []
+
+
+def test_con_dettagli_vuoti_nessun_dettaglio_e_la_consegna_non_si_ferma(tmp_path: Path) -> None:
+    """`"dettagli": []` vuol dire nessun riquadro, come la pianta che non li scrive. Prima
+    il nodo fitto senza dettaglio fermava la consegna; ora la scritta va fuori."""
+    esito = _con_il_dettaglio(tmp_path, [])
+    assert not esito.dettagli
+    assert esito.rilievi.scritte_fuori_pianta
+    assert esito.rilievi.bloccanti == []
