@@ -1,7 +1,7 @@
 # REL-026 — La 2.1.0: i rilievi d'uso della 2.0.0 su una commessa. Rapporto
 
 **13 novembre 2026.** Pacchetto: `ACTIVE_WORK_PACKAGE.md` (I-300). Ramo `claude/magical-wright-ffrf86`, PR #95.
-**Stato: in attesa che il PO guardi le tavole. Non è fuso.**
+**Stato: approvato dal PO il 14 novembre 2026, viste le tavole («Tutto perfetto fondi su main»), e fuso su `main`.**
 
 Il lavoro esecutivo l'hanno fatto quattro agenti della sessione (D-152), uno per blocco, ciascuno nel suo albero di
 lavoro; la sessione ha scritto il pacchetto, unito i rami, rieseguito le misure e guardato le tavole. Quello che gli

@@ -8,7 +8,9 @@
 
 **Da svolgere:** l'agente unico (**D-147**) come PM; lo sviluppo esecutivo ad **agenti della sessione** (**D-152**),
 su disposizione del PO (I-300): quello che riferiscono non è una misura finché la sessione non l'ha rieseguito.
-**Stato:** **IN CORSO**
+**Stato:** **CONSEGNATO** — approvato dal PO il 14 novembre 2026, viste le tavole («Tutto perfetto fondi su main»),
+e fuso su `main` con la PR #95. **Non c'è un pacchetto attivo successivo**: lo sceglie il PO (`HANDOFF.md`, «Il
+prossimo»). Chi apre una sessione nuova, prima di lavorare, lo chiede.
 **Base:** `main` con la 2.0.0 (`a43e414`, PR #94). Ramo: `claude/magical-wright-ffrf86`.
 **Approvazione della fusione:** **del PO**, guardando le tavole (D-146, D-147) e una spiegazione in termini semplici.
 **Il numero:** **2.1.0** (I-300). Il contenuto di `REL-025` slitta alla 2.2. `REL-024` è sospeso

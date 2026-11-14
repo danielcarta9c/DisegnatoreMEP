@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-11-13 — **la 2.1.0** (`REL-026`, I-300): i rilievi d'uso della 2.0.0 su una commessa. In PR #95, **in attesa che il PO guardi le tavole**: non è su `main` finché non dice di sì. `REL-024` è sospeso (fasi 2-4), `REL-025` diventa la 2.2.
+**Aggiornato:** 2026-11-14 — **la 2.1.0 è su `main`** (`REL-026`, I-300, PR #95): i rilievi d'uso della 2.0.0 su una commessa. Il PO ha visto le tavole e ha approvato la fusione. `REL-024` è sospeso (fasi 2-4), `REL-025` diventa la 2.2. **Il prossimo pacchetto lo sceglie il PO.**
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -18,9 +18,11 @@ sessione che la usava ha annotato che cosa manca. Tre blocchi, sviluppati da age
 sul ramo `claude/magical-wright-ffrf86`, **PR #95**. Il rapporto, con ogni criterio e il suo comando, è
 `docs/collaudi/REL-026/RAPPORTO.md`; i rapporti dei blocchi sono nelle sottocartelle.
 
-- **Prima cosa da guardare all'avvio: la PR #95.** Se è ancora aperta, il PO non ha ancora detto di sì: **non si
-  fonde**, gli si mostrano le tavole (`docs/collaudi/REL-026/`) e l'elenco dei punti che decide lui (§6 del rapporto).
-  Se è fusa, il lavoro che segue è qui sotto.
+- **Fuso il 14 novembre 2026**, con l'approvazione del PO dopo le tavole: «Tutto perfetto fondi su main». Prima
+  della fusione il PO ha commentato la tavola dei tre ventilconvettori (il ritorno col dente: corretto, rapporto §7) e
+  ha rimesso alla sessione la precarica del vaso sanitario (I-301, rapporto §8).
+- **`ACTIVE_WORK_PACKAGE.md` è `REL-026`, consegnato: non c'è un pacchetto attivo.** Il successivo lo sceglie il PO,
+  fra le voci di «Il prossimo» qui sotto. Non si comincia niente senza chiederglielo.
 - **Blocco A — catalogo, schema, vaso**: il ventilconvettore canalizzato idronico col lato aria
   (`fan-coil-ducted-air`), il plenum di mandata non motorizzato da 2 a 6 uscite (`supply-plenum-2…6`, sigla PL,
   ingresso centrato), le porte di comando che non contano come attraversamento nelle portate, i terminali con marca e
