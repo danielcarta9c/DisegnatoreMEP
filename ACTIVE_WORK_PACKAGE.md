@@ -13,8 +13,10 @@ di PR.MI.059 rifatto col listino completo.
 
 ## Le cose da fare
 
-1. **Completare il listino Tecnomat** (I-304, I-311). La lista è `docs/collaudi/REL-027/tecnomat-da-rilevare.md`:
-   **62 codici** della distinta senza un prezzo Tecnomat che rispetti la voce, **prima i 30 di PR.MI.059**. Il
+1. **Completare il listino Tecnomat, coi prezzi Tecnomat Pro** (I-304, I-311, I-313). Il file per la sessione Chrome,
+   con le istruzioni, è `docs/rilievi/tecnomat-pro-da-rilevare.md`: **parte A**, le 150 righe Tecnomat che abbiamo,
+   da verificare col prezzo Pro (Nove C ha l'abbonamento); **parte B**, i **62 codici** della distinta senza un prezzo
+   Tecnomat che rispetti la voce, **prima i 30 di PR.MI.059**. Il
    rilievo si fa **come il 2 novembre: il PO e Claude insieme, con Claude in Chrome nel browser del PO** — dalla
    sessione cloud tecnomat.it non si apre (protezione anti-robot), e non si aggira. Il PO riporta il file riempito; la
    sessione mette le righe nel listino (un capitolo col rilievo e la sua data, colonna Fornitore «Tecnomat»), con ⚠

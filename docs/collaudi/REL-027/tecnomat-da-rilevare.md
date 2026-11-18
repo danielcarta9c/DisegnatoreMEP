@@ -1,5 +1,7 @@
 # Il listino Tecnomat: che cosa manca da rilevare
 
+> **Superato** dal file completo, con le istruzioni per la sessione Chrome e i prezzi Tecnomat Pro da verificare: `docs/rilievi/tecnomat-pro-da-rilevare.md` (I-313).
+
 **18 novembre 2026** (`REL-027`, I-304, I-311). Le voci che la distinta conta e che il listino non ha **da Tecnomat**
 con un articolo che rispetti la voce: **62 codici su 158**. Si rilevano come il 2 novembre: insieme, con Claude in
 Chrome nel browser del PO, sul sito dei negozi di Segrate e Pero (MI).
