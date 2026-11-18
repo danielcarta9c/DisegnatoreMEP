@@ -5,8 +5,9 @@
 > il suo rapporto in `docs/collaudi/REL-027/RAPPORTO.md`.
 
 **Da svolgere:** l'agente unico (**D-147**), nella sessione.
-**Stato:** **DA AVVIARE** — il primo punto lo ha indicato il PO (la lista Tecnomat); chi apre la sessione nuova
-comincia da lì, e sui punti aperti chiede al PO.
+**Stato:** **AVVIATO** dal PO il 18 novembre 2026 («metti tutto su main e lancia direttamente la prossima sessione per
+sistemare», I-324). **La sessione lanciata fa il punto 2**; il punto 1 (il rilievo Tecnomat Pro) aspetta il file che il
+PO riempie con Claude in Chrome, e si fa quando lo porta.
 **Base:** `main` con la 2.1.1 (PR #96).
 **Approvazione della fusione:** del PO. Il pacchetto non tocca il disegno: il PO guarda il costo con «Dove comprare»
 di PR.MI.059 rifatto col listino completo.
@@ -32,7 +33,21 @@ di PR.MI.059 rifatto col listino completo.
      apparecchiature, nel listino e **nella voce della lista materiali che va al fornitore** («bollitore 200 l a
      serpentino maggiorato per pompa di calore, superficie di scambio non minore di … m²»), perché il fornitore non
      possa quotarne uno col serpentino piccolo; il confronto fra fornitori vale solo a pari superficie (o maggiore).
-     Il PO: «se mi quoti un bollitore con 0.8 mq di serpentino ovvio che costa meno ma la pdc non funziona». Sulle due offerte di PR.MI.059: Bolly 1 XL WB 200 di Abbattista 2 m², Bolly 1 ST WB 200 di
+     Il PO: «se mi quoti un bollitore con 0.8 mq di serpentino ovvio che costa meno ma la pdc non funziona».
+     **La fonte c'è** (I-323): manuale Shenling ThermaX R290 6–15 kW, §2.3 «Serbatoio dell'acqua calda sanitaria», p. 10
+     (pagina 15 del PDF; il manuale è del PO, non nel repository) — «L'area di scambio termico del serbatoio dell'acqua
+     calda sanitaria non deve essere inferiore al seguente valore consigliato»:
+
+     | Modello | 6 kW | 9 kW | 12/15 kW |
+     |---|--:|--:|--:|
+     | Volume del serbatoio, l | 100–250 | 150–300 | 200–500 |
+     | Area di scambio, serpentina smaltata, m² | 2,0 | 2,0 | 2,5 |
+     | Area di scambio, serpentina inox, m² | 1,4 | 1,4 | 1,6 |
+
+     E (punto 6): «La lunghezza del tubo tra l'unità esterna e il serbatoio deve essere inferiore a 5 metri». Su
+     PR.MI.059 (12 kW): il Bolly 1 ST WB 200 di Idrosanitaria (0,8 m²) è molto sotto, e anche il Bolly 1 XL WB 200 di
+     Abbattista (2 m²) sta sotto i 2,5 m² se la serpentina è smaltata (da verificare sulla scheda Cordivari): va detto al
+     PO. Per le pompe di calore che non sono Shenling, la superficie minima si chiede al PO. Sulle due offerte di PR.MI.059: Bolly 1 XL WB 200 di Abbattista 2 m², Bolly 1 ST WB 200 di
      Idrosanitaria 0,8 m² (da confermare sulle schede Cordivari). **La superficie minima per kW della pompa di calore
      è contenuto MEP**: dalla scheda del costruttore della pompa di calore, o dal PO; non si inventa.
    - **c. Il rame «CONDY»** (I-316): nel preventivo Idrosanitaria non c'è isolante per il rame, quindi è il rivestito:
@@ -50,6 +65,27 @@ di PR.MI.059 rifatto col listino completo.
      le modifiche di quella copia.
 3. **Le offerte nuove** dei fornitori, quando arrivano: un capitolo ciascuna nel listino, ogni riga col fornitore
    (I-304).
+
+## Criteri di accettazione del punto 2
+
+Prima le misure, poi il racconto; ogni criterio col comando e l'output nel rapporto (`docs/collaudi/REL-028/RAPPORTO.md`).
+
+1. **2a.** `distinta --costo` prezza anche le apparecchiature (dal listino, o DA PREZZARE), comprese quelle fornite da
+   Nove C; la lista senza prezzi per il fornitore dice «fornita da Nove C» su quelle voci, e un'opzione le toglie
+   (prove). La regola nuova è scritta come decisione del PO (D-241), con la sua frase (I-314).
+2. **2b.** La superficie di scambio del bollitore sta nel grafo e nel catalogo, nella tabella delle apparecchiature
+   della tavola, nella voce della lista materiali («… superficie di scambio non minore di X m²», dal §2.3 del manuale
+   per le Shenling) e nel listino; un bollitore con la superficie sotto il minimo è uno scostamento (⚠) nel confronto;
+   la tubazione fra unità esterna e bollitore oltre i 5 m è un avviso (prove, e la tavola di un caso del banco col
+   bollitore mostrata al PO se cambia).
+3. **2c.** Le righe 50 e 51 del §5 del listino prendono F01b e F03b, con la nota della deduzione (I-316).
+4. **2d.** Il raccordo «all'attacco» scrive il pollice dell'attacco della macchina quando il grafo o il catalogo lo
+   sanno; senza, è una domanda prima della lista (prove sul caso della centrale e su PR.MI.059).
+5. **2e.** Le quantità della lista sono nette, senza il 15% (prove; il documento lo dice).
+6. **Le tavole al PO per prime** se una cambia; il banco verde con le impronte cambiate registrate e mostrate; suite a 0
+   failed senza skip o xfail nuovi; ruff e mypy verdi; la release costruita con `scripts/costruisci-skill.py` e
+   `tests/test_le_release.py` verde (il numero lo decide il PO: la proposta è 2.2.0, che assorbe le quantità nette di
+   `REL-025`); la misura di PR.MI.059 rifatta; **non si fonde senza il sì del PO**.
 
 ## Fuori
 
