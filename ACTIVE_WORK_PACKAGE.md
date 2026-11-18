@@ -1,112 +1,42 @@
-# REL-027 — Il listino a più fornitori, e dove comprare
+# REL-028 — Il listino Tecnomat completo, e i punti aperti di REL-027
 
-> **Scritto il 18 novembre 2026.** Il PO ha ricevuto da due fornitori le offerte sulla lista materiali che la skill
-> ha fatto per PR.MI.059 (pompa di calore 12 kW con volano e bollitore, climatizzazione canalizzata), e chiede di
-> metterle nel listino «sempre tenendo in chiaro il fornitore» (I-302), perché la skill gli consigli **dove comprare in
-> funzione del prezzo totale della minuteria** — «compra queste 6 cose da Abbattista e queste 15 da Idrosanitaria»
-> (I-303). Il listino dei tre fornitori (Abbattista, Tecnomat, Idrosanitaria) si completa un po' alla volta (I-304).
-> La lista e lo schema della commessa sono arrivati anche per far vedere come lavora la skill (I-305).
+> **Scritto il 18 novembre 2026**, alla fusione di `REL-027` (la 2.1.1, PR #96). Il PO: «la lista mettila in main
+> insieme alle "cose da fare prox sessione"» (I-312). Il pacchetto precedente è in `docs/plans/pacchetti/REL-027.md`,
+> il suo rapporto in `docs/collaudi/REL-027/RAPPORTO.md`.
 
 **Da svolgere:** l'agente unico (**D-147**), nella sessione.
-**Stato:** **IN CORSO**.
-**Base:** `main` con la 2.1.0 (`980ec49`, PR #95). Ramo: `claude/peaceful-brown-lnxll7`.
-**Approvazione della fusione:** **del PO**. Il pacchetto **non tocca il disegno**: non esce nessuna tavola nuova, e il
-banco deve restare identico. Al posto delle tavole il PO vede **il costo della minuteria con «Dove comprare»** sulla
-sua commessa, confrontato con le offerte vere.
-**Il numero:** **2.1.1** (proposta della sessione: il contenuto di `REL-025` resta la 2.2; il numero lo decide il PO).
+**Stato:** **DA AVVIARE** — il primo punto lo ha indicato il PO (la lista Tecnomat); chi apre la sessione nuova
+comincia da lì, e sui punti aperti chiede al PO.
+**Base:** `main` con la 2.1.1 (PR #96).
+**Approvazione della fusione:** del PO. Il pacchetto non tocca il disegno: il PO guarda il costo con «Dove comprare»
+di PR.MI.059 rifatto col listino completo.
 
-## I documenti, e che cosa entra nel repository
+## Le cose da fare
 
-Le tre offerte (Idrosanitaria XC/STD/2704331 del 9 novembre 2026; Abbattista OC-STD-0185611 del 10 novembre e
-OC-STD-0188404 del 13 novembre 2026), la lista materiali PR.MI.059 rev. 01 e lo schema M.01 rev. 06. **I PDF non
-entrano nel repository**: portano il nome e l'indirizzo del committente, i telefoni e i nomi degli addetti, l'email del
-PO, e il repository è pubblico (I-296). Entrano le **righe di prezzo**, trascritte, con fornitore, documento e data: è
-quello che il PO ha chiesto. `docs/input-pm/2026-11-18-offerte-fornitori-pr-mi-059/LEGGIMI.md` dice che cosa c'era e
-dove è finito.
-
-## Che cosa si fa
-
-1. **Il listino, revisione 06** (`skill/distinta/LISTINO-MINUTERIA.md`):
-   - una tabella **«I fornitori»**: chi è, se Nove C ci ordina, come si paga, da dove vengono i prezzi;
-   - una colonna **Fornitore** in ogni tabella di articoli (Tecnomat nel §1, Bricoman nel §2ter);
-   - **§4 Abbattista** e **§5 Idrosanitaria**: **ogni riga** dei tre documenti, con articolo, codice del fornitore,
-     confezione, prezzo (per Abbattista il listino e gli sconti), netto per unità. Una riga prende l'**ID** di una voce
-     del listino quando l'articolo è la stessa voce della stessa misura; un ID **nuovo** solo dove una regola della
-     distinta lo usa (punto 3); le altre righe hanno «—» e restano documentate. Le apparecchiature e la
-     climatizzazione (macchine, volano, bollitore, circolatore, Daikin, Airzone) stanno in una tabella a parte, senza
-     ID: il costo della minuteria non le prezza (sezione A).
-2. **Il listino con più prezzi per codice** (`src/disegnatore_mep/distinta/listino.py`): un codice ha un prezzo per
-   fornitore; lo stesso codice due volte **dallo stesso fornitore** ferma la lettura. Si ordina solo dai fornitori
-   segnati «sì» nella tabella; il riferimento online e le fatture di un installatore sono riferimenti, non fornitori.
-3. **Le regole che prendono un prezzo che non avevano** (`rules/distinta/corredo.json`, `fluidi.json`): solo i
-   **codici** di voci che oggi non ne hanno, o che hanno un articolo di ripiego, dove una riga delle offerte è
-   esattamente quella voce: la guaina da 9 mm e da 30 mm sul multistrato 26 e da 9 mm sul 32, l'isolamento
-   anticondensa, il collante del PVC, la braga dell'innesto sullo scarico, la clip del tubo della condensa, le fascette
-   del flessibile, il nipplo ridotto 1¼" × 1". **Non cambia che cosa la distinta conta, né quanto**: cambia solo il
-   prezzo.
-4. **Il costo con «Dove comprare»** (`src/disegnatore_mep/distinta/costo.py`): il prezzo di ogni voce è il più basso
-   fra i fornitori da cui si ordina (senza nessuno, il riferimento, dichiarato); in fondo, l'**ordine per fornitore**
-   — articolo, codice del fornitore, confezione, quantità, prezzo, gli altri prezzi — e **le combinazioni con meno
-   ordini**, con quanto costano in più sugli stessi articoli. Il JSON porta l'ordine.
-5. **Le istruzioni** (`skill/SKILL.md`, `skill/distinta/ISTRUZIONI.md`): quando il progettista chiede dove comprare, o
-   di fare gli ordini, si lancia `--costo` e si legge «Dove comprare».
-6. **La misura sulla commessa**, in sessione: il costo e l'ordine sulle voci della lista PR.MI.059, confrontati con i
-   totali delle due offerte sulle stesse righe; e i rilievi su come la skill ha scritto la lista (I-305).
+1. **Completare il listino Tecnomat** (I-304, I-311). La lista è `docs/collaudi/REL-027/tecnomat-da-rilevare.md`:
+   **62 codici** della distinta senza un prezzo Tecnomat che rispetti la voce, **prima i 30 di PR.MI.059**. Il
+   rilievo si fa **come il 2 novembre: il PO e Claude insieme, con Claude in Chrome nel browser del PO** — dalla
+   sessione cloud tecnomat.it non si apre (protezione anti-robot), e non si aggira. Il PO riporta il file riempito; la
+   sessione mette le righe nel listino (un capitolo col rilievo e la sua data, colonna Fornitore «Tecnomat»), con ⚠
+   dove l'articolo non rispetta la voce, e rifà `docs/collaudi/REL-027/pr-mi-059/misura.py`.
+2. **Le domande aperte di `REL-027`**, da fare al PO (rapporto, §7), una alla volta:
+   - le **apparecchiature** (volano, circolatore, bollitore) nel consiglio d'acquisto: oggi fuori, la sezione A non
+     si prezza (D-235); il PO le compra da Abbattista, e Idrosanitaria le ha meno care;
+   - il **rame «CONDY»** di Idrosanitaria: è il rivestito? Se sì, le due righe prendono F01b e F03b;
+   - il **pollice nei raccordi «all'attacco»** della distinta: senza, Idrosanitaria ha offerto manicotti;
+   - l'**imbuto di scarico** della valvola di sicurezza «con scarico convogliato»: si conta?
+   - gli **sconti di Abbattista** nel repository pubblico;
+   - la **lista di PR.MI.059 fatta con una copia della skill che non è `main`** (quantità nette, testi diversi): le
+     modifiche, se servono, si riportano nel repository (sono in parte `REL-025`).
+3. **Le offerte nuove** dei fornitori, quando arrivano: un capitolo ciascuna nel listino, ogni riga col fornitore
+   (I-304).
 
 ## Fuori
 
-Le apparecchiature nel consiglio d'acquisto (volano, circolatore, bollitore: la sezione A non si prezza, D-235 — si
-chiede al PO se vuole che entrino); trasporto, ordine minimo e condizioni di pagamento nel conto; i collari per misura
-(la regola usa un codice solo per tutti i tubi); il contenuto di `REL-025`; le fasi aperte di `REL-024`.
-
-## Che cosa decide il PO, e non la sessione
-
-Se le apparecchiature entrano nel consiglio; se il rame «CONDY» di Idrosanitaria è il rivestito (oggi senza ID); se i
-prezzi di Bricoman contano come un fornitore; il numero della release.
+Il contenuto di `REL-025` (la 2.2) e le fasi aperte di `REL-024`: l'ordine lo dice il PO.
 
 ## Criteri di accettazione
 
-1. Il listino rev. 06 si legge; **tutte le righe** dei tre documenti ci sono, contate per fornitore contro i documenti
-   (Abbattista 4 + 42, Idrosanitaria 82 righe di articolo); ogni riga dice fornitore, documento e data.
-2. Un codice con due fornitori ha due prezzi; un codice doppio dello stesso fornitore ferma il listino (prova).
-3. Il prezzo di una voce è il più basso fra i fornitori da cui si ordina; senza nessuno, il riferimento, e il costo lo
-   dice (prova).
-4. `--costo` scrive «Dove comprare»: l'ordine per fornitore e le combinazioni; il totale degli ordini più le voci senza
-   fornitore è il totale del costo (prova, e il file su un caso del repository).
-5. La misura su PR.MI.059 è nel rapporto, con il confronto con le due offerte.
-6. **Nessuna tavola cambia**: `tests/test_il_banco.py` verde con le impronte invariate.
-7. Suite a 0 failed senza skip o xfail nuovi; `ruff check src tests` e `mypy` verdi; la 2.1.1 costruita con
-   `scripts/costruisci-skill.py` e `tests/test_le_release.py` verde; nessun dato personale nel diff; la CI verde.
-
-Ogni criterio con il comando e il suo output in `docs/collaudi/REL-027/RAPPORTO.md`.
-
-## Aggiunto il 18 novembre 2026, su I-306
-
-Visto come funziona il costo, il PO: «in base al cantiere posso magari dividere l'ordine in più fornitori o scegliere
-un solo fornitore per tutta la minuteria e la skill mi dice quale è il fornitore più economico per il totale prezzo».
-Nel perimetro (`ordine.py`, `listino.py`, `comando.py`, `skill.py`, le istruzioni, le prove):
-
-- **«Un fornitore solo»** in «Dove comprare»: per ogni fornitore il totale della minuteria comprata da lui, sullo stesso
-  paniere (quello che non ha, dal più economico degli altri), il più economico per primo; e il conto sugli articoli che
-  hanno tutti, a parità di articoli;
-- **`distinta --costo --fornitori <nomi>`**: si ordina soltanto dai fornitori scelti per il cantiere.
-
-8. «Un fornitore solo» dice il più economico sul totale e a parità di articoli; `--fornitori` manda l'ordine soltanto
-   ai fornitori scelti (prove, e la misura su PR.MI.059).
-
-## Aggiunto il 18 novembre 2026, su I-307 … I-310
-
-Il PO: la marca non conta, né per la minuteria né per volani e accessori; conta che l'articolo rispetti le
-prescrizioni, e uno scostamento lieve si evidenzia con un avviso sul prezzo; mai un pezzo che fa un altro mestiere
-(I-307). Il manometro è 0–6, non 0–12 (I-308). Del gruppo di riempimento con o senza disconnettore chiede la
-differenza (I-309). Lo scopo è risparmiare sulla minuteria, senza comprare l'utile che non serve (I-310). Nel
-perimetro (il listino, `listino.py`, `ordine.py`, `costo.py`, le istruzioni, le prove):
-
-- nel listino una nota che comincia con **⚠** è uno scostamento dalla voce; segnate le righe che si scostano: il
-  gruppo di riempimento senza disconnettore nel titolo (Tecnomat, Abbattista), il manometro 0–12 (Tecnomat), gli
-  attacchi da 3/8" al posto di ½" (Abbattista), il porta-bocchetta con l'attacco posteriore (Idrosanitaria);
-- il conto sceglie il più economico **fra gli articoli che rispettano la voce**; quello con ⚠ che costa meno è un
-  **avviso sul prezzo**, col risparmio; se nessuno rispetta la voce, si prende quello con ⚠ e lo si avvisa.
-
-9. Lo scostamento non si sceglie e diventa un avviso col risparmio; senza un articolo conforme, si prende quello con ⚠
-   avvisato (prove, e la misura su PR.MI.059).
+Si scrivono quando il PO avvia il pacchetto, sul lavoro che sceglie; per il punto 1: le righe rilevate nel listino con
+fornitore, negozio, codice e data, le prove del listino verdi, la misura su PR.MI.059 rifatta e mostrata al PO, la
+suite, ruff, mypy e il banco verdi, la release costruita con `scripts/costruisci-skill.py`.
