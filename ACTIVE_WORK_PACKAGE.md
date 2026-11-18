@@ -1,104 +1,81 @@
-# REL-026 — La 2.1.0: i rilievi d'uso della 2.0.0 su una commessa
+# REL-027 — Il listino a più fornitori, e dove comprare
 
-> **Scritto il 13 novembre 2026.** Il PO ha usato la 2.0.0 su una commessa (BD.RM.260, tavola IM.03) e la sessione che
-> la usava ha lavorato su una copia della skill, annotando che cosa ha dovuto cambiare e che cosa manca (I-300). Gli
-> allegati sono in `docs/input-pm/2026-11-13-rilievi-bd-rm-260/`: `LEGGIMI.txt` (le richieste, con le priorità decise
-> dal PO il 12 novembre), `modifiche-alla-skill.diff` (il codice cambiato nella copia), `estendi_catalogo.py` (i pezzi
-> aggiunti al catalogo).
+> **Scritto il 18 novembre 2026.** Il PO ha ricevuto da due fornitori le offerte sulla lista materiali che la skill
+> ha fatto per PR.MI.059 (pompa di calore 12 kW con volano e bollitore, climatizzazione canalizzata), e chiede di
+> metterle nel listino «sempre tenendo in chiaro il fornitore» (I-302), perché la skill gli consigli **dove comprare in
+> funzione del prezzo totale della minuteria** — «compra queste 6 cose da Abbattista e queste 15 da Idrosanitaria»
+> (I-303). Il listino dei tre fornitori (Abbattista, Tecnomat, Idrosanitaria) si completa un po' alla volta (I-304).
+> La lista e lo schema della commessa sono arrivati anche per far vedere come lavora la skill (I-305).
 
-**Da svolgere:** l'agente unico (**D-147**) come PM; lo sviluppo esecutivo ad **agenti della sessione** (**D-152**),
-su disposizione del PO (I-300): quello che riferiscono non è una misura finché la sessione non l'ha rieseguito.
-**Stato:** **CONSEGNATO** — approvato dal PO il 14 novembre 2026, viste le tavole («Tutto perfetto fondi su main»),
-e fuso su `main` con la PR #95. **Non c'è un pacchetto attivo successivo**: lo sceglie il PO (`HANDOFF.md`, «Il
-prossimo»). Chi apre una sessione nuova, prima di lavorare, lo chiede.
-**Base:** `main` con la 2.0.0 (`a43e414`, PR #94). Ramo: `claude/magical-wright-ffrf86`.
-**Approvazione della fusione:** **del PO**, guardando le tavole (D-146, D-147) e una spiegazione in termini semplici.
-**Il numero:** **2.1.0** (I-300). Il contenuto di `REL-025` slitta alla 2.2. `REL-024` è sospeso
-(`docs/plans/pacchetti/REL-024.md`): le sue fasi 2, 3 e 4 riprendono dopo.
+**Da svolgere:** l'agente unico (**D-147**), nella sessione.
+**Stato:** **IN CORSO**.
+**Base:** `main` con la 2.1.0 (`980ec49`, PR #95). Ramo: `claude/peaceful-brown-lnxll7`.
+**Approvazione della fusione:** **del PO**. Il pacchetto **non tocca il disegno**: non esce nessuna tavola nuova, e il
+banco deve restare identico. Al posto delle tavole il PO vede **il costo della minuteria con «Dove comprare»** sulla
+sua commessa, confrontato con le offerte vere.
+**Il numero:** **2.1.1** (proposta della sessione: il contenuto di `REL-025` resta la 2.2; il numero lo decide il PO).
 
-## Il caso di prova
+## I documenti, e che cosa entra nel repository
 
-Il grafo e la pianta di BD.RM.260 **non entrano nel repository** (I-300: «solo in sessione»). Ogni voce si prova su
-un caso del repository (`examples/pianta/`, i casi del banco) o su un caso anonimo scritto apposta; dove la commessa
-vera serve a misurare (i 72 avvisi di `pianta --grafo`, il retino sulle sagome), la misura si fa in sessione sui file
-del PO, e il rapporto dice se è stata fatta.
+Le tre offerte (Idrosanitaria XC/STD/2704331 del 9 novembre 2026; Abbattista OC-STD-0185611 del 10 novembre e
+OC-STD-0188404 del 13 novembre 2026), la lista materiali PR.MI.059 rev. 01 e lo schema M.01 rev. 06. **I PDF non
+entrano nel repository**: portano il nome e l'indirizzo del committente, i telefoni e i nomi degli addetti, l'email del
+PO, e il repository è pubblico (I-296). Entrano le **righe di prezzo**, trascritte, con fornitore, documento e data: è
+quello che il PO ha chiesto. `docs/input-pm/2026-11-18-offerte-fornitori-pr-mi-059/LEGGIMI.md` dice che cosa c'era e
+dove è finito.
 
 ## Che cosa si fa
 
-Tre blocchi. I primi due non si toccano fra loro e si sviluppano in parallelo; il terzo viene dopo il secondo.
-
-### Blocco A — catalogo, schema, vaso (fuori dalla pianta)
-
-| # | voce | origine |
-|---|---|---|
-| A-1 | **Tre pezzi nuovi**, simbolo e voce: il ventilconvettore canalizzato idronico con il lato aria (`fan-coil-ducted-air`), il plenum di mandata non motorizzato a 2 e a 3 uscite (`supply-plenum-2`, `supply-plenum-3`), la famiglia `air_distribution` con la sigla **PL**. Si parte da `estendi_catalogo.py`. Forma e sigla sono **proposte**, da giudicare sulla tavola. | LEGGIMI 1 |
-| A-2 | **Il plenum a due uscite ha l'ingresso centrato** fra le due uscite, come quello a tre (I-300, risposta del PO): il plenum non è una tre vie, e B4 non lo deve trattare da tale. Il plenum di zona motorizzato che c'è già **non si tocca**: se ha lo stesso difetto si scrive nel rapporto. | LEGGIMI B3 |
-| A-3 | **Le porte di comando non contano come attraversamento** nel calcolo delle portate: una pompa di calore con `power` e una sola uscita di comando collegata (`out_acs`) restava senza portata sul primario. Con la prova che lo riproduce. | LEGGIMI 2, diff |
-| A-4 | **I terminali con marca e modello entrano nella tabella delle apparecchiature**, con potenza e portata. | LEGGIMI 3, diff |
-| A-5 | **Il vaso sanitario**: il comando `vaso` dimensiona anche il vaso del bollitore ACS, da volume del bollitore, temperatura massima di accumulo, pressione di rete, taratura della valvola di sicurezza. Stesso impianto del vaso di riscaldamento (`vaso/calcolatore.py`): costanti con un nome, fonti dichiarate, e dove una fonte non è stata letta **lo dice**. Il metodo è una **proposta al PO**: il rapporto porta la formula, i margini e un esempio numerico. | LEGGIMI M1 |
-| A-6 | **La distinta con le voci nuove**: i tre pezzi di A-1 in una distinta, con la colonna Fornitura; le prove sulle modifiche di A-3 e A-4. | LEGGIMI B5 |
-
-### Blocco B — la pianta, prima parte
-
-| # | voce | origine |
-|---|---|---|
-| B-1 | **Il nome corto dei fluidi idronici** nella tabella delle tratte (la scritta lunga finiva sulla colonna «Da»). | LEGGIMI 4, diff |
-| B-2 | **`sagome_muri`**: campo facoltativo della pianta, poligoni in metri. Se c'è, il retino dei muri si disegna sulle sagome e non sui rettangoli asse-spessore di `muri`, che restano per l'instradamento. Vale nei riquadri di dettaglio (sagome ritagliate) e nel DXF (HATCH sul layer dei muri). Lo schema `schemas/pianta.schema.json` e le istruzioni della pianta aggiornati. **`muri_visibili` non entra** (LEGGIMI B4: è rimasto dalla rev02 e non serve). | LEGGIMI 5, B4, diff |
-| B-3 | **Le forature spente di base**: niente F1/F2 sulla tavola, niente elenco, niente conteggio in distinta. Si accendono su richiesta del progettista, con un campo della pianta. Il costo della foratura nell'instradamento resta: è la scelta del percorso, non una scritta. | LEGGIMI B1 |
-| B-4 | **Le lunghezze dalla pianta al grafo, in un passaggio solo.** Con `--grafo`, dopo la pianta le lunghezze misurate si scrivono nel grafo, con l'elenco di che cosa è cambiato; quelle date a mano dal progettista **restano** e vengono segnalate quando la pianta misura altro. Il grafo deve quindi dire da dove viene una lunghezza. Solo le lunghezze (e gli attraversamenti, se le forature sono accese): **la connettività non si tocca** (`docs/ARCHITETTURA-DEL-PIANO.md` §2). Un'opzione lascia il grafo in sola lettura. Schema e distinta, rifatti dopo, leggono i numeri nuovi. | LEGGIMI A1 |
-| B-5 | **Il confronto con grafo e distinta non cambia il foglio.** Oggi `pianta --grafo` sulla commessa dà 72 avvisi e porta il foglio da A2 ad A1; `--distinta` lo porta in A1. Gli avvisi del confronto si riassumono sulla tavola e stanno per esteso nei dati; il formato lo decide il disegno, non l'elenco degli avvisi. | LEGGIMI A1, B2 |
-
-### Blocco C — la pianta, seconda parte (dopo il blocco B)
-
-| # | voce | origine |
-|---|---|---|
-| C-1 | **Le scritte che non stanno in pianta vanno fuori**, nello spazio bianco attorno alla pianta, collegate al pezzo da una linea di richiamo, incolonnate e senza incroci. **Niente tavole di dettaglio aperte in automatico**: il riquadro di dettaglio si fa solo se il progettista lo chiede (`dettagli` nella pianta). I numeri cerchiati con il testo in legenda **restano**. | LEGGIMI M2 |
-| C-2 | **Una scritta sola per due tubi che corrono insieme** (M1/R1). | LEGGIMI M2 |
-| C-3 | **La base architettonica della tavola MEP** (vedi sotto). Sostituisce «le sagome lette dal disegno di base con un algoritmo»: il PO, il 13 novembre, ha mostrato cinque planimetrie vere e ha disposto chi fa che cosa. | LEGGIMI M3, 6; I-300 (seconda parte) |
-
-#### C-3, com'è disposta dal PO (I-300, 13 novembre)
-
-> «a volte sono catastali ben fatti a volte disegni a mano altre volte foto di catastali. per questo dicevo che la parte
-> interpretativa va fatta da agente AI (con indicazioni di metodo dalla skill - magari la skill dice di usare un sub
-> agente in modo da non appesantire il contesto di lavoro) poi quello che va standardizzato è l'output della base
-> grafica. Colore appena sbiadito della planimetria come si fa con gli xref architettonici in ambito mep, muri
-> grigiolini, finestre celestine, rimuovere arredi e lasciare solo i nomi delle stanze con i loro mq.»
-
-Le cinque planimetrie (in sessione, **mai nel repository**: portano nomi e codici fiscali): il vettoriale di un
-architetto con gli arredi; due catastali vettoriali, uno con tre piani sullo stesso foglio; un disegno a mano quotato,
-scansito; la fotografia di un catastale stampato.
-
-- **Leggere la planimetria è un pezzo AI**, con la forma di `skill/capire/` (`docs/ARCHITETTURA-DEL-PIANO.md` §3):
-  `skill/base/ISTRUZIONI.md` che bastano da sole, `CONSEGNA.md` che dice che cosa si restituisce e come si giudica, la
-  prova in camera pulita agli atti. La skill dice di affidarlo a **un sub-agente**, perché le immagini non pesino sul
-  contesto di chi disegna l'impianto. Il metodo comprende la **taratura** (la barra dei 10 metri del catastale, le
-  quote del disegno a mano, la scala dichiarata) e che cosa fare quando la planimetria non basta: una **domanda
-  dichiarata**, mai una misura inventata.
-- **Quello che l'agente consegna è la base in dati**, dentro il JSON della pianta: le sagome dei muri
-  (`sagome_muri`, B-2), le aperture con il loro tipo, le stanze con il nome. I mq li calcola il motore dal poligono.
-  Gli arredi non si trascrivono.
-- **Disegnare la base è deterministico, e la grafica è una sola** qualunque fosse l'ingresso: muri grigio chiaro,
-  finestre celesti, porte a tratto fine, nome del locale con i mq, tutto in mezzatinta sotto l'impianto. I colori sono
-  **proposte**, da giudicare sulla tavola.
-- **Il controllo è a vista**: un comando sovrappone la base ridisegnata alla planimetria d'origine, e l'agente (e il
-  PO) guardano se combacia. Gli aiuti deterministici — leggere i tratti di un PDF vettoriale — sono **aiuti** per
-  l'agente, non il lettore.
-- **La prova**: le cinque planimetrie del PO lette in camera pulita, in sessione; nel repository entra un caso
-  anonimo.
+1. **Il listino, revisione 06** (`skill/distinta/LISTINO-MINUTERIA.md`):
+   - una tabella **«I fornitori»**: chi è, se Nove C ci ordina, come si paga, da dove vengono i prezzi;
+   - una colonna **Fornitore** in ogni tabella di articoli (Tecnomat nel §1, Bricoman nel §2ter);
+   - **§4 Abbattista** e **§5 Idrosanitaria**: **ogni riga** dei tre documenti, con articolo, codice del fornitore,
+     confezione, prezzo (per Abbattista il listino e gli sconti), netto per unità. Una riga prende l'**ID** di una voce
+     del listino quando l'articolo è la stessa voce della stessa misura; un ID **nuovo** solo dove una regola della
+     distinta lo usa (punto 3); le altre righe hanno «—» e restano documentate. Le apparecchiature e la
+     climatizzazione (macchine, volano, bollitore, circolatore, Daikin, Airzone) stanno in una tabella a parte, senza
+     ID: il costo della minuteria non le prezza (sezione A).
+2. **Il listino con più prezzi per codice** (`src/disegnatore_mep/distinta/listino.py`): un codice ha un prezzo per
+   fornitore; lo stesso codice due volte **dallo stesso fornitore** ferma la lettura. Si ordina solo dai fornitori
+   segnati «sì» nella tabella; il riferimento online e le fatture di un installatore sono riferimenti, non fornitori.
+3. **Le regole che prendono un prezzo che non avevano** (`rules/distinta/corredo.json`, `fluidi.json`): solo i
+   **codici** di voci che oggi non ne hanno, o che hanno un articolo di ripiego, dove una riga delle offerte è
+   esattamente quella voce: la guaina da 9 mm e da 30 mm sul multistrato 26 e da 9 mm sul 32, l'isolamento
+   anticondensa, il collante del PVC, la braga dell'innesto sullo scarico, la clip del tubo della condensa, le fascette
+   del flessibile, il nipplo ridotto 1¼" × 1". **Non cambia che cosa la distinta conta, né quanto**: cambia solo il
+   prezzo.
+4. **Il costo con «Dove comprare»** (`src/disegnatore_mep/distinta/costo.py`): il prezzo di ogni voce è il più basso
+   fra i fornitori da cui si ordina (senza nessuno, il riferimento, dichiarato); in fondo, l'**ordine per fornitore**
+   — articolo, codice del fornitore, confezione, quantità, prezzo, gli altri prezzi — e **le combinazioni con meno
+   ordini**, con quanto costano in più sugli stessi articoli. Il JSON porta l'ordine.
+5. **Le istruzioni** (`skill/SKILL.md`, `skill/distinta/ISTRUZIONI.md`): quando il progettista chiede dove comprare, o
+   di fare gli ordini, si lancia `--costo` e si legge «Dove comprare».
+6. **La misura sulla commessa**, in sessione: il costo e l'ordine sulle voci della lista PR.MI.059, confrontati con i
+   totali delle due offerte sulle stesse righe; e i rilievi su come la skill ha scritto la lista (I-305).
 
 ## Fuori
 
-La base vettoriale dell'architetto nel DXF (`base_e_retini_dxf.py`): resta uno script di commessa (LEGGIMI, «non
-richiesto»). Il contenuto di `REL-025` (la 2.2). Le fasi aperte di `REL-024`.
+Le apparecchiature nel consiglio d'acquisto (volano, circolatore, bollitore: la sezione A non si prezza, D-235 — si
+chiede al PO se vuole che entrino); trasporto, ordine minimo e condizioni di pagamento nel conto; i collari per misura
+(la regola usa un codice solo per tutti i tubi); il contenuto di `REL-025`; le fasi aperte di `REL-024`.
 
 ## Che cosa decide il PO, e non la sessione
 
-La forma dei tre simboli nuovi e la sigla PL; il plenum a due uscite centrato; il metodo del vaso sanitario; come
-escono le scritte fuori pianta. Tutto si mostra sulla tavola o nella spiegazione, **prima** della fusione.
+Se le apparecchiature entrano nel consiglio; se il rame «CONDY» di Idrosanitaria è il rivestito (oggi senza ID); se i
+prezzi di Bricoman contano come un fornitore; il numero della release.
 
 ## Criteri di accettazione
 
-Le tavole per prime; suite a 0 failed senza skip o xfail nuovi; `ruff check src tests` e `mypy` verdi; il banco verde,
-con le tavole cambiate **registrate e mostrate** (`scripts/banco.py --registra`); nessun dato di cliente nel diff; la
-2.1.0 costruita con `scripts/costruisci-skill.py` e `tests/test_le_release.py` verde; la CI verde sulla PR. Ogni
-criterio con il comando e il suo output in `docs/collaudi/REL-026/RAPPORTO.md`.
+1. Il listino rev. 06 si legge; **tutte le righe** dei tre documenti ci sono, contate per fornitore contro i documenti
+   (Abbattista 4 + 42, Idrosanitaria 82 righe di articolo); ogni riga dice fornitore, documento e data.
+2. Un codice con due fornitori ha due prezzi; un codice doppio dello stesso fornitore ferma il listino (prova).
+3. Il prezzo di una voce è il più basso fra i fornitori da cui si ordina; senza nessuno, il riferimento, e il costo lo
+   dice (prova).
+4. `--costo` scrive «Dove comprare»: l'ordine per fornitore e le combinazioni; il totale degli ordini più le voci senza
+   fornitore è il totale del costo (prova, e il file su un caso del repository).
+5. La misura su PR.MI.059 è nel rapporto, con il confronto con le due offerte.
+6. **Nessuna tavola cambia**: `tests/test_il_banco.py` verde con le impronte invariate.
+7. Suite a 0 failed senza skip o xfail nuovi; `ruff check src tests` e `mypy` verdi; la 2.1.1 costruita con
+   `scripts/costruisci-skill.py` e `tests/test_le_release.py` verde; nessun dato personale nel diff; la CI verde.
+
+Ogni criterio con il comando e il suo output in `docs/collaudi/REL-027/RAPPORTO.md`.

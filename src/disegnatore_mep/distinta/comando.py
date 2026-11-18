@@ -129,6 +129,14 @@ def _il_costo(distinta: Distinta, listino: Path, uscita: Path) -> None:
         f"{len(costo.righe) - len(costo.da_prezzare)} voci prezzate; {len(costo.da_prezzare)} DA PREZZARE, fuori dal "
         "totale."
     )
+    from .ordine import ordine_della_minuteria
+
+    ordine = ordine_della_minuteria(costo)
+    gruppi = ordine.per_fornitore()
+    if gruppi:
+        parti = ", ".join(f"{f} {len(rr)} articoli" for f, rr in gruppi.items())
+        print(f"Dove comprare: {ordine.totale:.2f} € in {len(gruppi)} ordini ({parti}); "
+              f"{len(ordine.senza_fornitore)} articoli senza un fornitore.")
     for percorso in scritti:
         print(f"  {percorso}")
 

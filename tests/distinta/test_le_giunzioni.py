@@ -133,7 +133,9 @@ def test_fra_due_pollici_diversi_il_nipplo_e_ridotto(
     sezione_i = _sezione(componi_la_distinta(grafo, regole, *nomi), "I")
     ridotto = sezione_i["Nipplo ridotto 1¼\" × 1\" M × M"]
     assert ridotto.quantita == 2
-    assert ridotto.prezzo is not None and ridotto.prezzo.codici == (("I78a", 1.0),)
+    # REL-027 (I-302): il nipplo ridotto in ghisa delle offerte Abbattista e Idrosanitaria (I83e);
+    # prima la regola lo prezzava con la riduzione M × F (I78a), che il nipplo non e'.
+    assert ridotto.prezzo is not None and ridotto.prezzo.codici == (("I83e", 1.0),)
 
 
 @pytest.mark.parametrize("voce", ["air-vent", "pressure-gauge", "valve-safety"])
