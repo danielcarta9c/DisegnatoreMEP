@@ -163,7 +163,7 @@ Le prove vecchie che contavano le quantità maggiorate sono aggiornate ai numeri
 
 ```
 $ python3 -m pytest -q
-3190 passed, 15 skipped, 11 xfailed in 329.66s   (skip e xfail: gli stessi di REL-027; il diff delle prove non ne aggiunge)
+3191 passed, 15 skipped, 11 xfailed in 337.20s   (skip e xfail: gli stessi di REL-027; il diff delle prove non ne aggiunge)
 
 $ ruff check src tests
 All checks passed!
@@ -172,14 +172,14 @@ $ mypy
 Success: no issues found in 133 source files
 
 $ python3 scripts/costruisci-skill.py
-Skill: …/outputs/skill/disegnatore-mep (157 file, 3765 kB)
+Skill: …/outputs/skill/disegnatore-mep (157 file, 3774 kB); ZIP sha256 469792ace3da33f6 → releases/latest/DisegnatoreMEP-v2.2.0.zip
 Controlli della guida di Anthropic, di skill-creator e del caricamento su claude.ai (al massimo 200 file): passati.
 
 $ python3 -m pytest tests/test_le_release.py tests/test_package.py tests/skill -q
 50 passed
 ```
 
-La release non è ancora in `releases/`: **il numero lo decide il PO** (la proposta è 2.2.0).
+La release è in `releases/latest/DisegnatoreMEP-v2.2.0.zip` (e in `releases/archive/`).
 
 ## 5. Che cosa decide il PO, e che cosa ho scelto io
 
