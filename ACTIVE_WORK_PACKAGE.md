@@ -4,7 +4,7 @@
 > `docs/plans/pacchetti/REL-028.md`, il suo rapporto in `docs/collaudi/REL-028/RAPPORTO.md`.
 
 **Da svolgere:** l'agente unico (**D-147**), nella sessione.
-**Stato:** **IN CORSO**, dalla disposizione del PO del 18 novembre 2026 (I-330 … I-332).
+**Stato:** **CONSEGNATO** il 18 novembre 2026 (la 2.2.1, PR #99, fusa col sì del PO: «Si grazie»). Non c'è un pacchetto successivo: lo sceglie il PO.
 **Base:** `main` con la 2.2.0 (PR #98). Ramo `claude/rel-029-bollitore-escluso`.
 **Approvazione della fusione:** del PO. Il pacchetto non tocca il disegno: il PO guarda il costo di PR.MI.059.
 
