@@ -78,10 +78,11 @@ def test_la_voce_del_bollitore_dice_il_serpentino_minimo_della_shenling(
     voce = _bollitore(distinta)
     assert voce.testo == (
         "Bollitore ACS: Cordivari Bolly 1 XL WB 200 — 200 l, a serpentino maggiorato per pompa di calore, "
-        "superficie di scambio non minore di 2,5 m²"
+        "superficie di scambio non minore di 2 m²"
     )
-    assert "Shenling 12 kW, serpentina smaltata, manuale §2.3" in voce.note
-    assert voce.superficie_minima_m2 == 2.5 and not voce.da_definire
+    # Il manuale §2.3 dice 2,5 m² per la 12 kW; il PO ha disposto 2 m² (I-326).
+    assert "Shenling 12 kW, disposizione del PO, I-326" in voce.note
+    assert voce.superficie_minima_m2 == 2.0 and not voce.da_definire
 
 
 def test_il_serpentino_inox_e_le_taglie_piccole(
@@ -93,6 +94,9 @@ def test_il_serpentino_inox_e_le_taglie_piccole(
     grafo = _impianto()
     grafo["components"][0]["properties"]["power_kw"] = 9
     assert _bollitore(componi_la_distinta(grafo, regole, *nomi)).superficie_minima_m2 == 2.0
+    grafo["components"][0]["properties"]["power_kw"] = 15
+    voce = _bollitore(componi_la_distinta(grafo, regole, *nomi))
+    assert voce.superficie_minima_m2 == 2.5 and "Shenling 15 kW, serpentina smaltata, manuale §2.3" in voce.note
 
 
 def test_una_pompa_di_calore_che_non_e_shenling_fa_una_domanda(
@@ -124,7 +128,7 @@ def test_il_serpentino_piccolo_e_il_tubo_lungo_sono_avvisi(
 ) -> None:
     distinta = componi_la_distinta(_impianto(superficie=0.8, metri=6), regole, *nomi)
     avvisi = "\n".join(distinta.avvisi)
-    assert "BOL-01: serpentino 0,8 m², sotto il minimo di 2,5 m²" in avvisi
+    assert "BOL-01: serpentino 0,8 m², sotto il minimo di 2 m²" in avvisi
     assert "BOL-01: 6 m di tubo dalla pompa di calore PDC-01" in avvisi and "sotto i 5 m" in avvisi
     assert "serpentino del bollitore scelto 0,8 m²" in _bollitore(distinta).note
     giusto = componi_la_distinta(_impianto(superficie=2.5, metri=2), regole, *nomi)
@@ -140,20 +144,18 @@ def test_il_listino_dice_il_serpentino_e_il_confronto_lo_usa(
 ) -> None:
     righe = {v.fornitore: v for v in listino.righe["M10b"]}
     assert righe["Abbattista"].superficie_m2 == 2.0 and righe["Idrosanitaria"].superficie_m2 == 0.8
-    costo = prezza_la_distinta(componi_la_distinta(_impianto(), regole, *nomi), listino)
-    riga = next(r for r in costo.righe if r.testo.startswith("Bollitore ACS"))
-    # Tutti e due sotto i 2,5 m² della 12 kW: il conto prende il meno caro e lo avvisa.
-    assert riga.prezzata and "sotto il minimo di 2,5 m²" in riga.conto
-    ordine = ordine_della_minuteria(costo)
-    bollitore = next(r for r in ordine.righe if r.codice == "M10b")
-    assert {v.fornitore for v in bollitore.avvisi} == {"Idrosanitaria"}
-    # Con la 9 kW (2,0 m²) il bollitore di Abbattista rispetta la voce, e vince anche se costa di piu'.
-    grafo = _impianto()
-    grafo["components"][0]["properties"]["power_kw"] = 9
-    ordine = ordine_della_minuteria(prezza_la_distinta(componi_la_distinta(grafo, regole, *nomi), listino))
+    # Con la 12 kW (2 m², I-326) il bollitore di Abbattista rispetta la voce, e vince anche se costa di piu';
+    # quello di Idrosanitaria (0,8 m²) e' un avviso.
+    ordine = ordine_della_minuteria(prezza_la_distinta(componi_la_distinta(_impianto(), regole, *nomi), listino))
     bollitore = next(r for r in ordine.righe if r.codice == "M10b")
     assert bollitore.scelta is not None and bollitore.scelta.fornitore == "Abbattista"
     assert [v.fornitore for v in bollitore.avvisi] == ["Idrosanitaria"]
+    # Con la 15 kW (2,5 m²) tutti e due sono sotto: il conto prende il meno caro e lo avvisa.
+    grafo = _impianto()
+    grafo["components"][0]["properties"]["power_kw"] = 15
+    costo = prezza_la_distinta(componi_la_distinta(grafo, regole, *nomi), listino)
+    riga = next(r for r in costo.righe if r.testo.startswith("Bollitore ACS"))
+    assert riga.prezzata and "sotto il minimo di 2,5 m²" in riga.conto
 
 
 # --- 2a: le due liste ----------------------------------------------------------------------
@@ -202,7 +204,7 @@ def test_la_lista_per_il_fornitore_dice_fornita_da_nove_c_o_le_toglie(
     distinta = componi_la_distinta(_impianto(), regole, *nomi)
     testi = "\n".join(tutti_i_testi(documento_della_lista(distinta)))
     assert "fornita da Nove C: non si quota" in testi
-    assert "superficie di scambio non minore di 2,5 m²" in testi
+    assert "superficie di scambio non minore di 2 m²" in testi
     assert "€" not in testi
     senza = "\n".join(tutti_i_testi(documento_della_lista(distinta, senza_nove_c=True)))
     assert "Bollitore ACS" not in senza and "Pompa di calore aria-acqua" not in senza
@@ -219,3 +221,34 @@ def test_il_comando_ha_l_opzione_senza_nove_c(tmp_path: Path, capsys: pytest.Cap
     assert "Bollitore ACS" not in documento and "non sono in questa lista" in documento
     codice = main(["distinta", str(grafo), "--out", str(tmp_path / "e"), "--senza-nove-c"], cartelle_del_repository(ROOT))
     assert codice == 1 and "--senza-nove-c vale con --lista" in capsys.readouterr().err
+
+
+# --- I-326 … I-328: la Shenling 12 kW a 2 m², gli attacchi del Bolly 1 XL -----------------------
+
+
+def test_il_bolly_1_xl_200_dice_i_suoi_attacchi_porta_per_porta(
+    regole: RegoleDellaDistinta, nomi: tuple[dict[str, str], dict[str, str]]
+) -> None:
+    """La scheda Cordivari (I-328): primario 1¼" F, sul tubo MS 32×3 il raccordo all'attacco e' M 1¼".
+    Qui sono quattro: i due del bollitore e i due della Shenling 12 kW (attacchi 1¼", manuale), che in
+    questa prova non ha il giunto antivibrante."""
+    distinta = componi_la_distinta(_impianto(), regole, *nomi)
+    voci = [v for v in distinta.voci_della_sezione("I") if v.testo.endswith("all'attacco")]
+    assert [(v.testo, v.quantita) for v in voci] == [
+        ("Raccordo diritto a pressare M 1¼\" × tubo multistrato MS 32×3, all'attacco", 4)
+    ]
+    assert not voci[0].da_definire
+
+
+def test_la_shenling_12_kw_vuole_2_m2_disposizione_del_po(
+    regole: RegoleDellaDistinta, nomi: tuple[dict[str, str], dict[str, str]]
+) -> None:
+    voce = _bollitore(componi_la_distinta(_impianto(), regole, *nomi))
+    assert voce.superficie_minima_m2 == 2.0 and "disposizione del PO, I-326" in voce.note
+    # La 15 kW resta col manuale; un serpentino ne' smaltato ne' inox (Polywarm) li' e' una domanda.
+    grafo = _impianto()
+    grafo["components"][0]["properties"]["power_kw"] = 15
+    assert _bollitore(componi_la_distinta(grafo, regole, *nomi)).superficie_minima_m2 == 2.5
+    grafo["components"][1]["properties"]["serpentino"] = "acciaio rivestito Polywarm"
+    voce = _bollitore(componi_la_distinta(grafo, regole, *nomi))
+    assert voce.superficie_minima_m2 is None and voce.da_definire

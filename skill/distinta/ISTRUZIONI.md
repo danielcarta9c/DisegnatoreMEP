@@ -143,8 +143,9 @@ se il progettista le chiede.
 **Il bollitore della pompa di calore si sceglie col serpentino** (D-243, I-315): la voce dice «a serpentino maggiorato
 per pompa di calore, superficie di scambio non minore di X m²», perché il fornitore non possa quotare un serpentino
 piccolo. X viene dal manuale della pompa di calore che lo scalda: per le Shenling ThermaX R290 la skill lo sa (§2.3:
-2,0 m² per 6–9 kW, 2,5 m² per 12–15 kW, serpentina smaltata; 1,4 e 1,6 m² inox, se sul bollitore scrivi
-`"serpentino": "inox"`). Per un'altra pompa di calore è una domanda: il minimo lo dà il progettista, e si scrive sul
+2,0 m² per 6–9 kW, 2,5 m² per 15 kW, serpentina smaltata; 1,4 e 1,6 m² inox, se sul bollitore scrivi
+`"serpentino": "inox"`; **per la 12 kW 2,0 m²**, disposizione del PO, I-326). Se il bollitore è un Cordivari Bolly 1 XL,
+la skill sa i suoi attacchi dalla scheda (primario 1¼" F). Per un'altra pompa di calore è una domanda: il minimo lo dà il progettista, e si scrive sul
 bollitore in `superficie_minima_scambio_m2`. Se il progettista dice la superficie del bollitore scelto, scrivila in
 `superficie_scambio_m2`: la tabella delle apparecchiature la porta, e sotto il minimo è un avviso. Un avviso anche
 per il tubo fra unità esterna e bollitore oltre i 5 m (manuale Shenling §2.3, punto 6), se le tubazioni hanno le

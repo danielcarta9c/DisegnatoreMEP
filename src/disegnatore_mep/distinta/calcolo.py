@@ -15,10 +15,10 @@ varianti. Poi la verifica dell'aria, che **segnala e non corregge**.
 import math
 import re
 from collections.abc import Iterable, Mapping, Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Any
 
-from disegnatore_mep.diametri.costruttori import SHENLING_THERMAX_R290
+from disegnatore_mep.diametri.costruttori import SHENLING_THERMAX_R290, attacco_del_bollitore
 
 from .bollitore import SUPERFICIE_MINIMA, minima_per_voce, serpentini
 from .confezioni import in_confezioni
@@ -1386,13 +1386,19 @@ def _pollice_del_pezzo(lavoro: _Lavoro, pezzo: Pezzo, sezione: str | None) -> st
     )
 
 
-def _attacco_della_macchina(pezzo: Pezzo) -> str | None:
+def _attacco_della_macchina(pezzo: Pezzo, porta: str = "") -> str | None:
     """Il pollice dell'attacco di una macchina o di un confine (REL-028, I-317): quello che il
     grafo scrive sul pezzo (`attacco`, dalla scheda della macchina), o, per una Shenling ThermaX
     R290, quello del manuale (I-281). Senza, `None`: e' una domanda, non il pollice del tubo."""
     detto = pezzo.proprieta.get("attacco")
     if isinstance(detto, str) and detto.strip():
         return detto.strip()
+    dal_bollitore = attacco_del_bollitore(
+        pezzo.proprieta.get("marca"), pezzo.proprieta.get("modello"), numero(pezzo.proprieta.get("volume_l")), porta
+    )
+    if dal_bollitore is not None:
+        # I-327, I-328: il Bolly 1 XL di Cordivari, porta per porta, dalla sua scheda.
+        return dal_bollitore
     if "shenling" in str(pezzo.proprieta.get("marca") or "").lower():
         modello = SHENLING_THERMAX_R290.get(numero(pezzo.proprieta.get("power_kw")) or -1.0)
         if modello is not None:
@@ -1420,7 +1426,8 @@ def _giunzione(lavoro: _Lavoro, tubazione: Tubazione) -> _Giunzione | None:
             return []
         if genere in (FILETTATO, ADATTATORE, SULL_ATTACCO):
             return [("raccordo", {"pollice": _pollice_del_pezzo(lavoro, pezzo, sezione), "sezione": sezione}, pezzo.sigla)]
-        return [("raccordo_all_attacco", {"sezione": sezione, "attacco": _attacco_della_macchina(pezzo)}, pezzo.sigla)]
+        attacco = _attacco_della_macchina(pezzo, tubazione.porta(pezzo.id))
+        return [("raccordo_all_attacco", {"sezione": sezione, "attacco": attacco}, pezzo.sigla)]
 
     detto = tubazione.dati.get("tubo")
     col_tubo = detto is True or str(detto).strip().lower() in ("true", "si", "sì")
@@ -1436,6 +1443,13 @@ def _giunzione(lavoro: _Lavoro, tubazione: Tubazione) -> _Giunzione | None:
     pb = _pollice_del_pezzo(lavoro, b, sezione) if gb != ATTACCO else None
     attacco = next(
         (str(p.proprieta.get("attacco")) for p, g in ((a, ga), (b, gb)) if g == ATTACCO and p.proprieta.get("attacco")),
+        None,
+    ) or next(
+        (
+            trovato for p, g in ((a, ga), (b, gb)) if g == ATTACCO
+            and (trovato := attacco_del_bollitore(p.proprieta.get("marca"), p.proprieta.get("modello"),
+                                                  numero(p.proprieta.get("volume_l")), tubazione.porta(p.id)))
+        ),
         None,
     )
     pollici = [p for p in (pa, pb, attacco) if p]
@@ -1505,10 +1519,7 @@ def _giunzioni_dell_acqua(lavoro: _Lavoro) -> None:
         if tubazione.fluido not in FLUIDI_D_ACQUA:
             continue
         if tubazione.id in esterni:
-            tubazione = Tubazione(
-                id=tubazione.id, rete=tubazione.rete, fluido=tubazione.fluido, capo_a=tubazione.capo_a,
-                capo_b=tubazione.capo_b, dati={**tubazione.dati, "tubo": True},
-            )
+            tubazione = replace(tubazione, dati={**tubazione.dati, "tubo": True})
         giunzione = _giunzione(lavoro, tubazione)
         if giunzione is not None:
             per_tubazione[tubazione.id] = giunzione
@@ -1525,10 +1536,9 @@ def _giunzioni_dell_acqua(lavoro: _Lavoro) -> None:
         if fra is None:
             continue
         tubazione, _ = fra
-        per_tubazione[tubazione.id] = _giunzione(lavoro, Tubazione(
-            id=tubazione.id, rete=tubazione.rete, fluido=tubazione.fluido, capo_a=tubazione.capo_a,
-            capo_b=tubazione.capo_b, dati={**tubazione.dati, "tubo": True},
-        )) or per_tubazione[tubazione.id]
+        per_tubazione[tubazione.id] = _giunzione(
+            lavoro, replace(tubazione, dati={**tubazione.dati, "tubo": True})
+        ) or per_tubazione[tubazione.id]
         per_tubazione[tubazione.id].dove += " (tubo: il tratto ne ha almeno uno)"
     righe: dict[str, Voce] = {}
     for giunzione in per_tubazione.values():

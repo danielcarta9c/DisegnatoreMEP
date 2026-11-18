@@ -78,19 +78,62 @@ class BollitoreDelModello:
     """L'area di scambio minima consigliata del serpentino in acciaio inox, in m²."""
     volume_minimo_l: float
     volume_massimo_l: float
+    disposizione_del_po: bool = False
+    """Il minimo non e' quello del manuale ma quello del PO (I-326): per la 12 kW «2 mq sono piu' che
+    sufficienti … ce lo ha certificato anche shenling quello che fa il primo avviamento», al posto dei
+    2,5 m² del §2.3. Vale per qualunque serpentino che non sia inox (il PO lo dice del Bolly 1 XL, in
+    acciaio rivestito Polywarm®)."""
 
 
 SHENLING_THERMAX_R290_BOLLITORE: dict[float, BollitoreDelModello] = {
     6.0: BollitoreDelModello(2.0, 1.4, 100.0, 250.0),
     9.0: BollitoreDelModello(2.0, 1.4, 150.0, 300.0),
-    12.0: BollitoreDelModello(2.5, 1.6, 200.0, 500.0),
+    12.0: BollitoreDelModello(2.0, 1.6, 200.0, 500.0, disposizione_del_po=True),
     15.0: BollitoreDelModello(2.5, 1.6, 200.0, 500.0),
 }
 """Manuale ThermaX R290 6-15 kW, §2.3 «Serbatoio dell'acqua calda sanitaria», p. 10 (pagina 15 del
 PDF; il manuale e' del PO, non nel repository, I-323): «L'area di scambio termico del serbatoio
 dell'acqua calda sanitaria non deve essere inferiore al seguente valore consigliato» — 6 e 9 kW
 2,0 m² smaltata, 1,4 m² inox; 12 e 15 kW 2,5 m² smaltata, 1,6 m² inox; volumi 100-250, 150-300,
-200-500 l."""
+200-500 l. **Per la 12 kW il PO ha disposto 2,0 m²** (I-326), al posto dei 2,5 del manuale."""
+
+
+@dataclass(frozen=True)
+class AttacchiDelBollitore:
+    """Gli attacchi di un bollitore, in pollici, per porta del catalogo (`dhw-cylinder`)."""
+
+    per_porta: dict[str, str]
+
+
+def _bolly_1_xl(m: str, b: str, a: str) -> AttacchiDelBollitore:
+    return AttacchiDelBollitore({
+        "coil_in": '1¼"', "coil_out": '1¼"', "probe": '½"', "cold_in": m, "recirculation_in": b, "dhw_out": a,
+    })
+
+
+CORDIVARI_BOLLY_1_XL: dict[float, AttacchiDelBollitore] = {
+    200.0: _bolly_1_xl('¾"', '¾"', '1¼"'),
+    300.0: _bolly_1_xl('1"', '1"', '1¼"'),
+    400.0: _bolly_1_xl('1"', '1"', '1¼"'),
+    500.0: _bolly_1_xl('1"', '1"', '1¼"'),
+    800.0: _bolly_1_xl('1"', '1"', '1¼"'),
+    1000.0: _bolly_1_xl('1¼"', '1"', '1½"'),
+    1500.0: _bolly_1_xl('1½"', '1"', '2"'),
+}
+"""Cordivari BOLLY® 1 XL (scheda IT-Cordivari_TEC_Scheda-BOLLY-1-XL-W_02.2026, trascritta dalla sessione
+precedente, I-328; il PDF non e' nel repository): attacchi femmina; primario F e G 1¼", strumentazione C ½",
+anodo E e scarico O 1¼"; ingresso acqua fredda M, ricircolo B e uscita ACS A secondo la taglia. Il Bolly e'
+il bollitore che Nove C usa spesso (I-328)."""
+
+
+def attacco_del_bollitore(marca: object, modello: object, volume_l: object, porta: str) -> str | None:
+    """Il pollice dell'attacco `porta` di un bollitore di cui la skill ha la scheda (il Bolly 1 XL)."""
+    if "cordivari" not in str(marca or "").lower() or "bolly 1 xl" not in str(modello or "").lower():
+        return None
+    if not isinstance(volume_l, int | float) or isinstance(volume_l, bool):
+        return None
+    attacchi = CORDIVARI_BOLLY_1_XL.get(float(volume_l))
+    return attacchi.per_porta.get(porta) if attacchi else None
 
 SHENLING_DISTANZA_MASSIMA_BOLLITORE_M = 5.0
 """Lo stesso §2.3, punto 6: «La lunghezza del tubo tra l'unità esterna e il serbatoio deve essere

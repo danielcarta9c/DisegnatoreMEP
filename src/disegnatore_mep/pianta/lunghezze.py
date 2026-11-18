@@ -98,10 +98,14 @@ def maggiora(stimata: float, regola: Mapping[str, Any], minimi: Sequence[Minimo]
     aggiunta, fattore, passo = float(regola["aggiunta_m"]), float(regola["fattore"]), float(regola["passo_m"])
     grezza = (stimata + aggiunta) * fattore
     risultato = per_eccesso(grezza, passo)
-    calcolo = (
-        f"({in_parole(stimata)} + {in_parole(aggiunta)}) × {in_parole(fattore)} = {in_parole(grezza)}"
-        f" → {in_parole(risultato)} m"
-    )
+    somma = f"{in_parole(stimata)} + {in_parole(aggiunta)}"
+    if fattore != 1:
+        calcolo = f"({somma}) × {in_parole(fattore)} = {in_parole(grezza)} → {in_parole(risultato)} m"
+    elif risultato == grezza:
+        # Quantita' nette (I-320): niente «× 1» e niente freccia che non arrotonda niente.
+        calcolo = f"{somma} = {in_parole(risultato)} m" if aggiunta else f"{in_parole(risultato)} m"
+    else:
+        calcolo = f"{somma} = {in_parole(grezza)} → {in_parole(risultato)} m"
     for minimo in minimi:
         if minimo.metri > risultato + TOLLERANZA:
             risultato = minimo.metri

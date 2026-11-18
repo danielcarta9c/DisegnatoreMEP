@@ -1026,7 +1026,7 @@ deve essere completa. Il PO compra da Abbattista gli accessori più costosi (I-3
 |---|---|---|---|---|---|---|--:|---|--:|--:|---|---|
 | M30a | Circolatore DAB Evosta 2 40-70/130 | POMPA EVOSTA 2 40-70/130 (1")1X230 50/60 — Y25 60231853 | 85801171 | Abbattista | OC 0185611 r. 1 | 1 pz | 241,29 | 50+20 | 96,52 | 96,520 | cad |  |
 | M20b | Volano termico a quattro attacchi, 80 l | UP GBF 80 VOLANO TERMICO SEPARATORE IDRA — 3070160920018 | 68432687 | Abbattista | OC 0185611 r. 2 | 1 pz | 448,21 | 50+20 | 179,29 | 179,290 | cad | stesso articolo Cordivari dell'offerta Idrosanitaria (3070160920018) |
-| M10b | Bollitore ACS 200 l a serpentino | BOLLY 1 XL WB 200 BOLLITORE VERTICALE CO — 3104162330011 | 79861453 | Abbattista | OC 0185611 r. 4 | 1 pz | 1.566,31 | 50+20 | 626,52 | 626,520 | cad | superficie di scambio 2 m² (scheda Cordivari letta dal motore di ricerca, I-315: da confermare sulla scheda); modello diverso da quello dell'offerta Idrosanitaria |
+| M10b | Bollitore ACS 200 l a serpentino | BOLLY 1 XL WB 200 BOLLITORE VERTICALE CO — 3104162330011 | 79861453 | Abbattista | OC 0185611 r. 4 | 1 pz | 1.566,31 | 50+20 | 626,52 | 626,520 | cad | superficie di scambio 2 m² (scheda Cordivari BOLLY 1 XL 02.2026, codice 3104162330011, I-328; acciaio rivestito Polywarm®, attacchi primario 1¼" F); modello diverso da quello dell'offerta Idrosanitaria |
 
 ## 5. Idrosanitaria — preventivo del 9 novembre 2026
 

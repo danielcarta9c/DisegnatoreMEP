@@ -565,11 +565,14 @@ def _tratte_e_avvisi(
     numeri = regola.regola
     soglia = round(pianta.parametri.scarto_della_misura * 100)
     minimi = regola.minimi_del_testo()
+    aggiunta = f"L + {metri(float(numeri['aggiunta_m']), 2)} m"
+    formula = (
+        f"({aggiunta}) × {metri(float(numeri['fattore']), 2)}" if float(numeri["fattore"]) != 1 else aggiunta
+    )
     c.riga(
         ("Passano per organi in linea: " + "; ".join(in_linea) + ". " if in_linea else "")
         + "L prog. del progettista, si quota; L mis. sul disegno, un controllo "
-        f"(! oltre il {soglia} %); L quot. = (L + {metri(float(numeri['aggiunta_m']), 2)} m) × "
-        f"{metri(float(numeri['fattore']), 2)} per eccesso a {metri(float(numeri['passo_m']), 2)} m, "
+        f"(! oltre il {soglia} %); L quot. = {formula} per eccesso a {metri(float(numeri['passo_m']), 2)} m, "
         f"regola {regola.origine}; * minimo"
         + (f" ({', '.join(minimi)})" if minimi else "")
         + "; ° sulla misura, L prog. manca."

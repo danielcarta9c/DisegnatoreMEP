@@ -1158,7 +1158,7 @@
   }
  ],
  "apparecchiature": {
-  "fonte": "REL-028 (D-241): le apparecchiature della commessa, per la lista prezzata. Non vengono dalla lista rev. 01 (che non è nel repository): la Shenling ThermaX R290 12 kW (I-322), il bollitore da 200 l, il volano da 80 l a quattro attacchi e il circolatore Evosta 2 40-70/130 (le offerte di Abbattista e Idrosanitaria, I-302, e I-292: «Circolatore i due serbatoi e la pdc le compro io»), l'unità esterna, l'unità interna, il plenum Airzone e il comando a filo del clima (il preventivo Idrosanitaria). I termostati di zona sono fuori: la lista non dice quanti sono.",
+  "fonte": "REL-028 (D-241): le apparecchiature della commessa, per la lista prezzata. Non vengono dalla lista rev. 01 (che non è nel repository): la Shenling ThermaX R290 12 kW (I-322), il bollitore da 200 l, il volano da 80 l a quattro attacchi e il circolatore Evosta 2 40-70/130 (le offerte di Abbattista e Idrosanitaria, I-302, e I-292: «Circolatore i due serbatoi e la pdc le compro io»), l'unità esterna, l'unità interna, il plenum Airzone e il comando a filo del clima (il preventivo Idrosanitaria). I termostati di zona sono fuori: la lista non dice quanti sono. Il serpentino minimo per la Shenling 12 kW è 2 m², disposizione del PO (I-326), al posto dei 2,5 m² del manuale §2.3.",
   "voci": [
    {
     "rif": "P-A.1",
@@ -1177,7 +1177,7 @@
    {
     "rif": "P-A.2",
     "sezione": "A",
-    "testo": "Bollitore ACS — 200 l, a serpentino maggiorato per pompa di calore, superficie di scambio non minore di 2,5 m²",
+    "testo": "Bollitore ACS — 200 l, a serpentino maggiorato per pompa di calore, superficie di scambio non minore di 2 m²",
     "quantita": 1,
     "um": "n",
     "codici": [
@@ -1187,7 +1187,7 @@
      ]
     ],
     "fornitura": "Nove C",
-    "superficie_minima_m2": 2.5
+    "superficie_minima_m2": 2.0
    },
    {
     "rif": "P-A.3",

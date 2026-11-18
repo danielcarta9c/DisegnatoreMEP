@@ -15,8 +15,8 @@
   },
   "collaudo-t3-rel012": {
    "sintesi-1": "Formato A2 · tratte 18 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 4 · sormonti 0 · avvisi e regole: DRAWING_TOUCHES_THE_BORDER x1, SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x1, TAG_OMITTED x1",
-   "pianta/pianta.svg": "0008c53ca85a187f9f226182c2d8cf000d5675f733bf9db79ed9e6177a6a247e",
-   "pianta/pianta.tracciati.json": "8d9367caca969991a18f4ce1752cacbcc8373766479901e8d6cc5e71917c36ac",
+   "pianta/pianta.svg": "a3d4ea449ecc97cae36ccecc0f9c35f485a4e1c4c7a3cfaaef1b4da015cfa703",
+   "pianta/pianta.tracciati.json": "7628da9b9594cb5f4f0f78cfcd5107c6f5f7a8d3f1a6213203f8537691a78ad0",
    "tavola/canalizzato-appartamento-secondo-piano-t1-rilievi.md": "b3dbcb324b6e90ebc42d19086682d340741d5cba886b056ba5cab2f3a0c38ff5",
    "tavola/canalizzato-appartamento-secondo-piano-t1.svg": "fa3404f87f22574f28023489ed5b1110c67c521189284e0f0881bf3fae0e39b8"
   },
@@ -106,8 +106,8 @@
    "grafo-completo.json": "aa02b0b3a52374f14764a0116affa5fd371848cae4d59ac61eeed7f413ee40ac",
    "sintesi-1": "Formato A2 · tratte 36 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 4 · sormonti 2 · avvisi e regole: DRAWING_TOUCHES_THE_BORDER x1, SHEET_TOO_FULL x1",
    "sintesi-2": "Formato A3 · tratte 7 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 5 · sormonti 0 · avvisi e regole: nessuno",
-   "distinta/distinta.json": "7d580144d926194b495e05100203f69fd13f3c8af6457e76037df9da4c81507a",
-   "distinta/tabelle-del-foglio.json": "81da480b66f3d8661cafc48c52cb3ad74ed50f66d0fe1aadb24c65026468f158",
+   "distinta/distinta.json": "1d7ead0b8bb774a99947485666df958b99feda1585f5a13530937068386fbe92",
+   "distinta/tabelle-del-foglio.json": "1fd09c1a1b399d60f7278b0fab4d4b5829ead8647587fdab89d840955c25e995",
    "tavola/rel026-canalizzati-plenum-di-mandata-elettrico-t1-rilievi.md": "448b7e1374193be795d9d0543f64eaa26fc7d8cb856e1e7c513ea7b75565034d",
    "tavola/rel026-canalizzati-plenum-di-mandata-elettrico-t1.svg": "7134e5fb20cfcf9bdb5bebd6e49806ee7131fd06cd515cba207bdc08c9b75a63",
    "tavola/rel026-canalizzati-plenum-di-mandata-idraulica-t1-rilievi.md": "558c3774ce6fee4a12ad6ad9d5aa8640717a39ee67086a1ceb13b72cae83acc4",
@@ -116,8 +116,8 @@
   "plenum-motorizzato-rel026": {
    "grafo-completo.json": "d6034576eea44523cc6bd79ded076d075908a36a82c5f42999ff977fe2297177",
    "sintesi-1": "Formato A3 · tratte 24 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 11 · sormonti 0 · avvisi e regole: DRAWING_TOUCHES_THE_BORDER x1, SHEET_TOO_FULL x1",
-   "distinta/distinta.json": "bb429caaf8ad489d7ffea44a4359b24350fdbabfeb1e0e1ee3cef779a6d0c76e",
-   "distinta/tabelle-del-foglio.json": "23be22d6181adafd59a2d3beb9eb7f5e6ce551b628a317f0370383655e5600b0",
+   "distinta/distinta.json": "a4af0034f1f18417649f0ddd4c04f18de2c3297958e55ef0aa2622ffac93bf1e",
+   "distinta/tabelle-del-foglio.json": "f826aabbce23ec441b3111ebb510273f555700da9004dd7e710a8889185d2429",
    "tavola/rel026-canalizzato-plenum-motorizzato-t1-rilievi.md": "56feb1ac3cccd89a74ca1994627b5590fe28bebc4b0c88b5794d2701dd589d36",
    "tavola/rel026-canalizzato-plenum-motorizzato-t1.svg": "d848d93c58c8c3f37bfb84c2e78242c66a249da486e30fbdfa6e554cebdc78f5"
   },
@@ -172,8 +172,8 @@
   "t1-rel023": {
    "grafo-completo.json": "8edf5c3d67758a10689e6a5259363884148d86ba445ed7be4116307fe394a420",
    "sintesi-1": "Formato A3 · tratte 29 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 7 · sormonti 1 · avvisi e regole: SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x1",
-   "distinta/distinta.json": "abe34f23430b85dcdb01daf5a541c4a7768c4a287321820425c7889a5e227cb8",
-   "distinta/tabelle-del-foglio.json": "b5205489c4f338cc92b933468cad687ffdd639f481cf8d66ce6baf93fdeb8385",
+   "distinta/distinta.json": "7874a6870bb95e62397914eb3a846f9e66ae09eb6c894b2594ce39fd81109ba6",
+   "distinta/tabelle-del-foglio.json": "c6522cd0f57741579667f710b239855b8c73b4a396dd8a6409575808c8d0ac18",
    "tavola/villetta-pdc-volano-bollitore-idraulica-t1-rilievi.md": "cdd9435ae4a4956befee423041ca05d87ddf104c6fe8a2b1cbdd52231404ab57",
    "tavola/villetta-pdc-volano-bollitore-idraulica-t1.svg": "ca7e6515259372777067fdeb9dd99eee306d89edc4a1248cddf658338cee07fb"
   },

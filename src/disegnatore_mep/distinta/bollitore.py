@@ -10,7 +10,8 @@ riscaldamento), qui si dice:
 
 - **la superficie minima** del serpentino: dal manuale del costruttore per le Shenling
   ThermaX R290 (`diametri.costruttori`, §2.3 del manuale), con la serpentina smaltata se il
-  grafo non dice inox (`serpentino`: «inox»); oppure quella che il progettista scrive sul
+  grafo non dice inox (`serpentino`: «inox»); per la 12 kW 2,0 m², disposizione del PO (I-326);
+  per un serpentino ne' smaltato ne' inox (il Polywarm® del Bolly) nelle altre taglie, una domanda; oppure quella che il progettista scrive sul
   bollitore (`superficie_minima_scambio_m2`); se no, **una domanda**: per una pompa di calore
   che non e' una Shenling il minimo non si inventa;
 - **la superficie del bollitore scelto** (`superficie_scambio_m2`), se il progettista la da':
@@ -70,8 +71,8 @@ class SerpentinoDelBollitore:
             return ""
         return (
             f"{self.bollitore.sigla}: superficie minima del serpentino per la pompa di calore {self.pompa.sigla} "
-            "(dal manuale della pompa di calore: la skill la sa solo per le Shenling ThermaX R290); si scrive sul "
-            f"bollitore in «{SUPERFICIE_MINIMA}»."
+            "(dal manuale della pompa di calore: la skill la sa per le Shenling ThermaX R290, con il serpentino "
+            f"smaltato o inox); si scrive sul bollitore in «{SUPERFICIE_MINIMA}»."
         )
 
     @property
@@ -151,15 +152,17 @@ def _minimo(pompa: Pezzo, bollitore: Pezzo) -> tuple[float | None, str, float | 
     modello = bollitore_shenling(pompa.proprieta.get("marca"), numero(pompa.proprieta.get("power_kw")))
     if modello is None:
         return None, "", None
-    inox = "inox" in str(bollitore.proprieta.get(SERPENTINO) or "").lower()
+    materiale = str(bollitore.proprieta.get(SERPENTINO) or "").lower()
     potenza = f"{numero(pompa.proprieta.get('power_kw')) or 0:g}".replace(".", ",")
-    if inox:
-        return modello.superficie_inox_m2, f"Shenling {potenza} kW, serpentina inox, manuale §2.3", (
-            SHENLING_DISTANZA_MASSIMA_BOLLITORE_M
-        )
-    return modello.superficie_smaltata_m2, f"Shenling {potenza} kW, serpentina smaltata, manuale §2.3", (
-        SHENLING_DISTANZA_MASSIMA_BOLLITORE_M
-    )
+    massima = SHENLING_DISTANZA_MASSIMA_BOLLITORE_M
+    if "inox" in materiale:
+        return modello.superficie_inox_m2, f"Shenling {potenza} kW, serpentina inox, manuale §2.3", massima
+    if modello.disposizione_del_po:
+        return modello.superficie_smaltata_m2, f"Shenling {potenza} kW, disposizione del PO, I-326", massima
+    if materiale and "smalt" not in materiale:
+        # Ne' smaltato ne' inox (il Polywarm® del Bolly): il manuale non lo dice, lo dice il PO.
+        return None, "", massima
+    return modello.superficie_smaltata_m2, f"Shenling {potenza} kW, serpentina smaltata, manuale §2.3", massima
 
 
 def serpentini(impianto: Impianto) -> dict[str, SerpentinoDelBollitore]:

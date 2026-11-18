@@ -11,6 +11,17 @@
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
 
+## ▶ Com'è il 18 novembre 2026 sera, con il punto 2 di REL-028
+
+**Il punto 2 di `REL-028` è fatto sul ramo `claude/rel-028-punto-2`** (rapporto `docs/collaudi/REL-028/RAPPORTO.md`),
+**in attesa del sì del PO alla fusione** e del numero della release (proposta 2.2.0). Le decisioni nuove sono **D-241**
+(due liste complete, le apparecchiature nel CAPEX), **D-242** (quantità nette), **D-243** (il bollitore col serpentino;
+2 m² per la Shenling 12 kW, I-326). Gli input nuovi arrivano a **I-328**: il prossimo è **I-329**, la prossima decisione
+**D-244**. Nessuno schema cambia; cambia la pianta del collaudo T3 (le «L quot.» nette). Il punto 1 (Tecnomat Pro)
+aspetta il file del PO. Aperti col PO: la conferma di I-325 … I-328 (arrivati dalla sessione precedente), gli attacchi
+liberi del bollitore (tappi e riduzioni, I-327), fin dove arrivano le quantità nette (metro per tratto e minimi), la
+Haier nel preventivo Idrosanitaria.
+
 ## ▶ Da dove riparte la prossima sessione — scritto il 18 novembre 2026, alla fusione di REL-027
 
 **`REL-027` è consegnato** (la 2.1.1, PR #96, approvata dal PO: «metti tutto su main e fondi», I-312). **Il prossimo

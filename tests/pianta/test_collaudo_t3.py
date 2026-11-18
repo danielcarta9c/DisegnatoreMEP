@@ -220,7 +220,7 @@ def test_senza_lunghezza_la_prende_dalla_distinta(tmp_path: Path) -> None:
                               distinta=DISTINTA)
     per_tratta = {t["tratta"]: t for t in _dati(esito)["tratte"]}
     assert per_tratta["T10"]["lunghezza_data_m"] == 18 and per_tratta["T10"]["lunghezza_data_da"] == "distinta"
-    assert per_tratta["T10"]["lunghezza_da_quotare_m"] == 22
+    assert per_tratta["T10"]["lunghezza_da_quotare_m"] == 19  # 18 + 1 m, netti (I-320)
     assert any("dalla distinta" in a for a in esito.avvisi or [])
 
 
@@ -265,7 +265,7 @@ def test_la_scritta_dice_la_lunghezza_del_progettista_come_lo_schema(esiti: dict
     assert "T01 · Ø200 · L 5 m" in testi and "T15 · 2×0,75 · L 2 m" in testi
     assert not [t for t in testi if t.startswith("T01 ") and "L 7 m" in t]
     t01 = next(t for t in _dati(esito)["tratte"] if t["tratta"] == "T01")
-    assert t01["lunghezza_da_quotare_m"] == 7  # la L da quotare resta nella tabella
+    assert t01["lunghezza_da_quotare_m"] == 6  # la L da quotare resta nella tabella (5 + 1 m, netti)
 
 
 def test_la_scritta_del_fascio_non_da_un_numero_solo_a_lunghezze_diverse(esiti: dict[str, Esito]) -> None:
