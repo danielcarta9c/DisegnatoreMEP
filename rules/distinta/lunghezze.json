@@ -1,14 +1,14 @@
 {
   "id": "lunghezze",
-  "versione": "1.1.0",
-  "nota": "La regola delle lunghezze da quotare. La lunghezza di un tratto è un dato del progettista (`lunghezza_m` della tubazione: la lunghezza stimata, dalla pianta o dal sopralluogo); la distinta la maggiora così: L da quotare = (L + aggiunta) × fattore, arrotondata per eccesso al passo, mai sotto il minimo del fluido né sotto il minimo che il progettista scrive sul tratto (`lunghezza_minima_m`). Un tratto con `lunghezza_m` 0 è un raccordo diretto (il plenum montato sulla macchina, un cablaggio di fabbrica): niente materiale e niente maggiorazione. Una classe può dire anche `aggiunta_m`, al posto di quella della regola, per i suoi fluidi.",
+  "versione": "1.2.0",
+  "nota": "La regola delle lunghezze da quotare. La lunghezza di un tratto è un dato del progettista (`lunghezza_m` della tubazione: la lunghezza stimata, dalla pianta o dal sopralluogo); la distinta la conta così: L da quotare = (L + aggiunta) × fattore, arrotondata per eccesso al passo, mai sotto il minimo del fluido né sotto il minimo che il progettista scrive sul tratto (`lunghezza_minima_m`). Un tratto con `lunghezza_m` 0 è un raccordo diretto (il plenum montato sulla macchina, un cablaggio di fabbrica): niente materiale e niente maggiorazione. Una classe può dire anche `aggiunta_m`, al posto di quella della regola, per i suoi fluidi.",
   "regola": {
     "aggiunta_m": 1.0,
-    "fattore": 1.15,
+    "fattore": 1.0,
     "passo_m": 0.5,
-    "fonte": "kit AA-01: RAPPORTO.md §7 «Lunghezze»; lavoro/dimensionamento.py, `da_quotare`; REVISIONE-INDIPENDENTE.md rilievo 23 (una regola sola, applicata ovunque)",
-    "fonte_in_parole": "regola Nove C per le quotazioni a corpo (lunghezze maggiorate)",
-    "perche": "Le lunghezze vengono da una pianta (nel kit il catastale 1:200, ±10-15%): il metro in più copre discese e raccordi, il 15% l'incertezza del rilievo, il mezzo metro per eccesso il taglio. In dubbio per eccesso: un metro che manca è un extra di Nove C."
+    "fonte": "kit AA-01: RAPPORTO.md §7 «Lunghezze»; lavoro/dimensionamento.py, `da_quotare`; REVISIONE-INDIPENDENTE.md rilievo 23 (una regola sola, applicata ovunque); disposizione del PO del 18 novembre 2026 (I-320, REL-028): quantità nette, senza la maggiorazione del 15%",
+    "fonte_in_parole": "regola Nove C per le quantità (nette, senza maggiorazione percentuale: disposizione del PO, I-320)",
+    "perche": "Il materiale si vende a confezioni intere (il rotolo da 50 m per 35 m di tubo): una maggiorazione percentuale sopra le confezioni la paga due volte (I-320). Il metro in più per tratto copre discese e raccordi che la pianta non mostra, il mezzo metro per eccesso il taglio; i minimi delle linee restano."
   },
   "classi": [
     {
@@ -75,7 +75,7 @@
       "minimo_m": 0.0,
       "fonte": "REL-022 (I-288): disposizione del PO del 6 novembre 2026 — i metri, l'isolamento e i gomiti dei tubi d'acqua li dà il progettista nella chat; il grafo è uno spazio di disegno",
       "fonte_in_parole": "disposizione del PO (I-288): i dati di cantiere vengono dalla chat",
-      "perche": "I metri dei tubi d'acqua li dice il progettista per rete e diametro (blocco `distinta` del grafo): si maggiorano del 15%, senza il metro per tratto della regola generale, che è pensato per le linee dell'aria e del frigorifero.",
+      "perche": "I metri dei tubi d'acqua li dice il progettista per rete e diametro (blocco `distinta` del grafo): si contano netti, senza maggiorazione (I-320) e senza il metro per tratto della regola generale, che è pensato per le linee dell'aria e del frigorifero.",
       "aggiunta_m": 0.0
     }
   ],

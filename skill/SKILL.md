@@ -7,7 +7,7 @@ compatibility: Richiede l'esecuzione del codice (claude.ai, Claude Cowork o Clau
 
 # Disegnatore MEP
 
-**Versione 2.1.1** — 18 novembre 2026.
+**Versione 2.2.0** — 18 novembre 2026.
 
 Il progettista ha già deciso e dimensionato l'impianto, e te lo descrive a parole. Tu ne fai la
 **tavola dello schema funzionale**: la leggi, chiedi quello che manca, la fai approvare, la componi e
@@ -34,7 +34,7 @@ python3 scripts/mep.py <comando> ...     # dalla cartella di questa skill
   diametri; non decidi quanti pezzi ci vanno; non cambi l'ordine delle utenze e delle macchine,
   che è del progettista. Un ritorno inverso o due dorsali si disegnano solo se li chiede lui.
   La **sezione** e la **lunghezza** di un tratto («Ø200 · L 6 m», «3G2,5 · L 20 m») le dà lui: le
-  trascrivi, non le ricavi (`capire.md`). La distinta materiali e la maggiorazione delle
+  trascrivi, non le ricavi (`capire.md`). La distinta materiali e il conto delle
   lunghezze si fanno solo se la chiede, con le regole della skill, ognuna con la sua fonte.
 - **Non inventi dati.** Quello che il testo non dice o lo chiedi, o lo dichiari come assunzione
   che il progettista vede. Un dato che manca non compare sulla tavola: al suo posto c'è «DA

@@ -25,7 +25,7 @@ le tubazioni, che si dicono coi pezzi che collegano.
 
 import re
 from collections.abc import Iterable, Mapping
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Any
 
@@ -66,6 +66,15 @@ class Tubazione:
     capo_b: str
     dati: Mapping[str, Any]
     """Le `properties` della tubazione, con sopra i campi del tratto se li ha in testa."""
+    porta_a: str = ""
+    porta_b: str = ""
+    """Le porte dei due capi (`port_id`): il raccordo all'attacco legge il pollice della porta (REL-028)."""
+
+    def porta(self, pezzo: str) -> str:
+        """La porta del capo `pezzo`, o vuoto."""
+        if pezzo == self.capo_a:
+            return self.porta_a
+        return self.porta_b if pezzo == self.capo_b else ""
 
 
 @dataclass(frozen=True)
@@ -222,7 +231,9 @@ def leggi_impianto(
             if tubazione.get(campo) is not None:
                 dati[campo] = tubazione[campo]
         tubazioni.append(
-            Tubazione(id=ident, rete=rete, fluido=reti[rete].fluido, capo_a=capo_a, capo_b=capo_b, dati=dati)
+            Tubazione(id=ident, rete=rete, fluido=reti[rete].fluido, capo_a=capo_a, capo_b=capo_b, dati=dati,
+                      porta_a=str((tubazione.get("endpoint_a") or {}).get("port_id") or ""),
+                      porta_b=str((tubazione.get("endpoint_b") or {}).get("port_id") or ""))
         )
     return Impianto(
         metadati=dict(grafo.get("metadata") or {}),
@@ -240,14 +251,7 @@ def con_i_tubi(impianto: Impianto, tubi: "TubiDelloSchema") -> Impianto:
     if not tubi.tubazioni:
         return impianto
     tubazioni = tuple(
-        Tubazione(
-            id=item.id,
-            rete=item.rete,
-            fluido=item.fluido,
-            capo_a=item.capo_a,
-            capo_b=item.capo_b,
-            dati={**item.dati, "sezione": tubi.tubazioni[item.id]},
-        )
+        replace(item, dati={**item.dati, "sezione": tubi.tubazioni[item.id]})
         if item.id in tubi.tubazioni
         else item
         for item in impianto.tubazioni

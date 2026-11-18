@@ -1,5 +1,27 @@
-# L'ultima release: 2.1.1
+# L'ultima release: 2.2.0
 
+`DisegnatoreMEP-v2.2.0.zip` — sha256 `469792ace3da33f6…`, 157 file — è `REL-028` (I-313 … I-329, D-241 … D-243): **due
+liste materiali complete, il bollitore col serpentino, i prezzi Tecnomat Pro**. Si carica come ogni skill personale,
+dallo ZIP così com'è.
+
+Rispetto alla 2.1.1:
+- **due liste, tutte e due complete** (D-241): `distinta --costo` è la lista prezzata per l'analisi CAPEX, e prezza
+  anche le apparecchiature (pompa di calore, bollitore, volano, circolatore, unità e comandi del clima), comprese
+  quelle fornite da Nove C, o le dice DA PREZZARE; `distinta --lista` è la lista senza prezzi per il fornitore, con
+  «fornita da Nove C: non si quota» sulle voci di Nove C, o senza quelle voci con `--senza-nove-c`;
+- **il bollitore col serpentino** (D-243): la voce dice «a serpentino maggiorato per pompa di calore, superficie di
+  scambio non minore di X m²», con X dal manuale Shenling §2.3 (smaltato o inox); il progettista può accettarne uno più
+  piccolo scrivendolo sul bollitore; nel confronto fra fornitori un bollitore sotto il minimo è uno scostamento; la
+  tabella delle apparecchiature scrive «200 l · serpentino 2,5 m²»;
+- **il raccordo all'attacco** scrive il pollice dell'attacco (Shenling dal manuale, Cordivari Bolly 1 XL dalla scheda,
+  le altre macchine dal grafo) o lo chiede;
+- **le quantità nette** (D-242): niente +15%;
+- **il listino rev. 07**: i prezzi Tecnomat Pro del 18 novembre (150 righe e 35 articoli nuovi), le apparecchiature con
+  un ID, il rame «CONDY» di Idrosanitaria come preisolato.
+
+Nessuno schema cambia; cambia la pianta del collaudo T3 (la colonna «L quot.», ora netta).
+
+Prima, la **2.1.1**:
 `DisegnatoreMEP-v2.1.1.zip` — sha256 `80245662bb72d28f…`, 156 file — è `REL-027` (I-302 … I-305): **il listino a più
 fornitori e «Dove comprare»**. Si carica come ogni skill personale, dallo ZIP così com'è.
 

@@ -142,13 +142,14 @@ Regole di forma:
   testo**. Se non l'ha scritta, `tag` è `null`: le sigle le assegna dopo, in automatico,
   chi battezza il grafo. Non inventare numerazioni.
 - **`properties`** dei componenti: solo i dati che il testo dà. Nessun dato dedotto.
-  **Sette dati hanno un nome fisso**, perché li legge la tabella delle apparecchiature
+  **Otto dati hanno un nome fisso**, perché li legge la tabella delle apparecchiature
   che la tavola porta in alto a sinistra (§4.5) e il calcolo dei diametri (§4.7):
 
   | dato | chiave | come si scrive |
   |---|---|---|
   | potenza termica | `power_kw` | un numero, in kW: `"power_kw": 12` |
   | volume | `volume_l` | un numero, in litri: `"volume_l": 500` |
+  | superficie del serpentino del bollitore | `superficie_scambio_m2` | un numero, in m², sul bollitore: `"superficie_scambio_m2": 2.5` (se il testo la dà; se il bollitore lavora con una pompa di calore e il testo non la dice, è una domanda) |
   | portata | `flow_rate_m3h` | un numero, in m³/h: `"flow_rate_m3h": 2.5` |
   | prevalenza | `head_kpa` oppure `head_m` | un numero, in kPa o in metri di colonna d'acqua, **nell'unità del testo** |
   | salto termico di progetto | `delta_t_k` | un numero, in kelvin: `"delta_t_k": 5` (§4.7) |

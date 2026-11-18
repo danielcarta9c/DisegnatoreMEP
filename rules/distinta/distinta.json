@@ -140,10 +140,10 @@
   "righe_h": 6,
   "intestazione": [
     "Offerta richiesta: PREZZO A CORPO, FISSO E INVARIABILE, per l'impianto finito e funzionante, in euro oltre IVA: un importo a corpo per le voci da quotare, le attività G e le voci H; per le varianti V solo il prezzo unitario, fuori dal corpo.",
-    "Le quantità sono INDICATIVE e già maggiorate: sono la base comune delle offerte, non un elenco da prezzare voce per voce.",
+    "Le quantità sono INDICATIVE e nette, senza maggiorazioni percentuali: sono la base comune delle offerte, non un elenco da prezzare voce per voce.",
     "SOPRALLUOGO OBBLIGATORIO prima dell'offerta: l'installatore verifica le quantità e ne risponde; quanto manca per l'impianto finito lo aggiunge fra le voci H.",
     "Le forniture escluse da questa offerta (colonna Fornitura: Nove C, Committente) non si quotano; le voci DA DEFINIRE aspettano un dato del progettista.",
-    "La distinta non progetta: lunghezze, sezioni, portate e protezioni sono del progettista; la distinta le conta e le maggiora con regole scritte, ciascuna con la sua fonte."
+    "La distinta non progetta: lunghezze, sezioni, portate e protezioni sono del progettista; la distinta le conta con regole scritte, ciascuna con la sua fonte."
   ],
   "chiusura": "Validità dell'offerta, tempi di esecuzione (posa prima della chiusura del controsoffitto, messa in servizio al secondo accesso) e referente tecnico dell'installatore:"
 }

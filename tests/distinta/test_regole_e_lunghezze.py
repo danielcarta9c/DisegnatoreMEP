@@ -78,7 +78,8 @@ def test_il_minimo_vince_e_il_conto_lo_dice() -> None:
 
 def test_le_regole_della_cartella_sono_quelle_del_kit(regole: RegoleDellaDistinta) -> None:
     regola = regole.lunghezze["regola"]
-    assert (regola["aggiunta_m"], regola["fattore"], regola["passo_m"]) == (1.0, 1.15, 0.5)
+    # Il fattore del kit era 1,15; dal 18 novembre 2026 le quantita' sono nette (I-320, REL-028).
+    assert (regola["aggiunta_m"], regola["fattore"], regola["passo_m"]) == (1.0, 1.0, 0.5)
     minimi = {c["classe"]: c["minimo_m"] for c in regole.lunghezze["classi"]}
     assert minimi == {"frigo": 12.0, "condensa": 10.0, "bus": 5.0, "ramo_aria": 2.0, "potenza": 0.0, "acqua": 0.0}
 
@@ -125,3 +126,12 @@ def test_i_sostegni_uno_ogni_passo_piu_uno_per_tratto(regole: RegoleDellaDistint
     assert (passo, in_piu) == (1.2, 1)
     assert [quante_volte(q, passo) + in_piu for q in (6.0, 3.5, 6.0, 3.5, 7.0)] == [6, 4, 6, 4, 7]
     assert quante_volte(1.2, passo) + in_piu == 2
+
+
+def test_le_quantita_sono_nette_senza_la_maggiorazione(regole: RegoleDellaDistinta) -> None:
+    """REL-028, criterio 2e (I-320): niente ×1,15; il conto non scrive un «× 1» che non serve."""
+    regola = regole.lunghezze["regola"]
+    esito = da_quotare(8.0, regola)
+    assert esito.da_quotare == 9.0 and esito.calcolo == "8 + 1 = 9 m"
+    assert da_quotare(8.2, regola).calcolo == "8,2 + 1 = 9,2 → 9,5 m"
+    assert "nette" in regole.lunghezze["regola"]["fonte_in_parole"]

@@ -12,7 +12,8 @@ from .test_il_corredo_idronico_e_il_costo import _tubo
 
 RACCORDO_1 = "Raccordo diritto a pressare M 1\" × tubo multistrato MS 32×3"
 NIPPLO_1 = "Nipplo 1\" M × M"
-ALL_ATTACCO = "Raccordo diritto a pressare M × tubo multistrato MS 32×3, all'attacco"
+ALL_ATTACCO = "Raccordo diritto a pressare M DA DEFINIRE (attacco) × tubo multistrato MS 32×3, all'attacco"
+"""Il raccordo all'attacco di un pezzo di cui il grafo non dice il pollice (REL-028, I-317): una domanda."""
 
 
 def _grafo(pezzi: list[tuple[str, str, str]], tubi: list[dict[str, Any]], **pezzo_dati: dict[str, Any]) -> dict[str, Any]:
@@ -153,3 +154,21 @@ def test_gli_stacchi_non_portano_giunzioni(
     assert sezione_i[ALL_ATTACCO].quantita == 1
     assert sezione_i[RACCORDO_1].quantita == 1
     assert not [t for t in sezione_i if t.startswith("Nipplo")]
+
+
+def test_il_raccordo_all_attacco_scrive_il_pollice_dell_attacco(
+    regole: RegoleDellaDistinta, nomi: tuple[dict[str, str], dict[str, str]]
+) -> None:
+    """REL-028, criterio 2d (I-317): col pollice dell'attacco scritto sul pezzo (dalla scheda della
+    macchina) il raccordo lo dice; senza, e' una domanda prima della lista, mai il pollice del tubo."""
+    grafo = _gruppo_del_circolatore()
+    distinta = componi_la_distinta(grafo, regole, *nomi)
+    senza = _sezione(distinta, "I")[ALL_ATTACCO]
+    assert senza.da_definire and any("TE-01" in d and "di che pollice è l'attacco" in d for d in senza.domande)
+    assert any(m.dato == "attacco_della_macchina" and m.chi == "TE-01" for m in distinta.mancanti)
+    for pezzo in grafo["components"]:
+        if pezzo["id"] == "pav":
+            pezzo["properties"]["attacco"] = '1"'
+    sezione_i = _sezione(componi_la_distinta(grafo, regole, *nomi), "I")
+    voce = sezione_i["Raccordo diritto a pressare M 1\" × tubo multistrato MS 32×3, all'attacco"]
+    assert voce.quantita == 2 and not voce.da_definire and voce.prezzo is not None and voce.prezzo.codici

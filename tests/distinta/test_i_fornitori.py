@@ -107,8 +107,8 @@ def test_il_listino_vero_ordina_dai_tre_fornitori_e_non_da_bricoman(listino: Any
     gomito = listino.offerte("I13")
     assert {v.fornitore for v in gomito} == {"Tecnomat", "Abbattista", "Idrosanitaria"}
     assert listino.get("I13") == min(gomito, key=lambda v: v.prezzo)
-    # il nipplo da 1": Bricoman (2,13) è un riferimento, Idrosanitaria e Abbattista si ordinano
-    assert listino.get("I83c").fornitore == "Idrosanitaria"
+    # il nipplo da 1": Bricoman (2,13) è un riferimento; col rilievo Tecnomat Pro (REL-028) Tecnomat lo ha a 1,19
+    assert listino.get("I83c").fornitore == "Tecnomat"
 
 
 def test_l_ordine_va_al_piu_economico_e_dice_le_combinazioni(tmp_path: Path) -> None:
@@ -243,5 +243,40 @@ def test_lo_scostamento_non_si_sceglie_e_diventa_un_avviso(tmp_path: Path) -> No
 def test_nel_listino_vero_il_filler_e_il_manometro_0_12_sono_avvisi(listino: Any) -> None:
     """I-308, I-309: il gruppo di riempimento senza disconnettore e il manometro 0–12 non si scelgono."""
     assert listino.get("I47").fornitore == "Idrosanitaria" and "DISCONNETTORE" in listino.get("I47").descrizione
-    assert {v.fornitore for v in listino.offerte("I47") if v.scostamento} == {"Tecnomat", "Abbattista"}
+    # Col rilievo Tecnomat Pro (REL-028) Tecnomat ha il gruppo col disconnettore (254,57 €, conforme ma piu' caro);
+    # il Filler senza disconnettore resta documentato senza ID.
+    assert {v.fornitore for v in listino.offerte("I47") if v.scostamento} == {"Abbattista"}
     assert listino.get("I44").fornitore == "Idrosanitaria" and "0-6BAR" in listino.get("I44").descrizione
+
+
+def test_il_rilievo_tecnomat_pro_e_tutto_nel_listino(listino: Any) -> None:
+    """REL-028, punto 1 (I-313): ogni riga trovata del rilievo Pro del 18 novembre 2026 è nel listino, col suo
+    codice, il negozio, il prezzo Pro e la data; le 150 della parte A e le 35 trovate della parte B."""
+    righe = (ROOT / "docs" / "rilievi" / "tecnomat-pro-rilevato-2026-11-18.md").read_text(encoding="utf-8").splitlines()
+    tecnomat = {(v.codice, v.articolo): v for vv in listino.righe.values() for v in vv if v.fornitore == "Tecnomat"}
+    parte, intestazione, trovate = "", None, 0
+    for riga in righe:
+        if riga.startswith("## Parte"):
+            parte = riga.split()[2]
+        if not riga.startswith("|"):
+            intestazione = None
+            continue
+        celle = [c.strip() for c in riga.strip().strip("|").split("|")]
+        if intestazione is None:
+            intestazione = celle
+            continue
+        if set(riga.replace("|", "").strip()) <= set("-: "):
+            continue
+        dati = dict(zip(intestazione, celle, strict=False))
+        codice = dati.get("Codice Tecnomat", "")
+        if not codice:
+            continue
+        prezzo = dati["Netto/UM € Pro"] if parte == "A" else dati["Netto/UM €"]
+        voce = tecnomat.get((dati["ID"], codice))
+        if voce is None and dati["ID"] in ("I44", "I47"):
+            continue  # la riga della parte A di I44 e I47 resta senza ID: la parte B ha l'articolo piu' vicino
+        assert voce is not None, (parte, dati["ID"], codice)
+        assert abs(voce.prezzo - float(prezzo.replace(",", "."))) < 1e-6, (dati["ID"], voce.prezzo, prezzo)
+        assert "Segrate" in voce.fonte and "18 novembre 2026" in voce.fonte
+        trovate += 1
+    assert trovate == 150 - 2 + 35

@@ -325,6 +325,7 @@ def controlla(letti: Mapping[str, Any]) -> list[str]:
 
     for ident, voce_di_catalogo in letti["corredo"].get("voci", {}).items():
         _ha_fonte_e_perche(voce_di_catalogo, f"corredo.json, {ident}", difetti)
+        _controlla_il_prezzo(voce_di_catalogo.get("prezzo_apparecchiatura"), f"corredo.json, {ident}", difetti)
         if not isinstance(voce_di_catalogo.get("nome"), str):
             difetti.append(f"corredo.json, {ident}: manca «nome»")
         for voce in voce_di_catalogo.get("voci", []):

@@ -34,7 +34,7 @@ def test_un_ramo_senza_lunghezza_lascia_da_definire_la_sua_parte_delle_voci_a_me
     assert [(v.quantita, v.da_definire) for v in flessibile] == [(3, False), (None, True)]
     assert "T03" not in flessibile[0].note and "manca la lunghezza di T03" in flessibile[1].calcolo
     sostegni = [v for v in distinta.voci if v.regola.endswith("/sostegni")]
-    assert [v.quantita for v in sostegni] == [21, None]
+    assert [v.quantita for v in sostegni] == [20, None]
     fascette = next(v for v in distinta.voci if v.regola.endswith("/fascette"))
     assert fascette.quantita == 20, "le fascette si contano per ramo: il numero dei rami si sa"
     assert any("T03" in d and "quanto e' lungo" in d for d in distinta.domande)
@@ -101,7 +101,7 @@ def test_una_voce_senza_corredo_e_un_fluido_senza_regole_vanno_in_x(
     distinta = _distinta(grafo_aa01, regole, nomi)
     x = distinta.voci_della_sezione("X")
     assert [(v.testo.split(":")[0], v.quantita, v.fornitura) for v in x] == [
-        ("Linea di gas metano DA DEFINIRE (sezione)", 5.0, DA_DEFINIRE),
+        ("Linea di gas metano DA DEFINIRE (sezione)", 4.0, DA_DEFINIRE),
         ("Collettore solare", 1.0, DA_DEFINIRE),
         ("Regolatore d'impianto", 1.0, DA_DEFINIRE),
     ]

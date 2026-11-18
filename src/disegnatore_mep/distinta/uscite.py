@@ -1,7 +1,7 @@
 """Le uscite della distinta: il JSON, le tabelle per il foglio, il foglio dei calcoli.
 
 - `distinta.json` — tutto: le voci con la regola, la fonte, il perche' e il conto; le
-  tratte con la loro lunghezza maggiorata; la verifica; le domande;
+  tratte con la loro lunghezza da quotare; la verifica; le domande;
 - `tabelle-del-foglio.json` — **i dati** delle tabelle che il motore sa posare sulla
   tavola (`disegna --tabelle`), gia' scritti come testo. **Il flusso della skill non le
   posa piu'** (I-233: sulla tavola solo la tabella delle apparecchiature e la legenda);

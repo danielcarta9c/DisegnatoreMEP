@@ -122,3 +122,10 @@ Il comando della skill li riapre da sé.
   commessa PR.MI.059 (tutte le righe, col fornitore); `distinta --costo` usa per ogni articolo il prezzo più basso fra
   i fornitori da cui si ordina e scrive l'ordine per fornitore, il fornitore più economico se se ne sceglie uno solo e quanto costa in più comprare da meno fornitori; `--fornitori` per il fornitore scelto.
   Tavole identiche alla 2.1.0; nel banco cambia la sola impronta delle regole in tre distinte. 156 file.
+- **2.2.0** — 18 novembre 2026 (`REL-028`, I-313 … I-329; D-241 … D-243): **due liste complete, il bollitore col
+  serpentino, i prezzi Tecnomat Pro** — `distinta --costo` è la lista prezzata per il CAPEX, apparecchiature comprese
+  (anche quelle di Nove C); `--lista` per il fornitore dice «fornita da Nove C», `--senza-nove-c` le toglie; la voce del
+  bollitore dice la superficie minima del serpentino (manuale Shenling §2.3), e il confronto fra fornitori la rispetta;
+  il raccordo all'attacco col pollice dell'attacco (Shenling, Cordivari Bolly 1 XL) o una domanda; le quantità nette;
+  il listino rev. 07 coi prezzi Tecnomat Pro (150 righe, 35 articoli nuovi) e il rame «CONDY». Nessuno schema cambia;
+  cambia la pianta del collaudo T3 (le «L quot.» nette). 157 file.

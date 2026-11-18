@@ -142,25 +142,25 @@ def test_dove_non_c_e_posto_la_scritta_va_in_legenda_numerata(esiti: dict[str, E
 # --- 2. le lunghezze sono quelle del progettista ----------------------------------------
 
 DELLA_DISTINTA = {
-    "T01": 7, "T02": 5, "T03": 6, "T04": 8.5, "T06": 12, "T07": 12, "T08": 10.5, "T09": 10.5,
-    "T10": 22, "T11": 13, "T12": 9.5, "T13": 7, "T14": 11.5, "T15": 8.5,
+    "T01": 6, "T02": 4, "T03": 5, "T04": 7, "T06": 12, "T07": 12, "T08": 10, "T09": 9,
+    "T10": 19, "T11": 13, "T12": 8, "T13": 6, "T14": 10, "T15": 7,
 }
-"""La colonna «L quot.» della distinta del collaudo t1
-(`lavoro/distinta/tabelle-del-foglio.json`), sullo stesso grafo: la pianta deve
-dare gli stessi numeri."""
+"""La colonna «L quot.» della distinta del collaudo t1, sullo stesso grafo: la pianta deve
+dare gli stessi numeri. Dal 18 novembre 2026 le quantita' sono nette (I-320, REL-028): erano
+7, 5, 6, 8,5 … con il ×1,15 (`lavoro/distinta/tabelle-del-foglio.json` del collaudo)."""
 
 
 def test_pianta_e_distinta_danno_lo_stesso_numero(esiti: dict[str, Esito]) -> None:
     """Collaudo t1, §3: T01 era «L 4,5 m» in pianta (dalla misura, 2,9 m) e 7 m
     in distinta (dai 5 m del progettista). Ora la pianta quota i 5 m, con la
-    regola della distinta: 7 m nella colonna «L quot.». Sulla linea, come sullo
+    regola della distinta: 6 m netti nella colonna «L quot.» (7 col ×1,15 di allora). Sulla linea, come sullo
     schema, la lunghezza del progettista (collaudo T3: «L 5 m», non «L 7 m»)."""
     lunghe = {lu.tratta: lu for lu in esiti["collaudo"].lunghezze}
     assert {t: lunghe[t].da_quotare_m for t in DELLA_DISTINTA} == DELLA_DISTINTA
     testi = [s.in_legenda or s.testo for _, s in esiti["collaudo"].tavola.scritte]
     testi += [s.in_legenda or s.testo for t in esiti["collaudo"].dettagli or [] for _, s in t.scritte]
     assert "T01 · Ø200 · L 5 m" in testi
-    assert "T01 · Ø200 · L 7 m" not in testi
+    assert "T01 · Ø200 · L 6 m" not in testi
 
 
 def test_la_misura_e_un_controllo_e_lo_scarto_si_dice(esiti: dict[str, Esito]) -> None:

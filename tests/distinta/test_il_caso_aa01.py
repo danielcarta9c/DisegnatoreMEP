@@ -94,11 +94,20 @@ KIT: list[tuple[str, str, float]] = [
 DIFFERENZE: dict[str, tuple[float, str]] = {
     "B.11": (2, "la revisione del PO (I-262) isola anche manicotti e derivazione: un rotolo in piu'"),
     "F.7": (7, "la revisione del PO (I-262) porta la traccia fino al controsoffitto anche per i comandi"),
-    "B.9": (27, "L / 1,2 m per eccesso + 1 per ramo; il kit scriveva 25 a mano"),
+    "B.9": (26, "L / 1,2 m per eccesso + 1 per ramo, sui metri netti (I-320); il kit scriveva 25 a mano"),
     "D.8": (10, "su tutta la condensa: il tratto in controsoffitto (5 m nel kit) lo sa solo la pianta"),
-    "E.9": (10.5, "il minimo di 5 m vale per tutto il bus, come dice il rapporto; il codice del kit lo dava ai soli termostati"),
+    "E.9": (10, "il minimo di 5 m vale per tutto il bus, come dice il rapporto; il codice del kit lo dava ai soli termostati"),
 }
 """Dove la distinta conta diversamente dal kit, e perche'. Tutte in su."""
+
+NETTE: dict[str, tuple[float, str]] = {
+    "B.1": (3, "quantita' nette (I-320): 26 m di flessibile netti stanno in 3 confezioni da 10 m, il kit ne contava 4"),
+    "E.5": (13, "quantita' nette (I-320): (11 + 1) m senza il ×1,15 del kit"),
+    "E.8": (25, "quantita' nette (I-320): i bus Airzone senza il ×1,15 del kit"),
+}
+"""Dove la distinta conta meno del kit perche' le quantita' sono nette: la disposizione del PO
+del 18 novembre 2026 (I-320, REL-028) toglie la maggiorazione del 15% che il kit applicava. Il
+materiale si vende a confezioni intere: la maggiorazione la si pagava due volte."""
 
 IN_GIU_DEL_COMMITTENTE: dict[str, tuple[float, str]] = {
     "Z.6": (
@@ -144,7 +153,7 @@ def test_ogni_voce_del_kit_e_nella_distinta(distinta: Distinta, rif: str, regola
     if rif in RIVISTE_DAL_PO and RIVISTE_DAL_PO[rif][0] is None:
         assert not [v for v in distinta.voci if regola in v.regola.split(" + ")], rif
         return
-    attesa, _ = {**DIFFERENZE, **IN_GIU_DEL_COMMITTENTE, **RIVISTE_DAL_PO}.get(rif, (nel_kit, ""))
+    attesa, _ = {**DIFFERENZE, **NETTE, **IN_GIU_DEL_COMMITTENTE, **RIVISTE_DAL_PO}.get(rif, (nel_kit, ""))
     assert _quantita(distinta, regola) == pytest.approx(attesa), rif
 
 
@@ -176,9 +185,10 @@ def test_le_sezioni_e_il_numero_delle_voci(distinta: Distinta) -> None:
 
 
 def test_le_tratte_sono_quelle_del_kit(distinta: Distinta) -> None:
-    """Le 18 tratte della tabella della M.02, con le stesse lunghezze da quotare;
-    l'unica diversa e' la P1-P2 corta (3 m nel kit, 5 col minimo del bus), e la
-    verifica della scritta lo dice.
+    """Le 18 tratte della tabella della M.02. Dal 18 novembre 2026 le lunghezze da quotare
+    sono nette (I-320, REL-028): L + 1 m per eccesso al mezzo metro, senza il ×1,15 del kit,
+    con i minimi del fluido (le linee frigo a 12 m, la condensa a 10, il bus a 5). La P1-P2
+    corta (3 m nel kit, 5 col minimo del bus) la dice la verifica della scritta.
 
     **La numerazione non e' piu' quella del kit** (collaudo T3 di REL-012): dentro ogni
     fluido le tratte vanno nell'ordine delle sigle che collegano, come la colonna
@@ -188,27 +198,33 @@ def test_le_tratte_sono_quelle_del_kit(distinta: Distinta) -> None:
     kit T14 UI-01 - CF-01 ora T17, kit T13 UI-01 - CZ-01 ora T18)."""
     lunghezze = [(t.num, distinta.da_a(t), t.da_quotare_m) for t in distinta.tratte_in_tabella]
     assert lunghezze == [
-        ("T01", "PLZ-01 - B1", 6.0),
-        ("T02", "PLZ-01 - B2", 3.5),
-        ("T03", "PLZ-01 - B3", 6.0),
-        ("T04", "PLZ-01 - B4", 3.5),
-        ("T05", "PLZ-01 - B5", 7.0),
+        ("T01", "PLZ-01 - B1", 5.5),
+        ("T02", "PLZ-01 - B2", 3.0),
+        ("T03", "PLZ-01 - B3", 5.5),
+        ("T04", "PLZ-01 - B4", 3.0),
+        ("T05", "PLZ-01 - B5", 6.0),
         ("T06", "RA-01 - UI-01", None),
         ("T07", "UE-01 - UI-01", 12.0),
         ("T08", "UE-01 - UI-01", 12.0),
         ("T09", "UI-01 - SIF-01 - AL-01", 10.0),
-        ("T10", "QE-01 - CZ-01", 15.0),
+        ("T10", "QE-01 - CZ-01", 13.0),
         ("T11", "QE-01 - SZ-01 - UE-01", 20.0),
         ("T12", "UE-01 - UI-01", 13.0),
-        ("T13", "CZ-01 - TZ-01", 9.0),
-        ("T14", "CZ-01 - TZ-02", 7.0),
-        ("T15", "CZ-01 - TZ-03", 7.5),
-        ("T16", "CZ-01 - TZ-04", 5.5),
-        ("T17", "UI-01 - CF-01", 5.5),
+        ("T13", "CZ-01 - TZ-01", 7.5),
+        ("T14", "CZ-01 - TZ-02", 6.0),
+        ("T15", "CZ-01 - TZ-03", 6.5),
+        ("T16", "CZ-01 - TZ-04", 5.0),
+        ("T17", "UI-01 - CF-01", 5.0),
         ("T18", "UI-01 - CZ-01", 5.0),
     ]
     scritte = [e for e in distinta.verifica if e.controllo == "scritta sulla tavola" and e.esito == "oltre"]
-    assert [(e.dove, e.valore) for e in scritte] == [("T18", "«P1-P2 · L 3 m»")]
+    # Le scritte del grafo AA-01 vengono dalla tavola del kit, con le lunghezze maggiorate del 15%:
+    # con le quantita' nette la verifica le segnala tutte, tranne quelle che il minimo del fluido
+    # tiene uguali (le linee frigo, la condensa, l'alimentazione dell'unita' esterna). E' la verifica
+    # che fa il suo mestiere: la scritta va rifatta dal progettista.
+    uguali = {"T07", "T08", "T09", "T11", "T12"}
+    assert {e.dove for e in scritte} == {t.num for t in distinta.tratte_in_tabella if t.da_quotare_m} - uguali
+    assert ("T18", "«P1-P2 · L 3 m»") in [(e.dove, e.valore) for e in scritte]
 
 
 def test_la_verifica_dell_aria_segnala_e_non_corregge(distinta: Distinta) -> None:
@@ -232,7 +248,7 @@ def test_le_tabelle_del_foglio(distinta: Distinta) -> None:
     computo = tabelle["tabelle"][1]
     assert [s["titolo"][0] for s in computo["sezioni"]] == list("ASBCDEFZ")
     tratte = tabelle["tabelle"][0]["sezioni"][0]["righe"]
-    assert tratte[0] == ["T01", "PLZ-01 - B1", "Ø200", "flessibile coibentato", "270", "2,4", "4,1", "6"]
+    assert tratte[0] == ["T01", "PLZ-01 - B1", "Ø200", "flessibile coibentato", "270", "2,4", "4,1", "5,5"]
 
 
 def test_due_volte_lo_stesso_grafo_danno_la_stessa_distinta(

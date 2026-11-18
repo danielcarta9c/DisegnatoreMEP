@@ -28,7 +28,7 @@ della revisione 06) ordina da tutti, tranne che dal riferimento online.
 """
 
 import re
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field, replace
 from pathlib import Path
 
@@ -59,6 +59,9 @@ class VoceDelListino:
     confezione: str = ""
     scostamento: str = ""
     """Dove l'articolo non rispetta la prescrizione della voce (la nota con ⚠), o vuoto."""
+    superficie_m2: float | None = None
+    """La superficie di scambio del serpentino di un bollitore (REL-028, I-315): dalla nota,
+    «superficie di scambio 2 m²»; `None` se la riga non la dice."""
 
 
 @dataclass(frozen=True)
@@ -129,10 +132,41 @@ class Listino:
         }
         return replace(self, fornitori=scelti)
 
+    def con_le_superfici_minime(self, minime: Mapping[str, float]) -> "Listino":
+        """Lo stesso listino, dove per i codici di `minime` (i bollitori, REL-028) una riga col
+        serpentino sotto la superficie minima, o che non la dice, e' uno scostamento (⚠): il
+        fornitore che quota un serpentino piccolo non vince il confronto, e il conto lo avvisa."""
+        if not minime:
+            return self
+        righe = dict(self.righe)
+        for codice, minima in minime.items():
+            if codice not in righe:
+                continue
+            nuove = []
+            for voce in righe[codice]:
+                if voce.superficie_m2 is None:
+                    perche = f"la superficie del serpentino non è detta (la voce chiede almeno {_m2(minima)})"
+                elif voce.superficie_m2 + 1e-9 < minima:
+                    perche = f"serpentino {_m2(voce.superficie_m2)}, sotto il minimo di {_m2(minima)}"
+                else:
+                    nuove.append(voce)
+                    continue
+                scostamento = f"{voce.scostamento}; {perche}" if voce.scostamento else perche
+                nuove.append(replace(voce, scostamento=scostamento))
+            righe[codice] = tuple(nuove)
+        return replace(self, righe=righe)
+
     @property
     def voci(self) -> dict[str, VoceDelListino]:
         """Per codice, il prezzo che il conto usa (`get`)."""
         return {codice: voce for codice in self.righe if (voce := self.get(codice)) is not None}
+
+
+def _m2(valore: float) -> str:
+    return f"{valore:g}".replace(".", ",") + " m²"
+
+
+SUPERFICIE_NELLA_NOTA = re.compile(r"superficie di scambio\s+(\d+(?:[.,]\d+)?)\s*m²")
 
 
 def _numero(testo: str) -> float | None:
@@ -198,11 +232,14 @@ def leggi_il_listino(percorso: Path) -> Listino:
             articolo, confezione = dati.get("Codice", ""), dati.get("Confezione", "")
             nota = dati.get("Note", "").strip()
             scostamento = nota[1:].split(";")[0].strip() if nota.startswith("⚠") else ""
+            trovata_la_superficie = SUPERFICIE_NELLA_NOTA.search(nota)
+            superficie = float(trovata_la_superficie.group(1).replace(",", ".")) if trovata_la_superficie else None
         elif "Mediana €" in dati and "Codice" in dati:
             codice, prezzo, um = dati["Codice"], _numero(dati["Mediana €"]), dati.get("UM", "")
             descrizione = f"{dati.get('Voce', '')}, {dati.get('Misura', '')}".strip(", ")
             fonte = f"riferimento online{quando}, mediana di {dati.get('Riscontri', '?')} riscontri"
             fornitore, articolo, confezione, scostamento = RIFERIMENTO_ONLINE, "", "", ""
+            superficie = None
         else:
             continue
         if codice in SENZA_ID or prezzo is None:
@@ -211,7 +248,8 @@ def leggi_il_listino(percorso: Path) -> Listino:
         if any(v.fornitore == fornitore for v in gia):
             da = f" da {fornitore}" if fornitore else ""
             raise ErroreDelListino(f"{percorso}: il codice {codice} ha due prezzi{da}")
-        gia.append(VoceDelListino(codice, descrizione, prezzo, um, fonte, fornitore, articolo, confezione, scostamento))
+        gia.append(VoceDelListino(codice, descrizione, prezzo, um, fonte, fornitore, articolo, confezione, scostamento,
+                                  superficie))
     if not voci:
         raise ErroreDelListino(f"{percorso}: nessuna tabella di prezzi (colonne «ID … Netto/UM €» o «Codice … Mediana €»)")
     if fornitori:

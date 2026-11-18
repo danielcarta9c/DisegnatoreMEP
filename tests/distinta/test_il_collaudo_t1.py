@@ -49,13 +49,14 @@ def test_il_bus_senza_una_lunghezza_tiene_i_metri_noti(
     grafo_t1: dict[str, Any], regole: RegoleDellaDistinta, nomi: Nomi
 ) -> None:
     """I tre bus ai termostati (7 + 5 + 9 m) e il collegamento centrale-UI, senza lunghezza:
-    prima la voce intera era DA DEFINIRE e i 28 m noti sparivano."""
+    prima la voce intera era DA DEFINIRE e i metri noti sparivano (28 m maggiorati, 24 netti dal
+    18 novembre 2026, I-320)."""
     distinta = _distinta(grafo_t1, regole, nomi)
     cavo = [v for v in distinta.voci if v.regola.endswith("/cavo-di-bus")]
-    # 28 m noti (DA DEFINIRE solo la sezione del cavo, che il grafo non da'), poi T15, poi il comando a filo.
+    # 24 m noti (DA DEFINIRE solo la sezione del cavo, che il grafo non da'), poi T15, poi il comando a filo.
     # T15 e' CZ-01 - UI-01: nell'ordine delle sigle viene prima di UI-01 - CF-01 (collaudo T3).
-    assert [v.quantita for v in cavo] == [28, None, 8.5]
-    assert cavo[0].calcolo == "T12 9,5 + T13 7 + T14 11,5 = 28 m"
+    assert [v.quantita for v in cavo] == [24, None, 7]
+    assert cavo[0].calcolo == "T12 8 + T13 6 + T14 10 = 24 m"
     assert "Bus ai termostati di zona" in cavo[0].testo and "Collegamento centrale" not in cavo[0].testo
     assert "manca la lunghezza di T15" in cavo[1].calcolo and "Collegamento centrale di zona" in cavo[1].testo
     corrugato = [v for v in distinta.voci if v.regola.endswith("/corrugato-di-bus")]

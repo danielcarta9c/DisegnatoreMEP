@@ -1531,10 +1531,17 @@ def costruisci_il_parser() -> argparse.ArgumentParser:
         "l'offerta a corpo (I-262)",
     )
     distinta.add_argument(
+        "--senza-nove-c",
+        action="store_true",
+        help="con --lista, la lista per il fornitore senza le voci fornite da Nove C (I-314); senza, ci sono con la "
+        "nota «fornita da Nove C: non si quota»",
+    )
+    distinta.add_argument(
         "--costo",
         action="store_true",
-        help="anche il costo della minuteria a prezzi del listino (uso interno Nove C, non va all'installatore): "
-        "costo-minuteria.md e .json nella sottocartella interno/, che consegna non copia",
+        help="anche la lista materiali prezzata, CAPEX, a prezzi del listino, apparecchiature comprese (D-241; uso "
+        "interno Nove C, non va all'installatore): costo-minuteria.md e .json nella sottocartella interno/, che "
+        "consegna non copia",
     )
     distinta.add_argument(
         "--listino", type=Path, help="con --costo, un altro listino della minuteria (di default quello della skill)"
@@ -1645,6 +1652,7 @@ def _distinta(args: argparse.Namespace, cartelle: Cartelle) -> int:
         cartella_dei_simboli=cartelle.simboli,
         listino=(args.listino or cartelle.listino) if (args.costo or args.listino or args.fornitori) else None,
         fornitori=[f.strip() for f in args.fornitori.split(",") if f.strip()] if args.fornitori else None,
+        senza_nove_c=args.senza_nove_c,
     )
 
 
