@@ -6,9 +6,11 @@ entra nel documento per l'installatore, che resta senza prezzi (D-235); si scriv
 in un file suo.
 
 Che cosa si prezza: le voci di materiale (sezioni S, B, C, D, I, E e le voci senza regola
-della X). Non si prezzano le apparecchiature (A: macchine, accumuli, bollitori, che Nove C
-compra a parte), le opere e le attivita' (F, G, H, Z, V, e le voci a corpo: manodopera,
-non minuteria) e le voci del Committente. Ogni voce prezzata dice i suoi codici del listino, il prezzo netto
+della X) e, **dal 18 novembre 2026, le apparecchiature** (A: macchine, accumuli, bollitori,
+circolatori, unita' e comandi del clima), anche quelle che Nove C fornisce a parte (D-241, I-314:
+«LA lista materiali deve essere completa»; la lista prezzata e' l'analisi CAPEX). Non si prezzano le
+opere e le attivita' (F, G, H, Z, V, e le voci a corpo: manodopera, non materiale) e le voci del
+Committente, che Nove C non paga. Ogni voce prezzata dice i suoi codici del listino, il prezzo netto
 per unita' e il conto; una voce senza codice, o con un codice che il listino non ha, o con
 la quantita' DA DEFINIRE, e' **DA PREZZARE** e lo dice: non si stima.
 
@@ -31,8 +33,10 @@ from .listino import Listino
 from .lunghezze import in_parole
 from .ordine import ordine_della_minuteria, ordine_in_json, ordine_in_markdown
 
-SEZIONI_DI_MATERIALE = ("S", "B", "C", "D", "I", "E", "X")
-"""Le sezioni la cui roba si compra; le altre sono macchine, opere o attivita'."""
+SEZIONI_DI_MATERIALE = ("A", "S", "B", "C", "D", "I", "E", "X")
+"""Le sezioni la cui roba si compra (con le apparecchiature, D-241); le altre sono opere o attivita'."""
+
+COMMITTENTE = "committente"
 
 DA_PREZZARE = "DA PREZZARE"
 
@@ -94,7 +98,10 @@ def _riga(voce: Voce, listino: Listino) -> RigaDelCosto:
         nota=prezzo.nota if prezzo else "",
     )
     if prezzo is None:
-        riga.manca = "le regole non le danno un codice del listino"
+        riga.manca = (
+            "l'apparecchiatura non ha un codice del listino" if voce.sezione == "A"
+            else "le regole non le danno un codice del listino"
+        )
         return riga
     if prezzo.manca:
         riga.manca = prezzo.manca
@@ -119,16 +126,35 @@ def _riga(voce: Voce, listino: Listino) -> RigaDelCosto:
     return riga
 
 
+def superfici_minime(voci: list[Voce]) -> dict[str, float]:
+    """Per codice di bollitore, il serpentino minimo piu' alto che le voci chiedono (REL-028)."""
+    minime: dict[str, float] = {}
+    for voce in voci:
+        if voce.superficie_minima_m2 is None or voce.prezzo is None:
+            continue
+        for codice, _ in voce.prezzo.codici:
+            minime[codice] = max(minime.get(codice, 0.0), voce.superficie_minima_m2)
+    return minime
+
+
 def prezza_la_distinta(distinta: Distinta, listino: Listino) -> Costo:
+    """Le voci di materiale e le apparecchiature, chiunque le fornisca tranne il Committente (D-241).
+    Un bollitore del listino col serpentino sotto il minimo della pompa di calore e' uno scostamento."""
+    listino = listino.con_le_superfici_minime(superfici_minime(distinta.voci))
     costo = Costo(progetto=dict(distinta.progetto), listino=listino)
     for voce in distinta.voci:
         if voce.sezione not in SEZIONI_DI_MATERIALE or voce.um == "a corpo":
             costo.fuori.append((voce.rif, voce.sezione))
             continue
-        if voce.fornitura and voce.fornitura not in (distinta.regole.distinta.get("fornitura_installatore"), DA_DEFINIRE):
+        if voce.fornitura == COMMITTENTE:
             costo.fuori.append((voce.rif, voce.sezione))
             continue
-        costo.righe.append(_riga(voce, listino))
+        riga = _riga(voce, listino)
+        if voce.sezione == "A" and voce.fornitura and voce.fornitura not in (
+            distinta.regole.distinta.get("fornitura_installatore"), DA_DEFINIRE
+        ):
+            riga.nota = "; ".join(n for n in (riga.nota, f"fornita da {voce.fornitura}") if n)
+        costo.righe.append(riga)
     return costo
 
 
@@ -159,12 +185,13 @@ def costo_in_markdown(costo: Costo, titoli: dict[str, str]) -> str:
     nome = costo.progetto.get("project_name") or costo.progetto.get("drawing_title") or "impianto"
     prezzate = [r for r in costo.righe if r.prezzata]
     righe = [
-        f"# Costo della minuteria — {nome}",
+        f"# Lista materiali prezzata (CAPEX) — {nome}",
         "",
-        "> **Uso interno Nove C.** Non va all'installatore: il suo documento resta senza prezzi. È il costo, a "
-        "prezzi di listino, del materiale che la distinta conta (tubi, raccordi, valvolame, canali, cavi, accessori), "
-        "**escluse le apparecchiature** della sezione A (macchine, unità interne ed esterne, accumuli, bollitori, "
-        "plenum motorizzati: si comprano a parte) e la manodopera.",
+        "> **Uso interno Nove C.** Non va all'installatore né al fornitore: la lista per loro resta senza prezzi. È "
+        "il costo, a prezzi di listino, di **tutto** il materiale che la distinta conta: le apparecchiature della "
+        "sezione A (macchine, accumuli, bollitori, circolatori, unità e comandi del clima), anche quelle fornite da "
+        "Nove C (D-241), e la minuteria (tubi, raccordi, valvolame, canali, cavi, accessori). Fuori la manodopera e le "
+        "voci del Committente.",
         "",
         f"- **Listino:** {costo.listino.titolo}, revisione {costo.listino.revisione or '—'}. Prezzi netti, IVA esclusa; "
         "per ogni articolo il più basso fra i fornitori da cui si ordina (fra parentesi, di chi è), e dove nessuno lo "
@@ -172,8 +199,8 @@ def costo_in_markdown(costo: Costo, titoli: dict[str, str]) -> str:
         f"- **Totale prezzato: {_euro(costo.totale)} €**, su {len(prezzate)} voci di {len(costo.righe)}.",
         f"- **Da prezzare: {len(costo.da_prezzare)} voci**, che il totale non contiene (elencate in fondo, ciascuna "
         "col suo perché).",
-        "- Il conto è quantità × prezzo per unità del listino. Le quantità sono quelle della distinta: già maggiorate "
-        "per l'offerta a corpo (+15%, i minimi delle linee), e dove la distinta conta confezioni (il flessibile in "
+        "- Il conto è quantità × prezzo per unità del listino. Le quantità sono quelle della distinta, nette (senza "
+        "maggiorazione percentuale, I-320; restano i minimi delle linee), e dove la distinta conta confezioni (il flessibile in "
         "rotoli da 10 m) si pagano le confezioni intere; il resto è il consumo, e al banco le confezioni intere costano "
         "di più.",
         "",

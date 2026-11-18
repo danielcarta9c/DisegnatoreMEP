@@ -1,5 +1,6 @@
 # Listino della minuteria — riferimento interno Nove C
 
+**Revisione 07, 18 novembre 2026** (REL-028: le apparecchiature con un ID, il bollitore col serpentino, il rame «CONDY»).
 **Revisione 06, 18 novembre 2026.** Riscrive in Markdown il file del PO
 `listino_minuteria_pdc_rev02.xlsx` (2 novembre 2026); dalla revisione 05 il listino vive qui:
 si aggiorna in questo file, non più nel foglio Excel. **La revisione 06 lo fa a più fornitori**
@@ -30,7 +31,8 @@ Abbattista e il preventivo Idrosanitaria della commessa PR.MI.059 (§4 e §5).
 - **Netto/UM** è il netto diviso per la confezione: euro al metro (m), al metro quadro (m²)
   o al pezzo (cad).
 - **ID** è il codice del piano dei materiali: I idraulica, F frigorifero, A aeraulica,
-  E elettrico. Una lettera dopo il numero (I36a, I36b) distingue le misure della stessa voce.
+  E elettrico, M le apparecchiature (macchine, accumuli, bollitori, circolatori, unità e comandi del clima: dal 18
+  novembre 2026 il costo le prezza, D-241). Una lettera dopo il numero (I36a, I36b) distingue le misure della stessa voce.
 - **Fornitore** è chi vende l'articolo a quel prezzo; la tabella «I fornitori» qui sotto dice da quali Nove C
   ordina. **Lo stesso ID può avere più righe, una per fornitore**: è la stessa voce della stessa misura.
 - **La marca non conta, conta la prescrizione** (I-307): minuteria, volani, accessori. Il gomito a pressare da 32 è APE
@@ -42,6 +44,12 @@ Abbattista e il preventivo Idrosanitaria della commessa PR.MI.059 (§4 e §5).
   basso fra quelle che rispettano la voce, e se quella con ⚠ costa meno lo dice con un avviso sul prezzo, perché il
   progettista decida. Se nessun fornitore ha un articolo che rispetta la voce, il conto prende quello con ⚠ e lo
   avvisa.
+- **Il bollitore si confronta col serpentino** (I-315, I-321): una riga di bollitore dice nella nota la «superficie di
+  scambio N m²» del serpentino; il conto la confronta col minimo della pompa di calore che lo scalda (dal manuale
+  Shenling, §2.3), e una riga sotto il minimo, o che non la dice, è uno scostamento: non vince il confronto, e se è
+  l'unica il conto la prende avvisando. Un serpentino da 0,8 m² costa meno, ma con la pompa di calore non funziona.
+- **Le macchine si confrontano col modello** (pompa di calore, unità del clima, comandi): la marca conta, perché
+  la garanzia e gli attacchi sono quelli della macchina scelta. Una macchina di un'altra marca è uno scostamento.
 - **Mai un pezzo che fa un altro mestiere** sotto l'ID di una voce: il gruppo di sicurezza sull'acqua fredda del
   bollitore non diventa una valvola di sicurezza qualsiasi. Un articolo che fa un'altra cosa prende un altro ID, o
   «—».
@@ -1009,16 +1017,16 @@ documento (colonna Rif.: documento e riga).
 | — | Staffa per vaso di espansione ¾" | STAFFA VASO DI ESPANSIONE 3/4" 075510 — GIA | 69816916 | Abbattista | OC 0188404 r. 41 | 1 pz | 38,70 | 50+25 | 14,52 | 14,515 | cad | la voce del vaso la comprende («con attacco e staffa») |
 | I75 | Valvola a sfera FF a passaggio totale, ½" | VAL.SFERA FF ACQUA 1/2 TIEMME 2320 — 2310010 C/FARF.ROSSA | 88290332 | Abbattista | OC 0188404 r. 42 | 1 pz | 11,94 | 50+25 | 4,48 | 4,480 | cad | con farfalla |
 
-### Le apparecchiature (fuori dal conto della minuteria)
+### Le apparecchiature
 
-La sezione A della distinta non si prezza (D-235): queste righe sono qui perché il PO compra da Abbattista gli
-accessori più costosi (I-304), e perché il confronto si veda.
+Dal 18 novembre 2026 il costo prezza anche le apparecchiature (D-241, I-314): la lista prezzata è l'analisi CAPEX, e
+deve essere completa. Il PO compra da Abbattista gli accessori più costosi (I-304).
 
 | ID | Voce | Articolo | Codice | Fornitore | Rif. | Confezione | Listino € | Sconti % | Netto conf. € | Netto/UM € | UM | Note |
 |---|---|---|---|---|---|---|--:|---|--:|--:|---|---|
-| — | Circolatore | POMPA EVOSTA 2 40-70/130 (1")1X230 50/60 — Y25 60231853 | 85801171 | Abbattista | OC 0185611 r. 1 | 1 pz | 241,29 | 50+20 | 96,52 | 96,520 | cad |  |
-| — | Volano termico a quattro attacchi | UP GBF 80 VOLANO TERMICO SEPARATORE IDRA — 3070160920018 | 68432687 | Abbattista | OC 0185611 r. 2 | 1 pz | 448,21 | 50+20 | 179,29 | 179,290 | cad | stesso articolo Cordivari dell'offerta Idrosanitaria (3070160920018) |
-| — | Bollitore ACS 200 l | BOLLY 1 XL WB 200 BOLLITORE VERTICALE CO — 3104162330011 | 79861453 | Abbattista | OC 0185611 r. 4 | 1 pz | 1.566,31 | 50+20 | 626,52 | 626,520 | cad | modello diverso da quello dell'offerta Idrosanitaria |
+| M30a | Circolatore DAB Evosta 2 40-70/130 | POMPA EVOSTA 2 40-70/130 (1")1X230 50/60 — Y25 60231853 | 85801171 | Abbattista | OC 0185611 r. 1 | 1 pz | 241,29 | 50+20 | 96,52 | 96,520 | cad |  |
+| M20b | Volano termico a quattro attacchi, 80 l | UP GBF 80 VOLANO TERMICO SEPARATORE IDRA — 3070160920018 | 68432687 | Abbattista | OC 0185611 r. 2 | 1 pz | 448,21 | 50+20 | 179,29 | 179,290 | cad | stesso articolo Cordivari dell'offerta Idrosanitaria (3070160920018) |
+| M10b | Bollitore ACS 200 l a serpentino | BOLLY 1 XL WB 200 BOLLITORE VERTICALE CO — 3104162330011 | 79861453 | Abbattista | OC 0185611 r. 4 | 1 pz | 1.566,31 | 50+20 | 626,52 | 626,520 | cad | superficie di scambio 2 m² (scheda Cordivari letta dal motore di ricerca, I-315: da confermare sulla scheda); modello diverso da quello dell'offerta Idrosanitaria |
 
 ## 5. Idrosanitaria — preventivo del 9 novembre 2026
 
@@ -1032,7 +1040,7 @@ nell'ordine del documento; il totale merce è 10.835,01 € più 8,75 € di con
 - **I raccordi «all'attacco»**: per i raccordi diritti a pressare filettati che la lista chiamava «all'attacco» (senza
   il pollice), Idrosanitaria ha offerto **manicotti** tubo-tubo (righe 40, 42, 47): le righe sono sui codici dei
   manicotti, che è quello che sono.
-- **Il rame «CONDY»**: senza ID finché non si sa se è il rame rivestito (righe 50 e 51).
+- **Il rame «CONDY»**: è il rame rivestito (righe 50 e 51, F01b e F03b): il preventivo non ha isolante per il rame, e il PO ha detto che allora è il preisolato (I-316).
 
 ### Il materiale
 
@@ -1082,8 +1090,8 @@ nell'ordine del documento; il totale merce è 10.835,01 € più 8,75 € di con
 | I26c | Manicotto a pressare | RM102 MANICOTTO 32X3 | RM102Y011 | Idrosanitaria | XC 2704331 r. 47 | 1 pz | 6,07 | 6,074 | cad | manicotto: offerto per i raccordi «all'attacco» del 32 della lista, che sono filettati |
 | I83b | Nipplo in ottone | F280 NIPPLO GHISA ZINC.3/4" | 770280205 | Idrosanitaria | XC 2704331 r. 48 | 1 pz | 1,09 | 1,089 | cad | in ghisa zincata fig. 280 (il §2ter: in ottone) |
 | A01c | Tubo flessibile isolato per aria, rotolo 10 m, Ø200 | TUBO FLEX ISOLATO PER CANALIZZATO D203 PREZZO AL MT | TES203 | Idrosanitaria | XC 2704331 r. 49 | 1 m | 6,90 | 6,897 | m | Ø203, al metro |
-| — | Tubo di rame 3/8" × 0,8, rotolo 50 m («CONDY») | TUBO RAME 3/8"X0.8 ROTOLO 50M CONDY | RBMEM009520800 | Idrosanitaria | XC 2704331 r. 50 | 1 m | 4,34 | 4,344 | m | senza ID finché non si sa se è il rivestito: se lo è, prende F01b |
-| — | Tubo di rame 5/8" × 1,0, rotolo 50 m («CONDY») | TUBO RAME 5/8"X1.0 ROTOLO 50M CONDY | RBMEM015871000 | Idrosanitaria | XC 2704331 r. 51 | 1 m | 9,50 | 9,504 | m | senza ID finché non si sa se è il rivestito: se lo è, prende F03b |
+| F01b | Coppia tubi rame preisolati | TUBO RAME 3/8"X0.8 ROTOLO 50M CONDY | RBMEM009520800 | Idrosanitaria | XC 2704331 r. 50 | 1 m | 4,34 | 4,344 | m | rivestito: nel preventivo non c'è isolante per il rame (gli isolanti sono 9×28, 32×28, 19×35, 32×35, 9×35), quindi «CONDY» è il preisolato (I-316); 3/8" × 0,8 |
+| F03b | Coppia tubi rame preisolati | TUBO RAME 5/8"X1.0 ROTOLO 50M CONDY | RBMEM015871000 | Idrosanitaria | XC 2704331 r. 51 | 1 m | 9,50 | 9,504 | m | rivestito: nel preventivo non c'è isolante per il rame, quindi «CONDY» è il preisolato (I-316); 5/8" × 1,0 |
 | — | Piedino antivibrante, portata 1000 kg | PIEDINO ANTIVIBRANTE PAV 1000KG | 11105340N | Idrosanitaria | XC 2704331 r. 57 | 1 pz | 2,60 | 2,603 | cad | come la riga 6 (I71a), per l'unità esterna |
 | I64 | Barra filettata M8 / M10 zincata | BARRA FILETTATA MA 8 X 1000MM ZINCATA DIN 975 | 647V00000801 | Idrosanitaria | XC 2704331 r. 58 | 1 pz | 0,71 | 0,709 | cad |  |
 | — | Barra filettata M10, 1 m | BARRA FILETTATA MA10 X 1000MM ZINCATA DIN 975 | 647V00001001 | Idrosanitaria | XC 2704331 r. 59 | 1 pz | 1,15 | 1,153 | cad | le regole prezzano la M10 con la M8 (I64) |
@@ -1110,17 +1118,19 @@ nell'ordine del documento; il totale merce è 10.835,01 € più 8,75 € di con
 | I69 | Sifone ispezionabile condensa | SIFONE A SECCO ORIZ. ANTIODORED.32 | SCD300006 | Idrosanitaria | XC 2704331 r. 80 | 1 pz | 13,33 | 13,328 | cad | sifone a secco antiodore, Ø32 |
 | I85 | Collante per tubo di scarico condensa rigido | COLLA PER TUBO SCARICO CONDENSA RIGIDO | 11126315 | Idrosanitaria | XC 2704331 r. 81 | 1 pz | 13,65 | 13,652 | cad |  |
 
-### Le apparecchiature e la climatizzazione (fuori dal conto della minuteria)
+### Le apparecchiature e la climatizzazione
+
+Dal 18 novembre 2026 il costo le prezza (D-241, I-314).
 
 | ID | Voce | Articolo | Codice | Fornitore | Rif. | Confezione | Netto conf. € | Netto/UM € | UM | Note |
 |---|---|---|---|---|---|---|--:|--:|---|---|
-| — | Bollitore ACS 200 l | BOL. BOLLY1 ST FB WB 200 V003 | 3104162330042 | Idrosanitaria | XC 2704331 r. 1 | 1 pz | 461,40 | 461,396 | cad | «modello da confermare»; modello diverso da quello di Abbattista |
-| — | Pompa di calore monoblocco 12 kW R290 | U.E. PDC MONOBLOCCO TRI 12KW R290 | AW12NMXGHA | Idrosanitaria | XC 2704331 r. 2 | 1 pz | 3.103,60 | 3.103,600 | cad |  |
-| — | Box elettronico della pompa di calore | BOX ELETTRONICO POMPA DI CALORE MONOBLOCCO R290 | ATW-A03N | Idrosanitaria | XC 2704331 r. 3 | 1 pz | 461,20 | 461,200 | cad |  |
-| — | Circolatore | EVOSTA2 40-70/130 1" CIRC.EL.SING.MONOF. | 60231853 | Idrosanitaria | XC 2704331 r. 4 | 1 pz | 93,60 | 93,600 | cad |  |
-| — | Volano termico a quattro attacchi | BOL. VB 80LT C/4 ATT. C/COPERT.V003 | 3070160920018 | Idrosanitaria | XC 2704331 r. 5 | 1 pz | 156,49 | 156,492 | cad | lo stesso articolo Cordivari dell'ordine Abbattista (UP GBF 80) |
-| — | Comando a filo Daikin | COMANDO FILO BT BIANCO | BRC1H52W7 | Idrosanitaria | XC 2704331 r. 52 | 1 pz | 119,12 | 119,116 | cad |  |
-| — | Plenum motorizzato di zona Airzone 4×200 | AIRZONE EASYZONE 25 WI-FI MEDIUM IB8 DAIKIN 4X200 | AZC25DAIBS07M4 | Idrosanitaria | XC 2704331 r. 53 | 1 pz | 993,61 | 993,611 | cad |  |
-| — | Termostato di zona Airzone radio | TERMOSTATO THINK RADIO BIANCO | AZCE6THINKRB | Idrosanitaria | XC 2704331 r. 54 | 1 pz | 170,16 | 170,158 | cad |  |
-| — | Unità esterna Daikin 7,1 kW | U.E. MONO ADVANCE 7,1KW R32 MONOFASE | RZASG71MV1 | Idrosanitaria | XC 2704331 r. 55 | 1 pz | 1.017,27 | 1.017,275 | cad |  |
-| — | Unità interna canalizzata Daikin 7 kW | U.I.CANALIZ.M/PREV S/COM 7,0KW R32/R410 | FBA71A9 | Idrosanitaria | XC 2704331 r. 56 | 1 pz | 835,78 | 835,783 | cad |  |
+| M10b | Bollitore ACS 200 l a serpentino | BOL. BOLLY1 ST FB WB 200 V003 | 3104162330042 | Idrosanitaria | XC 2704331 r. 1 | 1 pz | 461,40 | 461,396 | cad | superficie di scambio 0,8 m² (scheda Cordivari letta dal motore di ricerca, I-315: da confermare); «modello da confermare»; modello diverso da quello di Abbattista |
+| M01c | Pompa di calore aria-acqua monoblocco R290, Shenling ThermaX 12 kW | U.E. PDC MONOBLOCCO TRI 12KW R290 | AW12NMXGHA | Idrosanitaria | XC 2704331 r. 2 | 1 pz | 3.103,60 | 3.103,600 | cad | ⚠ è una Haier GT R290 12 kW trifase, non la Shenling ThermaX della commessa (il codice AW12NMXGHA nelle schede dei rivenditori, REL-028) |
+| — | Box elettronico della pompa di calore | BOX ELETTRONICO POMPA DI CALORE MONOBLOCCO R290 | ATW-A03N | Idrosanitaria | XC 2704331 r. 3 | 1 pz | 461,20 | 461,200 | cad | va con la pompa di calore della riga 2 (non verificato); nessuna regola lo usa |
+| M30a | Circolatore DAB Evosta 2 40-70/130 | EVOSTA2 40-70/130 1" CIRC.EL.SING.MONOF. | 60231853 | Idrosanitaria | XC 2704331 r. 4 | 1 pz | 93,60 | 93,600 | cad |  |
+| M20b | Volano termico a quattro attacchi, 80 l | BOL. VB 80LT C/4 ATT. C/COPERT.V003 | 3070160920018 | Idrosanitaria | XC 2704331 r. 5 | 1 pz | 156,49 | 156,492 | cad | lo stesso articolo Cordivari dell'ordine Abbattista (UP GBF 80) |
+| M44a | Comando a filo Daikin BRC1H52W7 | COMANDO FILO BT BIANCO | BRC1H52W7 | Idrosanitaria | XC 2704331 r. 52 | 1 pz | 119,12 | 119,116 | cad |  |
+| M42a | Plenum motorizzato di zona Airzone 4×200 | AIRZONE EASYZONE 25 WI-FI MEDIUM IB8 DAIKIN 4X200 | AZC25DAIBS07M4 | Idrosanitaria | XC 2704331 r. 53 | 1 pz | 993,61 | 993,611 | cad |  |
+| M43a | Termostato di zona Airzone Think radio | TERMOSTATO THINK RADIO BIANCO | AZCE6THINKRB | Idrosanitaria | XC 2704331 r. 54 | 1 pz | 170,16 | 170,158 | cad |  |
+| M41a | Unità esterna Daikin RZASG71MV1, 7,1 kW | U.E. MONO ADVANCE 7,1KW R32 MONOFASE | RZASG71MV1 | Idrosanitaria | XC 2704331 r. 55 | 1 pz | 1.017,27 | 1.017,275 | cad |  |
+| M40a | Unità interna canalizzata Daikin FBA71A9, 7 kW | U.I.CANALIZ.M/PREV S/COM 7,0KW R32/R410 | FBA71A9 | Idrosanitaria | XC 2704331 r. 56 | 1 pz | 835,78 | 835,783 | cad |  |

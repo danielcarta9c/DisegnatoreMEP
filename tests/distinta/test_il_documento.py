@@ -121,11 +121,14 @@ def test_le_tratte_sono_quelle_della_distinta(aa01: Distinta) -> None:
     tratte, verifica = _blocchi(secondo, Tabella)
     righe = tabelle_del_foglio(aa01, ("tratte",))["tabelle"][0]["sezioni"][0]["righe"]
     assert [list(r) for r in tratte.righe] == righe
-    assert tratte.righe[0] == ("T01", "PLZ-01 - B1", "Ø200", "flessibile coibentato", "270", "2,4", "4,1", "6")
+    assert tratte.righe[0] == ("T01", "PLZ-01 - B1", "Ø200", "flessibile coibentato", "270", "2,4", "4,1", "5,5")
     assert tratte.intestazioni[-2:] == ("L stimata m", "L da quotare m")
     # La scritta sulla tavola che concorda non interessa l'installatore: solo quella che non concorda.
     scritte = [r for r in verifica.righe if r[1] == "scritta sulla tavola"]
-    assert scritte == [("T18", "scritta sulla tavola", "«P1-P2 · L 3 m»", "L 5 m da quotare", "oltre")]
+    # Le scritte del grafo AA-01 sono quelle maggiorate della tavola del kit: con le quantita' nette
+    # (I-320) la verifica le segnala (si veda test_il_caso_aa01).
+    assert ("T18", "scritta sulla tavola", "«P1-P2 · L 3 m»", "L 5 m da quotare", "oltre") in scritte
+    assert all(r[4] == "oltre" for r in scritte)
     assert len([r for r in verifica.righe if r[1] == "velocità"]) == 6
 
 
@@ -136,7 +139,7 @@ def test_il_computo_una_tabella_per_sezione(aa01: Distinta) -> None:
     assert all(t.intestazioni == ("Rif.", "Voce", "UM", "Q.tà", "Fornitura", "Note") for t in tabelle)
     righe = [r for t in tabelle for r in t.righe]
     assert [r[0] for r in righe] == [v.rif for v in aa01.voci if v.sezione in "ASBCDEFXZ"]
-    assert (righe[9][0], righe[9][3]) == ("B.1", "4")
+    assert (righe[9][0], righe[9][3]) == ("B.1", "3")
 
 
 def test_attivita_varianti_e_righe_vuote(aa01: Distinta) -> None:

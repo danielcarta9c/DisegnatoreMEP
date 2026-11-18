@@ -34,6 +34,18 @@ DATI: dict[str, DatoInParole] = {
         "«marca» e «modello»",
         "se il progettista li lascia aperti di proposito, nel documento restano da definire",
     ),
+    "marca": DatoInParole("La marca della macchina", "«marca»"),
+    "power_kw": DatoInParole("La potenza nominale della macchina, in kW", "«power_kw»"),
+    "superficie_minima_scambio_m2": DatoInParole(
+        "La superficie minima del serpentino del bollitore per la pompa di calore, in m², dal manuale della pompa "
+        "di calore (la skill la sa per le Shenling ThermaX R290)",
+        "«superficie_minima_scambio_m2» sul bollitore",
+    ),
+    "attacco_della_macchina": DatoInParole(
+        "Il pollice dell'attacco della macchina su cui arriva il tubo (es. «1\"»), dalla scheda della macchina: il "
+        "raccordo all'attacco lo scrive",
+        "«attacco» sul pezzo",
+    ),
     "refrigerante": DatoInParole("Il refrigerante della macchina (es. «R32»)", "«refrigerante»"),
     "precarica_fino_a_m": DatoInParole(
         "Dalla scheda della macchina: fino a quanti metri di linea basta la precarica", "«precarica_fino_a_m»"

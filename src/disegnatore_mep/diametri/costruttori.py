@@ -68,6 +68,44 @@ SHENLING_THERMAX_R290: dict[float, DatiDelModello] = {
 progettista puo' variare)."""
 
 
+@dataclass(frozen=True)
+class BollitoreDelModello:
+    """Il serbatoio dell'acqua calda sanitaria che il manuale chiede per una taglia (REL-028, I-323)."""
+
+    superficie_smaltata_m2: float
+    """L'area di scambio minima consigliata del serpentino smaltato, in m²."""
+    superficie_inox_m2: float
+    """L'area di scambio minima consigliata del serpentino in acciaio inox, in m²."""
+    volume_minimo_l: float
+    volume_massimo_l: float
+
+
+SHENLING_THERMAX_R290_BOLLITORE: dict[float, BollitoreDelModello] = {
+    6.0: BollitoreDelModello(2.0, 1.4, 100.0, 250.0),
+    9.0: BollitoreDelModello(2.0, 1.4, 150.0, 300.0),
+    12.0: BollitoreDelModello(2.5, 1.6, 200.0, 500.0),
+    15.0: BollitoreDelModello(2.5, 1.6, 200.0, 500.0),
+}
+"""Manuale ThermaX R290 6-15 kW, §2.3 «Serbatoio dell'acqua calda sanitaria», p. 10 (pagina 15 del
+PDF; il manuale e' del PO, non nel repository, I-323): «L'area di scambio termico del serbatoio
+dell'acqua calda sanitaria non deve essere inferiore al seguente valore consigliato» — 6 e 9 kW
+2,0 m² smaltata, 1,4 m² inox; 12 e 15 kW 2,5 m² smaltata, 1,6 m² inox; volumi 100-250, 150-300,
+200-500 l."""
+
+SHENLING_DISTANZA_MASSIMA_BOLLITORE_M = 5.0
+"""Lo stesso §2.3, punto 6: «La lunghezza del tubo tra l'unità esterna e il serbatoio deve essere
+inferiore a 5 metri»."""
+
+
+def bollitore_shenling(marca: object, potenza_kw: object) -> BollitoreDelModello | None:
+    """Il bollitore che il manuale chiede, se la macchina e' una Shenling di una taglia nota."""
+    if "shenling" not in str(marca or "").lower():
+        return None
+    if not isinstance(potenza_kw, int | float) or isinstance(potenza_kw, bool):
+        return None
+    return SHENLING_THERMAX_R290_BOLLITORE.get(float(potenza_kw))
+
+
 def dati_del_modello(pezzo: ComponentInstance) -> DatiDelModello | None:
     """I numeri del manuale per questa macchina, se e' una Shenling di una taglia nota."""
     if "shenling" not in str(pezzo.properties.get(MARCA, "")).lower():

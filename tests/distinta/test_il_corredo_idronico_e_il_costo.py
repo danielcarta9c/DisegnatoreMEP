@@ -92,7 +92,7 @@ def test_il_listino_si_legge_con_le_voci_del_banco_e_quelle_online(listino: Any)
     assert tecnomat["I04"].prezzo == pytest.approx(3.64) and tecnomat["I04"].um == "m"
     assert tecnomat["I04"].fonte.startswith("rilievo al banco, Tecnomat")
     assert listino.get("E02").prezzo == pytest.approx(2.28)
-    assert listino.revisione.startswith("06")
+    assert listino.revisione.startswith("07")
 
 
 def test_un_codice_doppio_ferma_il_listino(tmp_path: Path) -> None:
@@ -141,12 +141,14 @@ def test_la_centrale_ha_tubo_valvole_e_raccordi_del_suo_pollice(
     # VI-02 dal lato della macchina; sull'attacco del volano VI-02 si avvita con un nipplo.
     assert sezione_i["Raccordo diritto a pressare M 1\" × tubo multistrato MS 32×3"].quantita == 3
     assert sezione_i["Nipplo 1\" M × M"].quantita == 1
-    assert sezione_i["Raccordo diritto a pressare M × tubo multistrato MS 32×3, all'attacco"].quantita == 3
+    # REL-028 (I-317): la Shenling dice il suo attacco solo con la potenza; qui manca, e il volano
+    # non lo dice: il raccordo all'attacco e' una domanda.
+    assert sezione_i["Raccordo diritto a pressare M DA DEFINIRE (attacco) × tubo multistrato MS 32×3, all'attacco"].quantita == 3
     assert sezione_i["Tee a pressare tubo multistrato MS 32×3"].quantita == 1
-    # I 24 m del progettista × 1,15 = 27,6 → 28 m; le lunghezze dei tratti non contano.
+    # I 24 m del progettista, netti (I-320); le lunghezze dei tratti non contano.
     tubo = sezione_i["Tubo multistrato MS 32×3, nudo"]
-    assert tubo.quantita == pytest.approx(28)
-    assert sezione_i["Guaina isolante elastomerica per tubo multistrato MS 32×3 (guaina 19 mm)"].quantita == 28
+    assert tubo.quantita == pytest.approx(24)
+    assert sezione_i["Guaina isolante elastomerica per tubo multistrato MS 32×3 (guaina 19 mm)"].quantita == 24
     assert sezione_i["Gomito 90° a pressare tubo multistrato MS 32×3, a corpo"].quantita == 20
     assert not distinta.voci_della_sezione("X")
     assert not [t for t in distinta.tratte_in_tabella if t.fluido == "heating_water"]
@@ -160,11 +162,16 @@ def test_il_costo_e_la_somma_delle_voci_prezzate_e_dice_quelle_da_prezzare(
 ) -> None:
     distinta = componi_la_distinta(_centrale(), regole, *nomi)
     costo = prezza_la_distinta(distinta, listino)
-    assert {r.sezione for r in costo.righe} <= {"S", "I", "E", "B", "C", "D", "X"}
-    assert all(r.sezione != "A" for r in costo.righe), "le apparecchiature si comprano a parte"
+    assert {r.sezione for r in costo.righe} <= {"A", "S", "I", "E", "B", "C", "D", "X"}
+    # D-241 (I-314): la lista prezzata e' completa, anche le apparecchiature fornite da Nove C;
+    # senza un codice del listino sono DA PREZZARE, e lo dicono.
+    apparecchiature = [r for r in costo.righe if r.sezione == "A"]
+    assert {r.testo.split(":")[0] for r in apparecchiature} == {"Pompa di calore aria-acqua", "Volano termico a due attacchi"}
+    assert all(not r.prezzata and r.manca for r in apparecchiature)
+    assert all("fornita da Nove C" in r.nota for r in apparecchiature)
     assert costo.totale == pytest.approx(sum(r.totale or 0 for r in costo.righe))
     tubo = next(r for r in costo.righe if r.testo == "Tubo multistrato MS 32×3, nudo")
-    assert tubo.totale == pytest.approx(28.0 * listino.get("I04").prezzo)
+    assert tubo.totale == pytest.approx(24.0 * listino.get("I04").prezzo)
     sfiato = next(r for r in costo.righe if r.testo.startswith("Valvola automatica di sfogo aria"))
     assert sfiato.totale == pytest.approx(listino.get("I43a").prezzo) and sfiato.nota
     valvole = next(r for r in costo.righe if r.testo.startswith("Valvola a sfera"))
@@ -180,11 +187,11 @@ def test_il_comando_scrive_il_costo_accanto_alla_distinta(tmp_path: Path, capsys
         cartelle_del_repository(ROOT),
     )
     stampa = capsys.readouterr().out
-    assert "Costo della minuteria (uso interno, non va all'installatore)" in stampa
+    assert "Lista materiali prezzata, CAPEX (uso interno, non va all'installatore né al fornitore)" in stampa
     md = (tmp_path / "d" / "interno" / "costo-minuteria.md").read_text(encoding="utf-8")
     assert "Uso interno Nove C" in md and "Totale prezzato" in md
     dati = json.loads((tmp_path / "d" / "interno" / "costo-minuteria.json").read_text(encoding="utf-8"))
-    assert dati["totale_eur"] > 0 and dati["listino"]["revisione"].startswith("06")
+    assert dati["totale_eur"] > 0 and dati["listino"]["revisione"].startswith("07")
     documento = next((tmp_path / "d").glob("Distinta_*.md")).read_text(encoding="utf-8")
     assert "€" not in documento, "il documento per l'installatore resta senza prezzi"
     consegnati = consegna(tmp_path / "d", tmp_path / "consegna")

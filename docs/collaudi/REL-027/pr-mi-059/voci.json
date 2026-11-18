@@ -1156,5 +1156,123 @@
     ]
    ]
   }
- ]
+ ],
+ "apparecchiature": {
+  "fonte": "REL-028 (D-241): le apparecchiature della commessa, per la lista prezzata. Non vengono dalla lista rev. 01 (che non è nel repository): la Shenling ThermaX R290 12 kW (I-322), il bollitore da 200 l, il volano da 80 l a quattro attacchi e il circolatore Evosta 2 40-70/130 (le offerte di Abbattista e Idrosanitaria, I-302, e I-292: «Circolatore i due serbatoi e la pdc le compro io»), l'unità esterna, l'unità interna, il plenum Airzone e il comando a filo del clima (il preventivo Idrosanitaria). I termostati di zona sono fuori: la lista non dice quanti sono.",
+  "voci": [
+   {
+    "rif": "P-A.1",
+    "sezione": "A",
+    "testo": "Pompa di calore aria-acqua: Shenling ThermaX R290 12 kW",
+    "quantita": 1,
+    "um": "n",
+    "codici": [
+     [
+      "M01c",
+      1
+     ]
+    ],
+    "fornitura": "Nove C"
+   },
+   {
+    "rif": "P-A.2",
+    "sezione": "A",
+    "testo": "Bollitore ACS — 200 l, a serpentino maggiorato per pompa di calore, superficie di scambio non minore di 2,5 m²",
+    "quantita": 1,
+    "um": "n",
+    "codici": [
+     [
+      "M10b",
+      1
+     ]
+    ],
+    "fornitura": "Nove C",
+    "superficie_minima_m2": 2.5
+   },
+   {
+    "rif": "P-A.3",
+    "sezione": "A",
+    "testo": "Volano termico a quattro attacchi, 80 l",
+    "quantita": 1,
+    "um": "n",
+    "codici": [
+     [
+      "M20b",
+      1
+     ]
+    ],
+    "fornitura": "Nove C"
+   },
+   {
+    "rif": "P-A.4",
+    "sezione": "A",
+    "testo": "Pompa di circolazione: DAB Evosta 2 40-70/130",
+    "quantita": 1,
+    "um": "n",
+    "codici": [
+     [
+      "M30a",
+      1
+     ]
+    ],
+    "fornitura": "Nove C"
+   },
+   {
+    "rif": "C-A.1",
+    "sezione": "A",
+    "testo": "Unità esterna: Daikin RZASG71MV1",
+    "quantita": 1,
+    "um": "n",
+    "codici": [
+     [
+      "M41a",
+      1
+     ]
+    ],
+    "fornitura": "Nove C"
+   },
+   {
+    "rif": "C-A.2",
+    "sezione": "A",
+    "testo": "Unità interna canalizzata: Daikin FBA71A9",
+    "quantita": 1,
+    "um": "n",
+    "codici": [
+     [
+      "M40a",
+      1
+     ]
+    ],
+    "fornitura": "Nove C"
+   },
+   {
+    "rif": "C-A.3",
+    "sezione": "A",
+    "testo": "Plenum motorizzato di zona: Airzone Easyzone 4×200",
+    "quantita": 1,
+    "um": "n",
+    "codici": [
+     [
+      "M42a",
+      1
+     ]
+    ],
+    "fornitura": "Nove C"
+   },
+   {
+    "rif": "C-A.4",
+    "sezione": "A",
+    "testo": "Comando a filo dell'unità: Daikin BRC1H52W7",
+    "quantita": 1,
+    "um": "n",
+    "codici": [
+     [
+      "M44a",
+      1
+     ]
+    ],
+    "fornitura": "Nove C"
+   }
+  ]
+ }
 }

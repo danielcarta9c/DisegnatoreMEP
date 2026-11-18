@@ -18,6 +18,9 @@ from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import Any
 
+from disegnatore_mep.diametri.costruttori import SHENLING_THERMAX_R290
+
+from .bollitore import SUPERFICIE_MINIMA, minima_per_voce, serpentini
 from .confezioni import in_confezioni
 from .grafo import (
     Impianto,
@@ -54,6 +57,9 @@ DATI_DEL_TUBO = ("pollice", "sezione")
 FLUIDI_D_ACQUA = frozenset({"heating_water", "cold_water", "domestic_hot_water", "solar_fluid"})
 """I fluidi che corrono nei tubi d'acqua (REL-020)."""
 """I dati di un pezzo in linea sull'acqua che vengono dal tubo, non dal pezzo (REL-020)."""
+
+ATTACCO_DELLA_MACCHINA = "attacco_della_macchina"
+"""Il pollice dell'attacco di una macchina su cui arriva il tubo (REL-028, I-317)."""
 
 PEZZO = "pezzo"
 TRATTO = "tratto"
@@ -106,6 +112,9 @@ class Voce:
     prezzo: "PrezzoDellaVoce | None" = field(default=None, repr=False)
     """Con quali codici del listino della minuteria si prezza (REL-021); `None`: la
     regola non lo dice."""
+    superficie_minima_m2: float | None = field(default=None, repr=False)
+    """Il serpentino minimo del bollitore (REL-028, I-315): nel costo, un bollitore del listino
+    sotto il minimo e' uno scostamento."""
 
 
 @dataclass(frozen=True)
@@ -1066,6 +1075,9 @@ def _locali_serviti(lavoro: _Lavoro, voce: str) -> tuple[list[_Locale], list[Pez
 
 
 def _apparecchiature(lavoro: _Lavoro) -> None:
+    serpentini_ = serpentini(lavoro.impianto)
+    for serpentino in serpentini_.values():
+        lavoro.avvisi.extend(serpentino.avvisi)
     compresi: dict[str, list[Pezzo]] = {}
     per_sigla = {p.sigla: p.id for p in lavoro.impianto.pezzi.values()}
     for pezzo in lavoro.impianto.pezzi.values():
@@ -1099,10 +1111,37 @@ def _apparecchiature(lavoro: _Lavoro) -> None:
             for compreso in compresi.get(pezzo.id, []):
                 note.append(f"comprende {compreso.sigla} ({lavoro.nome_della_voce(compreso.voce)})")
         senza = not marca and not modello
+        testo = f"{nome}: {f'{marca} {modello}'.strip()}" if not senza else f"{nome}: marca e modello {DA_DEFINIRE}"
+        domande = [f"{sigle} ({nome}): marca e modello li dà il progettista."] if senza else []
+        mancanti = [lavoro.del_pezzo(MARCA_E_MODELLO, p) for p in pezzi] if senza else []
+        serpentini_della_voce = [serpentini_[p.id] for p in pezzi if p.id in serpentini_]
+        minima = minima_per_voce(serpentini_, [p.id for p in pezzi])
+        if serpentini_della_voce:
+            # REL-028 (I-315, I-321): la superficie del serpentino nella voce che va al fornitore.
+            volume = numero(primo.get("volume_l"))
+            serpentino = max(serpentini_della_voce, key=lambda s: s.minima_m2 or 0.0)
+            if minima is None:
+                serpentino = serpentini_della_voce[0]
+            testo += f" — {f'{in_parole(volume)} l, ' if volume is not None else ''}{serpentino.prescrizione()}"
+            if minima is not None:
+                note.append(f"serpentino minimo: {serpentino.perche}")
+            dichiarate = _unici(
+                in_parole(s.superficie_m2) for s in serpentini_della_voce if s.superficie_m2 is not None
+            )
+            if dichiarate:
+                note.append(f"serpentino del bollitore scelto {', '.join(dichiarate)} m²")
+            for s in serpentini_della_voce:
+                if s.domanda:
+                    domande.append(s.domanda)
+                    mancanti.append(lavoro.del_pezzo(SUPERFICIE_MINIMA, s.bollitore))
+        prezzo = prezzo_della_voce(
+            {"prezzo": corredo["prezzo_apparecchiatura"]} if "prezzo_apparecchiatura" in corredo else {},
+            {**primo, "marca": marca, "modello": modello},
+        )
         lavoro.voci.append(
             Voce(
                 sezione="A",
-                testo=f"{nome}: {f'{marca} {modello}'.strip()}" if not senza else f"{nome}: marca e modello {DA_DEFINIRE}",
+                testo=testo,
                 um="n",
                 quantita=float(len(pezzi)),
                 fornitura=lavoro.fornitura.valori["apparecchiature"],
@@ -1111,9 +1150,11 @@ def _apparecchiature(lavoro: _Lavoro) -> None:
                 perche=str(corredo["perche"]),
                 calcolo=f"{len(pezzi)} nello schema ({sigle})",
                 note="; ".join([sigle, *note]),
-                da_definire=senza,
-                domande=[f"{sigle} ({nome}): marca e modello li dà il progettista."] if senza else [],
-                mancanti=[lavoro.del_pezzo(MARCA_E_MODELLO, p) for p in pezzi] if senza else [],
+                da_definire=senza or bool(domande),
+                domande=domande,
+                mancanti=mancanti,
+                prezzo=prezzo,
+                superficie_minima_m2=minima,
             )
         )
 
@@ -1345,6 +1386,20 @@ def _pollice_del_pezzo(lavoro: _Lavoro, pezzo: Pezzo, sezione: str | None) -> st
     )
 
 
+def _attacco_della_macchina(pezzo: Pezzo) -> str | None:
+    """Il pollice dell'attacco di una macchina o di un confine (REL-028, I-317): quello che il
+    grafo scrive sul pezzo (`attacco`, dalla scheda della macchina), o, per una Shenling ThermaX
+    R290, quello del manuale (I-281). Senza, `None`: e' una domanda, non il pollice del tubo."""
+    detto = pezzo.proprieta.get("attacco")
+    if isinstance(detto, str) and detto.strip():
+        return detto.strip()
+    if "shenling" in str(pezzo.proprieta.get("marca") or "").lower():
+        modello = SHENLING_THERMAX_R290.get(numero(pezzo.proprieta.get("power_kw")) or -1.0)
+        if modello is not None:
+            return modello.attacco
+    return None
+
+
 def _giunzione(lavoro: _Lavoro, tubazione: Tubazione) -> _Giunzione | None:
     """Le voci di una tubazione d'acqua, dai due pezzi che collega (REL-023, I-291)."""
     impianto = lavoro.impianto
@@ -1365,7 +1420,7 @@ def _giunzione(lavoro: _Lavoro, tubazione: Tubazione) -> _Giunzione | None:
             return []
         if genere in (FILETTATO, ADATTATORE, SULL_ATTACCO):
             return [("raccordo", {"pollice": _pollice_del_pezzo(lavoro, pezzo, sezione), "sezione": sezione}, pezzo.sigla)]
-        return [("raccordo_all_attacco", {"sezione": sezione}, pezzo.sigla)]
+        return [("raccordo_all_attacco", {"sezione": sezione, "attacco": _attacco_della_macchina(pezzo)}, pezzo.sigla)]
 
     detto = tubazione.dati.get("tubo")
     col_tubo = detto is True or str(detto).strip().lower() in ("true", "si", "sì")
@@ -1493,7 +1548,17 @@ def _giunzioni_dell_acqua(lavoro: _Lavoro) -> None:
                 lavoro.voci.append(riga)
             riga.quantita = (riga.quantita or 0.0) + 1
             riga.contributi.append((giunzione.dove if chiave.startswith("nipplo") else f"{chi} ({giunzione.dove})", 1.0))
-            if mancanti:
+            if "attacco" in mancanti:
+                pezzo = next((p for p in lavoro.impianto.pezzi.values() if p.sigla == chi), None)
+                nome = lavoro.nome_della_voce(pezzo.voce) if pezzo else chi
+                domanda = (
+                    f"{chi} ({nome}): di che pollice è l'attacco su cui arriva il tubo? Dalla scheda della macchina; "
+                    "si scrive in «attacco» sul pezzo (es. «1\"»)."
+                )
+                if domanda not in riga.domande:
+                    riga.domande.append(domanda)
+                    riga.mancanti.append(Mancante(ATTACCO_DELLA_MACCHINA, PEZZO, chi, nome))
+            if [m for m in mancanti if m != "attacco"]:
                 domanda = (
                     f"{giunzione.dove}: su che tubo sta? Il pollice o il tubo della giunzione non c'e': serve la "
                     "`sezione` del tratto (es. «MS 32×3»)."
@@ -1695,7 +1760,8 @@ def _note(lavoro: _Lavoro, esiti: Sequence[EsitoDellaVerifica]) -> list[str]:
         if float(c.get("minimo_m", 0)) > 0
     ]
     note = [
-        f"«L da quotare» = (L stimata + {in_parole(float(regola['aggiunta_m']))} m) × {in_parole(float(regola['fattore']))}, "
+        f"«L da quotare» = L stimata + {in_parole(float(regola['aggiunta_m']))} m"
+        f"{'' if float(regola['fattore']) == 1 else ' × ' + in_parole(float(regola['fattore']))} (quantità nette), "
         f"per eccesso a {in_parole(float(regola['passo_m']))} m; minimi: {'; '.join(minimi)}. La L stimata è un dato "
         "del progettista, scritta su ogni tratto.",
         "Quantità indicative per un prezzo a corpo, fisso e invariabile: l'installatore le verifica nel sopralluogo "
@@ -1720,7 +1786,7 @@ def _note(lavoro: _Lavoro, esiti: Sequence[EsitoDellaVerifica]) -> list[str]:
     note.append(lavoro.fornitura.nota())
     note.append(
         "La distinta non progetta: lunghezze, sezioni, portate, protezioni, marca e modello sono dati del "
-        "progettista; la distinta li maggiora e ne conta il corredo con regole scritte, ciascuna con la sua fonte."
+        "progettista; la distinta li conta, con il loro corredo, con regole scritte, ciascuna con la sua fonte."
     )
     return note
 

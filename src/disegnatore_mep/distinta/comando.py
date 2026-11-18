@@ -130,7 +130,7 @@ def _il_costo(distinta: Distinta, listino: Path, uscita: Path, fornitori: list[s
     titoli = {s["lettera"]: s["titolo"] for s in distinta.regole.distinta["sezioni"]}
     scritti = scrivi_il_costo(costo, uscita, titoli)
     print(
-        f"Costo della minuteria (uso interno, non va all'installatore): {costo.totale:.2f} € netti su "
+        f"Lista materiali prezzata, CAPEX (uso interno, non va all'installatore né al fornitore): {costo.totale:.2f} € netti su "
         f"{len(costo.righe) - len(costo.da_prezzare)} voci prezzate; {len(costo.da_prezzare)} DA PREZZARE, fuori dal "
         "totale."
     )
@@ -160,6 +160,7 @@ def esegui(
     cartella_dei_simboli: Path | None = None,
     listino: Path | None = None,
     fornitori: list[str] | None = None,
+    senza_nove_c: bool = False,
 ) -> int:
     tabelle = tabelle_scelte(sul_foglio)
     distinta = _componi(
@@ -167,8 +168,10 @@ def esegui(
         cartella_dei_simboli,
     )
     scritti = scrivi_le_uscite(distinta, uscita, tabelle)
+    if senza_nove_c and not lista:
+        raise ValueError("--senza-nove-c vale con --lista: è la lista senza prezzi per il fornitore")
     documento, esito, perche = scrivi_il_documento(
-        (documento_della_lista if lista else documento_della_distinta)(distinta), uscita, report
+        documento_della_lista(distinta, senza_nove_c) if lista else documento_della_distinta(distinta), uscita, report
     )
     print(
         f"Distinta: {len(distinta.voci)} voci in {len({v.sezione for v in distinta.voci})} sezioni, "

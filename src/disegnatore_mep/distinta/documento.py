@@ -25,7 +25,7 @@ calcoli. Dove il cartiglio non ha un dato, «DA DEFINIRE», come la tavola.
 
 import re
 from collections.abc import Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 
 from .calcolo import DA_DEFINIRE, Distinta, Voce
 from .uscite import data_del_cartiglio, dato_o_da_definire, numero_o_vuoto, tabelle_del_foglio
@@ -223,7 +223,7 @@ def _capitolo_2(distinta: Distinta) -> Capitolo:
     blocchi: list[Blocco] = [
         Paragrafo(
             "Ogni tratto con la sua sezione, il materiale e la lunghezza: la «L stimata» è quella del progettista, "
-            "la «L da quotare» è quella maggiorata su cui si fa l'offerta. Un raccordo diretto (la ripresa sulla "
+            "la «L da quotare» è quella su cui si fa l'offerta (netta, col metro per tratto delle linee e i minimi). Un raccordo diretto (la ripresa sulla "
             "macchina, un cablaggio di fabbrica) non ha lunghezza."
         ),
         tratte,
@@ -250,7 +250,7 @@ def _capitolo_3(distinta: Distinta) -> Capitolo:
     lettere = [str(lettera) for lettera in regole.distinta.get("sezioni_sul_foglio", [])]
     blocchi: list[Blocco] = [
         Paragrafo(
-            "Le quantità per sezione, indicative e già maggiorate. La colonna «Fornitura» dice chi fornisce la voce in "
+            "Le quantità per sezione, indicative e nette. La colonna «Fornitura» dice chi fornisce la voce in "
             "questa offerta: le voci di Nove C e del Committente non si quotano, ma la posa sì dove la voce lo dice."
         )
     ]
@@ -376,7 +376,18 @@ SEZIONI_FUORI_DALLA_LISTA = ("F", "Z")
 """Le sezioni che non si comprano: le assistenze murarie e le opere del Committente (I-262)."""
 
 
-def documento_della_lista(distinta: Distinta) -> Documento:
+NOVE_C = "Nove C"
+
+
+def _con_la_nota_di_nove_c(voce: Voce) -> Voce:
+    """La voce fornita da Nove C con la nota «fornita da Nove C» (I-314): il fornitore non la quota."""
+    if voce.fornitura != NOVE_C:
+        return voce
+    note = "; ".join(n for n in (f"fornita da {NOVE_C}: non si quota", voce.note) if n)
+    return replace(voce, note=note)
+
+
+def documento_della_lista(distinta: Distinta, senza_nove_c: bool = False) -> Documento:
     """La distinta in forma di lista della spesa per l'installatore (I-262, I-264).
 
     Stesso calcolo, stesse regole e stessi numeri del documento a corpo; cambia il
@@ -384,7 +395,12 @@ def documento_della_lista(distinta: Distinta) -> Documento:
     un controllo del progettista), i soli materiali da comprare — fuori le assistenze
     murarie (F), le opere del Committente (Z) e le voci «a corpo», che non si comprano —, e
     niente attivita', varianti, domande e regole. Le apparecchiature (A) restano, con chi
-    le fornisce."""
+    le fornisce.
+
+    **La lista e' completa** (I-314, D-241): le voci fornite da Nove C ci sono, con la nota
+    «fornita da Nove C: non si quota», perche' il fornitore non le prezzi. Con `senza_nove_c` (il
+    PO lo chiede quando sa che quelle cose le fornisce lui da altre parti) non ci sono, e il
+    documento lo dice."""
     progetto = distinta.progetto
     regole = distinta.regole
     commessa = dato_o_da_definire(progetto, "commission_code")
@@ -404,9 +420,13 @@ def documento_della_lista(distinta: Distinta) -> Documento:
         )
     )
     avvertenze = (
-        "Le quantità sono indicative e già maggiorate: verificarle in sopralluogo prima di comprare.",
-        "Le voci con «Nove C» o «Committente» nella colonna Fornitura non si comprano: le apparecchiature fornite "
-        "da Nove C l'installatore le posa.",
+        "Le quantità sono indicative e nette, senza maggiorazioni: verificarle in sopralluogo prima di comprare.",
+        (
+            "Le voci fornite da Nove C non sono in questa lista: Nove C le fornisce a parte, l'installatore le posa."
+            if senza_nove_c else
+            "Le voci con «fornita da Nove C» o «Committente» nella colonna Fornitura non si quotano: le apparecchiature "
+            "fornite da Nove C l'installatore le posa."
+        ),
         "Le assistenze murarie e le opere del Committente non sono in questa lista.",
         "Le sigle sono quelle dello schema funzionale.",
     )
@@ -428,7 +448,7 @@ def documento_della_lista(distinta: Distinta) -> Documento:
         (
             Paragrafo(
                 "Ogni tratto con la sua sezione, il materiale e la lunghezza: la «L stimata» è quella del progetto, "
-                "la «L da comprare» è già maggiorata. Un raccordo diretto (la ripresa sulla macchina, un cablaggio "
+                "la «L da comprare» è quella netta, col metro per tratto delle linee e i minimi. Un raccordo diretto (la ripresa sulla macchina, un cablaggio "
                 "di fabbrica) non ha lunghezza."
             ),
             Tabella(
@@ -448,8 +468,8 @@ def documento_della_lista(distinta: Distinta) -> Documento:
         if lettera in SEZIONI_FUORI_DALLA_LISTA:
             continue
         voci = [
-            v for v in distinta.voci_della_sezione(lettera)
-            if lettera == "A" or v.um.strip().lower() != "a corpo"
+            _con_la_nota_di_nove_c(v) for v in distinta.voci_della_sezione(lettera)
+            if (lettera == "A" or v.um.strip().lower() != "a corpo") and not (senza_nove_c and v.fornitura == NOVE_C)
         ]
         if voci:
             blocchi.append(_computo(voci, f"{lettera}. {regole.titolo(lettera)}"))
@@ -462,7 +482,7 @@ def documento_della_lista(distinta: Distinta) -> Documento:
         sottotitolo=f"{schema}  ·  {data}",
         riquadro=(
             "LISTA MATERIALI PER L'INSTALLATORE",
-            "Quantità indicative, già maggiorate",
+            "Quantità indicative, nette",
             "Da verificare in sopralluogo prima dell'acquisto",
         ),
         piede=f"Commessa {commessa} — {data}",

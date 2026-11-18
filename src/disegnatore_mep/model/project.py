@@ -186,6 +186,7 @@ CHIAVI_DEI_DATI_NUMERICI: dict[str, str] = {
     "idn_ma": "mA",
     "prevalenza_utile_kpa": "kPa",
     "prevalenza_utile_m": "m c.a.",
+    "superficie_scambio_m2": "m²",
 }
 """I dati tecnici con un nome fisso, e l'unita' in cui si scrivono (REL-006).
 
@@ -206,6 +207,11 @@ chiavi che la tavola sapeva gia' scrivere accanto a un pezzo
 d'acqua, che il progettista da' spesso cosi' e che non si converte in kPa per
 non cambiargli il numero. Le legge la tabella delle apparecchiature
 (`graphics/tabella.py`).
+
+`superficie_scambio_m2` e' la **superficie di scambio del serpentino** di un bollitore, in m²
+(REL-028, I-315): per la pompa di calore il bollitore si sceglie col serpentino maggiorato, non
+solo col volume; la tabella delle apparecchiature la scrive accanto al volume e la distinta la
+confronta col minimo del costruttore della pompa di calore (`diametri.costruttori`).
 
 `delta_t_k` e' il **salto termico di progetto** del circuito di un generatore o
 di un'utenza, in kelvin: con `power_kw` da' la portata da cui il calcolatore dei

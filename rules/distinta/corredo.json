@@ -1,7 +1,7 @@
 {
   "id": "corredo",
   "versione": "1.7.0",
-  "nota": "Il corredo di posa di ogni voce del catalogo, per id di voce (`definition_id` del pezzo). Il catalogo non si tocca: il corredo sta qui. `apparecchiatura`: il pezzo è una macchina fornita da Nove C e va nella sezione A, una riga per marca e modello (un pezzo con la proprietà `compreso_in` è nella fornitura di un altro e non ha riga sua: né in sezione A né col suo corredo, I-297). `fornitura`: chi la fornisce, una scelta dell'offerta di `distinta.json` («opere_edili», «bocchette_e_griglie») o «committente»; senza, l'installatore. `per_locale` conta una volta per locale servito (il dato `locale` del pezzo, o la sua etichetta), e niente per un locale con `varco`. `passante`: il pezzo sta in mezzo a una linea (sezionatore, interruttore, relè, termostato a contatto, sifone), e il tratto lo attraversa. `voci`: il materiale e le opere che il pezzo porta con sé; `calcolo` è `per_pezzo` (n per pezzo) o `per_linea` (n per ogni tratto di quel fluido che arriva al pezzo). I raccordi e i nippli dell'acqua non sono nel corredo dei pezzi: li conta il blocco `giunzioni` (REL-023). Nei testi, `{proprieta}` è un dato del progettista sul pezzo (o la `sezione` del tratto che gli arriva): se manca, il testo dice DA DEFINIRE e la distinta fa la domanda. Copre l'aria-aria e l'elettrico del kit AA-01 e, da REL-020, l'idronico (sezione I: proposta della sessione sul listino del PO, da confermare). Nei testi idronici `{pollice}` è il pollice del tubo su cui sta il pezzo e `{sezione}` il tubo del tratto («multistrato MS 32×3»): li dà il calcolo dei diametri, o il progettista con la `sezione` del tratto. Un pezzo `stacco` (sicurezza, manometro, sfiato, scarico, sonda) si avvita sul tee o sul suo rubinetto: il tratto fino a lui, senza lunghezza, non ha tubo. Un pezzo `confine` (terminali, rete esistente, utenze) chiude la centrale: i tratti fino a lui vogliono la lunghezza del progettista. `prezzo` (REL-021) dice con quali codici del listino della minuteria si prezza la voce: un codice, o una scelta per il valore di un dato (`per`: `pollice`, `sezione`, `volume_l`, …) con le sue espressioni (`scegli`), per `n` unità del listino a unità della voce; una voce senza `prezzo`, o senza una scelta che vale, nel costo è DA PREZZARE. La riduzione all'attacco della macchina (D-233, REL-017) è nella sezione I con il suo testo, perché i due pollici li sa il pezzo. `se_dato` e `tranne_dato` (REL-022) fanno valere una voce solo se un dato del pezzo dice qualcosa: le staffe della pompa di calore se la sua «posa» dice staffe, il basamento a terra altrimenti.",
+  "nota": "Il corredo di posa di ogni voce del catalogo, per id di voce (`definition_id` del pezzo). Il catalogo non si tocca: il corredo sta qui. `apparecchiatura`: il pezzo è una macchina fornita da Nove C e va nella sezione A, una riga per marca e modello (un pezzo con la proprietà `compreso_in` è nella fornitura di un altro e non ha riga sua: né in sezione A né col suo corredo, I-297). `fornitura`: chi la fornisce, una scelta dell'offerta di `distinta.json` («opere_edili», «bocchette_e_griglie») o «committente»; senza, l'installatore. `per_locale` conta una volta per locale servito (il dato `locale` del pezzo, o la sua etichetta), e niente per un locale con `varco`. `passante`: il pezzo sta in mezzo a una linea (sezionatore, interruttore, relè, termostato a contatto, sifone), e il tratto lo attraversa. `voci`: il materiale e le opere che il pezzo porta con sé; `calcolo` è `per_pezzo` (n per pezzo) o `per_linea` (n per ogni tratto di quel fluido che arriva al pezzo). I raccordi e i nippli dell'acqua non sono nel corredo dei pezzi: li conta il blocco `giunzioni` (REL-023). Nei testi, `{proprieta}` è un dato del progettista sul pezzo (o la `sezione` del tratto che gli arriva): se manca, il testo dice DA DEFINIRE e la distinta fa la domanda. Copre l'aria-aria e l'elettrico del kit AA-01 e, da REL-020, l'idronico (sezione I: proposta della sessione sul listino del PO, da confermare). Nei testi idronici `{pollice}` è il pollice del tubo su cui sta il pezzo e `{sezione}` il tubo del tratto («multistrato MS 32×3»): li dà il calcolo dei diametri, o il progettista con la `sezione` del tratto. Un pezzo `stacco` (sicurezza, manometro, sfiato, scarico, sonda) si avvita sul tee o sul suo rubinetto: il tratto fino a lui, senza lunghezza, non ha tubo. Un pezzo `confine` (terminali, rete esistente, utenze) chiude la centrale: i tratti fino a lui vogliono la lunghezza del progettista. `prezzo` (REL-021) dice con quali codici del listino della minuteria si prezza la voce: un codice, o una scelta per il valore di un dato (`per`: `pollice`, `sezione`, `volume_l`, …) con le sue espressioni (`scegli`), per `n` unità del listino a unità della voce; una voce senza `prezzo`, o senza una scelta che vale, nel costo è DA PREZZARE. La riduzione all'attacco della macchina (D-233, REL-017) è nella sezione I con il suo testo, perché i due pollici li sa il pezzo. `se_dato` e `tranne_dato` (REL-022) fanno valere una voce solo se un dato del pezzo dice qualcosa: le staffe della pompa di calore se la sua «posa» dice staffe, il basamento a terra altrimenti. `prezzo_apparecchiatura` (REL-028, I-314, D-241): i codici del listino di un'apparecchiatura, scelti sui dati del pezzo come il `prezzo` di una voce; senza, l'apparecchiatura è DA PREZZARE.",
   "voci": {
     "split-outdoor-unit": {
       "nome": "Unità esterna split a pompa di calore",
@@ -99,6 +99,17 @@
           "fonte_in_parole": "regola Nove C rivista su una commessa aria-aria",
           "perche": "L'unità esterna assorbe fino alla sua corrente MCA di targa: con le altre utenze la potenza del contatore va verificata."
         }
+      ],
+      "prezzo_apparecchiatura": [
+        {
+          "per": "modello",
+          "scegli": [
+            {
+              "se": "RZASG71MV1",
+              "codice": "M41a"
+            }
+          ]
+        }
       ]
     },
     "ducted-indoor-unit": {
@@ -187,6 +198,17 @@
           "fonte": "kit AA-01: lavoro/dimensionamento.py, voce Z.2",
           "fonte_in_parole": "regola Nove C per la posa dell'unità interna canalizzata",
           "perche": "Filtro, pompa della condensa e scheda si raggiungono da sotto."
+        }
+      ],
+      "prezzo_apparecchiatura": [
+        {
+          "per": "modello",
+          "scegli": [
+            {
+              "se": "FBA71A9",
+              "codice": "M40a"
+            }
+          ]
         }
       ]
     },
@@ -459,6 +481,17 @@
           "fonte": "revisione su una commessa aria-aria del 02/11/2026 (rilievi del PO e del revisore indipendente)",
           "fonte_in_parole": "regola Nove C rivista su una commessa aria-aria",
           "perche": "La centrale di zona si configura e si comanda da app via Wi-Fi."
+        }
+      ],
+      "prezzo_apparecchiatura": [
+        {
+          "per": "modello",
+          "scegli": [
+            {
+              "se": "AZC25DAIBS07M4",
+              "codice": "M42a"
+            }
+          ]
         }
       ]
     },
@@ -951,6 +984,17 @@
           "fonte_in_parole": "regola Nove C rivista su una commessa aria-aria",
           "perche": "Il cavo scende dal controsoffitto alla scatola in traccia."
         }
+      ],
+      "prezzo_apparecchiatura": [
+        {
+          "per": "modello",
+          "scegli": [
+            {
+              "se": "AZCE6THINKRB",
+              "codice": "M43a"
+            }
+          ]
+        }
       ]
     },
     "room-thermostat-contact": {
@@ -1033,6 +1077,17 @@
           "fonte": "revisione su una commessa aria-aria del 02/11/2026 (rilievi del PO e del revisore indipendente)",
           "fonte_in_parole": "regola Nove C rivista su una commessa aria-aria",
           "perche": "Il cavo scende dal controsoffitto alla scatola in traccia."
+        }
+      ],
+      "prezzo_apparecchiatura": [
+        {
+          "per": "modello",
+          "scegli": [
+            {
+              "se": "BRC1H52W7",
+              "codice": "M44a"
+            }
+          ]
         }
       ]
     },
@@ -1937,7 +1992,18 @@
       "fonte_in_parole": "disposizione del PO (I-292)",
       "perche": "Il circolatore lo compra Nove C a parte, come la pompa di calore e gli accumuli (il PO: «Circolatore i due serbatoi e la pdc le compro io a parte»): va nella sezione A, e i suoi bocchettoni si avvitano con i nippli delle giunzioni.",
       "voci": [],
-      "apparecchiatura": true
+      "apparecchiatura": true,
+      "prezzo_apparecchiatura": [
+        {
+          "per": "modello",
+          "scegli": [
+            {
+              "se": "40-70/130",
+              "codice": "M30a"
+            }
+          ]
+        }
+      ]
     },
     "pump-circulator-dhw": {
       "nome": "Pompa di ricircolo sanitario",
@@ -3366,6 +3432,17 @@
             }
           ]
         }
+      ],
+      "prezzo_apparecchiatura": [
+        {
+          "per": "{marca} {power_kw}",
+          "scegli": [
+            {
+              "se": "(?i)shenling 12$",
+              "codice": "M01c"
+            }
+          ]
+        }
       ]
     },
     "heat-pump-air-water-large": {
@@ -3455,6 +3532,17 @@
             {
               "codice": "I55b",
               "n": 1.0
+            }
+          ]
+        }
+      ],
+      "prezzo_apparecchiatura": [
+        {
+          "per": "{marca} {power_kw}",
+          "scegli": [
+            {
+              "se": "(?i)shenling 12$",
+              "codice": "M01c"
             }
           ]
         }
@@ -3568,7 +3656,18 @@
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Accumuli e scambiatori li compra Nove C a parte: la distinta conta i raccordi agli attacchi.",
-      "voci": []
+      "voci": [],
+      "prezzo_apparecchiatura": [
+        {
+          "per": "volume_l",
+          "scegli": [
+            {
+              "se": "^80$",
+              "codice": "M20b"
+            }
+          ]
+        }
+      ]
     },
     "buffer-six-port": {
       "nome": "Volano termico a sei attacchi",
@@ -3592,7 +3691,18 @@
       "fonte": "REL-020 (I-284): proposta della sessione del 5 novembre 2026, sulle voci del listino della minuteria del PO (rev. 03); da confermare dal PO",
       "fonte_in_parole": "proposta Nove C sul corredo idronico (da confermare)",
       "perche": "Accumuli e scambiatori li compra Nove C a parte: la distinta conta i raccordi agli attacchi.",
-      "voci": []
+      "voci": [],
+      "prezzo_apparecchiatura": [
+        {
+          "per": "volume_l",
+          "scegli": [
+            {
+              "se": "^200$",
+              "codice": "M10b"
+            }
+          ]
+        }
+      ]
     },
     "dhw-cylinder-twin-coil": {
       "nome": "Bollitore ACS a due serpentini",
@@ -3942,11 +4052,11 @@
       "raccordo_all_attacco": {
         "id": "raccordo-all-attacco",
         "sezione": "I",
-        "testo": "Raccordo diritto a pressare M × tubo {sezione}, all'attacco",
+        "testo": "Raccordo diritto a pressare M {attacco} × tubo {sezione}, all'attacco",
         "um": "n",
-        "fonte": "REL-023 (I-291): regola del PO del 6 novembre 2026 sulle giunzioni; prezzi dei nippli dalle fatture Bricoman dell'installatore (listino §2ter)",
+        "fonte": "REL-023 (I-291): regola del PO del 6 novembre 2026 sulle giunzioni; prezzi dei nippli dalle fatture Bricoman dell'installatore (listino §2ter); REL-028 (I-317, I-322): il pollice dell'attacco della macchina, dal grafo o dal manuale",
         "fonte_in_parole": "regola del PO sulle giunzioni (I-291)",
-        "perche": "Il tubo che arriva a un attacco filettato (macchina, accumulo, collettore, terminale, rete esistente) finisce con un raccordo a pressare.",
+        "perche": "Il tubo che arriva a un attacco filettato (macchina, accumulo, collettore, terminale, rete esistente) finisce con un raccordo a pressare, del pollice dell'attacco: senza il pollice il fornitore lo legge come un manicotto, o lo suppone (PR.MI.059, I-317). Se il pollice non si sa, è una domanda.",
         "prezzo": [
           {
             "per": "sezione",
@@ -3978,7 +4088,8 @@
             ],
             "n": 1.0
           }
-        ]
+        ],
+        "prezzo_nota": "il prezzo è quello del raccordo del tubo (M ¾\" × 26, M 1\" × 32): fra pollici vicini cambia di poco"
       }
     },
     "macchine_esterne": [

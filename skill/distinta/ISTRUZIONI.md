@@ -52,8 +52,15 @@ Se non esce niente, cercala in tutto il disco (`find / -type d -name nove-c-repo
 
 ```
 python3 scripts/mep.py distinta <grafo-completo.json> --out <cartella> --report <cartella di nove-c-report>
-                                [--fornitura <scelte>|confermata] [--regole <cartella o fascio>] [--lista]
+                                [--fornitura <scelte>|confermata] [--regole <cartella o fascio>] [--lista [--senza-nove-c]]
+                                [--costo [--fornitori <nomi>]]
 ```
+
+**Due liste, tutte e due complete** (D-241, I-314). Il progettista chiede o la **lista prezzata** (l'analisi CAPEX:
+`--costo`, sotto) o la **lista senza prezzi** da mandare ai fornitori per le quotazioni (`--lista`). Nella lista senza
+prezzi le voci fornite da Nove C ci sono, con la nota «fornita da Nove C: non si quota»; se il progettista dice che
+quelle cose le fornisce lui da altre parti e non le vuole nella lista, rilancia con `--senza-nove-c`. Chiediglielo
+solo se non l'ha detto.
 
 **Con `--lista`** esce la **lista della spesa per l'installatore**, `<commessa>_Lista_materiali_<impianto>.pdf`:
 stessi calcoli e stessi numeri, ma solo i materiali da comprare — niente offerta a corpo, niente assistenze
@@ -131,7 +138,22 @@ accessori in linea — valvole, filtri, giunti, la deviatrice — portano il pol
 
 **L'idronico ha il suo corredo** (REL-020, sezione I). La pompa di calore, gli accumuli, il bollitore e il
 circolatore sono apparecchiature (sezione A, Nove C le compra a parte); la pompa di calore va a terra, su staffe solo
-se il progettista le chiede. Ogni accessorio in linea porta sé stesso, del pollice del tubo; ogni derivazione un tee.
+se il progettista le chiede.
+
+**Il bollitore della pompa di calore si sceglie col serpentino** (D-243, I-315): la voce dice «a serpentino maggiorato
+per pompa di calore, superficie di scambio non minore di X m²», perché il fornitore non possa quotare un serpentino
+piccolo. X viene dal manuale della pompa di calore che lo scalda: per le Shenling ThermaX R290 la skill lo sa (§2.3:
+2,0 m² per 6–9 kW, 2,5 m² per 12–15 kW, serpentina smaltata; 1,4 e 1,6 m² inox, se sul bollitore scrivi
+`"serpentino": "inox"`). Per un'altra pompa di calore è una domanda: il minimo lo dà il progettista, e si scrive sul
+bollitore in `superficie_minima_scambio_m2`. Se il progettista dice la superficie del bollitore scelto, scrivila in
+`superficie_scambio_m2`: la tabella delle apparecchiature la porta, e sotto il minimo è un avviso. Un avviso anche
+per il tubo fra unità esterna e bollitore oltre i 5 m (manuale Shenling §2.3, punto 6), se le tubazioni hanno le
+lunghezze.
+
+**Il raccordo all'attacco dice il pollice dell'attacco** (I-317): sul pezzo (bollitore, volano, collettore, terminale,
+rete esistente) si scrive `"attacco": "1\""` dalla scheda della macchina; la Shenling lo sa dal manuale (1" per 6–9 kW,
+1¼" per 12–15 kW). Senza, il raccordo esce DA DEFINIRE e `--domande` lo chiede: mai il pollice del tubo al posto di
+quello dell'attacco. Ogni accessorio in linea porta sé stesso, del pollice del tubo; ogni derivazione un tee.
 **Dal grafo si contano solo i pezzi** (valvole, tee, attacchi): sono pezzi veri.
 
 **Le giunzioni si contano sulle tubazioni** (REL-023, I-291), dai due pezzi che ciascuna collega:
@@ -168,7 +190,7 @@ una planimetria: le lunghezze dei suoi tratti e le sue pieghe non sono quelle de
 }
 ```
 
-La distinta maggiora i metri del 15%; i collari (uno ogni 1,5 m) e un manicotto di riserva seguono i metri; i gomiti
+La distinta conta i metri netti, senza maggiorazione (I-320: il materiale si vende a confezioni intere); i collari (uno ogni 1,5 m) e un manicotto di riserva seguono i metri; i gomiti
 sono **a corpo**: chiedili, proponendo l'ipotesi di 20, o stimali dal contesto del progetto (la pianta, il percorso
 descritto), mai dalle pieghe dello schema; senza risposta la voce esce con 20 e resta da confermare. I metri vengono
 dal contesto del progetto — la pianta quotata, il sopralluogo, le distanze che il progettista dice —, **mai dallo
@@ -219,8 +241,9 @@ Le scelte predefinite stanno in `distinta.json`, `fornitura`: si cambiano lì so
 - **I numeri di tratta seguono le sigle**: per fluido, e dentro il fluido nell'ordine delle sigle che la tratta
   collega, come la colonna «Da - a» (PLZ-01 - TA-01 prima di PLZ-01 - TA-02). Con una tratta per bocchetta, T0n
   va a TA-0n. La ripresa montata sulla macchina (lunghezza 0) è il **plenum di ripresa** in tutte le uscite.
-- **Le lunghezze** si quotano con `(L + 1 m) × 1,15`, per eccesso al mezzo metro, con i minimi del fluido (12 m frigo,
-  10 m condensa, 5 m bus, 2 m ramo d'aria): in dubbio per eccesso, come vuole il PO.
+- **Le quantità sono nette** (I-320): niente maggiorazione percentuale, perché i fornitori vendono a confezioni
+  intere. Le lunghezze delle linee si contano con `L + 1 m` per tratto (i tubi d'acqua senza il metro), per eccesso al
+  mezzo metro, con i minimi del fluido (12 m frigo, 10 m condensa, 5 m bus, 2 m ramo d'aria).
 - **Dove manca un dato, DA DEFINIRE e una domanda.** Mai un numero inventato.
 - Il documento chiede un prezzo **a corpo, fisso e invariabile**, con il **sopralluogo obbligatorio**; ha le righe
   vuote **H** per le voci che aggiunge l'installatore e le varianti **V** a prezzo unitario. **Nessun prezzo**: li
@@ -238,16 +261,18 @@ Le scelte predefinite stanno in `distinta.json`, `fornitura`: si cambiano lì so
   esce nella sezione **X**, contato e DA DEFINIRE: dillo al progettista, non completarlo tu.
 - Non calcola perdite di carico né prevalenze.
 
-## Il costo della minuteria, se lo chiede
+## La lista prezzata (CAPEX), se la chiede
 
-Se il progettista chiede **quanto costa la minuteria** (il materiale da comprare, o un riferimento per confrontare i
-preventivi degli installatori), lancia la distinta con `--costo`: nella sottocartella `interno/` della distinta escono `costo-minuteria.md` e
+Se il progettista chiede **la lista materiali prezzata**, l'analisi CAPEX, **quanto costa la minuteria** o un
+riferimento per confrontare i preventivi, lancia la distinta con `--costo`: nella sottocartella `interno/` della distinta escono `costo-minuteria.md` e
 `costo-minuteria.json` (`consegna` non li copia), con il prezzo di ogni voce dal **listino della minuteria** di Nove C
 (`riferimenti/listino-minuteria.md`; un altro con `--listino <file>`). È un conto **interno**:
 
 - **non va all'installatore** e non si mette nel suo documento, che resta senza prezzi;
-- prezza il materiale (sezioni S, B, C, D, I, E e la X), **non** le apparecchiature (pompa di calore, accumuli,
-  bollitori, unità interne ed esterne: si comprano a parte), le opere, le attività e le voci a corpo;
+- prezza **tutto il materiale**: le apparecchiature (pompa di calore, accumuli, bollitori, circolatori, unità e comandi
+  del clima), anche quelle fornite da Nove C (D-241), e la minuteria (sezioni S, B, C, D, I, E e la X); **non** le
+  opere, le attività, le voci a corpo e quelle del Committente. Una macchina che il listino non ha è DA PREZZARE;
+  una di un'altra marca, o un bollitore col serpentino sotto il minimo, è uno scostamento ⚠: dillo;
 - è il **consumo** (quantità × prezzo per unità del listino): le confezioni intere costano di più;
 - una voce senza codice, con un codice che il listino non ha, o con la quantità DA DEFINIRE, è **DA PREZZARE**, fuori
   dal totale, col suo perché: **non la stimi tu**. Riporta il totale, quante voci sono da prezzare e le più pesanti;

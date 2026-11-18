@@ -1,28 +1,37 @@
-# Costo della minuteria — PR.MI.059 (dalla lista materiali)
+# Lista materiali prezzata (CAPEX) — PR.MI.059 (dalla lista materiali)
 
-> **Uso interno Nove C.** Non va all'installatore: il suo documento resta senza prezzi. È il costo, a prezzi di listino, del materiale che la distinta conta (tubi, raccordi, valvolame, canali, cavi, accessori), **escluse le apparecchiature** della sezione A (macchine, unità interne ed esterne, accumuli, bollitori, plenum motorizzati: si comprano a parte) e la manodopera.
+> **Uso interno Nove C.** Non va all'installatore né al fornitore: la lista per loro resta senza prezzi. È il costo, a prezzi di listino, di **tutto** il materiale che la distinta conta: le apparecchiature della sezione A (macchine, accumuli, bollitori, circolatori, unità e comandi del clima), anche quelle fornite da Nove C (D-241), e la minuteria (tubi, raccordi, valvolame, canali, cavi, accessori). Fuori la manodopera e le voci del Committente.
 
-- **Listino:** Listino della minuteria — riferimento interno Nove C, revisione 06, 18 novembre 2026. Prezzi netti, IVA esclusa; per ogni articolo il più basso fra i fornitori da cui si ordina (fra parentesi, di chi è), e dove nessuno lo ha il prezzo di riferimento. **Dove comprare** è in fondo.
-- **Totale prezzato: 2.065,98 €**, su 82 voci di 91.
+- **Listino:** Listino della minuteria — riferimento interno Nove C, revisione 07, 18 novembre 2026. Prezzi netti, IVA esclusa; per ogni articolo il più basso fra i fornitori da cui si ordina (fra parentesi, di chi è), e dove nessuno lo ha il prezzo di riferimento. **Dove comprare** è in fondo.
+- **Totale prezzato: 8.822,55 €**, su 90 voci di 99.
 - **Da prezzare: 9 voci**, che il totale non contiene (elencate in fondo, ciascuna col suo perché).
-- Il conto è quantità × prezzo per unità del listino. Le quantità sono quelle della distinta: già maggiorate per l'offerta a corpo (+15%, i minimi delle linee), e dove la distinta conta confezioni (il flessibile in rotoli da 10 m) si pagano le confezioni intere; il resto è il consumo, e al banco le confezioni intere costano di più.
+- Il conto è quantità × prezzo per unità del listino. Le quantità sono quelle della distinta, nette (senza maggiorazione percentuale, I-320; restano i minimi delle linee), e dove la distinta conta confezioni (il flessibile in rotoli da 10 m) si pagano le confezioni intere; il resto è il consumo, e al banco le confezioni intere costano di più.
 
 ## Per sezione
 
 | Sezione | Voci prezzate | Da prezzare | Totale € |
 |---|--:|--:|--:|
+| A — Apparecchiature | 8 | 0 | 6.780,87 |
 | S — Staffaggi e supporti | 5 | 0 | 38,45 |
 | I — Circuito idraulico | 41 | 0 | 1.167,85 |
 | E — Elettrico, comando e regolazione | 20 | 1 | 255,82 |
 | B — Distribuzione aria | 5 | 4 | 409,53 |
-| C — Circuito frigorifero | 3 | 3 | 123,99 |
+| C — Circuito frigorifero | 3 | 3 | 99,69 |
 | D — Scarico condensa | 8 | 1 | 70,34 |
-| **Totale** | 82 | 9 | **2.065,98** |
+| **Totale** | 90 | 9 | **8.822,55** |
 
 ## Le voci prezzate
 
 | Rif. | Voce | Q.tà | UM | € unitario | € totale | Conto | Nota |
 |---|---|--:|---|--:|--:|---|---|
+| P-A.1 | Pompa di calore aria-acqua: Shenling ThermaX R290 12 kW | 1 | n | 3.103,60 | 3.103,60 | M01c 3103.60 (Idrosanitaria) | fornita da Nove C |
+| P-A.2 | Bollitore ACS — 200 l, a serpentino maggiorato per pompa di calore, superficie di scambio non minore di 2,5 m² | 1 | n | 461,40 | 461,40 | M10b 461.40 (Idrosanitaria) | fornita da Nove C |
+| P-A.3 | Volano termico a quattro attacchi, 80 l | 1 | n | 156,49 | 156,49 | M20b 156.49 (Idrosanitaria) | fornita da Nove C |
+| P-A.4 | Pompa di circolazione: DAB Evosta 2 40-70/130 | 1 | n | 93,60 | 93,60 | M30a 93.60 (Idrosanitaria) | fornita da Nove C |
+| C-A.1 | Unità esterna: Daikin RZASG71MV1 | 1 | n | 1.017,27 | 1.017,27 | M41a 1017.27 (Idrosanitaria) | fornita da Nove C |
+| C-A.2 | Unità interna canalizzata: Daikin FBA71A9 | 1 | n | 835,78 | 835,78 | M40a 835.78 (Idrosanitaria) | fornita da Nove C |
+| C-A.3 | Plenum motorizzato di zona: Airzone Easyzone 4×200 | 1 | n | 993,61 | 993,61 | M42a 993.61 (Idrosanitaria) | fornita da Nove C |
+| C-A.4 | Comando a filo dell'unità: Daikin BRC1H52W7 | 1 | n | 119,12 | 119,12 | M44a 119.12 (Idrosanitaria) | fornita da Nove C |
 | P-S.1 | Piedini antivibranti per pompa di calore a terra | 4 | n | 1,62 | 6,48 | I71a 1.62 (Tecnomat) |  |
 | P-I.1 | Tubo multistrato MS 26×3, nudo | 8 | m | 2,01 | 16,09 | I03 2.01 (Idrosanitaria) |  |
 | P-I.2 | Guaina isolante elastomerica per tubo multistrato MS 26×3 (guaina 9 mm) | 6 | m | 0,51 | 3,08 | I84a 0.51 (Idrosanitaria) |  |
@@ -84,8 +93,8 @@
 | C-B.3 | Nastro alluminio rinforzato 50 mm | 1 | rotolo | 5,57 | 5,57 | A07a 5.57 (Tecnomat) |  |
 | C-B.4 | Sostegno per flessibile (fascia o collare con pendino), passo ≤ 1,2 m | 21 | n | 3,60 | 75,60 | A08c 3.60 (Idrosanitaria) |  |
 | C-B.5 | Plenum porta-bocchetta coibentato per bocchetta 400×200, attacco Ø200 laterale | 5 | n | 30,81 | 154,04 | A06c 30.81 (Idrosanitaria) |  |
-| C-C.1 | Tubo rame ricotto pre-isolato Ø9,52 (3/8"), isolamento ≥ 10 mm | 7 | m | 6,52 | 45,64 | F01b 6.52 (Tecnomat) |  |
-| C-C.2 | Tubo rame ricotto pre-isolato Ø15,9 (5/8"), isolamento ≥ 13 mm | 7 | m | 10,80 | 75,60 | F03b 10.80 (Tecnomat) |  |
+| C-C.1 | Tubo rame ricotto pre-isolato Ø9,52 (3/8"), isolamento ≥ 10 mm | 7 | m | 4,34 | 30,41 | F01b 4.34 (Idrosanitaria) |  |
+| C-C.2 | Tubo rame ricotto pre-isolato Ø15,9 (5/8"), isolamento ≥ 13 mm | 7 | m | 9,50 | 66,53 | F03b 9.50 (Idrosanitaria) |  |
 | C-C.3 | Nastro di finitura e manicotti isolanti per le giunzioni a cartella | 1 | kit | 2,75 | 2,75 | F06 2.75 (Tecnomat) |  |
 | C-D.1 | Tubo PVC rigido Ø32 | 8 | m | 2,38 | 19,06 | I68a 2.38 (Idrosanitaria) |  |
 | C-D.2 | Curva 87°-90° Ø32 | 5 | n | 3,69 | 18,47 | I68d 3.69 (Idrosanitaria) |  |
@@ -124,10 +133,10 @@
 
 Ogni articolo dal fornitore che lo vende al prezzo più basso, fra quelli da cui Nove C ordina (la tabella «I fornitori» del listino) e fra gli articoli che rispettano la voce: la marca non conta, la prescrizione sì. Un articolo che se ne scosta (⚠) e costa meno è un avviso sul prezzo, non una scelta. Le quantità sono quelle della distinta, sommate per articolo; al banco si comprano le confezioni intere (colonna Confezione). I prezzi hanno la data del loro documento, e il conto non tiene trasporto, ordine minimo e condizioni di pagamento.
 
-- **Ogni articolo dal più economico: 1.928,43 €** in 3 ordini — Idrosanitaria 1.251,88 € (32 articoli), Tecnomat 646,58 € (27 articoli), Abbattista 29,97 € (2 articoli).
-- **Avvisi sul prezzo: 3 articoli** con un'offerta che costa meno ma non rispetta la voce (132,91 € di risparmio, se lo scostamento va bene): sono qui sotto, e decide il progettista.
+- **Ogni articolo dal più economico: 8.685,00 €** in 3 ordini — Idrosanitaria 8.129,69 € (42 articoli), Tecnomat 525,34 € (25 articoli), Abbattista 29,97 € (2 articoli).
+- **Avvisi sul prezzo: 5 articoli** con un'offerta che costa meno ma non rispetta la voce (132,91 € di risparmio, se lo scostamento va bene): sono qui sotto, e decide il progettista.
 - **Senza un fornitore: 7 articoli**, 137,55 € a prezzi di riferimento (online, o le fatture di un installatore): da comprare dove si trovano. Sono in fondo.
-- **Un fornitore solo per tutta la minuteria: il più economico è Tecnomat**, 2.078,36 € (1.346,30 € da Tecnomat, 732,06 € per i 23 articoli che non ha, da comprare altrove): 149,93 € in più che dividere l'ordine. A parità di articoli (i 20 che hanno tutti) il più economico è Tecnomat.
+- **Un fornitore solo per tutta la minuteria: il più economico è Tecnomat**, 8.859,23 € (1.346,30 € da Tecnomat, 7.512,93 € per i 31 articoli che non ha, da comprare altrove): 174,23 € in più che dividere l'ordine. A parità di articoli (i 20 che hanno tutti) il più economico è Tecnomat.
 
 ### Un fornitore solo
 
@@ -135,14 +144,16 @@ Tutta la minuteria da un fornitore: gli articoli che ha ai suoi prezzi, quelli c
 
 | Fornitore | Articoli che ha | € da lui | Articoli che non ha | € di quelli, altrove | Totale € | In più dell'ordine diviso € | € sugli articoli che hanno tutti |
 |---|--:|--:|--:|--:|--:|--:|--:|
-| Tecnomat | 38 | 1.346,30 | 23 | 732,06 | 2.078,36 | 149,93 | 825,74 |
-| Idrosanitaria | 51 | 1.820,22 | 10 | 288,17 | 2.108,39 | 179,96 | 886,05 |
-| Abbattista | 26 | 1.177,12 | 35 | 1.137,23 | 2.314,35 | 385,92 | 1.105,62 |
+| Tecnomat | 38 | 1.346,30 | 31 | 7.512,93 | 8.859,23 | 174,23 | 825,74 |
+| Idrosanitaria | 61 | 8.698,03 | 8 | 166,93 | 8.864,96 | 179,96 | 886,05 |
+| Abbattista | 29 | 2.079,45 | 40 | 7.182,32 | 9.261,76 | 576,76 | 1.105,62 |
 
 ### Avvisi sul prezzo
 
 | Codice | Voce | Scelto (rispetta la voce) | Costa meno, ma | Lo scostamento | Risparmio € |
 |---|---|---|---|---|--:|
+| M01c | U.E. PDC MONOBLOCCO TRI 12KW R290 | nessun articolo rispetta la voce: Idrosanitaria 3.103,60 ⚠ | — | è una Haier GT R290 12 kW trifase (il codice AW12NMXGHA, nelle schede dei rivenditori | — |
+| M10b | BOL. BOLLY1 ST FB WB 200 V003 | nessun articolo rispetta la voce: Idrosanitaria 461,40 ⚠ | — | serpentino 0,8 m², sotto il minimo di 2,5 m² | — |
 | A06c | PORTABOCCHETTA PLP 400X200 1X200 POSTERIORE | nessun articolo rispetta la voce: Idrosanitaria 30,81 ⚠ | — | attacco posteriore (la voce: laterale) | — |
 | I47 | GRUPPO DI CARICAMENTO C/DISCONNETTORE 1/2" | Idrosanitaria 153,01 | Tecnomat 24,61 | senza disconnettore nel titolo: la voce lo chiede (I-309) | 128,40 |
 | I47 | GRUPPO DI CARICAMENTO C/DISCONNETTORE 1/2" | Idrosanitaria 153,01 | Abbattista 67,59 | il disconnettore non è nel titolo: la voce lo chiede (I-309) | 85,42 |
@@ -155,28 +166,38 @@ Quanto costa comprare da un gruppo di fornitori soltanto: gli articoli che quel 
 
 | Fornitori | Ordini | Articoli che non hanno | € degli articoli che hanno | € in più del minimo |
 |---|--:|--:|--:|--:|
-| Idrosanitaria | 1 | 10 | 1.820,22 | 179,96 |
-| Tecnomat | 1 | 23 | 1.346,30 | 149,93 |
-| Abbattista | 1 | 35 | 1.177,12 | 385,92 |
-| Idrosanitaria + Tecnomat | 2 | 1 | 1.930,76 | 5,95 |
-| Abbattista + Idrosanitaria | 2 | 9 | 1.810,20 | 166,32 |
-| Abbattista + Tecnomat | 2 | 17 | 1.375,28 | 121,82 |
-| Abbattista + Idrosanitaria + Tecnomat | 3 | 0 | 1.928,43 | 0,00 |
+| Idrosanitaria | 1 | 8 | 8.698,03 | 179,96 |
+| Tecnomat | 1 | 31 | 1.346,30 | 174,23 |
+| Abbattista | 1 | 40 | 2.079,45 | 576,77 |
+| Idrosanitaria + Tecnomat | 2 | 1 | 8.687,33 | 5,95 |
+| Abbattista + Idrosanitaria | 2 | 7 | 8.688,01 | 166,32 |
+| Abbattista + Tecnomat | 2 | 22 | 2.277,61 | 336,97 |
+| Abbattista + Idrosanitaria + Tecnomat | 3 | 0 | 8.685,00 | 0,00 |
 
-### L'ordine a Idrosanitaria — 32 articoli, 1.251,88 €
+### L'ordine a Idrosanitaria — 42 articoli, 8.129,69 €
 
 | Codice | Articolo | Cod. fornitore | Confezione | Q.tà | UM | €/UM | € | Gli altri | Voci |
 |---|---|---|---|--:|---|--:|--:|---|---|
+| M01c | U.E. PDC MONOBLOCCO TRI 12KW R290 | AW12NMXGHA | 1 pz | 1 | cad | 3.103,60 ⚠ | 3.103,60 | — | P-A.1 |
+| M41a | U.E. MONO ADVANCE 7,1KW R32 MONOFASE | RZASG71MV1 | 1 pz | 1 | cad | 1.017,27 | 1.017,27 | — | C-A.1 |
+| M42a | AIRZONE EASYZONE 25 WI-FI MEDIUM IB8 DAIKIN 4X200 | AZC25DAIBS07M4 | 1 pz | 1 | cad | 993,61 | 993,61 | — | C-A.3 |
+| M40a | U.I.CANALIZ.M/PREV S/COM 7,0KW R32/R410 | FBA71A9 | 1 pz | 1 | cad | 835,78 | 835,78 | — | C-A.2 |
+| M10b | BOL. BOLLY1 ST FB WB 200 V003 | 3104162330042 | 1 pz | 1 | cad | 461,40 ⚠ | 461,40 | Abbattista 626,52 ⚠ | P-A.2 |
+| M20b | BOL. VB 80LT C/4 ATT. C/COPERT.V003 | 3070160920018 | 1 pz | 1 | cad | 156,49 | 156,49 | Abbattista 179,29 | P-A.3 |
 | A06c | PORTABOCCHETTA PLP 400X200 1X200 POSTERIORE | PLP-U-400X200-1B-P | 1 pz | 5 | cad | 30,81 ⚠ | 154,04 | — | C-B.5 |
 | I47 | GRUPPO DI CARICAMENTO C/DISCONNETTORE 1/2" | 580011 | 1 pz | 1 | cad | 153,01 | 153,01 | Tecnomat 24,61 ⚠ · Abbattista 67,59 ⚠ | P-I.21 |
 | I13 | RM122 GOMITO 90° 32 | RM122Y011 | 1 pz | 20 | cad | 7,20 | 144,00 | Tecnomat 7,45 · Abbattista 9,85 | P-I.11 |
 | A01c | TUBO FLEX ISOLATO PER CANALIZZATO D203 PREZZO AL MT | TES203 | 1 m | 20 | m | 6,90 | 137,94 | — | C-B.1 |
+| M44a | COMANDO FILO BT BIANCO | BRC1H52W7 | 1 pz | 1 | cad | 119,12 | 119,12 | — | C-A.4 |
 | I23 | RM107 RACCORDO FIL.M. 32X1" | RM107Y059 | 1 pz | 20 | cad | 4,74 | 94,74 | Abbattista 5,65 · Tecnomat 6,43 | P-I.37, P-I.40 |
+| M30a | EVOSTA2 40-70/130 1" CIRC.EL.SING.MONOF. | 60231853 | 1 pz | 1 | cad | 93,60 | 93,60 | Abbattista 96,52 | P-A.4 |
 | I04 | TUBO 32X3 AL.0,4 NUDO BARRE 5MT PX-AL-PEX | R999Y184 | barra 5 m | 28 | m | 3,21 | 89,91 | Tecnomat 3,64 | P-I.7 |
 | I38b | DEFANGATORE MAGNETICO VERTICALE 1" F | 545306 | 1 pz | 1 | cad | 81,83 | 81,83 | Abbattista 89,23 · Tecnomat 104,92 | P-I.17 |
 | A08c | COLLARE FISSAGGIO ISOLATO D200 | AIR-RS2SNE-200 | 1 pz | 21 | cad | 3,60 | 75,60 | — | C-B.4 |
+| F03b | TUBO RAME 5/8"X1.0 ROTOLO 50M CONDY | RBMEM015871000 | 1 m | 7 | m | 9,50 | 66,53 | Tecnomat 10,80 | C-C.2 |
 | I58 | ISOLANTE GOMMA ST 19X35 MM | 19035005508 | 1 m | 22 | m | 1,65 | 36,39 | Tecnomat 3,50 | P-I.8 |
 | A07c | FASCETTE STRINGITUBO ACC.INOX 60-270 | FSI60-270 | 1 pz | 20 | cad | 1,82 | 36,38 | — | C-B.2 |
+| F01b | TUBO RAME 3/8"X0.8 ROTOLO 50M CONDY | RBMEM009520800 | 1 m | 7 | m | 4,34 | 30,41 | Tecnomat 6,52 | C-C.1 |
 | I22 | RM107 RACCORDO FIL.M. 26X3/4" | RM107Y049 | 1 pz | 9 | cad | 3,01 | 27,10 | Abbattista 3,69 · Tecnomat 4,01 | P-I.33, P-I.34 |
 | I74 | GRUPPO SICUREZZA BOILER 1/2 DIR. | 526142 | 1 pz | 1 | cad | 26,05 | 26,05 | Abbattista 28,41 | P-I.16 |
 | I82 | ISOLANTE GOMMA ST 32X35 MM | 32035005508 | 1 m | 6 | m | 3,94 | 23,67 | — | P-I.10 |
@@ -200,15 +221,13 @@ Quanto costa comprare da un gruppo di fornitori soltanto: gli articoli che quel 
 | I86 | PP-TECH BRAGA DM 40/32 45 HTEA | BEA040345 | 1 pz | 1 | cad | 1,16 | 1,16 | — | C-D.7 |
 | I83b | F280 NIPPLO GHISA ZINC.3/4" | 770280205 | 1 pz | 1 | cad | 1,09 | 1,09 | Abbattista 1,57 | P-I.41 |
 
-### L'ordine a Tecnomat — 27 articoli, 646,58 €
+### L'ordine a Tecnomat — 25 articoli, 525,34 €
 
 | Codice | Articolo | Cod. fornitore | Confezione | Q.tà | UM | €/UM | € | Gli altri | Voci |
 |---|---|---|---|--:|---|--:|--:|---|---|
 | I51 | VALVOLA DEVIATRICE 3 VIE GIACOMINI R279B Ø 1'' ATTUATORE K270 220V | 25109732 | 1 pz | 1 | cad | 92,95 | 92,95 | Idrosanitaria 143,33 · Abbattista 156,29 | P-I.15 |
-| F03b | TUBO RAME RIVESTITO CLIMA ZETAESSE CUPEX GEL SILVER Ø 5/8''x 1 mm GUAINA 9 mm - vendita al ml | 25022931 | 1 m | 7 | m | 10,80 | 75,60 | — | C-C.2 |
 | I32 | VALVOLA A SFERA BUCCHI FF 1'' | 12080447 | 1 pz | 11 | cad | 6,30 | 69,30 | Idrosanitaria 8,12 · Abbattista 10,14 | P-I.30 |
 | I18 | TEE PRESSFIT APE APL Ø 32x32x32 mm PRESSATURA TH-H TUBO MULTISTRATO | 25000725 | 1 pz | 5 | cad | 11,02 | 55,10 | Idrosanitaria 11,11 · Abbattista 16,12 | P-I.27 |
-| F01b | TUBO RAME RIVESTITO CLIMA ZETAESSE CUPEX GEL SILVER Ø 3/8''x 1 mm GUAINA - vendita al ml | 25022913 | 1 m | 7 | m | 6,52 | 45,64 | — | C-C.1 |
 | E11a | TUBO CORRUGATO SEMPLE' ELEKTRIK Ø 25 mm COLORE NERO MATASSA 50 m | 25062264 | 50 m | 75 | m | 0,420 | 31,50 | — | P-E.5, P-E.7, C-E.6, C-E.9 |
 | I63 | COLLARI PER TUBI FRIULSIDER CON ASOLA Ø 1'' 2 PEZZI TASSELLO NYLON | 10062009 | 2 pz | 27 | cad | 1,10 | 29,70 | Idrosanitaria 1,68 · Abbattista 2,34 | P-I.3, P-I.5, P-I.9 |
 | E26a | SCATOLA GEWISS DI DERIVAZIONE ESTERNA 100x100x50 mm PARETI LISCE IP55 | 25011797 | 1 pz | 5 | cad | 5,33 | 26,65 | — | P-E.4, C-E.5 |

@@ -116,7 +116,7 @@ CARATTERISTICHE_PER_MESTIERE: dict[str, tuple[str, ...]] = {
     "refrigerant_generation": ("power_kw",),
     "heat_exchange": ("power_kw",),
     "thermal_storage": ("volume_l",),
-    "dhw_storage": ("volume_l",),
+    "dhw_storage": ("volume_l", "superficie_scambio_m2"),
     "expansion": ("volume_l",),
     "circulation": ("flow_rate_m3h", "head_kpa", "head_m"),
     "direct_expansion_terminal": ("power_kw", "flow_rate_m3h"),
@@ -125,7 +125,7 @@ CARATTERISTICHE_PER_MESTIERE: dict[str, tuple[str, ...]] = {
 """Che cosa si scrive fra le caratteristiche, secondo il mestiere del pezzo.
 
 La **potenza** dei generatori e degli scambiatori, il **volume** di accumuli,
-bollitori e vasi, **portata e prevalenza** dei circolatori, **potenza e portata
+bollitori e vasi, la **superficie del serpentino** del bollitore (REL-028, I-315), **portata e prevalenza** dei circolatori, **potenza e portata
 d'aria** dell'unita' interna (REL-012), **potenza e portata** del terminale d'emissione
 che entra in tabella con marca o modello (REL-026: la portata e' quella che il
 progettista ha scritto in `flow_rate_m3h`, che sull'acqua il calcolo dei diametri legge
@@ -134,6 +134,9 @@ piu' mestieri — il boiler in pompa di calore genera e accumula — le porta
 tutte, nell'ordine delle chiavi di `CHIAVI_DEI_DATI_NUMERICI`. Il separatore
 idraulico non ha una sua caratteristica: quando e' anche un accumulo, porta il
 volume da accumulo."""
+
+PREFISSI: dict[str, str] = {"superficie_scambio_m2": "serpentino "}
+"""La parola davanti a un dato che da solo non si capisce: «200 l · serpentino 2,5 m²» (REL-028)."""
 
 CONTATTO = "contatto"
 """La portata del contatto di un termostato a contatto o di un relè, come il progettista
@@ -250,7 +253,7 @@ def dati_idronici(mestieri: Iterable[str], proprieta: Mapping[str, JsonPrimitive
         if any(chiave in CARATTERISTICHE_PER_MESTIERE.get(item, ()) for item in fa)
     ]
     dati = [
-        scritto
+        f"{PREFISSI.get(chiave, '')}{scritto}"
         for chiave in chiavi
         if (scritto := formatta_il_dato(chiave, proprieta.get(chiave))) is not None
     ]

@@ -6,6 +6,11 @@ listino rev. 06 e con lo stesso codice di `distinta --costo` (`prezza`, `ordine_
 `costo_in_markdown`).
 
     python docs/collaudi/REL-027/pr-mi-059/misura.py
+
+**REL-028** (D-241, I-314; I-315 … I-323): la lista prezzata comprende le apparecchiature (il blocco
+`apparecchiature` di `voci.json`), e il bollitore si confronta col serpentino minimo della Shenling 12 kW,
+2,5 m² (manuale §2.3): un bollitore del listino sotto il minimo e' uno scostamento. Le quantita' della lista
+sono nette (I-320).
 """
 
 import json
@@ -17,12 +22,17 @@ from disegnatore_mep.distinta.ordine import ordine_della_minuteria
 
 QUI = Path(__file__).parent
 ROOT = QUI.parents[3]
-TITOLI = {"S": "Staffaggi e supporti", "I": "Circuito idraulico", "E": "Elettrico, comando e regolazione",
+TITOLI = {"A": "Apparecchiature", "S": "Staffaggi e supporti", "I": "Circuito idraulico", "E": "Elettrico, comando e regolazione",
           "B": "Distribuzione aria", "C": "Circuito frigorifero", "D": "Scarico condensa"}
 
 
 def costo_della_lista(voci: list[dict], listino_path: Path) -> Costo:
-    listino = leggi_il_listino(listino_path)
+    minime: dict[str, float] = {}
+    for v in voci:
+        if v.get("superficie_minima_m2") and v["codici"]:
+            for c, _ in v["codici"]:
+                minime[c] = max(minime.get(c, 0.0), float(v["superficie_minima_m2"]))
+    listino = leggi_il_listino(listino_path).con_le_superfici_minime(minime)
     costo = Costo(progetto={"project_name": "PR.MI.059 (dalla lista materiali)"}, listino=listino)
     for v in voci:
         riga = RigaDelCosto(v["rif"], v["sezione"], v["testo"], v["quantita"], v["um"], [], None, None, "")
@@ -39,13 +49,18 @@ def costo_della_lista(voci: list[dict], listino_path: Path) -> Costo:
                 riga.conto = " + ".join(
                     f"{c} {listino.get(c).prezzo:.2f} ({listino.get(c).fornitore})" for c, _ in riga.codici  # type: ignore[union-attr]
                 )
+        if v.get("fornitura") == "Nove C":
+            riga.nota = "fornita da Nove C"
         costo.righe.append(riga)
     return costo
 
 
 def main() -> None:
     dati = json.loads((QUI / "voci.json").read_text(encoding="utf-8"))
-    costo = costo_della_lista(dati["voci"], ROOT / "skill" / "distinta" / "LISTINO-MINUTERIA.md")
+    listino_path = ROOT / "skill" / "distinta" / "LISTINO-MINUTERIA.md"
+    apparecchiature(dati["apparecchiature"]["voci"], listino_path)
+    dati["voci"] = dati["apparecchiature"]["voci"] + dati["voci"]
+    costo = costo_della_lista(dati["voci"], listino_path)
     (QUI / "costo-minuteria.md").write_text(costo_in_markdown(costo, TITOLI), encoding="utf-8")
     ordine = ordine_della_minuteria(costo)
     print(f"voci {len(costo.righe)}, prezzate {len(costo.righe) - len(costo.da_prezzare)}, "
@@ -68,6 +83,20 @@ def main() -> None:
         print(f"  {' + '.join(c.fornitori):40} scoperti {c.scoperti:2}  {c.totale:9.2f} €  +{c.in_piu:7.2f} €")
 
     confronto(costo)
+
+
+def apparecchiature(voci: list[dict], listino_path: Path) -> None:
+    """REL-028: le apparecchiature, una per una, con i prezzi dei fornitori e gli scostamenti."""
+    costo = costo_della_lista(voci, listino_path)
+    print(f"apparecchiature: {len(costo.righe)} voci, prezzate {len(costo.righe) - len(costo.da_prezzare)}, "
+          f"totale {costo.totale:.2f} €")
+    for riga in costo.righe:
+        print(f"  {riga.rif} {riga.testo[:70]:70} {riga.totale or 0:9.2f} €  {riga.manca}")
+        for codice, _ in riga.codici:
+            for v in costo.listino.offerte(codice):
+                superficie = f", serpentino {v.superficie_m2:g} m²" if v.superficie_m2 is not None else ""
+                avviso = f"  ⚠ {v.scostamento}" if v.scostamento else ""
+                print(f"      {v.fornitore:14} {v.prezzo:9.2f} €{superficie}{avviso}")
 
 
 def confronto(costo: Costo) -> None:

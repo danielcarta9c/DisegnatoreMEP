@@ -4,7 +4,7 @@
                    mai sotto il minimo del fluido ne' sotto quello scritto sul tratto.
 
 La L e' il dato del progettista. Nel kit AA-01: aggiunta 1 m, fattore 1,15, passo
-0,5 m; minimi 12 m per le linee frigorifere, 10 m per la condensa, 5 m per il bus,
+0,5 m; dal 18 novembre 2026 il fattore e' 1, le quantita' sono nette (I-320, REL-028); minimi 12 m per le linee frigorifere, 10 m per la condensa, 5 m per il bus,
 2 m per un ramo d'aria. Ogni lunghezza esce con il conto scritto, perche' il
 progettista e l'installatore lo possano rifare.
 """
@@ -54,10 +54,14 @@ def da_quotare(stimata: float, regola: Mapping[str, Any], minimi: Sequence[Minim
     passo = float(regola["passo_m"])
     grezza = (stimata + aggiunta) * fattore
     maggiorata = per_eccesso(grezza, passo)
-    calcolo = (
-        f"({in_parole(stimata)} + {in_parole(aggiunta)}) × {in_parole(fattore)} = {in_parole(grezza)}"
-        f" → {in_parole(maggiorata)} m"
-    )
+    somma = f"{in_parole(stimata)} + {in_parole(aggiunta)}"
+    if fattore != 1:
+        calcolo = f"({somma}) × {in_parole(fattore)} = {in_parole(grezza)} → {in_parole(maggiorata)} m"
+    else:
+        calcolo = f"{somma} = {in_parole(grezza)} → {in_parole(maggiorata)} m"
+    if fattore == 1 and maggiorata == grezza:
+        calcolo = f"{somma} = {in_parole(maggiorata)} m" if aggiunta else f"{in_parole(maggiorata)} m"
+
     risultato = maggiorata
     for minimo in minimi:
         if minimo.metri > risultato + TOLLERANZA:
