@@ -33,8 +33,28 @@ $ python3 -m pytest -q
 $ ruff check src tests      → All checks passed!
 $ mypy                      → Success: no issues found in 133 source files
 $ python3 scripts/costruisci-skill.py
-ZIP sha256 3e324d57aa5dc751, 157 file → releases/latest/DisegnatoreMEP-v2.2.2.zip; controlli passati
+ZIP sha256 6f2ea4e5a60f9153, 157 file → releases/latest/DisegnatoreMEP-v2.2.2.zip; controlli passati
 ```
+
+## 3bis. Il preventivo corretto di Idrosanitaria (I-334)
+
+Il PO: «il Bolly XL Idrosanitaria ce lo ha corretto e lo ha quotato a 546». Nel listino §5 la riga M10b di
+Idrosanitaria è il Bolly 1 XL WB 200 a 546,00 € (2 m²); il Bolly 1 ST da 0,8 m² resta documentato senza ID. Il
+modello WB e il codice 3104162330011 sono assunti dalla scheda Cordivari: da confermare.
+
+```
+$ python3 docs/collaudi/REL-027/pr-mi-059/misura.py
+  P-A.2 Bollitore ACS — 200 l, … non minore di 2 m²     546.00 €
+      Idrosanitaria     546.00 €, serpentino 2 m²
+      Abbattista        626.52 €, serpentino 2 m²
+voci 99, prezzate 90, da prezzare 9; totale 8827.16 €
+ordine: 8774.48 € + senza fornitore 52.68 €
+  Idrosanitaria: 34 articoli, 8057.78 €   Tecnomat: 38 articoli, 686.73 €   Abbattista: 2 articoli, 29.97 €
+```
+
+Su PR.MI.059 il bollitore costa 80,52 € meno che da Abbattista, e la lista prezzata completa scende a 8.827,16 €. Le
+prove dell'esclusione usano ora un bollitore di prova da 0,8 m² (`_con_un_bollitore_piccolo`), perché nel listino vero
+non c'è più.
 
 ## 4. Le scelte della sessione
 
