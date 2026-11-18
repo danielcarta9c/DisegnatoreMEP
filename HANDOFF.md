@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-11-14 — **la 2.1.0 è su `main`** (`REL-026`, I-300, PR #95): i rilievi d'uso della 2.0.0 su una commessa. Il PO ha visto le tavole e ha approvato la fusione. `REL-024` è sospeso (fasi 2-4), `REL-025` diventa la 2.2. **Il prossimo pacchetto lo sceglie il PO.**
+**Aggiornato:** 2026-11-18 — **`REL-027` in corso, la 2.1.1** (I-302 … I-305): il listino a più fornitori e «Dove comprare». PR aperta, **da approvare dal PO** (non ci sono tavole nuove: il PO guarda il costo con «Dove comprare» su PR.MI.059). La 2.1.0 è su `main`.
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -10,6 +10,27 @@
 > È stato riscritto il 20 settembre perché una sessione ha sbagliato lo sviluppo pur avendo
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
+
+## ▶ Da dove riparte la prossima sessione — scritto il 18 novembre 2026, con REL-027
+
+**Il pacchetto è `REL-027`, la 2.1.1** (`ACTIVE_WORK_PACKAGE.md`): il PO ha portato le offerte di Abbattista e
+Idrosanitaria sulla lista materiali di PR.MI.059 e vuole che la skill gli dica **dove comprare** la minuteria (I-302,
+I-303), con un listino che col tempo copra i tre fornitori (I-304). Ramo `claude/peaceful-brown-lnxll7`. Il rapporto,
+con ogni criterio e il suo comando, è `docs/collaudi/REL-027/RAPPORTO.md`.
+
+- **Il listino rev. 06** (`skill/distinta/LISTINO-MINUTERIA.md`): la tabella «I fornitori» (si ordina da Tecnomat,
+  Abbattista, Idrosanitaria; Bricoman e l'online sono riferimenti), la colonna Fornitore, §4 Abbattista e §5
+  Idrosanitaria con **tutte** le righe dei tre documenti. Lo stesso ID ha un prezzo per fornitore.
+- **Il codice**: `listino.py` legge più prezzi per codice (doppio dello stesso fornitore = errore); `costo.py` usa il
+  più basso fra chi si ordina; `ordine.py` scrive «Dove comprare» — l'ordine per fornitore e le combinazioni con meno
+  ordini. Le regole hanno preso solo i codici di voci che non avevano prezzo.
+- **Su PR.MI.059**: Idrosanitaria e Tecnomat quasi tutto, Abbattista due articoli; Idrosanitaria meno cara di Abbattista
+  su 23 articoli comuni su 28, anche su volano, valvola di zona e circolatore.
+- **Aperti col PO** (rapporto §4, §5, §7): le righe Tecnomat del §1 che non sono la voce (il Filler senza
+  disconnettore, il manometro 0–12); le apparecchiature nel consiglio; il rame «CONDY»; il pollice nei raccordi
+  «all'attacco»; l'imbuto di scarico; gli sconti Abbattista nel repository pubblico; la lista di PR.MI.059 fatta con
+  una copia della skill che non è `main` (quantità nette, testi diversi).
+- **I numeri**: il prossimo input è **I-306**, la prossima decisione **D-241**.
 
 ## ▶ Da dove riparte la prossima sessione — scritto il 13 novembre 2026, con REL-026
 

@@ -1,0 +1,1160 @@
+{
+ "commessa": "PR.MI.059",
+ "fonte": "lista materiali PR.MI.059 rev. 01 del 6 novembre 2026, fatta con la skill (quantità nette della lista); i codici sono quelli che le regole della distinta (rules/distinta, REL-027) danno a ciascuna voce",
+ "voci": [
+  {
+   "rif": "P-S.1",
+   "sezione": "S",
+   "testo": "Piedini antivibranti per pompa di calore a terra",
+   "quantita": 4,
+   "um": "n",
+   "codici": [
+    [
+     "I71a",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-I.1",
+   "sezione": "I",
+   "testo": "Tubo multistrato MS 26×3, nudo",
+   "quantita": 8,
+   "um": "m",
+   "codici": [
+    [
+     "I03",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-I.2",
+   "sezione": "I",
+   "testo": "Guaina isolante elastomerica per tubo multistrato MS 26×3 (guaina 9 mm)",
+   "quantita": 6,
+   "um": "m",
+   "codici": [
+    [
+     "I84a",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-I.3",
+   "sezione": "I",
+   "testo": "Collare con gommino e tassello per tubo multistrato MS 26×3",
+   "quantita": 6,
+   "um": "n",
+   "codici": [
+    [
+     "I63",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-I.4",
+   "sezione": "I",
+   "testo": "Tubo multistrato MS 16×2, nudo",
+   "quantita": 3,
+   "um": "m",
+   "codici": [
+    [
+     "I01",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-I.5",
+   "sezione": "I",
+   "testo": "Collare con gommino e tassello per tubo multistrato MS 16×2",
+   "quantita": 2,
+   "um": "n",
+   "codici": [
+    [
+     "I63",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-I.6",
+   "sezione": "I",
+   "testo": "Guaina isolante elastomerica per tubo multistrato MS 26×3 (guaina 30 mm)",
+   "quantita": 2,
+   "um": "m",
+   "codici": [
+    [
+     "I84c",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-I.7",
+   "sezione": "I",
+   "testo": "Tubo multistrato MS 32×3, nudo",
+   "quantita": 28,
+   "um": "m",
+   "codici": [
+    [
+     "I04",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-I.8",
+   "sezione": "I",
+   "testo": "Guaina isolante elastomerica per tubo multistrato MS 32×3 (guaina 19 mm)",
+   "quantita": 22,
+   "um": "m",
+   "codici": [
+    [
+     "I58",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-I.9",
+   "sezione": "I",
+   "testo": "Collare con gommino e tassello per tubo multistrato MS 32×3",
+   "quantita": 19,
+   "um": "n",
+   "codici": [
+    [
+     "I63",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-I.10",
+   "sezione": "I",
+   "testo": "Guaina isolante elastomerica per tubo multistrato MS 32×3 (guaina 30 mm)",
+   "quantita": 6,
+   "um": "m",
+   "codici": [
+    [
+     "I82",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-I.11",
+   "sezione": "I",
+   "testo": "Gomito 90° a pressare tubo multistrato MS 32×3, a corpo",
+   "quantita": 20,
+   "um": "n",
+   "codici": [
+    [
+     "I13",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-I.12",
+   "sezione": "I",
+   "testo": "Nastro adesivo per le giunte dell'isolamento, rotolo 50 m",
+   "quantita": 1,
+   "um": "n",
+   "codici": [
+    [
+     "I61",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-I.13",
+   "sezione": "I",
+   "testo": "Canapa e pasta sigillante per i raccordi filettati",
+   "quantita": 1,
+   "um": "n",
+   "codici": [
+    [
+     "I67a",
+     1
+    ],
+    [
+     "I67b",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-I.14",
+   "sezione": "I",
+   "testo": "Valvola automatica di sfogo aria ½\" con rubinetto di intercettazione",
+   "quantita": 1,
+   "um": "n",
+   "codici": [
+    [
+     "I43a",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-I.15",
+   "sezione": "I",
+   "testo": "Valvola deviatrice a tre vie 1\" con attuatore 230 V",
+   "quantita": 1,
+   "um": "n",
+   "codici": [
+    [
+     "I51",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-I.16",
+   "sezione": "I",
+   "testo": "Gruppo di sicurezza sanitario per bollitore (ritegno, sicurezza 6 bar, intercettazione)",
+   "quantita": 1,
+   "um": "n",
+   "codici": [
+    [
+     "I74",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-I.17",
+   "sezione": "I",
+   "testo": "Defangatore magnetico 1\"",
+   "quantita": 1,
+   "um": "n",
+   "codici": [
+    [
+     "I38b",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-I.18",
+   "sezione": "I",
+   "testo": "Rubinetto di scarico ½\" con portagomma",
+   "quantita": 2,
+   "um": "n",
+   "codici": [
+    [
+     "I46",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-I.19",
+   "sezione": "I",
+   "testo": "Vaso di espansione sanitario 8 l, con attacco e staffa",
+   "quantita": 1,
+   "um": "n",
+   "codici": [
+    [
+     "I42",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-I.20",
+   "sezione": "I",
+   "testo": "Vaso di espansione chiuso a membrana per riscaldamento 24 l, con attacco e staffa",
+   "quantita": 1,
+   "um": "n",
+   "codici": [
+    [
+     "I41c",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-I.21",
+   "sezione": "I",
+   "testo": "Gruppo di riempimento automatico ½\" con disconnettore",
+   "quantita": 1,
+   "um": "n",
+   "codici": [
+    [
+     "I47",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-I.22",
+   "sezione": "I",
+   "testo": "Giunto antivibrante 1¼\"",
+   "quantita": 2,
+   "um": "n",
+   "codici": [
+    [
+     "I49a",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-I.23",
+   "sezione": "I",
+   "testo": "Pulitore per impianti nuovi o recenti, 1 l",
+   "quantita": 1,
+   "um": "n",
+   "codici": [
+    [
+     "I55a",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-I.24",
+   "sezione": "I",
+   "testo": "Filmante e inibitore per impianti, 1 l",
+   "quantita": 1,
+   "um": "n",
+   "codici": [
+    [
+     "I55b",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-I.25",
+   "sezione": "I",
+   "testo": "Riduzione 1¼\" M × 1\" F",
+   "quantita": 2,
+   "um": "n",
+   "codici": [
+    [
+     "I78a",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-I.26",
+   "sezione": "I",
+   "testo": "Manometro 0-6 bar attacco ½\"",
+   "quantita": 1,
+   "um": "n",
+   "codici": [
+    [
+     "I44",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-I.27",
+   "sezione": "I",
+   "testo": "Tee a pressare tubo multistrato MS 32×3",
+   "quantita": 5,
+   "um": "n",
+   "codici": [
+    [
+     "I18",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-I.28",
+   "sezione": "I",
+   "testo": "Tee a pressare tubo multistrato MS 26×3",
+   "quantita": 2,
+   "um": "n",
+   "codici": [
+    [
+     "I17",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-I.29",
+   "sezione": "I",
+   "testo": "Rubinetto portamanometro a tre vie ½\"",
+   "quantita": 1,
+   "um": "n",
+   "codici": [
+    [
+     "I77",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-I.30",
+   "sezione": "I",
+   "testo": "Valvola a sfera a passaggio totale 1\" FF, con leva",
+   "quantita": 11,
+   "um": "n",
+   "codici": [
+    [
+     "I32",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-I.31",
+   "sezione": "I",
+   "testo": "Valvola a sfera a passaggio totale ¾\" FF, con leva",
+   "quantita": 3,
+   "um": "n",
+   "codici": [
+    [
+     "I31",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-I.32",
+   "sezione": "I",
+   "testo": "Valvola di sicurezza ½\" MF 3 bar, con scarico convogliato",
+   "quantita": 1,
+   "um": "n",
+   "codici": [
+    [
+     "I40a",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-I.33",
+   "sezione": "I",
+   "testo": "Raccordo diritto a pressare M × tubo multistrato MS 26×3, all'attacco",
+   "quantita": 3,
+   "um": "n",
+   "codici": [
+    [
+     "I22",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-I.34",
+   "sezione": "I",
+   "testo": "Raccordo diritto a pressare M ¾\" × tubo multistrato MS 26×3",
+   "quantita": 6,
+   "um": "n",
+   "codici": [
+    [
+     "I22",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-I.35",
+   "sezione": "I",
+   "testo": "Raccordo diritto a pressare M × tubo multistrato MS 16×2, all'attacco",
+   "quantita": 1,
+   "um": "n",
+   "codici": [
+    [
+     "I81c",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-I.36",
+   "sezione": "I",
+   "testo": "Raccordo diritto a pressare M 3/8\" × tubo multistrato MS 16×2",
+   "quantita": 1,
+   "um": "n",
+   "codici": [
+    [
+     "I81c",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-I.37",
+   "sezione": "I",
+   "testo": "Raccordo diritto a pressare M 1\" × tubo multistrato MS 32×3",
+   "quantita": 18,
+   "um": "n",
+   "codici": [
+    [
+     "I23",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-I.38",
+   "sezione": "I",
+   "testo": "Nipplo 1\" M × M",
+   "quantita": 7,
+   "um": "n",
+   "codici": [
+    [
+     "I83c",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-I.39",
+   "sezione": "I",
+   "testo": "Nipplo ridotto 1¼\" × 1\" M × M",
+   "quantita": 4,
+   "um": "n",
+   "codici": [
+    [
+     "I83e",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-I.40",
+   "sezione": "I",
+   "testo": "Raccordo diritto a pressare M × tubo multistrato MS 32×3, all'attacco",
+   "quantita": 2,
+   "um": "n",
+   "codici": [
+    [
+     "I23",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-I.41",
+   "sezione": "I",
+   "testo": "Nipplo ¾\" M × M",
+   "quantita": 1,
+   "um": "n",
+   "codici": [
+    [
+     "I83b",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-E.1",
+   "sezione": "E",
+   "testo": "Cavo FG16OR16 4G1,5, Comando della deviatrice",
+   "quantita": 9,
+   "um": "m",
+   "codici": [
+    [
+     "E35c",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-E.2",
+   "sezione": "E",
+   "testo": "Cavo FG16OR16 3G6, Alimentazione pompa di calore",
+   "quantita": 9,
+   "um": "m",
+   "codici": [
+    [
+     "E03",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-E.3",
+   "sezione": "E",
+   "testo": "Cavo FG16OR16 3G1,5, Alimentazione circolatore dal quadro, attraverso il termostato",
+   "quantita": 20,
+   "um": "m",
+   "codici": [
+    [
+     "E35a",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-E.4",
+   "sezione": "E",
+   "testo": "Scatola di derivazione IP55",
+   "quantita": 3,
+   "um": "n",
+   "codici": [
+    [
+     "E26a",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-E.5",
+   "sezione": "E",
+   "testo": "Tubo corrugato Ø25 per le linee di alimentazione",
+   "quantita": 38,
+   "um": "m",
+   "codici": [
+    [
+     "E11a",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-E.6",
+   "sezione": "E",
+   "testo": "Cavo 2×0,75 schermato, Comando a filo della pompa di calore",
+   "quantita": 9,
+   "um": "m",
+   "codici": [
+    [
+     "E36",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-E.7",
+   "sezione": "E",
+   "testo": "Tubo corrugato Ø20 per bus e linee di comando",
+   "quantita": 9,
+   "um": "m",
+   "codici": [
+    [
+     "E11a",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-E.8",
+   "sezione": "E",
+   "testo": "Scatola 503 per termostati e comandi a parete",
+   "quantita": 2,
+   "um": "n",
+   "codici": [
+    [
+     "E37",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-E.9",
+   "sezione": "E",
+   "testo": "Interruttore magnetotermico differenziale 1P+N C10 Idn 30 mA tipo A",
+   "quantita": 1,
+   "um": "n",
+   "codici": [
+    [
+     "E33",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "P-E.10",
+   "sezione": "E",
+   "testo": "Interruttore magnetotermico differenziale 2P C32 Idn 30 mA tipo A",
+   "quantita": 1,
+   "um": "n",
+   "codici": [
+    [
+     "E17",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "C-S.1",
+   "sezione": "S",
+   "testo": "Sospensione del plenum motorizzato: 4 barre filettate M10 con ancoranti, dadi e antivibranti",
+   "quantita": 1,
+   "um": "kit",
+   "codici": [
+    [
+     "I64",
+     4
+    ],
+    [
+     "I66",
+     4
+    ]
+   ]
+  },
+  {
+   "rif": "C-S.2",
+   "sezione": "S",
+   "testo": "Sospensione del plenum di ripresa: 2 barre filettate M8 con ancoranti e dadi",
+   "quantita": 1,
+   "um": "kit",
+   "codici": [
+    [
+     "I64",
+     2
+    ],
+    [
+     "I66",
+     2
+    ]
+   ]
+  },
+  {
+   "rif": "C-S.3",
+   "sezione": "S",
+   "testo": "Piedini antivibranti per unità esterna a terra",
+   "quantita": 4,
+   "um": "n",
+   "codici": [
+    [
+     "I71a",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "C-S.4",
+   "sezione": "S",
+   "testo": "Sospensione dell'unità interna: 4 barre filettate M10, ancoranti, dadi, rondelle e antivibranti",
+   "quantita": 1,
+   "um": "kit",
+   "codici": [
+    [
+     "I64",
+     4
+    ],
+    [
+     "I66",
+     4
+    ]
+   ]
+  },
+  {
+   "rif": "C-B.1",
+   "sezione": "B",
+   "testo": "Condotto flessibile coibentato Ø200, confezione da 10 m",
+   "quantita": 2,
+   "um": "conf.",
+   "codici": [
+    [
+     "A01c",
+     10
+    ]
+   ]
+  },
+  {
+   "rif": "C-B.2",
+   "sezione": "B",
+   "testo": "Fascetta di serraggio Ø200 (anima e mantello)",
+   "quantita": 20,
+   "um": "n",
+   "codici": [
+    [
+     "A07c",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "C-B.3",
+   "sezione": "B",
+   "testo": "Nastro alluminio rinforzato 50 mm",
+   "quantita": 1,
+   "um": "rotolo",
+   "codici": [
+    [
+     "A07a",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "C-B.4",
+   "sezione": "B",
+   "testo": "Sostegno per flessibile (fascia o collare con pendino), passo ≤ 1,2 m",
+   "quantita": 21,
+   "um": "n",
+   "codici": [
+    [
+     "A08c",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "C-B.5",
+   "sezione": "B",
+   "testo": "Plenum porta-bocchetta coibentato per bocchetta 400×200, attacco Ø200 laterale",
+   "quantita": 5,
+   "um": "n",
+   "codici": [
+    [
+     "A06c",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "C-B.6",
+   "sezione": "B",
+   "testo": "Derivazione coibentata 1×Ø200 > 2×Ø200",
+   "quantita": 1,
+   "um": "n",
+   "codici": null
+  },
+  {
+   "rif": "C-B.7",
+   "sezione": "B",
+   "testo": "Isolamento elastomerico adesivo 13 mm per manicotti, raccordi, derivazione e plenum",
+   "quantita": 2,
+   "um": "rotolo",
+   "codici": null
+  },
+  {
+   "rif": "C-B.8",
+   "sezione": "B",
+   "testo": "Plenum di ripresa in lamiera zincata con filtro ispezionabile, bocca 1000×250",
+   "quantita": 1,
+   "um": "n",
+   "codici": null
+  },
+  {
+   "rif": "C-B.9",
+   "sezione": "B",
+   "testo": "Giunto antivibrante in tela fra unità interna e plenum di ripresa",
+   "quantita": 1,
+   "um": "n",
+   "codici": null
+  },
+  {
+   "rif": "C-C.1",
+   "sezione": "C",
+   "testo": "Tubo rame ricotto pre-isolato Ø9,52 (3/8\"), isolamento ≥ 10 mm",
+   "quantita": 7,
+   "um": "m",
+   "codici": [
+    [
+     "F01b",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "C-C.2",
+   "sezione": "C",
+   "testo": "Tubo rame ricotto pre-isolato Ø15,9 (5/8\"), isolamento ≥ 13 mm",
+   "quantita": 7,
+   "um": "m",
+   "codici": [
+    [
+     "F03b",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "C-C.3",
+   "sezione": "C",
+   "testo": "Nastro di finitura e manicotti isolanti per le giunzioni a cartella",
+   "quantita": 1,
+   "um": "kit",
+   "codici": [
+    [
+     "F06",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "C-C.4",
+   "sezione": "C",
+   "testo": "Collare di sostegno linee frigorifere in controsoffitto",
+   "quantita": 6,
+   "um": "n",
+   "codici": null
+  },
+  {
+   "rif": "C-C.5",
+   "sezione": "C",
+   "testo": "Canalina coprilinee esterna 110×75",
+   "quantita": 4,
+   "um": "m",
+   "codici": null
+  },
+  {
+   "rif": "C-C.6",
+   "sezione": "C",
+   "testo": "Accessori canalina: curva 2, terminale a muro 1, giunto 2",
+   "quantita": 1,
+   "um": "kit",
+   "codici": null
+  },
+  {
+   "rif": "C-D.1",
+   "sezione": "D",
+   "testo": "Tubo PVC rigido Ø32",
+   "quantita": 8,
+   "um": "m",
+   "codici": [
+    [
+     "I68a",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "C-D.2",
+   "sezione": "D",
+   "testo": "Curva 87°-90° Ø32",
+   "quantita": 5,
+   "um": "n",
+   "codici": [
+    [
+     "I68d",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "C-D.3",
+   "sezione": "D",
+   "testo": "Manicotto Ø32",
+   "quantita": 2,
+   "um": "n",
+   "codici": [
+    [
+     "I68f",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "C-D.4",
+   "sezione": "D",
+   "testo": "Collare per tubo condensa",
+   "quantita": 8,
+   "um": "n",
+   "codici": [
+    [
+     "I87",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "C-D.5",
+   "sezione": "D",
+   "testo": "Isolamento anticondensa 9 mm per il tubo della condensa",
+   "quantita": 8,
+   "um": "m",
+   "codici": [
+    [
+     "I84b",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "C-D.6",
+   "sezione": "D",
+   "testo": "Collante e pulitore PVC",
+   "quantita": 1,
+   "um": "n",
+   "codici": [
+    [
+     "I85",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "C-D.7",
+   "sezione": "D",
+   "testo": "Innesto sullo scarico esistente con braga 45° Ø40",
+   "quantita": 1,
+   "um": "n",
+   "codici": [
+    [
+     "I86",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "C-D.8",
+   "sezione": "D",
+   "testo": "Sifone ispezionabile per condensa",
+   "quantita": 1,
+   "um": "n",
+   "codici": [
+    [
+     "I69",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "C-D.9",
+   "sezione": "D",
+   "testo": "Raccordo di adattamento dall'attacco condensa dell'unità interna al tubo di scarico",
+   "quantita": 1,
+   "um": "n",
+   "codici": null
+  },
+  {
+   "rif": "C-E.1",
+   "sezione": "E",
+   "testo": "Cavo FG16OR16 3G1,5, Alimentazione centrale Airzone",
+   "quantita": 12,
+   "um": "m",
+   "codici": [
+    [
+     "E35a",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "C-E.2",
+   "sezione": "E",
+   "testo": "Cavo FG16OR16 3G4, Alimentazione unità esterna",
+   "quantita": 10,
+   "um": "m",
+   "codici": [
+    [
+     "E02",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "C-E.3",
+   "sezione": "E",
+   "testo": "Magnetotermico-differenziale 1P+N C6, Idn 30 mA, tipo A",
+   "quantita": 1,
+   "um": "n",
+   "codici": null
+  },
+  {
+   "rif": "C-E.4",
+   "sezione": "E",
+   "testo": "Magnetotermico-differenziale 1P+N C20, Idn 30 mA, tipo A o F",
+   "quantita": 1,
+   "um": "n",
+   "codici": [
+    [
+     "E16a",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "C-E.5",
+   "sezione": "E",
+   "testo": "Scatola di derivazione IP55",
+   "quantita": 2,
+   "um": "n",
+   "codici": [
+    [
+     "E26a",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "C-E.6",
+   "sezione": "E",
+   "testo": "Tubo corrugato Ø25 per le linee di alimentazione",
+   "quantita": 22,
+   "um": "m",
+   "codici": [
+    [
+     "E11a",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "C-E.7",
+   "sezione": "E",
+   "testo": "Cavo di collegamento 4G1,5 a doppio isolamento",
+   "quantita": 8,
+   "um": "m",
+   "codici": [
+    [
+     "E35c",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "C-E.8",
+   "sezione": "E",
+   "testo": "Cavo 2×0,75 (P1-P2), linea P1-P2 dell'unità interna",
+   "quantita": 6,
+   "um": "m",
+   "codici": [
+    [
+     "E36",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "C-E.9",
+   "sezione": "E",
+   "testo": "Tubo corrugato Ø20 per bus e linee di comando",
+   "quantita": 6,
+   "um": "m",
+   "codici": [
+    [
+     "E11a",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "C-E.10",
+   "sezione": "E",
+   "testo": "Scatola 503 per termostati e comandi a parete",
+   "quantita": 1,
+   "um": "n",
+   "codici": [
+    [
+     "E37",
+     1
+    ]
+   ]
+  },
+  {
+   "rif": "C-E.11",
+   "sezione": "E",
+   "testo": "Sezionatore onnipolare di prossimità IP55, 25 A",
+   "quantita": 1,
+   "um": "n",
+   "codici": [
+    [
+     "E23a",
+     1
+    ]
+   ]
+  }
+ ]
+}

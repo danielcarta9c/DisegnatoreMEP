@@ -1,5 +1,23 @@
-# L'ultima release: 2.1.0
+# L'ultima release: 2.1.1
 
+`DisegnatoreMEP-v2.1.1.zip` — sha256 `89de7b4e66051d0e…`, 156 file — è `REL-027` (I-302 … I-305): **il listino a più
+fornitori e «Dove comprare»**. Si carica come ogni skill personale, dallo ZIP così com'è.
+
+Rispetto alla 2.1.0:
+- **il listino della minuteria rev. 06** (`riferimenti/listino-minuteria.md`): la tabella «I fornitori» (si ordina da
+  Tecnomat, Abbattista, Idrosanitaria), la colonna Fornitore, e le offerte di Abbattista (ordini del 10 e del 13
+  novembre 2026) e Idrosanitaria (preventivo del 9 novembre 2026) sulla commessa PR.MI.059, tutte le righe; lo stesso
+  articolo ha il prezzo di ciascun fornitore;
+- **`distinta --costo` dice dove comprare**: il prezzo di ogni articolo è il più basso fra i fornitori da cui si
+  ordina, e in fondo al costo c'è l'ordine per fornitore (articolo, codice del fornitore, confezione, quantità,
+  prezzo, gli altri prezzi) con quanto costa in più comprare da meno fornitori;
+- le regole della distinta prezzano voci che prima erano DA PREZZARE (guaine da 9 e 30 mm, isolamento anticondensa,
+  collante, braga, clip della condensa, fascette e sostegni del flessibile Ø200, porta-bocchetta 400×200, nipplo
+  ridotto 1¼" × 1"): cambia solo il prezzo, non che cosa si conta.
+
+Tavole identiche alla 2.1.0.
+
+Prima, la **2.1.0**:
 `DisegnatoreMEP-v2.1.0.zip` — sha256 `7a37dd4348ba330c…`, 155 file — è `REL-026` (I-300): **i rilievi d'uso della 2.0.0 su una
 commessa**. Si carica come ogni skill personale, dallo ZIP così com'è.
 

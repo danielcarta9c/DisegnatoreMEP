@@ -117,3 +117,8 @@ Il comando della skill li riapre da sé.
   architettonica letta da un sub-agente e ridisegnata in una grafica sola, le scritte fuori pianta col richiamo, le
   lunghezze dalla pianta al grafo, il ventilconvettore canalizzato idronico e il plenum di mandata da 2 a 6 uscite,
   il vaso sanitario. Nel banco cambia la sola pianta del collaudo T3. 155 file.
+- **2.1.1** — 18 novembre 2026 (`REL-027`, I-302 … I-305): **il listino a più fornitori e «Dove comprare»** — il
+  listino della minuteria rev. 06 con la tabella dei fornitori e le offerte di Abbattista e Idrosanitaria sulla
+  commessa PR.MI.059 (tutte le righe, col fornitore); `distinta --costo` usa per ogni articolo il prezzo più basso fra
+  i fornitori da cui si ordina e scrive l'ordine per fornitore, con quanto costa in più comprare da meno fornitori.
+  Tavole identiche alla 2.1.0; nel banco cambia la sola impronta delle regole in tre distinte. 156 file.

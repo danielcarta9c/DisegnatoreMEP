@@ -8,7 +8,12 @@ from typing import Any
 import pytest
 
 from disegnatore_mep.distinta import RegoleDellaDistinta, componi_la_distinta
-from disegnatore_mep.distinta.costo import Costo, RigaDelCosto, costo_in_markdown, prezza_la_distinta
+from disegnatore_mep.distinta.costo import (
+    Costo,
+    RigaDelCosto,
+    costo_in_markdown,
+    prezza_la_distinta,
+)
 from disegnatore_mep.distinta.listino import ErroreDelListino, leggi_il_listino
 from disegnatore_mep.distinta.ordine import ordine_della_minuteria
 from disegnatore_mep.skill import cartelle_del_repository, main

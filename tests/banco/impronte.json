@@ -106,7 +106,7 @@
    "grafo-completo.json": "aa02b0b3a52374f14764a0116affa5fd371848cae4d59ac61eeed7f413ee40ac",
    "sintesi-1": "Formato A2 · tratte 36 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 4 · sormonti 2 · avvisi e regole: DRAWING_TOUCHES_THE_BORDER x1, SHEET_TOO_FULL x1",
    "sintesi-2": "Formato A3 · tratte 7 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 5 · sormonti 0 · avvisi e regole: nessuno",
-   "distinta/distinta.json": "0436f28979ba9023439c2ef252f67dceb47f9de07c4b3eb5884fba67df791871",
+   "distinta/distinta.json": "7d580144d926194b495e05100203f69fd13f3c8af6457e76037df9da4c81507a",
    "distinta/tabelle-del-foglio.json": "81da480b66f3d8661cafc48c52cb3ad74ed50f66d0fe1aadb24c65026468f158",
    "tavola/rel026-canalizzati-plenum-di-mandata-elettrico-t1-rilievi.md": "448b7e1374193be795d9d0543f64eaa26fc7d8cb856e1e7c513ea7b75565034d",
    "tavola/rel026-canalizzati-plenum-di-mandata-elettrico-t1.svg": "7134e5fb20cfcf9bdb5bebd6e49806ee7131fd06cd515cba207bdc08c9b75a63",
@@ -116,7 +116,7 @@
   "plenum-motorizzato-rel026": {
    "grafo-completo.json": "d6034576eea44523cc6bd79ded076d075908a36a82c5f42999ff977fe2297177",
    "sintesi-1": "Formato A3 · tratte 24 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 11 · sormonti 0 · avvisi e regole: DRAWING_TOUCHES_THE_BORDER x1, SHEET_TOO_FULL x1",
-   "distinta/distinta.json": "13ba3fb0bfc44b940b2f08d6bbbe7865090aadc51aa4074e7d32622d32963d66",
+   "distinta/distinta.json": "bb429caaf8ad489d7ffea44a4359b24350fdbabfeb1e0e1ee3cef779a6d0c76e",
    "distinta/tabelle-del-foglio.json": "23be22d6181adafd59a2d3beb9eb7f5e6ce551b628a317f0370383655e5600b0",
    "tavola/rel026-canalizzato-plenum-motorizzato-t1-rilievi.md": "56feb1ac3cccd89a74ca1994627b5590fe28bebc4b0c88b5794d2701dd589d36",
    "tavola/rel026-canalizzato-plenum-motorizzato-t1.svg": "d848d93c58c8c3f37bfb84c2e78242c66a249da486e30fbdfa6e554cebdc78f5"
@@ -172,7 +172,7 @@
   "t1-rel023": {
    "grafo-completo.json": "8edf5c3d67758a10689e6a5259363884148d86ba445ed7be4116307fe394a420",
    "sintesi-1": "Formato A3 · tratte 29 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 7 · sormonti 1 · avvisi e regole: SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x1",
-   "distinta/distinta.json": "db34eaf4b8da94632606dd4d2fa132d7c88e80dc93e36a030d1177da6cd6d832",
+   "distinta/distinta.json": "abe34f23430b85dcdb01daf5a541c4a7768c4a287321820425c7889a5e227cb8",
    "distinta/tabelle-del-foglio.json": "b5205489c4f338cc92b933468cad687ffdd639f481cf8d66ce6baf93fdeb8385",
    "tavola/villetta-pdc-volano-bollitore-idraulica-t1-rilievi.md": "cdd9435ae4a4956befee423041ca05d87ddf104c6fe8a2b1cbdd52231404ab57",
    "tavola/villetta-pdc-volano-bollitore-idraulica-t1.svg": "ca7e6515259372777067fdeb9dd99eee306d89edc4a1248cddf658338cee07fb"

@@ -251,7 +251,26 @@ preventivi degli installatori), lancia la distinta con `--costo`: nella sottocar
 - è il **consumo** (quantità × prezzo per unità del listino): le confezioni intere costano di più;
 - una voce senza codice, con un codice che il listino non ha, o con la quantità DA DEFINIRE, è **DA PREZZARE**, fuori
   dal totale, col suo perché: **non la stimi tu**. Riporta il totale, quante voci sono da prezzare e le più pesanti;
-- i prezzi del listino hanno una data e due gradi di affidabilità (il rilievo al banco e il riferimento online): dillo.
+- i prezzi del listino hanno una data e tre gradi di affidabilità (gli ordini e i preventivi dei fornitori, il
+  rilievo al banco, il riferimento online): dillo.
+
+### Dove comprare, e gli ordini
+
+Il listino è **a più fornitori** (dalla revisione 06): la tabella «I fornitori» dice da chi Nove C ordina (oggi
+Abbattista, Tecnomat, Idrosanitaria), e lo stesso articolo può avere il prezzo di ciascuno. Il costo usa, articolo
+per articolo, **il prezzo più basso fra quelli da cui si ordina**, e dice di chi è; dove nessuno ha l'articolo, il
+riferimento (online, o le fatture di un installatore). In fondo a `costo-minuteria.md`, **«Dove comprare»**:
+
+- l'**ordine per fornitore**: per ogni articolo il codice e la descrizione del fornitore, la confezione, la quantità
+  (la somma sulle voci che lo usano), il prezzo, e i prezzi degli altri fornitori;
+- **«Con meno ordini»**: per ogni gruppo di fornitori, quanti articoli non hanno e quanto costano in più gli altri,
+  sugli stessi articoli. È lì che il progettista decide se tre ordini valgono la differenza;
+- gli articoli **senza un fornitore**, da comprare dove si trovano.
+
+Quando il progettista chiede **dove comprare** o di **fare gli ordini**, lancia `--costo` e riportagli «Dove
+comprare» così com'è: gli ordini, le combinazioni, gli articoli senza fornitore. **Non** spostare tu un articolo da un
+fornitore all'altro e non aggiungere trasporto o minimi d'ordine: il conto non li ha, e lo dici. Le quantità sono il
+consumo: al banco si comprano le confezioni intere (il rotolo, la barra), e la colonna Confezione lo dice.
 
 ## Come la consegni
 
