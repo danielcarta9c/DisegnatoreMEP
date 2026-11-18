@@ -146,7 +146,10 @@ piccolo. X viene dal manuale della pompa di calore che lo scalda: per le Shenlin
 2,0 m² per 6–9 kW, 2,5 m² per 12–15 kW, serpentina smaltata; 1,4 e 1,6 m² inox, se sul bollitore scrivi
 `"serpentino": "inox"`). **Di base vale la specifica della macchina** (I-329): se il progettista accetta un
 serpentino più piccolo (per esempio il Bolly 1 XL da 2 m² sulla 12 kW, che rende bene), scrivi il suo minimo sul bollitore in
-`superficie_minima_scambio_m2`. Se il bollitore è un Cordivari Bolly 1 XL,
+`superficie_minima_scambio_m2`.
+Nel conto un bollitore del listino col serpentino sotto il minimo è **escluso**, non si sceglie nemmeno come ripiego
+(I-331); se nessuno arriva al minimo la voce è DA PREZZARE e dice chi è escluso. Allora chiedi al progettista se
+accetta un serpentino minore: il PO non trova bollitori da 2,5 m² per 150–200 l a magazzino in Italia (I-332). Se il bollitore è un Cordivari Bolly 1 XL,
 la skill sa i suoi attacchi dalla scheda (primario 1¼" F). Per un'altra pompa di calore è una domanda: il minimo lo dà il progettista, e si scrive sul
 bollitore in `superficie_minima_scambio_m2`. Se il progettista dice la superficie del bollitore scelto, scrivila in
 `superficie_scambio_m2`: la tabella delle apparecchiature la porta, e sotto il minimo è un avviso. Un avviso anche

@@ -145,17 +145,22 @@ def test_il_listino_dice_il_serpentino_e_il_confronto_lo_usa(
     righe = {v.fornitore: v for v in listino.righe["M10b"]}
     assert righe["Abbattista"].superficie_m2 == 2.0 and righe["Idrosanitaria"].superficie_m2 == 0.8
     # Con la 9 kW (2 m²) il bollitore di Abbattista rispetta la voce, e vince anche se costa di piu';
-    # quello di Idrosanitaria (0,8 m²) e' un avviso.
+    # quello di Idrosanitaria (0,8 m²) e' sbagliato: escluso dal confronto, non un avviso (REL-029, I-331).
     grafo = _impianto()
     grafo["components"][0]["properties"]["power_kw"] = 9
-    ordine = ordine_della_minuteria(prezza_la_distinta(componi_la_distinta(grafo, regole, *nomi), listino))
+    costo = prezza_la_distinta(componi_la_distinta(grafo, regole, *nomi), listino)
+    ordine = ordine_della_minuteria(costo)
     bollitore = next(r for r in ordine.righe if r.codice == "M10b")
     assert bollitore.scelta is not None and bollitore.scelta.fornitore == "Abbattista"
-    assert [v.fornitore for v in bollitore.avvisi] == ["Idrosanitaria"]
-    # Con la 12 kW (2,5 m², manuale) tutti e due sono sotto: il conto prende il meno caro e lo avvisa.
+    assert not bollitore.avvisi and {v.fornitore for v in bollitore.offerte} == {"Abbattista"}
+    riga = next(r for r in costo.righe if r.testo.startswith("Bollitore ACS"))
+    assert "esclusi perché sbagliati: Idrosanitaria (serpentino 0,8 m², sotto il minimo di 2 m²)" in riga.nota
+    # Con la 12 kW (2,5 m², manuale) tutti e due sono sotto: nessuno si sceglie, la voce e' DA PREZZARE.
     costo = prezza_la_distinta(componi_la_distinta(_impianto(), regole, *nomi), listino)
     riga = next(r for r in costo.righe if r.testo.startswith("Bollitore ACS"))
-    assert riga.prezzata and "sotto il minimo di 2,5 m²" in riga.conto
+    assert not riga.prezzata and riga.manca.startswith("nessun articolo del listino rispetta la voce; esclusi:")
+    assert "Abbattista (serpentino 2 m², sotto il minimo di 2,5 m²)" in riga.manca
+    assert not [r for r in ordine_della_minuteria(costo).righe if r.codice == "M10b"]
 
 
 # --- 2a: le due liste ----------------------------------------------------------------------

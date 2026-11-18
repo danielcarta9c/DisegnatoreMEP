@@ -129,3 +129,7 @@ Il comando della skill li riapre da sé.
   il raccordo all'attacco col pollice dell'attacco (Shenling, Cordivari Bolly 1 XL) o una domanda; le quantità nette;
   il listino rev. 07 coi prezzi Tecnomat Pro (150 righe, 35 articoli nuovi) e il rame «CONDY». Nessuno schema cambia;
   cambia la pianta del collaudo T3 (le «L quot.» nette). 157 file.
+- **2.2.1** — 18 novembre 2026 (`REL-029`, I-330 … I-332; D-244): **il bollitore sbagliato si esclude** — nel conto e
+  in «Dove comprare» un bollitore col serpentino sotto il minimo non si sceglie, nemmeno come ripiego, e il conto dice
+  chi è escluso; senza un bollitore buono la voce è DA PREZZARE e l'agente chiede al progettista se accetta un
+  serpentino minore. Tavole identiche alla 2.2.0. 157 file.

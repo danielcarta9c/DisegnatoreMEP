@@ -1,5 +1,14 @@
-# L'ultima release: 2.2.0
+# L'ultima release: 2.2.1
 
+`DisegnatoreMEP-v2.2.1.zip` — sha256 `4ca139d843a2ee21…`, 157 file — è `REL-029` (I-330 … I-332, D-244): **il bollitore
+sbagliato si esclude**. Si carica come ogni skill personale, dallo ZIP così com'è.
+
+Rispetto alla 2.2.0: nel conto della lista prezzata e in «Dove comprare» un bollitore col serpentino sotto il minimo
+della voce è escluso (non si sceglie nemmeno come ripiego) e il conto dice chi ha escluso; se nessun bollitore arriva
+al minimo la voce è DA PREZZARE, e l'agente chiede al progettista se accetta un serpentino minore. Tavole identiche
+alla 2.2.0.
+
+Prima, la **2.2.0**:
 `DisegnatoreMEP-v2.2.0.zip` — sha256 `469792ace3da33f6…`, 157 file — è `REL-028` (I-313 … I-329, D-241 … D-243): **due
 liste materiali complete, il bollitore col serpentino, i prezzi Tecnomat Pro**. Si carica come ogni skill personale,
 dallo ZIP così com'è.

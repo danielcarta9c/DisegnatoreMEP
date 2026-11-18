@@ -81,6 +81,9 @@ class Listino:
     percorso: Path
     fornitori: dict[str, Fornitore] = field(default_factory=dict)
     """La tabella «I fornitori»; vuota nei listini di prima della revisione 06."""
+    esclusi: dict[str, tuple[VoceDelListino, ...]] = field(default_factory=dict)
+    """Per codice, le righe tolte dal confronto perche' sbagliate per la voce: il bollitore col
+    serpentino sotto il minimo (REL-029, I-331). Restano qui perche' il conto possa dire chi ha escluso."""
 
     def si_ordina(self, fornitore: str) -> bool:
         if fornitore == RIFERIMENTO_ONLINE:
@@ -133,28 +136,35 @@ class Listino:
         return replace(self, fornitori=scelti)
 
     def con_le_superfici_minime(self, minime: Mapping[str, float]) -> "Listino":
-        """Lo stesso listino, dove per i codici di `minime` (i bollitori, REL-028) una riga col
-        serpentino sotto la superficie minima, o che non la dice, e' uno scostamento (⚠): il
-        fornitore che quota un serpentino piccolo non vince il confronto, e il conto lo avvisa."""
+        """Lo stesso listino, dove per i codici di `minime` (i bollitori) **una riga col serpentino
+        sotto la superficie minima e' esclusa** dal confronto (REL-029, I-331: «dovrebbe escludere
+        quello di Idrosanitaria perché è sbagliato»): non si sceglie, nemmeno come ripiego, e va in
+        `esclusi`. Una riga che non dice la superficie e' uno scostamento (⚠): si sceglie solo se
+        nessun'altra rispetta la voce, e il conto lo avvisa (REL-028)."""
         if not minime:
             return self
         righe = dict(self.righe)
+        esclusi = dict(self.esclusi)
         for codice, minima in minime.items():
             if codice not in righe:
                 continue
-            nuove = []
+            nuove, fuori = [], []
             for voce in righe[codice]:
                 if voce.superficie_m2 is None:
                     perche = f"la superficie del serpentino non è detta (la voce chiede almeno {_m2(minima)})"
+                    scostamento = f"{voce.scostamento}; {perche}" if voce.scostamento else perche
+                    nuove.append(replace(voce, scostamento=scostamento))
                 elif voce.superficie_m2 + 1e-9 < minima:
-                    perche = f"serpentino {_m2(voce.superficie_m2)}, sotto il minimo di {_m2(minima)}"
+                    fuori.append(replace(voce, scostamento=f"serpentino {_m2(voce.superficie_m2)}, sotto il minimo di {_m2(minima)}"))
                 else:
                     nuove.append(voce)
-                    continue
-                scostamento = f"{voce.scostamento}; {perche}" if voce.scostamento else perche
-                nuove.append(replace(voce, scostamento=scostamento))
-            righe[codice] = tuple(nuove)
-        return replace(self, righe=righe)
+            if nuove:
+                righe[codice] = tuple(nuove)
+            else:
+                del righe[codice]
+            if fuori:
+                esclusi[codice] = tuple(fuori)
+        return replace(self, righe=righe, esclusi=esclusi)
 
     @property
     def voci(self) -> dict[str, VoceDelListino]:
