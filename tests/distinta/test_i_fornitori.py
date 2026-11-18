@@ -210,3 +210,38 @@ def test_il_comando_con_un_fornitore_scelto(tmp_path: Path, capsys: pytest.Captu
     assert "Si ordina soltanto da: Idrosanitaria." in capsys.readouterr().out
     dati = json.loads((tmp_path / "d" / "interno" / "costo-minuteria.json").read_text(encoding="utf-8"))
     assert list(dati["ordine"]["per_fornitore"]) == ["Idrosanitaria"]
+
+
+def _riga_con_nota(codice: str, fornitore: str, prezzo: str, nota: str) -> str:
+    return _riga(codice, fornitore, prezzo).replace(" | |\n", f" | {nota} |\n")
+
+
+def test_lo_scostamento_non_si_sceglie_e_diventa_un_avviso(tmp_path: Path) -> None:
+    """I-307: la marca non conta, la prescrizione sì. Beta costa meno ma si scosta (⚠): si sceglie
+    Alfa, e Beta è un avviso col risparmio. I02 lo hanno solo con lo scostamento: si prende, avvisato."""
+    listino = leggi_il_listino(_listino(tmp_path, (
+        _riga("I01", "Alfa", "10,00") + _riga_con_nota("I01", "Beta", "4,00", "⚠ senza disconnettore; altro")
+        + _riga_con_nota("I02", "Alfa", "3,00", "⚠ attacco 3/8")
+    )))
+    beta = next(v for v in listino.offerte("I01") if v.fornitore == "Beta")
+    assert beta.scostamento == "senza disconnettore"
+    assert listino.get("I01").fornitore == "Alfa" and listino.get("I02").scostamento == "attacco 3/8"
+    costo = _costo(listino, [("V1", 2, [("I01", 1.0)]), ("V2", 1, [("I02", 1.0)])])
+    ordine = ordine_della_minuteria(costo)
+    i01 = next(r for r in ordine.righe if r.codice == "I01")
+    assert i01.scelta is not None and i01.scelta.fornitore == "Alfa" and i01.avvisi == [beta]
+    assert i01.descrizione == "Articolo I01 Alfa", "la descrizione è quella dell'articolo scelto"
+    i02 = next(r for r in ordine.righe if r.codice == "I02")
+    assert i02.scelta is not None and i02.scelta.scostamento and i02.avvisi == [i02.scelta]
+    assert ordine.totale == pytest.approx(2 * 10 + 3)
+    assert {u.fornitore: u.ha for u in ordine.un_fornitore()} == {"Alfa": 2}, "lo scostamento non conta come «ha»"
+    md = costo_in_markdown(costo, {})
+    assert "### Avvisi sul prezzo" in md and "Beta 4,00 | senza disconnettore | 12,00 |" in md
+    assert "nessun articolo rispetta la voce: Alfa 3,00 ⚠" in md
+
+
+def test_nel_listino_vero_il_filler_e_il_manometro_0_12_sono_avvisi(listino: Any) -> None:
+    """I-308, I-309: il gruppo di riempimento senza disconnettore e il manometro 0–12 non si scelgono."""
+    assert listino.get("I47").fornitore == "Idrosanitaria" and "DISCONNETTORE" in listino.get("I47").descrizione
+    assert {v.fornitore for v in listino.offerte("I47") if v.scostamento} == {"Tecnomat", "Abbattista"}
+    assert listino.get("I44").fornitore == "Idrosanitaria" and "0-6BAR" in listino.get("I44").descrizione

@@ -51,7 +51,7 @@ articolo, e le combinazioni confrontano sugli stessi articoli; sulla distinta di
 ordini più gli articoli senza fornitore è il totale del costo; `distinta --costo` scrive «Dove comprare» nel Markdown e
 l'ordine nel JSON (versione 2).
 
-**Criterio 5 — la misura su PR.MI.059**: §3. **Criterio 8 — un fornitore solo e `--fornitori`**: §3bis.
+**Criterio 5 — la misura su PR.MI.059**: §3. **Criterio 8 — un fornitore solo e `--fornitori`**: §3bis. **Criterio 9 — gli scostamenti come avvisi**: §4.
 
 **Criterio 6 — nessuna tavola cambia** e **criterio 7 — suite, ruff, mypy, release**: §6.
 
@@ -60,95 +60,128 @@ l'ordine nel JSON (versione 2).
 Il grafo della commessa non c'è: le voci vengono dalla lista materiali rev. 01 che la skill ha scritto
 (`pr-mi-059/voci.json`, 91 voci, con i codici che le regole danno a ciascuna, senza dati del committente). Le quantità
 sono **quelle nette della lista**, non maggiorate: la frase sul +15% che il file del costo scrive di suo, qui, non vale.
+I numeri sono quelli con le disposizioni del PO di §4 (la marca non conta, gli scostamenti sono avvisi).
 
 ```
 $ python3 docs/collaudi/REL-027/pr-mi-059/misura.py
-voci 91, prezzate 82, da prezzare 9; totale 1933.07 €
-ordine: 1795.52 € + senza fornitore 137.55 €
-  Idrosanitaria: 30 articoli, 1089.03 €
-  Tecnomat: 29 articoli, 676.52 €
+voci 91, prezzate 82, da prezzare 9; totale 2065.98 €
+ordine: 1928.43 € + senza fornitore 137.55 €
+un fornitore solo (articoli in comune: 20):
+  Tecnomat       ha 38 ( 1346.30 €), non ha 23 ( 732.06 € altrove): totale  2078.36 €; sugli articoli in comune   825.74 €
+  Idrosanitaria  ha 51 ( 1820.22 €), non ha 10 ( 288.17 € altrove): totale  2108.39 €; sugli articoli in comune   886.05 €
+  Abbattista     ha 26 ( 1177.12 €), non ha 35 (1137.23 € altrove): totale  2314.35 €; sugli articoli in comune  1105.62 €
+  Idrosanitaria: 32 articoli, 1251.88 €
+  Tecnomat: 27 articoli, 646.58 €
   Abbattista: 2 articoli, 29.97 €
-  Idrosanitaria                            scoperti 10    1820.22 €  + 312.87 €
-  Tecnomat                                 scoperti 21    1376.24 €  + 149.93 €
-  Abbattista                               scoperti 32    1265.75 €  + 435.66 €
-  Idrosanitaria + Tecnomat                 scoperti  1    1797.85 €  +   5.95 €
-  Abbattista + Idrosanitaria               scoperti  9    1722.28 €  + 211.32 €
-  Abbattista + Tecnomat                    scoperti 14    1418.91 €  + 126.56 €
-  Abbattista + Idrosanitaria + Tecnomat    scoperti  0    1795.52 €  +   0.00 €
-…
+  Idrosanitaria                            scoperti 10    1820.22 €  + 179.96 €
+  Tecnomat                                 scoperti 23    1346.30 €  + 149.93 €
+  Abbattista                               scoperti 35    1177.12 €  + 385.92 €
+  Idrosanitaria + Tecnomat                 scoperti  1    1930.76 €  +   5.95 €
+  Abbattista + Idrosanitaria               scoperti  9    1810.20 €  + 166.32 €
+  Abbattista + Tecnomat                    scoperti 17    1375.28 €  + 121.82 €
+  Abbattista + Idrosanitaria + Tecnomat    scoperti  0    1928.43 €  +   0.00 €
+solo la pompa di calore: 1228.50 € in 3 ordini
+  Idrosanitaria: 20 articoli, 775.37 €
+  Tecnomat: 19 articoli, 423.16 €
+  Abbattista: 2 articoli, 29.97 €
+  Idrosanitaria                            scoperti  5    1300.15 €  + 156.08 €
+  Tecnomat                                 scoperti 12    1112.18 €  + 146.32 €
+  Abbattista                               scoperti 15    1177.12 €  + 385.92 €
+  Idrosanitaria + Tecnomat                 scoperti  1    1230.83 €  +   5.95 €
+  Abbattista + Idrosanitaria               scoperti  4    1290.13 €  + 142.44 €
+  Abbattista + Tecnomat                    scoperti  6    1141.16 €  + 118.21 €
+  Abbattista + Idrosanitaria + Tecnomat    scoperti  0    1228.50 €  +   0.00 €
 articoli in comune Abbattista-Idrosanitaria: 28; meno caro Abbattista 5, Idrosanitaria 23; alle quantità della lista Abbattista 1262.13 €, Idrosanitaria 1111.32 €
-circuito idraulico della pompa di calore (P-S, P-I): 42 voci; ordine diviso 1041.42 € + senza fornitore 0.00 €
-  Idrosanitaria: 18 articoli, 612.52 €
-  Tecnomat: 18 articoli, 398.93 €
+avviso A06c: Idrosanitaria 30.81 € ⚠ attacco posteriore (la voce: laterale)
+avviso I47: Tecnomat 24.61 € ⚠ senza disconnettore nel titolo: la voce lo chiede (I-309)
+avviso I47: Abbattista 67.59 € ⚠ il disconnettore non è nel titolo: la voce lo chiede (I-309)
+avviso I44: Tecnomat 5.33 € ⚠ fondo scala 0–12 bar: la voce chiede 0–6 (I-308)
+avviso I44: Abbattista 7.35 € ⚠ attacco 3/8" (la voce: ½")
+circuito idraulico della pompa di calore (P-S, P-I): 42 voci; ordine diviso 1174.33 € + senza fornitore 0.00 €
+  Idrosanitaria: 20 articoli, 775.37 €
+  Tecnomat: 16 articoli, 368.99 €
   Abbattista: 2 articoli, 29.97 €
-  …
-  Idrosanitaria + Tecnomat                 scoperti  1    1043.75 €  +   5.95 €
+  Idrosanitaria                            scoperti  2    1300.15 €  + 156.08 €
+  Tecnomat                                 scoperti 12    1058.01 €  + 146.32 €
+  Abbattista                               scoperti 12    1177.12 €  + 385.92 €
+  Idrosanitaria + Tecnomat                 scoperti  1    1176.66 €  +   5.95 €
+  Abbattista + Idrosanitaria               scoperti  1    1290.13 €  + 142.44 €
+  Abbattista + Tecnomat                    scoperti  6    1086.99 €  + 118.21 €
+  Abbattista + Idrosanitaria + Tecnomat    scoperti  0    1174.33 €  +   0.00 €
 ```
 
 **Che cosa dice, in parole.**
 
-- Su questa commessa **«Dove comprare» manda quasi tutto a Idrosanitaria e Tecnomat**: Abbattista vince due articoli
-  (i giunti antivibranti 1¼" e il raccordo 16 × ½"), 29,97 €. Due ordini, Idrosanitaria più Tecnomat, costano 5,95 €
-  in più di tre.
+- **L'ordine diviso**: 1.928,43 € in tre ordini — Idrosanitaria 32 articoli (1.251,88 €), Tecnomat 27 (646,58 €),
+  Abbattista 2 (29,97 €: i giunti antivibranti 1¼" e il raccordo 16 × ½"). Due ordini, Idrosanitaria più Tecnomat,
+  costano 5,95 € in più di tre.
+- **Un fornitore solo** (§3bis): Tecnomat 2.078,36 €, ma 23 articoli li deve comprare altrove; Idrosanitaria
+  2.108,39 €, e altrove ne compra solo 10.
 - **Abbattista contro Idrosanitaria**, sui 28 articoli che hanno tutti e due: Idrosanitaria costa meno su 23, alle
   quantità della lista 1.111,32 € contro 1.262,13 € (−12%). Anche sugli articoli costosi che il PO compra da Abbattista
   (§5 del listino): volano Cordivari UP GBF 80, stesso codice, 156,49 € contro 179,29 €; valvola di zona Caleffi 6443,
   stesso codice, 143,33 € contro 156,29 €; circolatore Evosta 2 40-70/130, 93,60 € contro 96,52 €.
+- **Gli avvisi sul prezzo**: il gruppo di riempimento senza disconnettore (Tecnomat 24,61 €, Abbattista 67,59 €,
+  contro 153,01 € di quello con disconnettore di Idrosanitaria) e il manometro (Tecnomat 0–12 a 5,33 €, Abbattista
+  da 3/8" a 7,35 €, contro il 0–6 da ½" di Idrosanitaria a 9,84 €): 132,91 € di risparmio possibile, se lo
+  scostamento va bene. Il porta-bocchetta 400×200 c'è solo con l'attacco posteriore: preso, e avvisato.
 - **Le offerte vere, sullo stesso perimetro** (il circuito idraulico della pompa di calore con la valvola di zona):
   Abbattista 1.703,41 € (l'ordine del 13 novembre, 1.547,12 €, più la valvola di zona dell'ordine del 10, 156,29 €),
   Idrosanitaria 1.327,85 € (righe 6–48 del preventivo). Le offerte comprano confezioni intere (barre, rotoli) e qualche
-  pezzo che la lista non chiede (imbuto, serpentina, staffe dei vasi da Abbattista); il conto della skill è il consumo,
-  1.041,42 €. Non sono la stessa misura, e non le metto in fila come se lo fossero.
+  pezzo che la lista non chiede (§5, punto 7); il conto della skill è il consumo, 1.174,33 €. Non sono la stessa
+  misura, e non le metto in fila come se lo fossero.
 
 ## 3bis. Un fornitore solo (I-306, criterio 8)
 
 Il PO, visto il funzionamento: «in base al cantiere posso magari dividere l'ordine in più fornitori o scegliere un solo
 fornitore per tutta la minuteria e la skill mi dice quale è il fornitore più economico per il totale prezzo». In
-«Dove comprare» c'è ora **«Un fornitore solo»**, e `distinta --costo --fornitori <nomi>` manda l'ordine soltanto ai
-fornitori scelti.
+«Dove comprare» c'è ora **«Un fornitore solo»**: per ogni fornitore il totale della minuteria comprata da lui, sullo
+stesso paniere (quello che non ha, dal più economico degli altri), e il conto sugli articoli che hanno tutti. E
+`distinta --costo --fornitori <nomi>` manda l'ordine soltanto ai fornitori scelti.
 
-```
-$ python3 docs/collaudi/REL-027/pr-mi-059/misura.py
-…
-un fornitore solo (articoli in comune: 22):
-  Tecnomat       ha 40 ( 1376.24 €), non ha 21 ( 569.21 € altrove): totale  1945.45 €; sugli articoli in comune   855.68 €
-  Idrosanitaria  ha 51 ( 1820.22 €), non ha 10 ( 288.17 € altrove): totale  2108.39 €; sugli articoli in comune  1048.91 €
-  Abbattista     ha 29 ( 1265.75 €), non ha 32 ( 965.43 € altrove): totale  2231.18 €; sugli articoli in comune  1180.56 €
-…
-articoli in comune senza i 5 dubbi del §1 (I40a, I44, I47, I51, I61): 17
-  Abbattista       875.83 €
-  Idrosanitaria    700.25 €
-  Tecnomat         714.15 €
-```
+Su PR.MI.059 (l'output è in §3): il più economico come fornitore unico è **Tecnomat**, 2.078,36 €, sui 20 articoli
+che hanno tutti 825,74 € contro 886,05 € di Idrosanitaria e 1.105,62 € di Abbattista. **Ma Tecnomat non ha 23 articoli**
+(i 732,06 € che andrebbero comprati altrove: i porta-bocchetta, il flessibile coi collari e le fascette, le guaine da 9 e da 32 mm, la condensa, il gruppo di riempimento col disconnettore, il gruppo di sicurezza del bollitore, i nippli in ghisa),
+mentre a Idrosanitaria ne mancano 10: per un ordine solo davvero, oggi, è Idrosanitaria quella che copre la commessa,
+a 30,03 € in più di Tecnomat sul totale. Il listino Tecnomat è il rilievo del 2 novembre: completarlo cambierebbe il
+conto.
 
-```
-$ python3 -m pytest tests/distinta/test_i_fornitori.py -q
-.............
-13 passed
-```
+## 4. Il prezzo più basso e la prescrizione (I-307 … I-310)
 
-**Il numero dice Tecnomat; guardando gli articoli non è detto.** Come fornitore unico vince Tecnomat sia sul totale
-(1.945,45 €, ma con 21 articoli da comprare altrove) sia sui 22 articoli che hanno tutti (855,68 €). Ma fra quei 22 ci
-sono i cinque articoli Tecnomat del §4 che non sono la voce (il Filler, il manometro 0–12, la sicurezza, il nastro, la
-deviatrice di un'altra marca): **tolti quelli, sui 17 che restano Idrosanitaria costa meno di Tecnomat**, 700,25 €
-contro 714,15 €. Il verdetto «un fornitore solo» dipende dalla risposta del PO sul §4.
+**Il rilievo.** Il conto confronta le righe che hanno lo stesso ID, e la prima versione prendeva il prezzo più basso
+anche quando l'articolo non rispettava la voce: il gruppo di riempimento «Filler» di Tecnomat (24,61 €, senza
+disconnettore nel titolo) contro 67,59 € e 153,01 €; il manometro 0–12 bar contro il 0–6 della voce.
 
-## 4. Il rilievo più utile: il prezzo più basso non è sempre lo stesso articolo
+**La disposizione del PO** (18 novembre 2026): «la marca non mi interessa … mi interessa solo che rispettino le
+prescrizioni. queste la skill puo' anche evidenziarle se ci sono lievi sconstamenti … mi mette un alert sul prezzo,
+certo se ho messo un gruppo di sicurezza su AF verso il boiler ACS non è che la skill decide di cambiarlo con una cosa
+che fa un mestiere diverso» (I-307); «Il manometro da 0-12 bar … tanto vale mettere quello da 6» (I-308); «lo scopo
+principale è risparmiare sulla minuteria. Non voglio comprare cose che sono utili ma non necessarie» (I-310).
 
-**I numeri dicono che Tecnomat vince 29 articoli; ma per alcuni l'articolo Tecnomat del §1 non è la voce.** Il conto
-confronta le righe che hanno lo stesso ID, e l'ID dice «la stessa voce della stessa misura»: se l'articolo sotto l'ID
-non lo è, il prezzo più basso è falso. Su questa commessa:
+**Come è fatta.** Nel listino una nota che comincia con ⚠ è uno scostamento dalla voce; il conto sceglie il più
+economico fra gli articoli che la rispettano, e quello con ⚠ che costa meno diventa un avviso col risparmio; senza un
+articolo conforme si prende quello con ⚠, avvisato. La marca non è uno scostamento: la deviatrice Giacomini di
+Tecnomat (92,95 €) vale la Caleffi 6443 (143,33 €, 156,29 €), la valvola di sicurezza RBM vale la Caleffi. Le righe
+segnate, dai titoli degli articoli:
 
-| Voce | Tecnomat (vince) | Gli altri | Che cosa non torna |
-|---|--:|---|---|
-| I47 gruppo di riempimento con disconnettore | 24,61 € «Filler» | Abbattista 67,59 · Idrosanitaria 153,01 | il Filler non ha il disconnettore nel titolo; la voce lo chiede |
-| I44 manometro 0–6 bar | 5,33 € (0–12 bar) | Abbattista 7,35 · Idrosanitaria 9,84 | il fondo scala (la nota del §1 lo dice) |
-| I40a valvola di sicurezza ½" 3 bar | 13,07 € RBM | Idrosanitaria 27,14 (INAIL) · Abbattista 48,95 (ISPESL) | la certificazione, da verificare |
-| I61 nastro per le giunte dell'isolamento | 5,57 € alluminio | Idrosanitaria 15,34 · Abbattista 24,55 (gomma 3 mm) | i fornitori hanno offerto il nastro anticondensa in gomma |
-| I51 valvola deviatrice 1" | 92,95 € Giacomini | Idrosanitaria 143,33 · Abbattista 156,29 (Caleffi 6443) | marche diverse: equivalenti? |
+| ID | Fornitore | Lo scostamento |
+|---|---|---|
+| I47 gruppo di riempimento con disconnettore | Tecnomat, Abbattista | il disconnettore non è nel titolo |
+| I44 manometro 0–6 bar ½" | Tecnomat | fondo scala 0–12 (I-308) |
+| I44 manometro 0–6 bar ½" | Abbattista | attacco 3/8" |
+| I77 rubinetto portamanometro ½" | Abbattista | attacco 3/8" |
+| A06c porta-bocchetta 400×200, attacco laterale | Idrosanitaria | attacco posteriore |
 
-Non ho cambiato le righe del §1: sono il rilievo del PO, e l'equivalenza di due articoli è un giudizio suo. **Domanda
-per il PO**: le righe che non sono la voce si spostano su «—» (non entrano nel conto), o restano con la nota?
+**Il disconnettore (I-309), per il PO.** Il disconnettore (tipo BA, a zona di pressione ridotta controllabile) sta
+sulla linea di riempimento e impedisce che l'acqua dell'impianto torni nell'acquedotto. Le schede dei produttori lo
+legano alla EN 1717: l'acqua di riscaldamento **con inibitori** è un fluido di categoria 4, e contro la categoria 4 ci
+vuole il BA (Resideo NK300S; Kemper FG 3650G); Caleffi consiglia sempre il gruppo di riempimento col disconnettore
+(Caleffi 01061, 01125). In questa commessa la lista mette il filmante-inibitore (P-I.24): un gruppo senza disconnettore
+non rispetta la voce. **Non ho letto il testo della EN 1717**, né verificato se in Italia sia un obbligo per ogni
+impianto: sono schede di produttori. Il risparmio del Filler (128,40 €) resta un avviso.
+
+**Che cosa non ho fatto**: classificare righe dove il titolo non basta (il nastro in alluminio contro quello in gomma
+per le giunte, il sifone «a secco» contro «ispezionabile»): restano conformi finché il PO non dice altro.
 
 ## 5. Come ha lavorato la skill sulla lista (I-305)
 
@@ -174,6 +207,10 @@ deviato.
    il plenum di ripresa «indicativo».
 6. **Le quantità**: i fornitori arrotondano alla confezione (barre da 5 m: 10 m per 8, 30 per 28, 5 per 3; rotoli da
    50 e 25 m). Normale; il conto della skill lo dice nella colonna Confezione.
+7. **L'utile che non serve (I-310)**: Abbattista ha messo nell'ordine quattro articoli che la lista non chiede —
+   l'imbuto di scarico (22,76 €), la serpentina del manometro (9,91 €), due staffe per i vasi (29,03 €, la voce del
+   vaso le comprende già), 14 supporti rapidi per i collari (16,79 €): 78,49 €. L'ordine della skill conta solo gli
+   articoli della distinta, e non li aggiunge.
 
 ## 6. Le prove di sempre
 
@@ -209,7 +246,7 @@ $ python3 -m pytest tests/test_il_banco.py -q
 
 ```
 $ python3 -m pytest -q   (stato finale)
-3172 passed, 15 skipped, 11 xfailed in 446.71s
+3174 passed, 15 skipped, 11 xfailed in 554.44s
 
 $ ruff check src tests
 All checks passed!
@@ -218,8 +255,8 @@ $ mypy
 Success: no issues found in 132 source files
 
 $ python3 scripts/costruisci-skill.py
-Skill: …/outputs/skill/disegnatore-mep (156 file, 3727 kB)
-ZIP:   …/outputs/skill/disegnatore-mep.zip (1161 kB, sha256 a332ac688f431a9e)
+Skill: …/outputs/skill/disegnatore-mep (156 file, 3733 kB)
+ZIP:   …/outputs/skill/disegnatore-mep.zip (1163 kB, sha256 e99e7a076cc42f3b)
 Controlli della guida di Anthropic, di skill-creator e del caricamento su claude.ai (al massimo 200 file): passati.
 
 $ python3 -m pytest tests/test_le_release.py tests/test_package.py tests/skill -q
@@ -227,7 +264,7 @@ $ python3 -m pytest tests/test_le_release.py tests/test_package.py tests/skill -
 ```
 
 Skip e xfail: 15 e 11, gli stessi della prima esecuzione; il diff delle prove non aggiunge nessun `skip` né `xfail`
-(`git diff origin/main -- tests | grep -E "^\+.*(skip|xfail)"`: vuoto). Le prove nuove sono 13
+(`git diff origin/main -- tests | grep -E "^\+.*(skip|xfail)"`: vuoto). Le prove nuove sono 15
 (`tests/distinta/test_i_fornitori.py`); due prove vecchie cambiano perché il dato è cambiato apposta: la revisione del
 listino (05 → 06) e il prezzo del tubo da 32, che ora si legge per fornitore
 (`test_il_corredo_idronico_e_il_costo.py`); il codice del nipplo ridotto (I78a → I83e, `test_le_giunzioni.py`).

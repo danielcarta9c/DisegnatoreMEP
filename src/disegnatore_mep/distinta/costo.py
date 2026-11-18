@@ -106,7 +106,7 @@ def _riga(voce: Voce, listino: Listino) -> RigaDelCosto:
             riga.manca = f"il listino non ha il codice {codice}"
             return riga
         unitario += n * trovata.prezzo
-        da = f" ({trovata.fornitore})" if trovata.fornitore else ""
+        da = f" ({trovata.fornitore}{' ⚠ ' + trovata.scostamento if trovata.scostamento else ''})" if trovata.fornitore else ""
         parti.append(f"{in_parole(n)} × {codice} {_euro(trovata.prezzo)} €/{trovata.um}{da}" if n != 1 else
                      f"{codice} {_euro(trovata.prezzo)} €/{trovata.um}{da}")
     riga.unitario = unitario

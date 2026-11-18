@@ -32,9 +32,19 @@ Abbattista e il preventivo Idrosanitaria della commessa PR.MI.059 (§4 e §5).
 - **ID** è il codice del piano dei materiali: I idraulica, F frigorifero, A aeraulica,
   E elettrico. Una lettera dopo il numero (I36a, I36b) distingue le misure della stessa voce.
 - **Fornitore** è chi vende l'articolo a quel prezzo; la tabella «I fornitori» qui sotto dice da quali Nove C
-  ordina. **Lo stesso ID può avere più righe, una per fornitore**: è la stessa voce della stessa misura, anche se
-  la marca è diversa (il gomito a pressare da 32 è APE da Tecnomat, Tiemme da Abbattista, RM da Idrosanitaria). Le
-  note dicono dove l'articolo non è proprio quello della voce (un attacco diverso, una guaina più sottile).
+  ordina. **Lo stesso ID può avere più righe, una per fornitore**: è la stessa voce della stessa misura.
+- **La marca non conta, conta la prescrizione** (I-307): minuteria, volani, accessori. Il gomito a pressare da 32 è APE
+  da Tecnomat, Tiemme da Abbattista, RM da Idrosanitaria, ed è la stessa voce. Quello che conta è che l'articolo
+  rispetti quello che la voce prescrive: la misura, l'attacco, la pressione, il fondo scala, gli organi che la voce
+  nomina (il disconnettore del gruppo di riempimento).
+- **⚠ in testa alla nota è uno scostamento** dalla prescrizione: il fondo scala 0–12 al posto di 0–6, l'attacco 3/8"
+  al posto di ½", il disconnettore che non c'è. Una riga così **non si sceglie da sé**: il conto prende il prezzo più
+  basso fra quelle che rispettano la voce, e se quella con ⚠ costa meno lo dice con un avviso sul prezzo, perché il
+  progettista decida. Se nessun fornitore ha un articolo che rispetta la voce, il conto prende quello con ⚠ e lo
+  avvisa.
+- **Mai un pezzo che fa un altro mestiere** sotto l'ID di una voce: il gruppo di sicurezza sull'acqua fredda del
+  bollitore non diventa una valvola di sicurezza qualsiasi. Un articolo che fa un'altra cosa prende un altro ID, o
+  «—».
 - **ID «—»**: la riga è documentata, ma nessuna regola della distinta la usa ancora (un articolo che la lista non
   chiede, una misura che la regola non distingue). Il conto non la legge.
 - **Tre gradi di affidabilità.** Gli ordini e i preventivi dei fornitori (§4, §5) e le fatture (§2ter) sono
@@ -157,10 +167,10 @@ esposto dal sito; prezzi al banco. Le note dicono dove una misura non c'era.
 | I38b | Defangatore magnetico | FILTRO DEFANGATORE MAGNETICO RBM MP2 1'' 800 µ 11000 GAUSS | 25050370 | Tecnomat | Segrate (MI) | 1 pz | 104,92 | 104,92 | cad |  |
 | I43a | Valvola automatica di sfogo aria | VALVOLA SFOGO ARIA AUTOMATICA ITAP 362 M 1/2'' ATTACCO VERTICALE OTTONE | 25087007 | Tecnomat | Segrate (MI) | 1 pz | 4,80 | 4,80 | cad |  |
 | I43b | Valvola automatica di sfogo aria | VALVOLA SFOGO ARIA AUTOMATICA ITAP 362 M 3/8'' ATTACCO VERTICALE OTTONE | 25087005 | Tecnomat | Segrate (MI) | 1 pz | 4,22 | 4,22 | cad |  |
-| I44 | Manometro radiale/assiale 0-6 bar | MANOMETRO PRESSIONE 0-12 bar | 10047624 | Tecnomat | Segrate (MI) | 1 pz | 5,33 | 5,33 | cad | fondo scala 0-12 bar (0-6 non trovato) |
+| I44 | Manometro radiale/assiale 0-6 bar | MANOMETRO PRESSIONE 0-12 bar | 10047624 | Tecnomat | Segrate (MI) | 1 pz | 5,33 | 5,33 | cad | ⚠ fondo scala 0–12 bar: la voce chiede 0–6 (I-308); 0–6 non trovato |
 | I45 | Termometro a immersione con pozzetto | TERMOMETRO BIMETALLICO FERRARI Ø 80 mm 0 - 120° ATTACCO POSTERIORE POZZETTO | 10046531 | Tecnomat | Segrate (MI) | 1 pz | 6,89 | 6,89 | cad |  |
 | I46 | Rubinetto di scarico portagomma | RUBINETTO SCARICO CALDAIA 1/2'' CON PORTAGOMMA | 10012741 | Tecnomat | Segrate (MI) | 1 pz | 3,73 | 3,73 | cad |  |
-| I47 | Gruppo di riempimento automatico | GRUPPO DI RIEMPIMENTO ''FILLER'' 1/2'' | 10034051 | Tecnomat | Segrate (MI) | 1 pz | 24,61 | 24,61 | cad | alt: 25005259 Honeywell V06F con riduttore netto 48,51 |
+| I47 | Gruppo di riempimento automatico | GRUPPO DI RIEMPIMENTO ''FILLER'' 1/2'' | 10034051 | Tecnomat | Segrate (MI) | 1 pz | 24,61 | 24,61 | cad | ⚠ senza disconnettore nel titolo: la voce lo chiede (I-309); alt: 25005259 Honeywell V06F con riduttore netto 48,51 |
 | I48 | Riduttore di pressione | RIDUTTORE DI PRESSIONE HONEYWELL D04FM TARABILE 1,5 - 6 bar CON FILTRO | 10071827 | Tecnomat | Segrate (MI) | 1 pz | 25,61 | 25,61 | cad | misura attacco da verificare sulla scheda |
 | I49a | Tubo flessibile inox / giunto antivibrante | FLESSIBILE ANTIVIBRANTE ACCIAIO INOX MF 1"1/4 A/F LUNGHEZZA 50 cm | 25051084 | Tecnomat | Segrate (MI) | 1 pz | 16,15 | 16,15 | cad |  |
 | I49b | Tubo flessibile inox / giunto antivibrante | GIUNTO ELASTICO IN GOMMA FERRARI PER ACQUA L200 mm 1"FF PN10 A 80° | 25017314 | Tecnomat | Segrate (MI) | 1 pz | 7,83 | 7,83 | cad |  |
@@ -965,9 +975,9 @@ documento (colonna Rif.: documento e riga).
 | I46 | Rubinetto di scarico portagomma | RUBIN.PORTAGOMMA 1/2 TIEMME LEVA NERA — 2500043 | 47637767 | Abbattista | OC 0188404 r. 7 | 1 pz | 14,36 | 50+25 | 5,38 | 5,385 | cad |  |
 | I41a | Vaso di espansione chiuso a membrana per riscaldamento | VASO ESP.SANIT/RISC.VAREM EXTRA LT.8 — LC CE R1008223S4000000 | 32063341 | Abbattista | OC 0188404 r. 8 | 1 pz | 61,70 | 50+25 | 23,14 | 23,140 | cad | sanitario e riscaldamento |
 | I41c | Vaso di espansione chiuso a membrana per riscaldamento | VASO ESP.SANIT.VAREM LT.24 AT.3/4" — C/CONTROFLAN.AVVITATA S2024263S40000000 | 46192715 | Abbattista | OC 0188404 r. 9 | 1 pz | 96,29 | 50+25 | 36,11 | 36,110 | cad | 24 l, sanitario, con controflangia: offerto per il vaso del riscaldamento da 24 l (il codice è la taglia da 25 l) |
-| I44 | Manometro radiale/assiale 0-6 bar | MAN.RAD.3/8 ISPESL D.80 6BAR FERR. — 110512/6 | 23838345 | Abbattista | OC 0188404 r. 10 | 1 pz | 21,00 | 50+30 | 7,35 | 7,350 | cad | attacco 3/8" (la voce: ½"), ISPESL; con serpentina e rubinetto a parte (righe 11 e 12) |
+| I44 | Manometro radiale/assiale 0-6 bar | MAN.RAD.3/8 ISPESL D.80 6BAR FERR. — 110512/6 | 23838345 | Abbattista | OC 0188404 r. 10 | 1 pz | 21,00 | 50+30 | 7,35 | 7,350 | cad | ⚠ attacco 3/8" (la voce: ½"); ISPESL; con serpentina e rubinetto a parte (righe 11 e 12) |
 | — | Serpentina in rame 3/8" per manometro | SERPENTINA RAME 3/8 FERR.110556 | 34982850 | Abbattista | OC 0188404 r. 11 | 1 pz | 28,31 | 50+30 | 9,91 | 9,910 | cad | il kit ISPESL del manometro; la lista non la chiede |
-| I77 | Rubinetto portamanometro a tre vie, ½" | RUB.PORTAMANOMETRO PN16 FERR.110553 3/8 | 36256339 | Abbattista | OC 0188404 r. 12 | 1 pz | 39,10 | 50+30 | 13,69 | 13,690 | cad | attacco 3/8" (la voce: ½") |
+| I77 | Rubinetto portamanometro a tre vie, ½" | RUB.PORTAMANOMETRO PN16 FERR.110553 3/8 | 36256339 | Abbattista | OC 0188404 r. 12 | 1 pz | 39,10 | 50+30 | 13,69 | 13,690 | cad | ⚠ attacco 3/8" (la voce: ½") |
 | I18 | Tee a pressare | RACC.T PRESS.TIEMME 1657 32X32X32 — 1650058 | 99816767 | Abbattista | OC 0188404 r. 13 | 1 pz | 42,98 | 50+25 | 16,12 | 16,116 | cad |  |
 | I17 | Tee a pressare | RACC.T PRESS.TIEMME 1657 26X26X26 — 1650018 | 89921759 | Abbattista | OC 0188404 r. 14 | 1 pz | 26,08 | 50+25 | 9,78 | 9,780 | cad |  |
 | I32 | Valvola a sfera a passaggio totale ottone | VAL.SFERA FF ACQUA 1 TIEMME 2310 — 2310001 C/LEVA ROSSA | 84135919 | Abbattista | OC 0188404 r. 15 | 1 pz | 27,04 | 50+25 | 10,14 | 10,140 | cad |  |
@@ -994,7 +1004,7 @@ documento (colonna Rif.: documento e riga).
 | I55a | Additivo inibitore / pulitore per impianti | CONDIZ.CALD.CILLIT HS23RS PLUS KG.1 — 10145AC LAVAGGIO ALTA T. | 38021657 | Abbattista | OC 0188404 r. 36 | 1 pz | 47,70 | 50+20 | 19,08 | 19,080 | cad | lavaggio, 1 kg |
 | I55b | Additivo inibitore / pulitore per impianti | CONDIZ.CALD.CILLIT HS COMBI KG1 10135 — ALTA TEMPERATURA PROTET | 67193034 | Abbattista | OC 0188404 r. 37 | 1 pz | 75,60 | 50+20 | 30,24 | 30,240 | cad | protettivo, 1 kg |
 | I74 | Gruppo di sicurezza sanitario per bollitore, ¾" | GR.SIC.BOLL.CF.5261 1/2 526142 | 43273068 | Abbattista | OC 0188404 r. 38 | 1 pz | 71,02 | 50+20 | 28,41 | 28,410 | cad | Caleffi 5261 ½" (526142), lo stesso articolo dell'offerta Idrosanitaria |
-| I47 | Gruppo di riempimento automatico | VAL.CAR.CALEFFI.553 C/MANOM.1/2 553640 — RIEMPIMENTO AUTOM | 42291019 | Abbattista | OC 0188404 r. 39 | 1 pz | 168,96 | 50+20 | 67,59 | 67,590 | cad | Caleffi 553 con manometro: gruppo di riempimento, il disconnettore non è nel titolo |
+| I47 | Gruppo di riempimento automatico | VAL.CAR.CALEFFI.553 C/MANOM.1/2 553640 — RIEMPIMENTO AUTOM | 42291019 | Abbattista | OC 0188404 r. 39 | 1 pz | 168,96 | 50+20 | 67,59 | 67,590 | cad | ⚠ il disconnettore non è nel titolo: la voce lo chiede (I-309); Caleffi 553 con manometro |
 | I78a | Riduzione filettata in ottone M × F, 1¼" × 1" | RIDUZIONE GHISA ZINCATA FIG.241 11/4-1 — GEORGZ24111/4-1 | 45357738 | Abbattista | OC 0188404 r. 40 | 1 pz | 5,17 | 50+20 | 2,07 | 2,070 | cad | in ghisa zincata fig. 241 |
 | — | Staffa per vaso di espansione ¾" | STAFFA VASO DI ESPANSIONE 3/4" 075510 — GIA | 69816916 | Abbattista | OC 0188404 r. 41 | 1 pz | 38,70 | 50+25 | 14,52 | 14,515 | cad | la voce del vaso la comprende («con attacco e staffa») |
 | I75 | Valvola a sfera FF a passaggio totale, ½" | VAL.SFERA FF ACQUA 1/2 TIEMME 2320 — 2310010 C/FARF.ROSSA | 88290332 | Abbattista | OC 0188404 r. 42 | 1 pz | 11,94 | 50+25 | 4,48 | 4,480 | cad | con farfalla |
@@ -1079,7 +1089,7 @@ nell'ordine del documento; il totale merce è 10.835,01 € più 8,75 € di con
 | — | Barra filettata M10, 1 m | BARRA FILETTATA MA10 X 1000MM ZINCATA DIN 975 | 647V00001001 | Idrosanitaria | XC 2704331 r. 59 | 1 pz | 1,15 | 1,153 | cad | le regole prezzano la M10 con la M8 (I64) |
 | — | Dado esagonale M8 | DADI ESAG. M 8 6S CL8 ZINC.UNI 5588 | 688V00000008 | Idrosanitaria | XC 2704331 r. 60 | 1 pz | 0,01 | 0,009 | cad |  |
 | — | Dado esagonale M10 | DADI ESAG. M10 6S CL8 ZINC.UNI 5588 | 688V00000010 | Idrosanitaria | XC 2704331 r. 61 | 1 pz | 0,02 | 0,019 | cad | «quantita' dadi da confermare» |
-| A06c | Plenum porta-bocchetta 400×200, attacco Ø200 | PORTABOCCHETTA PLP 400X200 1X200 POSTERIORE | PLP-U-400X200-1B-P | Idrosanitaria | XC 2704331 r. 62 | 1 pz | 30,81 | 30,808 | cad | attacco posteriore (la lista: laterale) |
+| A06c | Plenum porta-bocchetta 400×200, attacco Ø200 | PORTABOCCHETTA PLP 400X200 1X200 POSTERIORE | PLP-U-400X200-1B-P | Idrosanitaria | XC 2704331 r. 62 | 1 pz | 30,81 | 30,808 | cad | ⚠ attacco posteriore (la voce: laterale) |
 | A07c | Fascetta stringitubo inox 60–270 mm | FASCETTE STRINGITUBO ACC.INOX 60-270 | FSI60-270 | Idrosanitaria | XC 2704331 r. 63 | 1 pz | 1,82 | 1,819 | cad | per il flessibile fino a Ø250 |
 | A07a | Nastro alluminio / fascette stringitubo | NASTRO ADESIVO IN ALLUMINIO | KK-43 | Idrosanitaria | XC 2704331 r. 64 | 1 pz | 16,75 | 16,749 | cad |  |
 | A08c | Collare di fissaggio isolato Ø200 | COLLARE FISSAGGIO ISOLATO D200 | AIR-RS2SNE-200 | Idrosanitaria | XC 2704331 r. 65 | 1 pz | 3,60 | 3,600 | cad | il sostegno del flessibile Ø200; 5 offerti contro 21 della lista |

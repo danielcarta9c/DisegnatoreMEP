@@ -85,12 +85,9 @@ def confronto(costo: Costo) -> None:
             i_meno += prezzi["Idrosanitaria"] < prezzi["Abbattista"]
     print(f"articoli in comune Abbattista-Idrosanitaria: {a_meno + i_meno}; meno caro Abbattista {a_meno}, "
           f"Idrosanitaria {i_meno}; alle quantità della lista Abbattista {tot_a:.2f} €, Idrosanitaria {tot_i:.2f} €")
-    dubbi = {"I47", "I44", "I40a", "I61", "I51"}
-    comune = [r for r in ordine.articoli_in_comune if r.codice not in dubbi]
-    print(f"articoli in comune senza i 5 dubbi del §1 ({', '.join(sorted(dubbi))}): {len(comune)}")
-    for fornitore in ordine.fornitori:
-        totale = sum(r.quantita * (r.prezzo_da(frozenset({fornitore})) or 0.0) for r in comune)
-        print(f"  {fornitore:14} {totale:8.2f} €")
+    for riga in ordine.ordinabili:
+        for v in riga.avvisi:
+            print(f"avviso {riga.codice}: {v.fornitore} {v.prezzo:.2f} € ⚠ {v.scostamento}")
     idraulico = [r for r in costo.righe if r.rif.startswith(("P-S", "P-I"))]
     parte = Costo(progetto={}, listino=costo.listino, righe=idraulico)
     o = ordine_della_minuteria(parte)

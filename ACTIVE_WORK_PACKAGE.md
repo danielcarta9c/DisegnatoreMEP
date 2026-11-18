@@ -93,3 +93,20 @@ Nel perimetro (`ordine.py`, `listino.py`, `comando.py`, `skill.py`, le istruzion
 
 8. «Un fornitore solo» dice il più economico sul totale e a parità di articoli; `--fornitori` manda l'ordine soltanto
    ai fornitori scelti (prove, e la misura su PR.MI.059).
+
+## Aggiunto il 18 novembre 2026, su I-307 … I-310
+
+Il PO: la marca non conta, né per la minuteria né per volani e accessori; conta che l'articolo rispetti le
+prescrizioni, e uno scostamento lieve si evidenzia con un avviso sul prezzo; mai un pezzo che fa un altro mestiere
+(I-307). Il manometro è 0–6, non 0–12 (I-308). Del gruppo di riempimento con o senza disconnettore chiede la
+differenza (I-309). Lo scopo è risparmiare sulla minuteria, senza comprare l'utile che non serve (I-310). Nel
+perimetro (il listino, `listino.py`, `ordine.py`, `costo.py`, le istruzioni, le prove):
+
+- nel listino una nota che comincia con **⚠** è uno scostamento dalla voce; segnate le righe che si scostano: il
+  gruppo di riempimento senza disconnettore nel titolo (Tecnomat, Abbattista), il manometro 0–12 (Tecnomat), gli
+  attacchi da 3/8" al posto di ½" (Abbattista), il porta-bocchetta con l'attacco posteriore (Idrosanitaria);
+- il conto sceglie il più economico **fra gli articoli che rispettano la voce**; quello con ⚠ che costa meno è un
+  **avviso sul prezzo**, col risparmio; se nessuno rispetta la voce, si prende quello con ⚠ e lo si avvisa.
+
+9. Lo scostamento non si sceglie e diventa un avviso col risparmio; senza un articolo conforme, si prende quello con ⚠
+   avvisato (prove, e la misura su PR.MI.059).

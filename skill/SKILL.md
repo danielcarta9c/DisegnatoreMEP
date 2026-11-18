@@ -388,7 +388,7 @@ con la data e la fonte di ogni prezzo). Quel conto lo dai al progettista e resta
 documento per l'installatore, che non ha prezzi. Una voce che non è nel listino resta «DA
 PREZZARE»: non la stimi. Se chiede **dove comprare** o di **fare gli ordini**, è lo stesso comando: in
 fondo al file, «Dove comprare» dà l'ordine per fornitore (ogni articolo dal più economico fra quelli da
-cui Nove C ordina), il fornitore più economico se ne sceglie uno solo, e quanto costa in più comprare da
+cui Nove C ordina; la marca non conta, la prescrizione sì, e uno scostamento più economico è un avviso), il fornitore più economico se ne sceglie uno solo, e quanto costa in più comprare da
 meno fornitori; se il fornitore lo sceglie lui, `--fornitori <nome>`. Riportaglielo così com'è.
 
 ### Su richiesta — la pianta dei posizionamenti e dei tracciati

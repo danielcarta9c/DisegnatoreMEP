@@ -17,6 +17,10 @@ Abbattista e da Idrosanitaria sono tre righe con lo stesso ID. Lo stesso codice 
 stesso fornitore** ferma la lettura: il prezzo di un fornitore per una voce dev'essere uno. Una
 riga con l'ID «—» e' documentata ma nessuna regola la usa, e non si legge.
 
+**La marca non conta, conta la prescrizione** (I-307): una nota che comincia con «⚠» e' uno
+scostamento dalla voce (il fondo scala, l'attacco, un organo che manca). Il prezzo che il conto usa
+e' il piu' basso fra le righe che rispettano la voce; quella con ⚠ entra solo se nessun'altra c'e'.
+
 La tabella «I fornitori» (colonne `Fornitore` e `Si ordina`) dice da chi Nove C ordina. Gli altri
 prezzi — il riferimento online, le fatture di un installatore — sono riferimenti: entrano nel conto
 solo dove nessun fornitore da cui si ordina ha l'articolo. Un listino senza quella tabella (prima
@@ -53,6 +57,8 @@ class VoceDelListino:
     articolo: str = ""
     """Il codice dell'articolo del fornitore (la colonna `Codice`), per l'ordine."""
     confezione: str = ""
+    scostamento: str = ""
+    """Dove l'articolo non rispetta la prescrizione della voce (la nota con ⚠), o vuoto."""
 
 
 @dataclass(frozen=True)
@@ -89,12 +95,20 @@ class Listino:
         """I prezzi del codice dei fornitori da cui si ordina, il piu' basso per primo."""
         return tuple(v for v in self.offerte(codice) if self.si_ordina(v.fornitore))
 
-    def get(self, codice: str) -> VoceDelListino | None:
-        """Il prezzo che il conto usa: il piu' basso fra i fornitori da cui si ordina; se nessuno
-        di loro ha il codice, il riferimento piu' basso."""
+    def validi(self, codice: str) -> tuple[VoceDelListino, ...]:
+        """I prezzi dei fornitori da cui si ordina che rispettano la voce; se nessuno la rispetta,
+        tutti quelli da cui si ordina (con lo scostamento, che il conto dice)."""
         ordinabili = self.ordinabili(codice)
-        if ordinabili:
-            return ordinabili[0]
+        conformi = tuple(v for v in ordinabili if not v.scostamento)
+        return conformi or ordinabili
+
+    def get(self, codice: str) -> VoceDelListino | None:
+        """Il prezzo che il conto usa: il piu' basso fra i fornitori da cui si ordina, fra gli
+        articoli che rispettano la voce (`validi`); se nessuno di loro ha il codice, il riferimento
+        piu' basso."""
+        validi = self.validi(codice)
+        if validi:
+            return validi[0]
         offerte = self.offerte(codice)
         return offerte[0] if offerte else None
 
@@ -182,11 +196,13 @@ def leggi_il_listino(percorso: Path) -> Listino:
             else:
                 fonte = f"rilievo al banco, {dove}{quando}"
             articolo, confezione = dati.get("Codice", ""), dati.get("Confezione", "")
+            nota = dati.get("Note", "").strip()
+            scostamento = nota[1:].split(";")[0].strip() if nota.startswith("⚠") else ""
         elif "Mediana €" in dati and "Codice" in dati:
             codice, prezzo, um = dati["Codice"], _numero(dati["Mediana €"]), dati.get("UM", "")
             descrizione = f"{dati.get('Voce', '')}, {dati.get('Misura', '')}".strip(", ")
             fonte = f"riferimento online{quando}, mediana di {dati.get('Riscontri', '?')} riscontri"
-            fornitore, articolo, confezione = RIFERIMENTO_ONLINE, "", ""
+            fornitore, articolo, confezione, scostamento = RIFERIMENTO_ONLINE, "", "", ""
         else:
             continue
         if codice in SENZA_ID or prezzo is None:
@@ -195,7 +211,7 @@ def leggi_il_listino(percorso: Path) -> Listino:
         if any(v.fornitore == fornitore for v in gia):
             da = f" da {fornitore}" if fornitore else ""
             raise ErroreDelListino(f"{percorso}: il codice {codice} ha due prezzi{da}")
-        gia.append(VoceDelListino(codice, descrizione, prezzo, um, fonte, fornitore, articolo, confezione))
+        gia.append(VoceDelListino(codice, descrizione, prezzo, um, fonte, fornitore, articolo, confezione, scostamento))
     if not voci:
         raise ErroreDelListino(f"{percorso}: nessuna tabella di prezzi (colonne «ID … Netto/UM €» o «Codice … Mediana €»)")
     if fornitori:

@@ -3,7 +3,7 @@
 > **Uso interno Nove C.** Non va all'installatore: il suo documento resta senza prezzi. È il costo, a prezzi di listino, del materiale che la distinta conta (tubi, raccordi, valvolame, canali, cavi, accessori), **escluse le apparecchiature** della sezione A (macchine, unità interne ed esterne, accumuli, bollitori, plenum motorizzati: si comprano a parte) e la manodopera.
 
 - **Listino:** Listino della minuteria — riferimento interno Nove C, revisione 06, 18 novembre 2026. Prezzi netti, IVA esclusa; per ogni articolo il più basso fra i fornitori da cui si ordina (fra parentesi, di chi è), e dove nessuno lo ha il prezzo di riferimento. **Dove comprare** è in fondo.
-- **Totale prezzato: 1.933,07 €**, su 82 voci di 91.
+- **Totale prezzato: 2.065,98 €**, su 82 voci di 91.
 - **Da prezzare: 9 voci**, che il totale non contiene (elencate in fondo, ciascuna col suo perché).
 - Il conto è quantità × prezzo per unità del listino. Le quantità sono quelle della distinta: già maggiorate per l'offerta a corpo (+15%, i minimi delle linee), e dove la distinta conta confezioni (il flessibile in rotoli da 10 m) si pagano le confezioni intere; il resto è il consumo, e al banco le confezioni intere costano di più.
 
@@ -12,12 +12,12 @@
 | Sezione | Voci prezzate | Da prezzare | Totale € |
 |---|--:|--:|--:|
 | S — Staffaggi e supporti | 5 | 0 | 38,45 |
-| I — Circuito idraulico | 41 | 0 | 1.034,94 |
+| I — Circuito idraulico | 41 | 0 | 1.167,85 |
 | E — Elettrico, comando e regolazione | 20 | 1 | 255,82 |
 | B — Distribuzione aria | 5 | 4 | 409,53 |
 | C — Circuito frigorifero | 3 | 3 | 123,99 |
 | D — Scarico condensa | 8 | 1 | 70,34 |
-| **Totale** | 82 | 9 | **1.933,07** |
+| **Totale** | 82 | 9 | **2.065,98** |
 
 ## Le voci prezzate
 
@@ -44,12 +44,12 @@
 | P-I.18 | Rubinetto di scarico ½" con portagomma | 2 | n | 3,73 | 7,46 | I46 3.73 (Tecnomat) |  |
 | P-I.19 | Vaso di espansione sanitario 8 l, con attacco e staffa | 1 | n | 26,64 | 26,64 | I42 26.64 (Tecnomat) |  |
 | P-I.20 | Vaso di espansione chiuso a membrana per riscaldamento 24 l, con attacco e staffa | 1 | n | 23,66 | 23,66 | I41c 23.66 (Idrosanitaria) |  |
-| P-I.21 | Gruppo di riempimento automatico ½" con disconnettore | 1 | n | 24,61 | 24,61 | I47 24.61 (Tecnomat) |  |
+| P-I.21 | Gruppo di riempimento automatico ½" con disconnettore | 1 | n | 153,01 | 153,01 | I47 153.01 (Idrosanitaria) |  |
 | P-I.22 | Giunto antivibrante 1¼" | 2 | n | 13,18 | 26,35 | I49a 13.18 (Abbattista) |  |
 | P-I.23 | Pulitore per impianti nuovi o recenti, 1 l | 1 | n | 10,82 | 10,82 | I55a 10.82 (Tecnomat) |  |
 | P-I.24 | Filmante e inibitore per impianti, 1 l | 1 | n | 12,70 | 12,70 | I55b 12.70 (Tecnomat) |  |
 | P-I.25 | Riduzione 1¼" M × 1" F | 2 | n | 1,44 | 2,88 | I78a 1.44 (Idrosanitaria) |  |
-| P-I.26 | Manometro 0-6 bar attacco ½" | 1 | n | 5,33 | 5,33 | I44 5.33 (Tecnomat) |  |
+| P-I.26 | Manometro 0-6 bar attacco ½" | 1 | n | 9,84 | 9,84 | I44 9.84 (Idrosanitaria) |  |
 | P-I.27 | Tee a pressare tubo multistrato MS 32×3 | 5 | n | 11,02 | 55,10 | I18 11.02 (Tecnomat) |  |
 | P-I.28 | Tee a pressare tubo multistrato MS 26×3 | 2 | n | 6,89 | 13,78 | I17 6.89 (Tecnomat) |  |
 | P-I.29 | Rubinetto portamanometro a tre vie ½" | 1 | n | 8,95 | 8,95 | I77 8.95 (Idrosanitaria) |  |
@@ -122,21 +122,32 @@
 
 ## Dove comprare
 
-Ogni articolo dal fornitore che lo vende al prezzo più basso, fra quelli da cui Nove C ordina (la tabella «I fornitori» del listino). Le quantità sono quelle della distinta, sommate per articolo; al banco si comprano le confezioni intere (colonna Confezione). I prezzi hanno la data del loro documento, e il conto non tiene trasporto, ordine minimo e condizioni di pagamento.
+Ogni articolo dal fornitore che lo vende al prezzo più basso, fra quelli da cui Nove C ordina (la tabella «I fornitori» del listino) e fra gli articoli che rispettano la voce: la marca non conta, la prescrizione sì. Un articolo che se ne scosta (⚠) e costa meno è un avviso sul prezzo, non una scelta. Le quantità sono quelle della distinta, sommate per articolo; al banco si comprano le confezioni intere (colonna Confezione). I prezzi hanno la data del loro documento, e il conto non tiene trasporto, ordine minimo e condizioni di pagamento.
 
-- **Ogni articolo dal più economico: 1.795,52 €** in 3 ordini — Idrosanitaria 1.089,03 € (30 articoli), Tecnomat 676,52 € (29 articoli), Abbattista 29,97 € (2 articoli).
+- **Ogni articolo dal più economico: 1.928,43 €** in 3 ordini — Idrosanitaria 1.251,88 € (32 articoli), Tecnomat 646,58 € (27 articoli), Abbattista 29,97 € (2 articoli).
+- **Avvisi sul prezzo: 3 articoli** con un'offerta che costa meno ma non rispetta la voce (132,91 € di risparmio, se lo scostamento va bene): sono qui sotto, e decide il progettista.
 - **Senza un fornitore: 7 articoli**, 137,55 € a prezzi di riferimento (online, o le fatture di un installatore): da comprare dove si trovano. Sono in fondo.
-- **Un fornitore solo per tutta la minuteria: il più economico è Tecnomat**, 1.945,45 € (1.376,24 € da Tecnomat, 569,21 € per i 21 articoli che non ha, da comprare altrove): 149,93 € in più che dividere l'ordine. A parità di articoli (i 22 che hanno tutti) il più economico è Tecnomat.
+- **Un fornitore solo per tutta la minuteria: il più economico è Tecnomat**, 2.078,36 € (1.346,30 € da Tecnomat, 732,06 € per i 23 articoli che non ha, da comprare altrove): 149,93 € in più che dividere l'ordine. A parità di articoli (i 20 che hanno tutti) il più economico è Tecnomat.
 
 ### Un fornitore solo
 
-Tutta la minuteria da un fornitore: gli articoli che ha ai suoi prezzi, quelli che non ha dal più economico degli altri (andrebbero comprati altrove), così i totali sono sullo stesso paniere. L'ultima colonna è il conto sui soli 22 articoli che hanno tutti: dove il listino di un fornitore è incompleto, è quella che dice chi costa meno a parità di articoli.
+Tutta la minuteria da un fornitore: gli articoli che ha ai suoi prezzi, quelli che non ha dal più economico degli altri (andrebbero comprati altrove), così i totali sono sullo stesso paniere. L'ultima colonna è il conto sui soli 20 articoli che hanno tutti: dove il listino di un fornitore è incompleto, è quella che dice chi costa meno a parità di articoli.
 
 | Fornitore | Articoli che ha | € da lui | Articoli che non ha | € di quelli, altrove | Totale € | In più dell'ordine diviso € | € sugli articoli che hanno tutti |
 |---|--:|--:|--:|--:|--:|--:|--:|
-| Tecnomat | 40 | 1.376,24 | 21 | 569,21 | 1.945,45 | 149,93 | 855,68 |
-| Idrosanitaria | 51 | 1.820,22 | 10 | 288,17 | 2.108,39 | 312,87 | 1.048,91 |
-| Abbattista | 29 | 1.265,75 | 32 | 965,43 | 2.231,18 | 435,66 | 1.180,56 |
+| Tecnomat | 38 | 1.346,30 | 23 | 732,06 | 2.078,36 | 149,93 | 825,74 |
+| Idrosanitaria | 51 | 1.820,22 | 10 | 288,17 | 2.108,39 | 179,96 | 886,05 |
+| Abbattista | 26 | 1.177,12 | 35 | 1.137,23 | 2.314,35 | 385,92 | 1.105,62 |
+
+### Avvisi sul prezzo
+
+| Codice | Voce | Scelto (rispetta la voce) | Costa meno, ma | Lo scostamento | Risparmio € |
+|---|---|---|---|---|--:|
+| A06c | PORTABOCCHETTA PLP 400X200 1X200 POSTERIORE | nessun articolo rispetta la voce: Idrosanitaria 30,81 ⚠ | — | attacco posteriore (la voce: laterale) | — |
+| I47 | GRUPPO DI CARICAMENTO C/DISCONNETTORE 1/2" | Idrosanitaria 153,01 | Tecnomat 24,61 | senza disconnettore nel titolo: la voce lo chiede (I-309) | 128,40 |
+| I47 | GRUPPO DI CARICAMENTO C/DISCONNETTORE 1/2" | Idrosanitaria 153,01 | Abbattista 67,59 | il disconnettore non è nel titolo: la voce lo chiede (I-309) | 85,42 |
+| I44 | MANOMETRO ATT.RAD.G1/2B M1-ABS 100/R-0-6BAR | Idrosanitaria 9,84 | Tecnomat 5,33 | fondo scala 0–12 bar: la voce chiede 0–6 (I-308) | 4,51 |
+| I44 | MANOMETRO ATT.RAD.G1/2B M1-ABS 100/R-0-6BAR | Idrosanitaria 9,84 | Abbattista 7,35 | attacco 3/8" (la voce: ½") | 2,49 |
 
 ### Con meno ordini
 
@@ -144,19 +155,20 @@ Quanto costa comprare da un gruppo di fornitori soltanto: gli articoli che quel 
 
 | Fornitori | Ordini | Articoli che non hanno | € degli articoli che hanno | € in più del minimo |
 |---|--:|--:|--:|--:|
-| Idrosanitaria | 1 | 10 | 1.820,22 | 312,87 |
-| Tecnomat | 1 | 21 | 1.376,24 | 149,93 |
-| Abbattista | 1 | 32 | 1.265,75 | 435,66 |
-| Idrosanitaria + Tecnomat | 2 | 1 | 1.797,85 | 5,95 |
-| Abbattista + Idrosanitaria | 2 | 9 | 1.722,28 | 211,32 |
-| Abbattista + Tecnomat | 2 | 14 | 1.418,91 | 126,56 |
-| Abbattista + Idrosanitaria + Tecnomat | 3 | 0 | 1.795,52 | 0,00 |
+| Idrosanitaria | 1 | 10 | 1.820,22 | 179,96 |
+| Tecnomat | 1 | 23 | 1.346,30 | 149,93 |
+| Abbattista | 1 | 35 | 1.177,12 | 385,92 |
+| Idrosanitaria + Tecnomat | 2 | 1 | 1.930,76 | 5,95 |
+| Abbattista + Idrosanitaria | 2 | 9 | 1.810,20 | 166,32 |
+| Abbattista + Tecnomat | 2 | 17 | 1.375,28 | 121,82 |
+| Abbattista + Idrosanitaria + Tecnomat | 3 | 0 | 1.928,43 | 0,00 |
 
-### L'ordine a Idrosanitaria — 30 articoli, 1.089,03 €
+### L'ordine a Idrosanitaria — 32 articoli, 1.251,88 €
 
 | Codice | Articolo | Cod. fornitore | Confezione | Q.tà | UM | €/UM | € | Gli altri | Voci |
 |---|---|---|---|--:|---|--:|--:|---|---|
-| A06c | PORTABOCCHETTA PLP 400X200 1X200 POSTERIORE | PLP-U-400X200-1B-P | 1 pz | 5 | cad | 30,81 | 154,04 | — | C-B.5 |
+| A06c | PORTABOCCHETTA PLP 400X200 1X200 POSTERIORE | PLP-U-400X200-1B-P | 1 pz | 5 | cad | 30,81 ⚠ | 154,04 | — | C-B.5 |
+| I47 | GRUPPO DI CARICAMENTO C/DISCONNETTORE 1/2" | 580011 | 1 pz | 1 | cad | 153,01 | 153,01 | Tecnomat 24,61 ⚠ · Abbattista 67,59 ⚠ | P-I.21 |
 | I13 | RM122 GOMITO 90° 32 | RM122Y011 | 1 pz | 20 | cad | 7,20 | 144,00 | Tecnomat 7,45 · Abbattista 9,85 | P-I.11 |
 | A01c | TUBO FLEX ISOLATO PER CANALIZZATO D203 PREZZO AL MT | TES203 | 1 m | 20 | m | 6,90 | 137,94 | — | C-B.1 |
 | I23 | RM107 RACCORDO FIL.M. 32X1" | RM107Y059 | 1 pz | 20 | cad | 4,74 | 94,74 | Abbattista 5,65 · Tecnomat 6,43 | P-I.37, P-I.40 |
@@ -175,7 +187,8 @@ Quanto costa comprare da un gruppo di fornitori soltanto: gli articoli che quel 
 | I85 | COLLA PER TUBO SCARICO CONDENSA RIGIDO | 11126315 | 1 pz | 1 | cad | 13,65 | 13,65 | — | C-D.6 |
 | I83e | F245 NIPPLO GH.ZINC.11/4-1" | 770245227 | 1 pz | 4 | cad | 3,12 | 12,48 | Abbattista 4,49 | P-I.39 |
 | I83c | F280 NIPPLO GHISA ZINC.1" | 770280206 | 1 pz | 7 | cad | 1,57 | 10,97 | Abbattista 2,26 | P-I.38 |
-| I77 | 403RF RUBINETTO PORTAMANOMETRO 1/2" WATTS | 403R12 | 1 pz | 1 | cad | 8,95 | 8,95 | Abbattista 13,69 | P-I.29 |
+| I44 | MANOMETRO ATT.RAD.G1/2B M1-ABS 100/R-0-6BAR | PA5206BD03 | 1 pz | 1 | cad | 9,84 | 9,84 | Tecnomat 5,33 ⚠ · Abbattista 7,35 ⚠ | P-I.26 |
+| I77 | 403RF RUBINETTO PORTAMANOMETRO 1/2" WATTS | 403R12 | 1 pz | 1 | cad | 8,95 | 8,95 | Abbattista 13,69 ⚠ | P-I.29 |
 | I64 | BARRA FILETTATA MA 8 X 1000MM ZINCATA DIN 975 | 647V00000801 | 1 pz | 10 | cad | 0,709 | 7,09 | Tecnomat 1,07 | C-S.1, C-S.2, C-S.4 |
 | I84c | ISOLANTE GOMMA ST 32X28 MM | 32028005508 | 1 m | 2 | m | 3,50 | 7,01 | — | P-I.6 |
 | I68f | TCR32 MG MANICOTTO DI GIUNZIONE | 11126393 | 1 pz | 2 | cad | 2,60 | 5,21 | — | C-D.3 |
@@ -187,7 +200,7 @@ Quanto costa comprare da un gruppo di fornitori soltanto: gli articoli che quel 
 | I86 | PP-TECH BRAGA DM 40/32 45 HTEA | BEA040345 | 1 pz | 1 | cad | 1,16 | 1,16 | — | C-D.7 |
 | I83b | F280 NIPPLO GHISA ZINC.3/4" | 770280205 | 1 pz | 1 | cad | 1,09 | 1,09 | Abbattista 1,57 | P-I.41 |
 
-### L'ordine a Tecnomat — 29 articoli, 676,52 €
+### L'ordine a Tecnomat — 27 articoli, 646,58 €
 
 | Codice | Articolo | Cod. fornitore | Confezione | Q.tà | UM | €/UM | € | Gli altri | Voci |
 |---|---|---|---|--:|---|--:|--:|---|---|
@@ -200,7 +213,6 @@ Quanto costa comprare da un gruppo di fornitori soltanto: gli articoli che quel 
 | I63 | COLLARI PER TUBI FRIULSIDER CON ASOLA Ø 1'' 2 PEZZI TASSELLO NYLON | 10062009 | 2 pz | 27 | cad | 1,10 | 29,70 | Idrosanitaria 1,68 · Abbattista 2,34 | P-I.3, P-I.5, P-I.9 |
 | E26a | SCATOLA GEWISS DI DERIVAZIONE ESTERNA 100x100x50 mm PARETI LISCE IP55 | 25011797 | 1 pz | 5 | cad | 5,33 | 26,65 | — | P-E.4, C-E.5 |
 | I42 | VASO ESPANSIONE AQUAFILL RISCALDAMENTO SANITARIO 12 l Ø 270 mm | 10011742 | 1 pz | 1 | cad | 26,64 | 26,64 | — | P-I.19 |
-| I47 | GRUPPO DI RIEMPIMENTO ''FILLER'' 1/2'' | 10034051 | 1 pz | 1 | cad | 24,61 | 24,61 | Abbattista 67,59 · Idrosanitaria 153,01 | P-I.21 |
 | E23a | SEZIONATORI DI MANOVRA 32A 4 poli IN CASSETTA CON MANIGLIA GIALLO/ROSSA | 12085434 | 1 pz | 1 | cad | 23,24 | 23,24 | — | C-E.11 |
 | E17 | INTERRUTTORE MAGNETOTERMICO CHINT DIFFERENZIALE 1P+N 32A 4,5KA 30mA 2 MODULI 230V CLASSE A | 25008050 | 1 pz | 1 | cad | 18,44 | 18,44 | — | P-E.10 |
 | E16a | INTERRUTTORE MAGNETOTERMICO CHINT DIFFERENZIALE 1P+N 20A 4,5KA 30mA 2 MODULI 230V CLASSE A | 25008032 | 1 pz | 1 | cad | 18,44 | 18,44 | — | C-E.4 |
@@ -214,7 +226,6 @@ Quanto costa comprare da un gruppo di fornitori soltanto: gli articoli che quel 
 | I46 | RUBINETTO SCARICO CALDAIA 1/2'' CON PORTAGOMMA | 10012741 | 1 pz | 2 | cad | 3,73 | 7,46 | Abbattista 5,38 · Idrosanitaria 6,25 | P-I.18 |
 | I61 | NASTRO ADESIVO IN ALLUMINIO ISOCELL FLEX ALU AA H 50 mm x 50 m | 25075683 | 1 pz | 1 | cad | 5,57 | 5,57 | Idrosanitaria 15,34 · Abbattista 24,55 | P-I.12 |
 | A07a | NASTRO ADESIVO IN ALLUMINIO ISOCELL FLEX ALU AA H 50 mm x 50 m SPESSORE 30 µm | 25075683 | 1 pz | 1 | cad | 5,57 | 5,57 | Idrosanitaria 16,75 | C-B.3 |
-| I44 | MANOMETRO PRESSIONE 0-12 bar | 10047624 | 1 pz | 1 | cad | 5,33 | 5,33 | Abbattista 7,35 · Idrosanitaria 9,84 | P-I.26 |
 | I69 | SIFONE SCARICO CONDENSA IDROSTILE IN PP MORSETTO Ø 46x32 mm | 12104501 | 1 pz | 1 | cad | 4,88 | 4,88 | Idrosanitaria 13,33 | C-D.8 |
 | I43a | VALVOLA SFOGO ARIA AUTOMATICA ITAP 362 M 1/2'' ATTACCO VERTICALE OTTONE | 25087007 | 1 pz | 1 | cad | 4,80 | 4,80 | Idrosanitaria 11,16 · Abbattista 13,57 | P-I.14 |
 | I67a | CANAPA A FILO CON CONTENITORE 80 g | 10069812 | 1 pz | 1 | cad | 3,07 | 3,07 | Idrosanitaria 3,94 · Abbattista 7,50 | P-I.13 |

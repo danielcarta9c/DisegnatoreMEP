@@ -30,8 +30,10 @@ con ogni criterio e il suo comando, è `docs/collaudi/REL-027/RAPPORTO.md`.
   disconnettore, il manometro 0–12); le apparecchiature nel consiglio; il rame «CONDY»; il pollice nei raccordi
   «all'attacco»; l'imbuto di scarico; gli sconti Abbattista nel repository pubblico; la lista di PR.MI.059 fatta con
   una copia della skill che non è `main` (quantità nette, testi diversi).
-- **I-306** (il fornitore unico più economico, `--fornitori`) è dentro la stessa PR.
-- **I numeri**: il prossimo input è **I-307**, la prossima decisione **D-241**.
+- **I-306** (il fornitore unico più economico, `--fornitori`) e **I-307 … I-310** (la marca non conta, la
+  prescrizione sì: gli scostamenti ⚠ diventano avvisi sul prezzo; il manometro 0–6; il disconnettore) sono dentro la
+  stessa PR.
+- **I numeri**: il prossimo input è **I-311**, la prossima decisione **D-241**.
 
 ## ▶ Da dove riparte la prossima sessione — scritto il 13 novembre 2026, con REL-026
 

@@ -10,7 +10,10 @@ servire a piu' voci; l'ordine si fa per articolo.
   della voce × unita' dell'articolo per unita' della voce. Le voci DA PREZZARE o con la quantita'
   DA DEFINIRE non entrano.
 - **Il fornitore di un articolo** e' quello da cui si ordina che lo vende al prezzo piu' basso (a
-  pari prezzo, il primo in ordine alfabetico). Un articolo che nessun fornitore da cui si ordina
+  pari prezzo, il primo in ordine alfabetico), **fra gli articoli che rispettano la voce**: la marca
+  non conta, la prescrizione si' (I-307). Un articolo con uno scostamento (⚠ nel listino) che costa
+  meno non si sceglie: diventa un **avviso sul prezzo**, col risparmio, e decide il progettista. Se
+  nessun articolo rispetta la voce, si prende quello con lo scostamento, e lo si avvisa. Un articolo che nessun fornitore da cui si ordina
   ha, ma che ha un riferimento (online, le fatture di un installatore), va fra quelli **senza
   fornitore**, col prezzo di riferimento.
 - **Le combinazioni** dicono quanto costa ordinare da meno fornitori: per ogni gruppo di fornitori,
@@ -53,8 +56,24 @@ class RigaDellOrdine:
     """Il prezzo di riferimento, quando nessun fornitore da cui si ordina ha l'articolo."""
 
     @property
+    def valide(self) -> tuple[VoceDelListino, ...]:
+        """Le offerte che rispettano la voce; se nessuna, tutte (con lo scostamento)."""
+        conformi = tuple(v for v in self.offerte if not v.scostamento)
+        return conformi or self.offerte
+
+    @property
     def scelta(self) -> VoceDelListino | None:
-        return self.offerte[0] if self.offerte else None
+        return self.valide[0] if self.offerte else None
+
+    @property
+    def avvisi(self) -> list[VoceDelListino]:
+        """Le offerte con uno scostamento che costano meno della scelta; la scelta stessa, se si scosta."""
+        scelta = self.scelta
+        if scelta is None:
+            return []
+        if scelta.scostamento:
+            return [scelta]
+        return [v for v in self.offerte if v.scostamento and v.prezzo < scelta.prezzo]
 
     @property
     def totale(self) -> float:
@@ -63,7 +82,7 @@ class RigaDellOrdine:
 
     def prezzo_da(self, fornitori: frozenset[str]) -> float | None:
         """Il prezzo piu' basso dell'articolo fra `fornitori`, o None se nessuno di loro lo ha."""
-        return next((v.prezzo for v in self.offerte if v.fornitore in fornitori), None)
+        return next((v.prezzo for v in self.valide if v.fornitore in fornitori), None)
 
 
 @dataclass(frozen=True)
@@ -109,8 +128,8 @@ class Ordine:
 
     @property
     def fornitori(self) -> list[str]:
-        """I fornitori da cui si ordina che hanno almeno un articolo dell'ordine."""
-        return sorted({v.fornitore for r in self.righe for v in r.offerte})
+        """I fornitori da cui si ordina che hanno almeno un articolo dell'ordine che rispetta la voce."""
+        return sorted({v.fornitore for r in self.righe for v in r.valide})
 
     @property
     def totale(self) -> float:
@@ -133,7 +152,7 @@ class Ordine:
     def articoli_in_comune(self) -> list[RigaDellOrdine]:
         """Gli articoli che tutti i fornitori dell'ordine hanno."""
         tutti = set(self.fornitori)
-        return [r for r in self.ordinabili if tutti <= {v.fornitore for v in r.offerte}]
+        return [r for r in self.ordinabili if tutti <= {v.fornitore for v in r.valide}]
 
     def un_fornitore(self) -> list[UnFornitore]:
         """Per ogni fornitore, la minuteria comprata da lui (quello che non ha, altrove); il piu'
@@ -195,7 +214,8 @@ def ordine_della_minuteria(costo: "Costo") -> Ordine:
     for codice, q in quantita.items():
         offerte = tuple(sorted(listino.ordinabili(codice), key=lambda v: (v.prezzo, v.fornitore)))
         di_riferimento = None if offerte else listino.get(codice)
-        voce = offerte[0] if offerte else di_riferimento
+        conformi = [v for v in offerte if not v.scostamento]
+        voce = (conformi or list(offerte))[0] if offerte else di_riferimento
         righe.append(RigaDellOrdine(
             codice=codice, quantita=q, um=voce.um if voce else "", descrizione=voce.descrizione if voce else "",
             voci=voci[codice], offerte=offerte, riferimento=di_riferimento,
@@ -228,7 +248,8 @@ def ordine_in_markdown(ordine: Ordine) -> list[str]:
         "## Dove comprare",
         "",
         "Ogni articolo dal fornitore che lo vende al prezzo più basso, fra quelli da cui Nove C ordina (la tabella "
-        "«I fornitori» del listino). Le quantità sono quelle della distinta, sommate per articolo; al banco si "
+        "«I fornitori» del listino) e fra gli articoli che rispettano la voce: la marca non conta, la prescrizione sì. "
+        "Un articolo che se ne scosta (⚠) e costa meno è un avviso sul prezzo, non una scelta. Le quantità sono quelle della distinta, sommate per articolo; al banco si "
         "comprano le confezioni intere (colonna Confezione). I prezzi hanno la data del loro documento, e il conto non "
         "tiene trasporto, ordine minimo e condizioni di pagamento.",
         "",
@@ -240,6 +261,14 @@ def ordine_in_markdown(ordine: Ordine) -> list[str]:
         righe.append(
             f"- **Ogni articolo dal più economico: {_euro(ordine.totale)} €** in {len(gruppi)} "
             f"{'ordine' if len(gruppi) == 1 else 'ordini'} — {parti}."
+        )
+    con_avviso = [r for r in ordine.ordinabili if r.avvisi]
+    if con_avviso:
+        risparmio = sum(_risparmio(r) for r in con_avviso)
+        righe.append(
+            f"- **Avvisi sul prezzo: {len(con_avviso)} articoli** con un'offerta che costa meno ma non rispetta la voce"
+            + (f" ({_euro(risparmio)} € di risparmio, se lo scostamento va bene)" if risparmio > 0 else "")
+            + ": sono qui sotto, e decide il progettista."
         )
     senza = ordine.senza_fornitore
     if senza:
@@ -284,6 +313,27 @@ def ordine_in_markdown(ordine: Ordine) -> list[str]:
                 f"{_euro(u.totale - ordine.totale)} | {_euro(u.in_comune) if comune else '—'} |"
             )
         righe.append("")
+    if con_avviso:
+        righe += [
+            "### Avvisi sul prezzo",
+            "",
+            "| Codice | Voce | Scelto (rispetta la voce) | Costa meno, ma | Lo scostamento | Risparmio € |",
+            "|---|---|---|---|---|--:|",
+        ]
+        for r in con_avviso:
+            assert r.scelta is not None
+            if r.scelta.scostamento:
+                righe.append(
+                    f"| {r.codice} | {r.descrizione} | nessun articolo rispetta la voce: {r.scelta.fornitore} "
+                    f"{_prezzo(r.scelta.prezzo)} ⚠ | — | {r.scelta.scostamento} | — |"
+                )
+                continue
+            for v in r.avvisi:
+                righe.append(
+                    f"| {r.codice} | {r.scelta.descrizione} | {r.scelta.fornitore} {_prezzo(r.scelta.prezzo)} | "
+                    f"{v.fornitore} {_prezzo(v.prezzo)} | {v.scostamento} | {_euro(r.quantita * (r.scelta.prezzo - v.prezzo))} |"
+                )
+        righe.append("")
     combinazioni = ordine.combinazioni()
     if len(ordine.fornitori) > 1:
         righe += [
@@ -310,10 +360,13 @@ def ordine_in_markdown(ordine: Ordine) -> list[str]:
         ]
         for r in rr:
             assert r.scelta is not None
-            altri = " · ".join(f"{v.fornitore} {_prezzo(v.prezzo)}" for v in r.offerte[1:]) or "—"
+            altri = " · ".join(
+                f"{v.fornitore} {_prezzo(v.prezzo)}{' ⚠' if v.scostamento else ''}" for v in r.offerte if v is not r.scelta
+            ) or "—"
             righe.append(
                 f"| {r.codice} | {r.scelta.descrizione} | {r.scelta.articolo} | {r.scelta.confezione} | "
-                f"{_quantita(r.quantita)} | {r.um} | {_prezzo(r.scelta.prezzo)} | {_euro(r.totale)} | {altri} | "
+                f"{_quantita(r.quantita)} | {r.um} | {_prezzo(r.scelta.prezzo)}{' ⚠' if r.scelta.scostamento else ''} | "
+                f"{_euro(r.totale)} | {altri} | "
                 f"{', '.join(r.voci)} |"
             )
         righe.append("")
@@ -335,9 +388,17 @@ def ordine_in_markdown(ordine: Ordine) -> list[str]:
     return righe
 
 
+def _risparmio(riga: RigaDellOrdine) -> float:
+    """Quanto si risparmia con l'offerta con lo scostamento piu' economica, se lo scostamento va bene."""
+    if riga.scelta is None or riga.scelta.scostamento or not riga.avvisi:
+        return 0.0
+    return riga.quantita * (riga.scelta.prezzo - min(v.prezzo for v in riga.avvisi))
+
+
 def _offerta(voce: VoceDelListino) -> dict[str, Any]:
     return {"fornitore": voce.fornitore, "prezzo_eur": round(voce.prezzo, 4), "articolo": voce.descrizione,
-            "codice_fornitore": voce.articolo, "confezione": voce.confezione, "fonte": voce.fonte}
+            "codice_fornitore": voce.articolo, "confezione": voce.confezione, "fonte": voce.fonte,
+            "scostamento": voce.scostamento}
 
 
 def ordine_in_json(ordine: Ordine) -> dict[str, Any]:
@@ -351,7 +412,8 @@ def ordine_in_json(ordine: Ordine) -> dict[str, Any]:
                     {"codice": r.codice, "quantita": round(r.quantita, 4), "um": r.um,
                      "totale_eur": round(r.totale, 2), "voci": r.voci,
                      **({"scelta": _offerta(r.scelta)} if r.scelta else {}),
-                     "altri": [_offerta(v) for v in r.offerte[1:]]}
+                     "altri": [_offerta(v) for v in r.offerte if v is not r.scelta],
+                     "avvisi": [_offerta(v) for v in r.avvisi]}
                     for r in rr
                 ],
             }
