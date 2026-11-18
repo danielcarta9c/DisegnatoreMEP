@@ -10,8 +10,9 @@ riscaldamento), qui si dice:
 
 - **la superficie minima** del serpentino: dal manuale del costruttore per le Shenling
   ThermaX R290 (`diametri.costruttori`, §2.3 del manuale), con la serpentina smaltata se il
-  grafo non dice inox (`serpentino`: «inox»); per la 12 kW 2,0 m², disposizione del PO (I-326);
-  per un serpentino ne' smaltato ne' inox (il Polywarm® del Bolly) nelle altre taglie, una domanda; oppure quella che il progettista scrive sul
+  grafo non dice inox (`serpentino`: «inox»); per un serpentino ne' smaltato ne' inox (il Polywarm®
+  del Bolly), una domanda. **Di base vale la specifica della macchina** (I-329); se il progettista
+  accetta un serpentino piu' piccolo (il Bolly 1 XL da 2 m², che rende bene), lo scrive sul bollitore; oppure quella che il progettista scrive sul
   bollitore (`superficie_minima_scambio_m2`); se no, **una domanda**: per una pompa di calore
   che non e' una Shenling il minimo non si inventa;
 - **la superficie del bollitore scelto** (`superficie_scambio_m2`), se il progettista la da':
@@ -157,10 +158,8 @@ def _minimo(pompa: Pezzo, bollitore: Pezzo) -> tuple[float | None, str, float | 
     massima = SHENLING_DISTANZA_MASSIMA_BOLLITORE_M
     if "inox" in materiale:
         return modello.superficie_inox_m2, f"Shenling {potenza} kW, serpentina inox, manuale §2.3", massima
-    if modello.disposizione_del_po:
-        return modello.superficie_smaltata_m2, f"Shenling {potenza} kW, disposizione del PO, I-326", massima
     if materiale and "smalt" not in materiale:
-        # Ne' smaltato ne' inox (il Polywarm® del Bolly): il manuale non lo dice, lo dice il PO.
+        # Ne' smaltato ne' inox (il Polywarm® del Bolly): il manuale non lo dice, lo dice il progettista.
         return None, "", massima
     return modello.superficie_smaltata_m2, f"Shenling {potenza} kW, serpentina smaltata, manuale §2.3", massima
 

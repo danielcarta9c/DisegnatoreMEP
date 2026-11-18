@@ -9,7 +9,7 @@ listino rev. 06 e con lo stesso codice di `distinta --costo` (`prezza`, `ordine_
 
 **REL-028** (D-241, I-314; I-315 … I-323): la lista prezzata comprende le apparecchiature (il blocco
 `apparecchiature` di `voci.json`), e il bollitore si confronta col serpentino minimo della Shenling 12 kW,
-2,5 m² (manuale §2.3): un bollitore del listino sotto il minimo e' uno scostamento. Le quantita' della lista
+2,5 m² (manuale §2.3; I-329): un bollitore del listino sotto il minimo e' uno scostamento. Le quantita' della lista
 sono nette (I-320).
 """
 

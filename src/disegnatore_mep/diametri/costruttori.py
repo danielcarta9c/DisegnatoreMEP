@@ -78,24 +78,21 @@ class BollitoreDelModello:
     """L'area di scambio minima consigliata del serpentino in acciaio inox, in m²."""
     volume_minimo_l: float
     volume_massimo_l: float
-    disposizione_del_po: bool = False
-    """Il minimo non e' quello del manuale ma quello del PO (I-326): per la 12 kW «2 mq sono piu' che
-    sufficienti … ce lo ha certificato anche shenling quello che fa il primo avviamento», al posto dei
-    2,5 m² del §2.3. Vale per qualunque serpentino che non sia inox (il PO lo dice del Bolly 1 XL, in
-    acciaio rivestito Polywarm®)."""
 
 
 SHENLING_THERMAX_R290_BOLLITORE: dict[float, BollitoreDelModello] = {
     6.0: BollitoreDelModello(2.0, 1.4, 100.0, 250.0),
     9.0: BollitoreDelModello(2.0, 1.4, 150.0, 300.0),
-    12.0: BollitoreDelModello(2.0, 1.6, 200.0, 500.0, disposizione_del_po=True),
+    12.0: BollitoreDelModello(2.5, 1.6, 200.0, 500.0),
     15.0: BollitoreDelModello(2.5, 1.6, 200.0, 500.0),
 }
 """Manuale ThermaX R290 6-15 kW, §2.3 «Serbatoio dell'acqua calda sanitaria», p. 10 (pagina 15 del
 PDF; il manuale e' del PO, non nel repository, I-323): «L'area di scambio termico del serbatoio
 dell'acqua calda sanitaria non deve essere inferiore al seguente valore consigliato» — 6 e 9 kW
 2,0 m² smaltata, 1,4 m² inox; 12 e 15 kW 2,5 m² smaltata, 1,6 m² inox; volumi 100-250, 150-300,
-200-500 l. **Per la 12 kW il PO ha disposto 2,0 m²** (I-326), al posto dei 2,5 del manuale."""
+200-500 l.
+Di base vale la specifica della macchina (I-329): un serpentino piu' piccolo lo accetta il progettista, e lo scrive
+sul bollitore (`superficie_minima_scambio_m2`)."""
 
 
 @dataclass(frozen=True)

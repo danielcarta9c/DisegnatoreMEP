@@ -11,16 +11,21 @@
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
 
-## ▶ Com'è il 18 novembre 2026 sera, con il punto 2 di REL-028
+## ▶ Da dove riparte la prossima sessione — scritto il 18 novembre 2026 sera, alla fusione di REL-028
 
-**Il punto 2 di `REL-028` è fatto sul ramo `claude/rel-028-punto-2`** (rapporto `docs/collaudi/REL-028/RAPPORTO.md`),
-**in attesa del sì del PO alla fusione** e del numero della release (proposta 2.2.0). Le decisioni nuove sono **D-241**
-(due liste complete, le apparecchiature nel CAPEX), **D-242** (quantità nette), **D-243** (il bollitore col serpentino;
-2 m² per la Shenling 12 kW, I-326). Gli input nuovi arrivano a **I-328**: il prossimo è **I-329**, la prossima decisione
-**D-244**. Nessuno schema cambia; cambia la pianta del collaudo T3 (le «L quot.» nette). Il punto 1 (Tecnomat Pro)
-aspetta il file del PO. Aperti col PO: la conferma di I-325 … I-328 (arrivati dalla sessione precedente), gli attacchi
-liberi del bollitore (tappi e riduzioni, I-327), fin dove arrivano le quantità nette (metro per tratto e minimi), la
-Haier nel preventivo Idrosanitaria.
+**`REL-028` è consegnato: la 2.2.0 è su `main`** (punti 1 e 2; rapporto `docs/collaudi/REL-028/RAPPORTO.md`). Il PO:
+«al termine dammi la skill aggiornata e fondi su main». **Non c'è un pacchetto attivo**: il prossimo lo sceglie il PO
+(`REL-025`, la 2.2 di allora — derivazione air-split, termostato radio, resistenza integrativa, termostato di
+sicurezza, pianta su più piani —; le fasi aperte di `REL-024`; le offerte nuove dei fornitori, punto 3 di `REL-028`).
+
+- **Fatto**: due liste complete (D-241: la prezzata per il CAPEX con le apparecchiature, la lista per il fornitore con
+  «fornita da Nove C» o `--senza-nove-c`); quantità nette (D-242); il bollitore col serpentino minimo del manuale
+  Shenling (D-243, I-329: l'eccezione la scrive il progettista sul bollitore); il raccordo all'attacco col pollice
+  (Shenling, Cordivari Bolly 1 XL) o una domanda; il rame «CONDY»; il listino rev. 07 coi prezzi Tecnomat Pro.
+- **Aperti col PO**: quali attacchi del bollitore restano liberi (tappi e riduzioni, I-327); se togliere anche il metro
+  per tratto e i minimi delle linee; la Haier nel preventivo Idrosanitaria; in quale conversazione è stata fatta la
+  lista di PR.MI.059.
+- **I numeri**: il prossimo input è **I-330**, la prossima decisione **D-244**.
 
 ## ▶ Da dove riparte la prossima sessione — scritto il 18 novembre 2026, alla fusione di REL-027
 

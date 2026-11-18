@@ -86,7 +86,7 @@ def test_il_listino_si_legge_con_le_voci_del_banco_e_quelle_online(listino: Any)
     """Le 150 righe del rilievo al banco (§1), i 4 nippli delle fatture dell'installatore
     (§2ter, REL-023), i codici del riepilogo online (§2) e, dalla revisione 06 (REL-027), le
     offerte dei fornitori (§4, §5), ciascuna col suo fornitore."""
-    assert len(_prezzi(listino, "Tecnomat")) == 150 and len(_prezzi(listino, "Bricoman")) == 4
+    assert len(_prezzi(listino, "Tecnomat")) == 183 and len(_prezzi(listino, "Bricoman")) == 4
     assert len(_prezzi(listino, "riferimento online")) >= 60
     tecnomat = {v.codice: v for v in _prezzi(listino, "Tecnomat")}
     assert tecnomat["I04"].prezzo == pytest.approx(3.64) and tecnomat["I04"].um == "m"

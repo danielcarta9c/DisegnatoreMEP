@@ -172,8 +172,8 @@
   "t1-rel023": {
    "grafo-completo.json": "8edf5c3d67758a10689e6a5259363884148d86ba445ed7be4116307fe394a420",
    "sintesi-1": "Formato A3 · tratte 29 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 7 · sormonti 1 · avvisi e regole: SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x1",
-   "distinta/distinta.json": "7874a6870bb95e62397914eb3a846f9e66ae09eb6c894b2594ce39fd81109ba6",
-   "distinta/tabelle-del-foglio.json": "c6522cd0f57741579667f710b239855b8c73b4a396dd8a6409575808c8d0ac18",
+   "distinta/distinta.json": "ca6ec0cb46d4d8bc59369f12f4748d83cd12b7a897023b2fd995405a331052da",
+   "distinta/tabelle-del-foglio.json": "06135d4bff9ee30d0a0c2234649322470398923db8a642764894f9d410f50333",
    "tavola/villetta-pdc-volano-bollitore-idraulica-t1-rilievi.md": "cdd9435ae4a4956befee423041ca05d87ddf104c6fe8a2b1cbdd52231404ab57",
    "tavola/villetta-pdc-volano-bollitore-idraulica-t1.svg": "ca7e6515259372777067fdeb9dd99eee306d89edc4a1248cddf658338cee07fb"
   },

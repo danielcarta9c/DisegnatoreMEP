@@ -5,7 +5,7 @@
 > il suo rapporto in `docs/collaudi/REL-027/RAPPORTO.md`.
 
 **Da svolgere:** l'agente unico (**D-147**), nella sessione.
-**Stato:** **AVVIATO** dal PO il 18 novembre 2026 («metti tutto su main e lancia direttamente la prossima sessione per
+**Stato:** **CONSEGNATO** il 18 novembre 2026, punti 1 e 2 (la 2.2.0, rapporto `docs/collaudi/REL-028/RAPPORTO.md`), fuso col sì del PO («al termine dammi la skill aggiornata e fondi su main»). Era: **AVVIATO** dal PO il 18 novembre 2026 («metti tutto su main e lancia direttamente la prossima sessione per
 sistemare», I-324). **La sessione lanciata fa il punto 2**; il punto 1 (il rilievo Tecnomat Pro) aspetta il file che il
 PO riempie con Claude in Chrome, e si fa quando lo porta.
 **Base:** `main` con la 2.1.1 (PR #96).
