@@ -261,3 +261,29 @@ def test_il_progettista_accetta_un_serpentino_piu_piccolo(
     grafo["components"][1]["properties"]["serpentino"] = "acciaio rivestito Polywarm"
     voce = _bollitore(componi_la_distinta(grafo, regole, *nomi))
     assert voce.superficie_minima_m2 is None and voce.da_definire
+
+
+# --- REL-030 (I-333): il Boilernova euromax WWM, dalla sua scheda ---------------------------------
+
+
+def _con_l_euromax(grafo: dict[str, Any]) -> dict[str, Any]:
+    grafo["components"][1]["properties"].update({"marca": "Boilernova", "modello": "euromax WWM 200 SMALGLASS"})
+    return grafo
+
+
+def test_l_euromax_wwm_200_ha_i_suoi_attacchi_e_il_suo_serpentino(
+    regole: RegoleDellaDistinta, nomi: tuple[dict[str, str], dict[str, str]]
+) -> None:
+    """La scheda Boilernova (I-333): serpentino 1" sul 200, 3,0 m²: rispetta i 2,5 m² della Shenling 12 kW."""
+    distinta = componi_la_distinta(_con_l_euromax(_impianto()), regole, *nomi)
+    attacchi = {v.testo: v.quantita for v in distinta.voci_della_sezione("I") if v.testo.endswith("all'attacco")}
+    assert attacchi["Raccordo diritto a pressare M 1\" × tubo multistrato MS 32×3, all'attacco"] == 2
+    assert not [a for a in distinta.avvisi if "BOL-01" in a]
+    assert "serpentino del bollitore scelto 3 m²" in _bollitore(distinta).note
+
+
+def test_il_bolly_1_xl_200_dice_i_suoi_2_m2_anche_se_il_grafo_non_li_scrive(
+    regole: RegoleDellaDistinta, nomi: tuple[dict[str, str], dict[str, str]]
+) -> None:
+    distinta = componi_la_distinta(_impianto(), regole, *nomi)
+    assert "BOL-01: serpentino 2 m², sotto il minimo di 2,5 m²" in "\n".join(distinta.avvisi)

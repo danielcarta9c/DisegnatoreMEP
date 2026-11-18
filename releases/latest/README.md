@@ -1,5 +1,14 @@
-# L'ultima release: 2.2.1
+# L'ultima release: 2.2.2
 
+`DisegnatoreMEP-v2.2.2.zip` — sha256 `3e324d57aa5dc751…`, 157 file — è `REL-030` (I-333): **il bollitore Boilernova
+euromax WWM**. Si carica come ogni skill personale, dallo ZIP così com'è.
+
+Rispetto alla 2.2.1: la skill conosce gli attacchi e la superficie del serpentino del Boilernova euromax WWM (il 200:
+190 l utili, 3,0 m² vetrificato, serpentino 1", acqua fredda e ACS 1", ricircolo ½"), come del Cordivari Bolly 1 XL:
+il raccordo all'attacco scrive il pollice giusto, e la superficie della scheda vale per gli avvisi del serpentino quando
+il grafo non la scrive. Il prezzo entra nel listino quando arriva un'offerta. Tavole identiche alla 2.2.1.
+
+Prima, la **2.2.1**:
 `DisegnatoreMEP-v2.2.1.zip` — sha256 `4ca139d843a2ee21…`, 157 file — è `REL-029` (I-330 … I-332, D-244): **il bollitore
 sbagliato si esclude**. Si carica come ogni skill personale, dallo ZIP così com'è.
 

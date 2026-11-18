@@ -32,6 +32,7 @@ from dataclasses import dataclass
 from disegnatore_mep.diametri.costruttori import (
     SHENLING_DISTANZA_MASSIMA_BOLLITORE_M,
     bollitore_shenling,
+    superficie_del_bollitore,
 )
 
 from .grafo import Impianto, Pezzo, Tubazione, numero
@@ -117,6 +118,16 @@ def _lunghezza(tubazione: Tubazione) -> float | None:
     return None
 
 
+def _superficie(bollitore: Pezzo) -> float | None:
+    """La superficie del serpentino del bollitore scelto: quella che il progettista scrive, o quella della
+    scheda se la skill ce l'ha (il Bolly 1 XL, l'euromax WWM, REL-030)."""
+    detta = numero(bollitore.proprieta.get(SUPERFICIE))
+    if detta is not None:
+        return detta
+    p = bollitore.proprieta
+    return superficie_del_bollitore(p.get("marca"), p.get("modello"), numero(p.get("volume_l")))
+
+
 def _percorso(impianto: Impianto, da: str, a: str) -> list[Tubazione] | None:
     """Le tubazioni d'acqua di riscaldamento dal pezzo `da` al pezzo `a`, col minor numero di
     tubazioni; `None` se non si raggiungono."""
@@ -198,7 +209,7 @@ def serpentini(impianto: Impianto) -> dict[str, SerpentinoDelBollitore]:
             pompa=pompa,
             minima_m2=minima_o_niente,
             perche=perche,
-            superficie_m2=numero(bollitore.proprieta.get(SUPERFICIE)),
+            superficie_m2=_superficie(bollitore),
             distanza_m=distanza,
             distanza_massima_m=massima,
         )

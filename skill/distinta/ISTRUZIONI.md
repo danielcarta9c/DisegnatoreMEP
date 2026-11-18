@@ -149,8 +149,9 @@ serpentino più piccolo (per esempio il Bolly 1 XL da 2 m² sulla 12 kW, che ren
 `superficie_minima_scambio_m2`.
 Nel conto un bollitore del listino col serpentino sotto il minimo è **escluso**, non si sceglie nemmeno come ripiego
 (I-331); se nessuno arriva al minimo la voce è DA PREZZARE e dice chi è escluso. Allora chiedi al progettista se
-accetta un serpentino minore: il PO non trova bollitori da 2,5 m² per 150–200 l a magazzino in Italia (I-332). Se il bollitore è un Cordivari Bolly 1 XL,
-la skill sa i suoi attacchi dalla scheda (primario 1¼" F). Per un'altra pompa di calore è una domanda: il minimo lo dà il progettista, e si scrive sul
+accetta un serpentino minore: il PO non trova bollitori da 2,5 m² per 150–200 l a magazzino in Italia (I-332). Se il bollitore è un Cordivari Bolly 1 XL
+o un Boilernova euromax WWM, la skill sa i suoi attacchi e la superficie del serpentino dalla scheda (Bolly 1 XL
+200: primario 1¼", 2 m²; euromax WWM 200: serpentino 1", 3,0 m², che basta anche alla Shenling 12 kW). Per un'altra pompa di calore è una domanda: il minimo lo dà il progettista, e si scrive sul
 bollitore in `superficie_minima_scambio_m2`. Se il progettista dice la superficie del bollitore scelto, scrivila in
 `superficie_scambio_m2`: la tabella delle apparecchiature la porta, e sotto il minimo è un avviso. Un avviso anche
 per il tubo fra unità esterna e bollitore oltre i 5 m (manuale Shenling §2.3, punto 6), se le tubazioni hanno le

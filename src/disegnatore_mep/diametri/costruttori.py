@@ -97,40 +97,82 @@ sul bollitore (`superficie_minima_scambio_m2`)."""
 
 @dataclass(frozen=True)
 class AttacchiDelBollitore:
-    """Gli attacchi di un bollitore, in pollici, per porta del catalogo (`dhw-cylinder`)."""
+    """Un bollitore di cui la skill ha la scheda: gli attacchi in pollici per porta del catalogo
+    (`dhw-cylinder`) e la superficie del serpentino."""
 
     per_porta: dict[str, str]
+    superficie_m2: float | None = None
 
 
-def _bolly_1_xl(m: str, b: str, a: str) -> AttacchiDelBollitore:
+def _bolly_1_xl(m: str, b: str, a: str, superficie: float) -> AttacchiDelBollitore:
     return AttacchiDelBollitore({
         "coil_in": '1¼"', "coil_out": '1¼"', "probe": '½"', "cold_in": m, "recirculation_in": b, "dhw_out": a,
-    })
+    }, superficie)
 
 
 CORDIVARI_BOLLY_1_XL: dict[float, AttacchiDelBollitore] = {
-    200.0: _bolly_1_xl('¾"', '¾"', '1¼"'),
-    300.0: _bolly_1_xl('1"', '1"', '1¼"'),
-    400.0: _bolly_1_xl('1"', '1"', '1¼"'),
-    500.0: _bolly_1_xl('1"', '1"', '1¼"'),
-    800.0: _bolly_1_xl('1"', '1"', '1¼"'),
-    1000.0: _bolly_1_xl('1¼"', '1"', '1½"'),
-    1500.0: _bolly_1_xl('1½"', '1"', '2"'),
+    200.0: _bolly_1_xl('¾"', '¾"', '1¼"', 2.0),
+    300.0: _bolly_1_xl('1"', '1"', '1¼"', 3.4),
+    400.0: _bolly_1_xl('1"', '1"', '1¼"', 4.4),
+    500.0: _bolly_1_xl('1"', '1"', '1¼"', 5.4),
+    800.0: _bolly_1_xl('1"', '1"', '1¼"', 6.0),
+    1000.0: _bolly_1_xl('1¼"', '1"', '1½"', 6.5),
+    1500.0: _bolly_1_xl('1½"', '1"', '2"', 7.7),
 }
-"""Cordivari BOLLY® 1 XL (scheda IT-Cordivari_TEC_Scheda-BOLLY-1-XL-W_02.2026, trascritta dalla sessione
+"""Cordivari BOLLY® 1 XL W (scheda IT-Cordivari_TEC_Scheda-BOLLY-1-XL-W_02.2026, trascritta dalla sessione
 precedente, I-328; il PDF non e' nel repository): attacchi femmina; primario F e G 1¼", strumentazione C ½",
-anodo E e scarico O 1¼"; ingresso acqua fredda M, ricircolo B e uscita ACS A secondo la taglia. Il Bolly e'
-il bollitore che Nove C usa spesso (I-328)."""
+anodo E e scarico O 1¼"; ingresso acqua fredda M, ricircolo B e uscita ACS A secondo la taglia; scambiatore in
+acciaio rivestito Polywarm®, superficie dei modelli XL WB. Il Bolly e' il bollitore che Nove C usa spesso (I-328)."""
+
+
+def _euromax_wwm(acqua: str, ricircolo: str, serpentino: str, superficie: float) -> AttacchiDelBollitore:
+    return AttacchiDelBollitore({
+        "coil_in": serpentino, "coil_out": serpentino, "probe": '½"', "cold_in": acqua,
+        "recirculation_in": ricircolo, "dhw_out": acqua,
+    }, superficie)
+
+
+BOILERNOVA_EUROMAX_WWM: dict[float, AttacchiDelBollitore] = {
+    200.0: _euromax_wwm('1"', '½"', '1"', 3.0),
+    300.0: _euromax_wwm('1"', '½"', '1"', 4.0),
+    400.0: _euromax_wwm('1"', '½"', '1¼"', 5.0),
+    500.0: _euromax_wwm('1"', '½"', '1¼"', 6.0),
+    800.0: _euromax_wwm('1¼"', '1"', '1¼"', 7.0),
+    1000.0: _euromax_wwm('1¼"', '1"', '1¼"', 8.0),
+    1500.0: _euromax_wwm('1½"', '1"', '1¼"', 8.0),
+    2000.0: _euromax_wwm('1½"', '1"', '1¼"', 13.0),
+}
+"""Boilernova euromax WWM SMALGLASS, «bollitore per produzione acqua calda sanitaria da pompa di calore» (scheda
+https://www.boilernova.com/wp-content/uploads/2020/04/EUROMAX.pdf, pp. 61-64, portata dal PO il 18 novembre
+2026, I-333): un serpentino vetrificato (DIN 4753-3); attacchi: mandata ACS (1) e acqua fredda (6) 1" fino al
+500, 1¼" 800-1000, 1½" 1500-2000; mandata (10) e ritorno (7) del serpentino 1" sul 200-300, 1¼" dal 400;
+ricircolo (9) ½" fino al 500, 1" oltre; sonde (3, 8) ½". Il 200 ha 190 l utili e 3,0 m², codici 1Y5920D
+(isolamento 50 mm) e 1Y5920F (70 mm). La seconda uscita ACS in alto (11, 1¼" sul 200-500) e la resistenza
+(4, 1½") non sono porte del catalogo."""
+
+
+def _scheda_del_bollitore(marca: object, modello: object, volume_l: object) -> AttacchiDelBollitore | None:
+    """La scheda del bollitore, se la skill ce l'ha: il Cordivari Bolly 1 XL, il Boilernova euromax WWM."""
+    if not isinstance(volume_l, int | float) or isinstance(volume_l, bool):
+        return None
+    marca_, modello_ = str(marca or "").lower(), str(modello or "").lower()
+    if "cordivari" in marca_ and "bolly 1 xl" in modello_:
+        return CORDIVARI_BOLLY_1_XL.get(float(volume_l))
+    if ("boilernova" in marca_ or "euromax" in marca_ or "euromax" in modello_) and "wwm" in modello_:
+        return BOILERNOVA_EUROMAX_WWM.get(float(volume_l))
+    return None
 
 
 def attacco_del_bollitore(marca: object, modello: object, volume_l: object, porta: str) -> str | None:
-    """Il pollice dell'attacco `porta` di un bollitore di cui la skill ha la scheda (il Bolly 1 XL)."""
-    if "cordivari" not in str(marca or "").lower() or "bolly 1 xl" not in str(modello or "").lower():
-        return None
-    if not isinstance(volume_l, int | float) or isinstance(volume_l, bool):
-        return None
-    attacchi = CORDIVARI_BOLLY_1_XL.get(float(volume_l))
-    return attacchi.per_porta.get(porta) if attacchi else None
+    """Il pollice dell'attacco `porta` di un bollitore di cui la skill ha la scheda."""
+    scheda = _scheda_del_bollitore(marca, modello, volume_l)
+    return scheda.per_porta.get(porta) if scheda else None
+
+
+def superficie_del_bollitore(marca: object, modello: object, volume_l: object) -> float | None:
+    """La superficie del serpentino di un bollitore di cui la skill ha la scheda, in m²."""
+    scheda = _scheda_del_bollitore(marca, modello, volume_l)
+    return scheda.superficie_m2 if scheda else None
 
 SHENLING_DISTANZA_MASSIMA_BOLLITORE_M = 5.0
 """Lo stesso §2.3, punto 6: «La lunghezza del tubo tra l'unità esterna e il serbatoio deve essere
