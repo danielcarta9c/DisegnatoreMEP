@@ -48,7 +48,7 @@ $ python3 -m pytest tests/distinta/test_rel028_due_liste_e_bollitore.py -q
 
 ```
 $ python3 -m pytest -q
-SUITE
+3191 passed, 15 skipped, 11 xfailed in 337.58s   (skip e xfail invariati; banco verde, nessuna tavola cambia)
 
 $ ruff check src tests
 All checks passed!
