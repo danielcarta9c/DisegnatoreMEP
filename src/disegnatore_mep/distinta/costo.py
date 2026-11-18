@@ -109,6 +109,11 @@ def _riga(voce: Voce, listino: Listino) -> RigaDelCosto:
     parti, unitario = [], 0.0
     for codice, n in prezzo.codici:
         trovata = listino.get(codice)
+        if trovata is None and listino.esclusi.get(codice):
+            # REL-029 (I-331): ci sono bollitori nel listino, ma tutti col serpentino sotto il minimo.
+            fuori = ", ".join(f"{v.fornitore} ({v.scostamento})" for v in listino.esclusi[codice])
+            riga.manca = f"nessun articolo del listino rispetta la voce; esclusi: {fuori}"
+            return riga
         if trovata is None:
             riga.manca = f"il listino non ha il codice {codice}"
             return riga
@@ -117,6 +122,9 @@ def _riga(voce: Voce, listino: Listino) -> RigaDelCosto:
         parti.append(f"{in_parole(n)} × {codice} {_euro(trovata.prezzo)} €/{trovata.um}{da}" if n != 1 else
                      f"{codice} {_euro(trovata.prezzo)} €/{trovata.um}{da}")
     riga.unitario = unitario
+    esclusi = [f"{v.fornitore} ({v.scostamento})" for codice, _ in prezzo.codici for v in listino.esclusi.get(codice, ())]
+    if esclusi:
+        riga.nota = "; ".join(n for n in (riga.nota, f"esclusi perché sbagliati: {', '.join(esclusi)}") if n)
     if voce.quantita is None:
         riga.manca = f"quantita' {DA_DEFINIRE}"
         riga.conto = " + ".join(parti)

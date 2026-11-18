@@ -9,7 +9,8 @@ listino rev. 06 e con lo stesso codice di `distinta --costo` (`prezza`, `ordine_
 
 **REL-028** (D-241, I-314; I-315 … I-323): la lista prezzata comprende le apparecchiature (il blocco
 `apparecchiature` di `voci.json`), e il bollitore si confronta col serpentino minimo della Shenling 12 kW,
-2,5 m² (manuale §2.3; I-329): un bollitore del listino sotto il minimo e' uno scostamento. Le quantita' della lista
+2,5 m² (manuale §2.3; I-329), e su questa commessa il progettista ha accettato 2 m² (I-330); un
+bollitore sotto il minimo e' escluso dal confronto (REL-029, I-331): un bollitore del listino sotto il minimo e' uno scostamento. Le quantita' della lista
 sono nette (I-320).
 """
 
@@ -51,6 +52,9 @@ def costo_della_lista(voci: list[dict], listino_path: Path) -> Costo:
                 )
         if v.get("fornitura") == "Nove C":
             riga.nota = "fornita da Nove C"
+        fuori = [f"{e.fornitore} ({e.scostamento})" for c, _ in riga.codici for e in listino.esclusi.get(c, ())]
+        if fuori:
+            riga.nota = "; ".join(n for n in (riga.nota, f"esclusi perché sbagliati: {', '.join(fuori)}") if n)
         costo.righe.append(riga)
     return costo
 
@@ -97,6 +101,8 @@ def apparecchiature(voci: list[dict], listino_path: Path) -> None:
                 superficie = f", serpentino {v.superficie_m2:g} m²" if v.superficie_m2 is not None else ""
                 avviso = f"  ⚠ {v.scostamento}" if v.scostamento else ""
                 print(f"      {v.fornitore:14} {v.prezzo:9.2f} €{superficie}{avviso}")
+            for v in costo.listino.esclusi.get(codice, ()):
+                print(f"      {v.fornitore:14} {v.prezzo:9.2f} €  ESCLUSO: {v.scostamento}")
 
 
 def confronto(costo: Costo) -> None:
