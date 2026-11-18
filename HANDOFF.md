@@ -22,7 +22,7 @@ serpentino sotto il minimo è escluso dal confronto (D-244, I-331); su PR.MI.059
   https://www.boilernova.com/wp-content/uploads/2020/04/EUROMAX.pdf, portata dal PO) con i suoi attacchi, e nel listino
   quando arriva l'offerta. L'Emmeti Euro HPV 200 ha gli stessi numeri (forse lo stesso prodotto). Altri candidati da
   2,5 m² per 200 l, dalla ricerca (da verificare sulle schede): ACV TSA 1HP 200 (2,5 m², ~1.440 €), Bosch BWP 200.
-- **I numeri**: il prossimo input è **I-333**, la prossima decisione **D-245**.
+- **I numeri**: il prossimo input è **I-334**, la prossima decisione **D-245**.
 
 
 
