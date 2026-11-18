@@ -132,7 +132,7 @@ Le prove vecchie che contavano le quantità maggiorate sono aggiornate ai numeri
 
 ```
 $ python3 -m pytest -q
-SUITE_FINALE
+3190 passed, 15 skipped, 11 xfailed in 329.66s   (skip e xfail: gli stessi di REL-027; il diff delle prove non ne aggiunge)
 
 $ ruff check src tests
 All checks passed!
