@@ -28,7 +28,7 @@ sono «M 1" × tubo multistrato MS 32×3, all'attacco» e non c'è nessun avviso
 
 ```
 $ python3 -m pytest -q
-SUITE
+3193 passed, 15 skipped, 11 xfailed in 308.52s (0:05:08)   (skip e xfail invariati; banco verde, nessuna tavola cambia)
 
 $ ruff check src tests      → All checks passed!
 $ mypy                      → Success: no issues found in 133 source files
