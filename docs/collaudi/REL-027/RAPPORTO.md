@@ -256,7 +256,7 @@ Success: no issues found in 132 source files
 
 $ python3 scripts/costruisci-skill.py
 Skill: …/outputs/skill/disegnatore-mep (156 file, 3733 kB)
-ZIP:   …/outputs/skill/disegnatore-mep.zip (1163 kB, sha256 e99e7a076cc42f3b)
+ZIP:   …/outputs/skill/disegnatore-mep.zip (1163 kB, sha256 80245662bb72d28f)
 Controlli della guida di Anthropic, di skill-creator e del caricamento su claude.ai (al massimo 200 file): passati.
 
 $ python3 -m pytest tests/test_le_release.py tests/test_package.py tests/skill -q

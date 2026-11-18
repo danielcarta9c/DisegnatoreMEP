@@ -48,8 +48,8 @@ Abbattista e il preventivo Idrosanitaria della commessa PR.MI.059 (§4 e §5).
 - **ID «—»**: la riga è documentata, ma nessuna regola della distinta la usa ancora (un articolo che la lista non
   chiede, una misura che la regola non distingue). Il conto non la legge.
 - **Tre gradi di affidabilità.** Gli ordini e i preventivi dei fornitori (§4, §5) e le fatture (§2ter) sono
-  prezzi veri, alla data del documento. Le righe Tecnomat (§1) le ha rilevate il PO sul sito del
-  negozio. Le righe online (§2) vengono dal motore di ricerca: le pagine dei negozi non si
+  prezzi veri, alla data del documento. Le righe Tecnomat (§1) le hanno rilevate il PO e Claude insieme
+  sul sito del negozio, con Claude in Chrome nel browser del PO (I-311). Le righe online (§2) vengono dal motore di ricerca: le pagine dei negozi non si
   aprivano dalla sessione, quindi **il prezzo non è stato letto sulla pagina del prodotto**.
   Valgono come ordine di grandezza, e prima di usarle per una trattativa si apre il link.
 
@@ -69,7 +69,7 @@ lettura. Un fornitore nuovo si aggiunge alla tabella qui sotto.
 
 | Fornitore | Si ordina | Come si paga | Da dove vengono i prezzi | Capitolo |
 |---|---|---|---|---|
-| Tecnomat | sì | al banco | il rilievo del PO sul sito, negozi di Segrate e Pero (MI), 2 novembre 2026 | §1 |
+| Tecnomat | sì | al banco | il rilievo sul sito con Claude in Chrome, nel browser del PO, negozi di Segrate e Pero (MI), 2 novembre 2026 | §1 |
 | Abbattista | sì | RB 30/60 gg fine mese | due ordini della commessa PR.MI.059, 10 e 13 novembre 2026 | §4 |
 | Idrosanitaria | sì | alla consegna | il preventivo della commessa PR.MI.059, 9 novembre 2026 (valido fino al 24 novembre) | §5 |
 | Bricoman | no | — | le fatture all'installatore della commessa PR.BG.017, fine ottobre 2026 | §2ter |
