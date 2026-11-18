@@ -11,7 +11,20 @@
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
 
-## ▶ Da dove riparte la prossima sessione — scritto il 18 novembre 2026 sera, alla fusione di REL-028
+## ▶ Da dove riparte la prossima sessione — scritto il 18 novembre 2026 sera, alla fusione di REL-029
+
+**La 2.2.1 è su `main`** (`REL-029`, PR #99; rapporto `docs/collaudi/REL-029/RAPPORTO.md`): il bollitore col
+serpentino sotto il minimo è escluso dal confronto (D-244, I-331); su PR.MI.059 il PO ha accettato il Bolly 1 XL da 2 m²
+(I-330). **Non c'è un pacchetto attivo**: il prossimo lo sceglie il PO.
+
+- **In sospeso col PO**: registrare nella skill il bollitore **Boilernova Euromax WWM 200** (190 l, serpentino 3,0 m²
+  vetrificato, attacchi serpentino 1", AF e ACS 1", ricircolo ½", resistenza 1½"; codici 1Y5920D / 1Y5920F; scheda
+  https://www.boilernova.com/wp-content/uploads/2020/04/EUROMAX.pdf, portata dal PO) con i suoi attacchi, e nel listino
+  quando arriva l'offerta. L'Emmeti Euro HPV 200 ha gli stessi numeri (forse lo stesso prodotto). Altri candidati da
+  2,5 m² per 200 l, dalla ricerca (da verificare sulle schede): ACV TSA 1HP 200 (2,5 m², ~1.440 €), Bosch BWP 200.
+- **I numeri**: il prossimo input è **I-333**, la prossima decisione **D-245**.
+
+
 
 **`REL-028` è consegnato: la 2.2.0 è su `main`** (punti 1 e 2; rapporto `docs/collaudi/REL-028/RAPPORTO.md`). Il PO:
 «al termine dammi la skill aggiornata e fondi su main». **Non c'è un pacchetto attivo**: il prossimo lo sceglie il PO
@@ -25,7 +38,6 @@ sicurezza, pianta su più piani —; le fasi aperte di `REL-024`; le offerte nuo
 - **Aperti col PO**: quali attacchi del bollitore restano liberi (tappi e riduzioni, I-327); se togliere anche il metro
   per tratto e i minimi delle linee; la Haier nel preventivo Idrosanitaria; in quale conversazione è stata fatta la
   lista di PR.MI.059.
-- **I numeri**: il prossimo input è **I-330**, la prossima decisione **D-244**.
 
 ## ▶ Da dove riparte la prossima sessione — scritto il 18 novembre 2026, alla fusione di REL-027
 
