@@ -20,9 +20,11 @@
    `docs/rilievi/tecnomat-pro-da-rilevare.md`: le 150 righe da verificare col prezzo Tecnomat Pro e i 62 codici da
    trovare, prima i 30 di PR.MI.059; si rileva col PO, **con Claude in Chrome nel suo browser**, come il 2 novembre (da qui il sito non
    si apre); poi si rifà la misura di PR.MI.059;
-2. **le domande aperte di `REL-027`** al PO: apparecchiature nel consiglio, rame «CONDY», pollice nei raccordi
-   «all'attacco», imbuto di scarico, sconti Abbattista nel repository pubblico, la lista di PR.MI.059 fatta con una
-   copia della skill che non è `main`.
+2. **le risposte del PO del 18 novembre** (I-314 … I-320), scritte in `ACTIVE_WORK_PACKAGE.md`, punto 2: due liste
+   complete (prezzata per il CAPEX, anche le macchine; senza prezzi per la fornitura, con «fornita da Nove C»); il
+   bollitore con la superficie di scambio; il rame «CONDY» è il rivestito; il raccordo all'attacco col pollice
+   dell'attacco; le quantità nette come regola. Resta da chiedere in quale conversazione è stata fatta la lista di
+   PR.MI.059.
 
 Sotto, com'era durante `REL-027`.
 
@@ -49,7 +51,7 @@ con ogni criterio e il suo comando, è `docs/collaudi/REL-027/RAPPORTO.md`.
   prescrizione sì: gli scostamenti ⚠ diventano avvisi sul prezzo; il manometro 0–6; il disconnettore) sono dentro la
   stessa PR.
 - **Il listino Tecnomat da finire** (I-304, I-311): 62 codici della distinta senza un prezzo Tecnomat conforme, 30 su PR.MI.059; la lista da riempire è `docs/collaudi/REL-027/tecnomat-da-rilevare.md`. Il rilievo del 2 novembre l'hanno fatto il PO e Claude insieme, con Claude in Chrome nel browser del PO: si rifà così (dalla sessione cloud il sito non si apre).
-- **I numeri**: il prossimo input è **I-314**, la prossima decisione **D-241**.
+- **I numeri**: il prossimo input è **I-321**, la prossima decisione **D-241**.
 
 ## ▶ Da dove riparte la prossima sessione — scritto il 13 novembre 2026, con REL-026
 

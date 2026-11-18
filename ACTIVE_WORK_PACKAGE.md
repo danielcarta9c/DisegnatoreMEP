@@ -21,15 +21,29 @@ di PR.MI.059 rifatto col listino completo.
    sessione cloud tecnomat.it non si apre (protezione anti-robot), e non si aggira. Il PO riporta il file riempito; la
    sessione mette le righe nel listino (un capitolo col rilievo e la sua data, colonna Fornitore «Tecnomat»), con ⚠
    dove l'articolo non rispetta la voce, e rifà `docs/collaudi/REL-027/pr-mi-059/misura.py`.
-2. **Le domande aperte di `REL-027`**, da fare al PO (rapporto, §7), una alla volta:
-   - le **apparecchiature** (volano, circolatore, bollitore) nel consiglio d'acquisto: oggi fuori, la sezione A non
-     si prezza (D-235); il PO le compra da Abbattista, e Idrosanitaria le ha meno care;
-   - il **rame «CONDY»** di Idrosanitaria: è il rivestito? Se sì, le due righe prendono F01b e F03b;
-   - il **pollice nei raccordi «all'attacco»** della distinta: senza, Idrosanitaria ha offerto manicotti;
-   - l'**imbuto di scarico** della valvola di sicurezza «con scarico convogliato»: si conta?
-   - gli **sconti di Abbattista** nel repository pubblico;
-   - la **lista di PR.MI.059 fatta con una copia della skill che non è `main`** (quantità nette, testi diversi): le
-     modifiche, se servono, si riportano nel repository (sono in parte `REL-025`).
+2. **Le risposte del PO del 18 novembre** (I-314 … I-320), da fare:
+   - **a. Due liste materiali, tutte e due complete** (I-314). **Prezzata**, per l'analisi CAPEX: il costo prezza
+     **anche le apparecchiature** (pompa di calore, bollitore, volano, circolatore, termostati, unità del clima), dal
+     listino o DA PREZZARE; oggi le tiene fuori (D-235): la regola nuova si scrive come decisione del PO. **Senza
+     prezzi**, per la richiesta di fornitura: le voci fornite da Nove C hanno la nota «fornita da Nove C» (il fornitore
+     non le quota), oppure, se il PO lo chiede, non ci sono.
+   - **b. Il bollitore con la superficie di scambio** (I-315): un bollitore non si sceglie solo dal volume; per la
+     pompa di calore serve il serpentino maggiorato, e la superficie (m²) va nel grafo, nella tabella delle
+     apparecchiature, nella voce della distinta e nel listino; il confronto fra fornitori vale solo a pari superficie
+     (o maggiore). Sulle due offerte di PR.MI.059: Bolly 1 XL WB 200 di Abbattista 2 m², Bolly 1 ST WB 200 di
+     Idrosanitaria 0,8 m² (da confermare sulle schede Cordivari). **La superficie minima per kW della pompa di calore
+     è contenuto MEP**: dalla scheda del costruttore della pompa di calore, o dal PO; non si inventa.
+   - **c. Il rame «CONDY»** (I-316): nel preventivo Idrosanitaria non c'è isolante per il rame, quindi è il rivestito:
+     le righe 50 e 51 del §5 prendono F01b e F03b.
+   - **d. I raccordi agli attacchi delle macchine** (I-317): il raccordo «all'attacco» scrive il pollice dell'attacco
+     della macchina (dal grafo o dal catalogo); se non c'è, è una domanda prima della lista, non un raccordo del pollice
+     del tubo.
+   - **e. Le quantità nette** (I-320): regola fissa, senza la maggiorazione del 15%; i fornitori vendono a confezioni
+     intere comunque. È anche in `REL-025`.
+   - Risposte che non chiedono lavoro: l'imbuto di scarico non si conta (I-318); gli sconti nel repository pubblico
+     vanno bene così (I-319).
+   - Resta da sapere dal PO **in quale conversazione è stata fatta la lista di PR.MI.059**, per riportare nella skill
+     le modifiche di quella copia.
 3. **Le offerte nuove** dei fornitori, quando arrivano: un capitolo ciascuna nel listino, ogni riga col fornitore
    (I-304).
 
