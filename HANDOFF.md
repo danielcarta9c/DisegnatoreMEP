@@ -51,7 +51,7 @@ con ogni criterio e il suo comando, è `docs/collaudi/REL-027/RAPPORTO.md`.
   prescrizione sì: gli scostamenti ⚠ diventano avvisi sul prezzo; il manometro 0–6; il disconnettore) sono dentro la
   stessa PR.
 - **Il listino Tecnomat da finire** (I-304, I-311): 62 codici della distinta senza un prezzo Tecnomat conforme, 30 su PR.MI.059; la lista da riempire è `docs/collaudi/REL-027/tecnomat-da-rilevare.md`. Il rilievo del 2 novembre l'hanno fatto il PO e Claude insieme, con Claude in Chrome nel browser del PO: si rifà così (dalla sessione cloud il sito non si apre).
-- **I numeri**: il prossimo input è **I-321**, la prossima decisione **D-241**.
+- **I numeri**: il prossimo input è **I-323**, la prossima decisione **D-241**.
 
 ## ▶ Da dove riparte la prossima sessione — scritto il 13 novembre 2026, con REL-026
 

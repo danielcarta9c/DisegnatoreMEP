@@ -27,17 +27,21 @@ di PR.MI.059 rifatto col listino completo.
      listino o DA PREZZARE; oggi le tiene fuori (D-235): la regola nuova si scrive come decisione del PO. **Senza
      prezzi**, per la richiesta di fornitura: le voci fornite da Nove C hanno la nota «fornita da Nove C» (il fornitore
      non le quota), oppure, se il PO lo chiede, non ci sono.
-   - **b. Il bollitore con la superficie di scambio** (I-315): un bollitore non si sceglie solo dal volume; per la
-     pompa di calore serve il serpentino maggiorato, e la superficie (m²) va nel grafo, nella tabella delle
-     apparecchiature, nella voce della distinta e nel listino; il confronto fra fornitori vale solo a pari superficie
-     (o maggiore). Sulle due offerte di PR.MI.059: Bolly 1 XL WB 200 di Abbattista 2 m², Bolly 1 ST WB 200 di
+   - **b. Il bollitore con la superficie di scambio** (I-315, I-321): un bollitore non si sceglie solo dal volume; per
+     la pompa di calore serve il serpentino maggiorato, e la superficie (m²) va nel grafo, nella tabella delle
+     apparecchiature, nel listino e **nella voce della lista materiali che va al fornitore** («bollitore 200 l a
+     serpentino maggiorato per pompa di calore, superficie di scambio non minore di … m²»), perché il fornitore non
+     possa quotarne uno col serpentino piccolo; il confronto fra fornitori vale solo a pari superficie (o maggiore).
+     Il PO: «se mi quoti un bollitore con 0.8 mq di serpentino ovvio che costa meno ma la pdc non funziona». Sulle due offerte di PR.MI.059: Bolly 1 XL WB 200 di Abbattista 2 m², Bolly 1 ST WB 200 di
      Idrosanitaria 0,8 m² (da confermare sulle schede Cordivari). **La superficie minima per kW della pompa di calore
      è contenuto MEP**: dalla scheda del costruttore della pompa di calore, o dal PO; non si inventa.
    - **c. Il rame «CONDY»** (I-316): nel preventivo Idrosanitaria non c'è isolante per il rame, quindi è il rivestito:
      le righe 50 e 51 del §5 prendono F01b e F03b.
-   - **d. I raccordi agli attacchi delle macchine** (I-317): il raccordo «all'attacco» scrive il pollice dell'attacco
-     della macchina (dal grafo o dal catalogo); se non c'è, è una domanda prima della lista, non un raccordo del pollice
-     del tubo.
+   - **d. I raccordi agli attacchi delle macchine** (I-317, I-322): il raccordo «all'attacco» scrive il pollice
+     dell'attacco della macchina (dal grafo o dal catalogo); se non c'è, è una domanda prima della lista, non un
+     raccordo del pollice del tubo. Gli attacchi della Shenling ci sono già (I-281: R1" 6–9 kW, R1¼" 12–15 kW) e la
+     skill li usa; mancano quelli delle altre macchine (bollitore, volano) e dei capi su reti esistenti: si registrano
+     come la Shenling, dalle schede delle macchine che Nove C usa di solito.
    - **e. Le quantità nette** (I-320): regola fissa, senza la maggiorazione del 15%; i fornitori vendono a confezioni
      intere comunque. È anche in `REL-025`.
    - Risposte che non chiedono lavoro: l'imbuto di scarico non si conta (I-318); gli sconti nel repository pubblico
