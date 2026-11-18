@@ -16,6 +16,11 @@ servire a piu' voci; l'ordine si fa per articolo.
 - **Le combinazioni** dicono quanto costa ordinare da meno fornitori: per ogni gruppo di fornitori,
   quanti articoli non hanno, quanto costano gli articoli che hanno, e quanto in piu' del minimo
   sugli **stessi** articoli — il confronto e' sempre a parita' di articoli.
+- **Un fornitore solo** (I-306): se il progettista compra tutta la minuteria da uno, quale costa
+  meno sul totale. Il totale di ciascuno e' sullo **stesso paniere**: gli articoli che ha, ai suoi
+  prezzi, piu' quelli che non ha, dal piu' economico degli altri (andrebbero comprati altrove). E
+  accanto, il conto sui soli articoli che **tutti** hanno: dove il listino di un fornitore e'
+  incompleto, e' quello che dice chi costa meno a parita' di articoli.
 
 Il conto non tiene il trasporto, l'ordine minimo e le condizioni di pagamento, e i prezzi hanno la
 data del loro documento: lo dice il file che lo scrive.
@@ -72,6 +77,24 @@ class Combinazione:
     """Euro in piu' del minimo, sugli stessi articoli."""
 
 
+@dataclass(frozen=True)
+class UnFornitore:
+    fornitore: str
+    ha: int
+    """Gli articoli dell'ordine che il fornitore ha."""
+    da_lui: float
+    """Euro di quegli articoli, ai suoi prezzi."""
+    non_ha: int
+    altrove: float
+    """Euro degli articoli che non ha, dal piu' economico degli altri."""
+    in_comune: float
+    """Euro degli articoli che hanno tutti i fornitori, ai suoi prezzi."""
+
+    @property
+    def totale(self) -> float:
+        return self.da_lui + self.altrove
+
+
 @dataclass
 class Ordine:
     righe: list[RigaDellOrdine]
@@ -105,6 +128,33 @@ class Ordine:
             assert riga.scelta is not None
             gruppi.setdefault(riga.scelta.fornitore, []).append(riga)
         return dict(sorted(gruppi.items(), key=lambda g: (-sum(r.totale for r in g[1]), g[0])))
+
+    @property
+    def articoli_in_comune(self) -> list[RigaDellOrdine]:
+        """Gli articoli che tutti i fornitori dell'ordine hanno."""
+        tutti = set(self.fornitori)
+        return [r for r in self.ordinabili if tutti <= {v.fornitore for v in r.offerte}]
+
+    def un_fornitore(self) -> list[UnFornitore]:
+        """Per ogni fornitore, la minuteria comprata da lui (quello che non ha, altrove); il piu'
+        economico sul totale per primo."""
+        in_comune = self.articoli_in_comune
+        risultato = []
+        for fornitore in self.fornitori:
+            solo = frozenset({fornitore})
+            da_lui = altrove = 0.0
+            ha = 0
+            for riga in self.ordinabili:
+                prezzo = riga.prezzo_da(solo)
+                if prezzo is None:
+                    assert riga.scelta is not None
+                    altrove += riga.quantita * riga.scelta.prezzo
+                else:
+                    ha += 1
+                    da_lui += riga.quantita * prezzo
+            comune = sum(r.quantita * (r.prezzo_da(solo) or 0.0) for r in in_comune)
+            risultato.append(UnFornitore(fornitore, ha, da_lui, len(self.ordinabili) - ha, altrove, comune))
+        return sorted(risultato, key=lambda u: (u.totale, u.fornitore))
 
     def combinazioni(self) -> list[Combinazione]:
         tutti = self.fornitori
@@ -197,7 +247,43 @@ def ordine_in_markdown(ordine: Ordine) -> list[str]:
             f"- **Senza un fornitore: {len(senza)} articoli**, {_euro(ordine.totale_di_riferimento)} € a prezzi di "
             "riferimento (online, o le fatture di un installatore): da comprare dove si trovano. Sono in fondo."
         )
+    uno = ordine.un_fornitore()
+    if len(uno) > 1:
+        primo = uno[0]
+        comune = ordine.articoli_in_comune
+        parita = min(uno, key=lambda u: (u.in_comune, u.fornitore)) if comune else None
+        frase = (
+            f"- **Un fornitore solo per tutta la minuteria: il più economico è {primo.fornitore}**, "
+            f"{_euro(primo.totale)} € ({_euro(primo.da_lui)} € da {primo.fornitore}"
+            + (f", {_euro(primo.altrove)} € per i {primo.non_ha} articoli che non ha, da comprare altrove" if primo.non_ha else "")
+            + f"): {_euro(primo.totale - ordine.totale)} € in più che dividere l'ordine."
+        )
+        if parita is not None:
+            frase += (
+                f" A parità di articoli (i {len(comune)} che hanno tutti) il più economico è {parita.fornitore}."
+            )
+        righe.append(frase)
     righe.append("")
+    if len(uno) > 1:
+        comune = ordine.articoli_in_comune
+        righe += [
+            "### Un fornitore solo",
+            "",
+            "Tutta la minuteria da un fornitore: gli articoli che ha ai suoi prezzi, quelli che non ha dal più economico "
+            "degli altri (andrebbero comprati altrove), così i totali sono sullo stesso paniere. L'ultima colonna è il "
+            f"conto sui soli {len(comune)} articoli che hanno tutti: dove il listino di un fornitore è incompleto, è "
+            "quella che dice chi costa meno a parità di articoli.",
+            "",
+            "| Fornitore | Articoli che ha | € da lui | Articoli che non ha | € di quelli, altrove | Totale € | "
+            "In più dell'ordine diviso € | € sugli articoli che hanno tutti |",
+            "|---|--:|--:|--:|--:|--:|--:|--:|",
+        ]
+        for u in uno:
+            righe.append(
+                f"| {u.fornitore} | {u.ha} | {_euro(u.da_lui)} | {u.non_ha} | {_euro(u.altrove)} | {_euro(u.totale)} | "
+                f"{_euro(u.totale - ordine.totale)} | {_euro(u.in_comune) if comune else '—'} |"
+            )
+        righe.append("")
     combinazioni = ordine.combinazioni()
     if len(ordine.fornitori) > 1:
         righe += [
@@ -277,6 +363,13 @@ def ordine_in_json(ordine: Ordine) -> dict[str, Any]:
             for r in ordine.senza_fornitore
         ],
         "totale_di_riferimento_eur": round(ordine.totale_di_riferimento, 2),
+        "un_fornitore": [
+            {"fornitore": u.fornitore, "ha": u.ha, "da_lui_eur": round(u.da_lui, 2), "non_ha": u.non_ha,
+             "altrove_eur": round(u.altrove, 2), "totale_eur": round(u.totale, 2),
+             "in_piu_eur": round(u.totale - ordine.totale, 2), "in_comune_eur": round(u.in_comune, 2)}
+            for u in ordine.un_fornitore()
+        ],
+        "articoli_in_comune": len(ordine.articoli_in_comune),
         "combinazioni": [
             {"fornitori": list(c.fornitori), "scoperti": c.scoperti, "totale_eur": round(c.totale, 2),
              "in_piu_eur": round(c.in_piu, 2)}

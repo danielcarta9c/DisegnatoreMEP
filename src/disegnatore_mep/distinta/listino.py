@@ -24,7 +24,8 @@ della revisione 06) ordina da tutti, tranne che dal riferimento online.
 """
 
 import re
-from dataclasses import dataclass, field
+from collections.abc import Sequence
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 
 
@@ -96,6 +97,23 @@ class Listino:
             return ordinabili[0]
         offerte = self.offerte(codice)
         return offerte[0] if offerte else None
+
+    def con_i_fornitori(self, nomi: Sequence[str]) -> "Listino":
+        """Lo stesso listino, da cui si ordina soltanto dai fornitori `nomi` (`distinta --costo
+        --fornitori`, I-306): il progettista ha scelto per il cantiere un fornitore, o due. Gli altri
+        prezzi restano, come riferimenti. Un nome che il listino non ha ferma."""
+        noti = {v.fornitore for vv in self.righe.values() for v in vv} - {RIFERIMENTO_ONLINE}
+        noti |= set(self.fornitori)
+        ignoti = [n for n in nomi if n not in noti]
+        if ignoti or not nomi:
+            raise ErroreDelListino(
+                f"{self.percorso}: fornitori che il listino non ha: {', '.join(ignoti) or '(nessuno)'}; "
+                f"quelli che ha: {', '.join(sorted(noti))}"
+            )
+        scelti = {
+            nome: replace(self.fornitori.get(nome, Fornitore(nome, True)), si_ordina=nome in nomi) for nome in sorted(noti)
+        }
+        return replace(self, fornitori=scelti)
 
     @property
     def voci(self) -> dict[str, VoceDelListino]:

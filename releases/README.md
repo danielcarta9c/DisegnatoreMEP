@@ -120,5 +120,5 @@ Il comando della skill li riapre da sé.
 - **2.1.1** — 18 novembre 2026 (`REL-027`, I-302 … I-305): **il listino a più fornitori e «Dove comprare»** — il
   listino della minuteria rev. 06 con la tabella dei fornitori e le offerte di Abbattista e Idrosanitaria sulla
   commessa PR.MI.059 (tutte le righe, col fornitore); `distinta --costo` usa per ogni articolo il prezzo più basso fra
-  i fornitori da cui si ordina e scrive l'ordine per fornitore, con quanto costa in più comprare da meno fornitori.
+  i fornitori da cui si ordina e scrive l'ordine per fornitore, il fornitore più economico se se ne sceglie uno solo e quanto costa in più comprare da meno fornitori; `--fornitori` per il fornitore scelto.
   Tavole identiche alla 2.1.0; nel banco cambia la sola impronta delle regole in tre distinte. 156 file.

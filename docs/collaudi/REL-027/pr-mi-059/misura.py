@@ -51,6 +51,10 @@ def main() -> None:
     print(f"voci {len(costo.righe)}, prezzate {len(costo.righe) - len(costo.da_prezzare)}, "
           f"da prezzare {len(costo.da_prezzare)}; totale {costo.totale:.2f} €")
     print(f"ordine: {ordine.totale:.2f} € + senza fornitore {ordine.totale_di_riferimento:.2f} €")
+    print(f"un fornitore solo (articoli in comune: {len(ordine.articoli_in_comune)}):")
+    for u in ordine.un_fornitore():
+        print(f"  {u.fornitore:14} ha {u.ha:2} ({u.da_lui:8.2f} €), non ha {u.non_ha:2} ({u.altrove:7.2f} € altrove): "
+              f"totale {u.totale:8.2f} €; sugli articoli in comune {u.in_comune:8.2f} €")
     for fornitore, righe in ordine.per_fornitore().items():
         print(f"  {fornitore}: {len(righe)} articoli, {sum(r.totale for r in righe):.2f} €")
     for c in ordine.combinazioni():
@@ -81,6 +85,12 @@ def confronto(costo: Costo) -> None:
             i_meno += prezzi["Idrosanitaria"] < prezzi["Abbattista"]
     print(f"articoli in comune Abbattista-Idrosanitaria: {a_meno + i_meno}; meno caro Abbattista {a_meno}, "
           f"Idrosanitaria {i_meno}; alle quantità della lista Abbattista {tot_a:.2f} €, Idrosanitaria {tot_i:.2f} €")
+    dubbi = {"I47", "I44", "I40a", "I61", "I51"}
+    comune = [r for r in ordine.articoli_in_comune if r.codice not in dubbi]
+    print(f"articoli in comune senza i 5 dubbi del §1 ({', '.join(sorted(dubbi))}): {len(comune)}")
+    for fornitore in ordine.fornitori:
+        totale = sum(r.quantita * (r.prezzo_da(frozenset({fornitore})) or 0.0) for r in comune)
+        print(f"  {fornitore:14} {totale:8.2f} €")
     idraulico = [r for r in costo.righe if r.rif.startswith(("P-S", "P-I"))]
     parte = Costo(progetto={}, listino=costo.listino, righe=idraulico)
     o = ordine_della_minuteria(parte)

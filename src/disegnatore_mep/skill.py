@@ -1540,6 +1540,11 @@ def costruisci_il_parser() -> argparse.ArgumentParser:
         "--listino", type=Path, help="con --costo, un altro listino della minuteria (di default quello della skill)"
     )
     distinta.add_argument(
+        "--fornitori",
+        help="con --costo, si ordina soltanto da questi fornitori del listino, separati da virgole "
+        "(es. Idrosanitaria, o Abbattista,Tecnomat): il fornitore scelto per il cantiere (I-306)",
+    )
+    distinta.add_argument(
         "--fornitura",
         help="chi fornisce che cosa in questa offerta, es. apparecchiature=installatore; «confermata» per le "
         "predefinite; senza, le predefinite da confermare",
@@ -1638,7 +1643,8 @@ def _distinta(args: argparse.Namespace, cartelle: Cartelle) -> int:
         report=args.report,
         lista=args.lista,
         cartella_dei_simboli=cartelle.simboli,
-        listino=(args.listino or cartelle.listino) if (args.costo or args.listino) else None,
+        listino=(args.listino or cartelle.listino) if (args.costo or args.listino or args.fornitori) else None,
+        fornitori=[f.strip() for f in args.fornitori.split(",") if f.strip()] if args.fornitori else None,
     )
 
 

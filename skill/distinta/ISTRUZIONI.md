@@ -263,12 +263,19 @@ riferimento (online, o le fatture di un installatore). In fondo a `costo-minuter
 
 - l'**ordine per fornitore**: per ogni articolo il codice e la descrizione del fornitore, la confezione, la quantità
   (la somma sulle voci che lo usano), il prezzo, e i prezzi degli altri fornitori;
+- **«Un fornitore solo»**: se compra tutta la minuteria da uno, quale costa meno sul totale — gli articoli che ha ai
+  suoi prezzi, quelli che non ha dal più economico degli altri, così i totali sono sullo stesso paniere; e accanto il
+  conto sui soli articoli che **tutti** hanno, che dice chi costa meno a parità di articoli quando un listino è
+  incompleto. Se le due righe nominano fornitori diversi, diglielo: vuol dire che il listino di qualcuno è incompleto;
 - **«Con meno ordini»**: per ogni gruppo di fornitori, quanti articoli non hanno e quanto costano in più gli altri,
   sugli stessi articoli. È lì che il progettista decide se tre ordini valgono la differenza;
 - gli articoli **senza un fornitore**, da comprare dove si trovano.
 
 Quando il progettista chiede **dove comprare** o di **fare gli ordini**, lancia `--costo` e riportagli «Dove
-comprare» così com'è: gli ordini, le combinazioni, gli articoli senza fornitore. **Non** spostare tu un articolo da un
+comprare» così com'è: gli ordini, il fornitore più economico se ne sceglie uno solo, le combinazioni, gli articoli
+senza fornitore. Se per il cantiere **sceglie lui** il fornitore (o due), rilancia con `--fornitori Idrosanitaria`
+(o `--fornitori Abbattista,Tecnomat`): l'ordine va tutto a quelli, e quello che non hanno resta fra gli articoli
+senza fornitore, col prezzo più basso degli altri. **Non** spostare tu un articolo da un
 fornitore all'altro e non aggiungere trasporto o minimi d'ordine: il conto non li ha, e lo dici. Le quantità sono il
 consumo: al banco si comprano le confezioni intere (il rotolo, la barra), e la colonna Confezione lo dice.
 

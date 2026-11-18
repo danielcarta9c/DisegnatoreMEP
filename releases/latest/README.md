@@ -1,6 +1,6 @@
 # L'ultima release: 2.1.1
 
-`DisegnatoreMEP-v2.1.1.zip` — sha256 `89de7b4e66051d0e…`, 156 file — è `REL-027` (I-302 … I-305): **il listino a più
+`DisegnatoreMEP-v2.1.1.zip` — sha256 `a332ac688f431a9e…`, 156 file — è `REL-027` (I-302 … I-305): **il listino a più
 fornitori e «Dove comprare»**. Si carica come ogni skill personale, dallo ZIP così com'è.
 
 Rispetto alla 2.1.0:
@@ -10,7 +10,8 @@ Rispetto alla 2.1.0:
   articolo ha il prezzo di ciascun fornitore;
 - **`distinta --costo` dice dove comprare**: il prezzo di ogni articolo è il più basso fra i fornitori da cui si
   ordina, e in fondo al costo c'è l'ordine per fornitore (articolo, codice del fornitore, confezione, quantità,
-  prezzo, gli altri prezzi) con quanto costa in più comprare da meno fornitori;
+  prezzo, gli altri prezzi), il fornitore più economico se si compra tutta la minuteria da uno solo, e quanto costa
+  in più comprare da meno fornitori; con `--fornitori <nome>` l'ordine va soltanto al fornitore scelto per il cantiere;
 - le regole della distinta prezzano voci che prima erano DA PREZZARE (guaine da 9 e 30 mm, isolamento anticondensa,
   collante, braga, clip della condensa, fascette e sostegni del flessibile Ø200, porta-bocchetta 400×200, nipplo
   ridotto 1¼" × 1"): cambia solo il prezzo, non che cosa si conta.

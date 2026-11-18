@@ -166,3 +166,47 @@ def test_il_comando_scrive_dove_comprare(tmp_path: Path, capsys: pytest.CaptureF
     assert dati["ordine"]["totale_eur"] + dati["ordine"]["totale_di_riferimento_eur"] == pytest.approx(
         dati["totale_eur"], abs=0.02
     )
+
+
+def test_un_fornitore_solo_sullo_stesso_paniere(tmp_path: Path) -> None:
+    """I-306: tutta la minuteria da un fornitore. Alfa ha tutto (I01 2,00; I02 3,00; I03 5,00),
+    Beta solo I01 e I02 (1,00; 4,00): il suo totale compra I03 altrove, da Alfa."""
+    listino = leggi_il_listino(_listino(tmp_path, (
+        _riga("I01", "Alfa", "2,00") + _riga("I01", "Beta", "1,00")
+        + _riga("I02", "Alfa", "3,00") + _riga("I02", "Beta", "4,00")
+        + _riga("I03", "Alfa", "5,00")
+    )))
+    costo = _costo(listino, [("V1", 10, [("I01", 1.0)]), ("V2", 2, [("I02", 1.0)]), ("V3", 1, [("I03", 1.0)])])
+    ordine = ordine_della_minuteria(costo)
+    uno = {u.fornitore: u for u in ordine.un_fornitore()}
+    assert uno["Alfa"].totale == pytest.approx(10 * 2 + 2 * 3 + 5) and uno["Alfa"].non_ha == 0
+    assert uno["Beta"].da_lui == pytest.approx(10 * 1 + 2 * 4) and uno["Beta"].non_ha == 1
+    assert uno["Beta"].altrove == pytest.approx(5) and uno["Beta"].totale == pytest.approx(23)
+    assert [u.fornitore for u in ordine.un_fornitore()] == ["Beta", "Alfa"]
+    assert [r.codice for r in ordine.articoli_in_comune] == ["I01", "I02"]
+    assert uno["Alfa"].in_comune == pytest.approx(26) and uno["Beta"].in_comune == pytest.approx(18)
+    md = costo_in_markdown(costo, {})
+    assert "### Un fornitore solo" in md
+    assert "Un fornitore solo per tutta la minuteria: il più economico è Beta" in md
+
+
+def test_con_i_fornitori_si_ordina_soltanto_da_quelli(tmp_path: Path) -> None:
+    listino = leggi_il_listino(_listino(tmp_path, _riga("I01", "Alfa", "2,00") + _riga("I01", "Beta", "1,00")))
+    solo_alfa = listino.con_i_fornitori(["Alfa"])
+    assert solo_alfa.get("I01").fornitore == "Alfa"
+    assert [v.fornitore for v in solo_alfa.offerte("I01")] == ["Beta", "Alfa"], "gli altri prezzi restano"
+    with pytest.raises(ErroreDelListino, match="Delta"):
+        listino.con_i_fornitori(["Delta"])
+
+
+def test_il_comando_con_un_fornitore_scelto(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    grafo = tmp_path / "grafo-completo.json"
+    grafo.write_text(json.dumps(_centrale(), ensure_ascii=False), encoding="utf-8")
+    main(
+        ["distinta", str(grafo), "--out", str(tmp_path / "d"), "--costo", "--fornitura", "confermata",
+         "--fornitori", "Idrosanitaria"],
+        cartelle_del_repository(ROOT),
+    )
+    assert "Si ordina soltanto da: Idrosanitaria." in capsys.readouterr().out
+    dati = json.loads((tmp_path / "d" / "interno" / "costo-minuteria.json").read_text(encoding="utf-8"))
+    assert list(dati["ordine"]["per_fornitore"]) == ["Idrosanitaria"]

@@ -51,7 +51,7 @@ articolo, e le combinazioni confrontano sugli stessi articoli; sulla distinta di
 ordini più gli articoli senza fornitore è il totale del costo; `distinta --costo` scrive «Dove comprare» nel Markdown e
 l'ordine nel JSON (versione 2).
 
-**Criterio 5 — la misura su PR.MI.059**: §3.
+**Criterio 5 — la misura su PR.MI.059**: §3. **Criterio 8 — un fornitore solo e `--fornitori`**: §3bis.
 
 **Criterio 6 — nessuna tavola cambia** e **criterio 7 — suite, ruff, mypy, release**: §6.
 
@@ -99,6 +99,39 @@ circuito idraulico della pompa di calore (P-S, P-I): 42 voci; ordine diviso 1041
   Idrosanitaria 1.327,85 € (righe 6–48 del preventivo). Le offerte comprano confezioni intere (barre, rotoli) e qualche
   pezzo che la lista non chiede (imbuto, serpentina, staffe dei vasi da Abbattista); il conto della skill è il consumo,
   1.041,42 €. Non sono la stessa misura, e non le metto in fila come se lo fossero.
+
+## 3bis. Un fornitore solo (I-306, criterio 8)
+
+Il PO, visto il funzionamento: «in base al cantiere posso magari dividere l'ordine in più fornitori o scegliere un solo
+fornitore per tutta la minuteria e la skill mi dice quale è il fornitore più economico per il totale prezzo». In
+«Dove comprare» c'è ora **«Un fornitore solo»**, e `distinta --costo --fornitori <nomi>` manda l'ordine soltanto ai
+fornitori scelti.
+
+```
+$ python3 docs/collaudi/REL-027/pr-mi-059/misura.py
+…
+un fornitore solo (articoli in comune: 22):
+  Tecnomat       ha 40 ( 1376.24 €), non ha 21 ( 569.21 € altrove): totale  1945.45 €; sugli articoli in comune   855.68 €
+  Idrosanitaria  ha 51 ( 1820.22 €), non ha 10 ( 288.17 € altrove): totale  2108.39 €; sugli articoli in comune  1048.91 €
+  Abbattista     ha 29 ( 1265.75 €), non ha 32 ( 965.43 € altrove): totale  2231.18 €; sugli articoli in comune  1180.56 €
+…
+articoli in comune senza i 5 dubbi del §1 (I40a, I44, I47, I51, I61): 17
+  Abbattista       875.83 €
+  Idrosanitaria    700.25 €
+  Tecnomat         714.15 €
+```
+
+```
+$ python3 -m pytest tests/distinta/test_i_fornitori.py -q
+.............
+13 passed
+```
+
+**Il numero dice Tecnomat; guardando gli articoli non è detto.** Come fornitore unico vince Tecnomat sia sul totale
+(1.945,45 €, ma con 21 articoli da comprare altrove) sia sui 22 articoli che hanno tutti (855,68 €). Ma fra quei 22 ci
+sono i cinque articoli Tecnomat del §4 che non sono la voce (il Filler, il manometro 0–12, la sicurezza, il nastro, la
+deviatrice di un'altra marca): **tolti quelli, sui 17 che restano Idrosanitaria costa meno di Tecnomat**, 700,25 €
+contro 714,15 €. Il verdetto «un fornitore solo» dipende dalla risposta del PO sul §4.
 
 ## 4. Il rilievo più utile: il prezzo più basso non è sempre lo stesso articolo
 
@@ -176,7 +209,7 @@ $ python3 -m pytest tests/test_il_banco.py -q
 
 ```
 $ python3 -m pytest -q   (stato finale)
-3169 passed, 15 skipped, 11 xfailed in 399.15s
+3172 passed, 15 skipped, 11 xfailed in 446.71s
 
 $ ruff check src tests
 All checks passed!
@@ -185,8 +218,8 @@ $ mypy
 Success: no issues found in 132 source files
 
 $ python3 scripts/costruisci-skill.py
-Skill: …/outputs/skill/disegnatore-mep (156 file, 3720 kB)
-ZIP:   …/outputs/skill/disegnatore-mep.zip (1159 kB, sha256 89de7b4e66051d0e)
+Skill: …/outputs/skill/disegnatore-mep (156 file, 3727 kB)
+ZIP:   …/outputs/skill/disegnatore-mep.zip (1161 kB, sha256 a332ac688f431a9e)
 Controlli della guida di Anthropic, di skill-creator e del caricamento su claude.ai (al massimo 200 file): passati.
 
 $ python3 -m pytest tests/test_le_release.py tests/test_package.py tests/skill -q
@@ -194,7 +227,7 @@ $ python3 -m pytest tests/test_le_release.py tests/test_package.py tests/skill -
 ```
 
 Skip e xfail: 15 e 11, gli stessi della prima esecuzione; il diff delle prove non aggiunge nessun `skip` né `xfail`
-(`git diff origin/main -- tests | grep -E "^\+.*(skip|xfail)"`: vuoto). Le prove nuove sono 10
+(`git diff origin/main -- tests | grep -E "^\+.*(skip|xfail)"`: vuoto). Le prove nuove sono 13
 (`tests/distinta/test_i_fornitori.py`); due prove vecchie cambiano perché il dato è cambiato apposta: la revisione del
 listino (05 → 06) e il prezzo del tubo da 32, che ora si legge per fornitore
 (`test_il_corredo_idronico_e_il_costo.py`); il codice del nipplo ridotto (I78a → I83e, `test_le_giunzioni.py`).

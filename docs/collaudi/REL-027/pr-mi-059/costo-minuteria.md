@@ -126,6 +126,17 @@ Ogni articolo dal fornitore che lo vende al prezzo più basso, fra quelli da cui
 
 - **Ogni articolo dal più economico: 1.795,52 €** in 3 ordini — Idrosanitaria 1.089,03 € (30 articoli), Tecnomat 676,52 € (29 articoli), Abbattista 29,97 € (2 articoli).
 - **Senza un fornitore: 7 articoli**, 137,55 € a prezzi di riferimento (online, o le fatture di un installatore): da comprare dove si trovano. Sono in fondo.
+- **Un fornitore solo per tutta la minuteria: il più economico è Tecnomat**, 1.945,45 € (1.376,24 € da Tecnomat, 569,21 € per i 21 articoli che non ha, da comprare altrove): 149,93 € in più che dividere l'ordine. A parità di articoli (i 22 che hanno tutti) il più economico è Tecnomat.
+
+### Un fornitore solo
+
+Tutta la minuteria da un fornitore: gli articoli che ha ai suoi prezzi, quelli che non ha dal più economico degli altri (andrebbero comprati altrove), così i totali sono sullo stesso paniere. L'ultima colonna è il conto sui soli 22 articoli che hanno tutti: dove il listino di un fornitore è incompleto, è quella che dice chi costa meno a parità di articoli.
+
+| Fornitore | Articoli che ha | € da lui | Articoli che non ha | € di quelli, altrove | Totale € | In più dell'ordine diviso € | € sugli articoli che hanno tutti |
+|---|--:|--:|--:|--:|--:|--:|--:|
+| Tecnomat | 40 | 1.376,24 | 21 | 569,21 | 1.945,45 | 149,93 | 855,68 |
+| Idrosanitaria | 51 | 1.820,22 | 10 | 288,17 | 2.108,39 | 312,87 | 1.048,91 |
+| Abbattista | 29 | 1.265,75 | 32 | 965,43 | 2.231,18 | 435,66 | 1.180,56 |
 
 ### Con meno ordini
 

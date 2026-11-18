@@ -79,3 +79,17 @@ prezzi di Bricoman contano come un fornitore; il numero della release.
    `scripts/costruisci-skill.py` e `tests/test_le_release.py` verde; nessun dato personale nel diff; la CI verde.
 
 Ogni criterio con il comando e il suo output in `docs/collaudi/REL-027/RAPPORTO.md`.
+
+## Aggiunto il 18 novembre 2026, su I-306
+
+Visto come funziona il costo, il PO: «in base al cantiere posso magari dividere l'ordine in più fornitori o scegliere
+un solo fornitore per tutta la minuteria e la skill mi dice quale è il fornitore più economico per il totale prezzo».
+Nel perimetro (`ordine.py`, `listino.py`, `comando.py`, `skill.py`, le istruzioni, le prove):
+
+- **«Un fornitore solo»** in «Dove comprare»: per ogni fornitore il totale della minuteria comprata da lui, sullo stesso
+  paniere (quello che non ha, dal più economico degli altri), il più economico per primo; e il conto sugli articoli che
+  hanno tutti, a parità di articoli;
+- **`distinta --costo --fornitori <nomi>`**: si ordina soltanto dai fornitori scelti per il cantiere.
+
+8. «Un fornitore solo» dice il più economico sul totale e a parità di articoli; `--fornitori` manda l'ordine soltanto
+   ai fornitori scelti (prove, e la misura su PR.MI.059).
