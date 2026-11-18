@@ -72,7 +72,13 @@
           "fonte": "revisione su una commessa aria-aria del 04/11/2026 (flessibili senza curve rigide, indicazione del PO)",
           "fonte_in_parole": "regola Nove C per i canali flessibili",
           "perche": "Per ramo: le due estremità del flessibile, ciascuna con una fascetta sull'anima e una sul mantello isolante: 2 × 2 = 4.",
-          "prezzo": []
+          "prezzo": [
+            {
+              "codice": "A07c",
+              "n": 1
+            }
+          ],
+          "prezzo_nota": "listino: fascetta inox 60–270 mm (A07c), da Idrosanitaria"
         },
         {
           "id": "nastro-alluminio",
@@ -109,7 +115,18 @@
           "fonte": "kit AA-01: RAPPORTO.md §7 («sostegni ogni ≤ 1,2 m»); lavoro/dimensionamento.py, 25 sostegni",
           "fonte_in_parole": "regola Nove C per i canali flessibili",
           "perche": "Un flessibile che si imbarca fra due sostegni perde portata e fa condensa nelle anse: un sostegno ogni 1,2 m per tratto, più uno vicino all'attacco.",
-          "prezzo": []
+          "prezzo": [
+            {
+              "per": "sezione",
+              "scegli": [
+                {
+                  "se": "200",
+                  "codice": "A08c"
+                }
+              ]
+            }
+          ],
+          "prezzo_nota": "listino: collare di fissaggio isolato Ø200 (A08c), da Idrosanitaria; le altre sezioni non hanno un prezzo"
         },
         {
           "id": "foratura-per-flessibile",
@@ -486,11 +503,11 @@
           "perche": "Il tubo piccolo in pendenza si sostiene fitto, o la pendenza si perde fra due collari.",
           "prezzo": [
             {
-              "codice": "I63",
-              "n": 1.0
+              "codice": "I87",
+              "n": 1
             }
           ],
-          "prezzo_nota": "listino: collare per tubo 1\" (I63)"
+          "prezzo_nota": "listino: clip per tubo condensa rigido (I87), da Idrosanitaria; prima il collare del multistrato (I63)"
         },
         {
           "id": "isolamento-anticondensa",
@@ -503,7 +520,13 @@
           "fonte": "kit AA-01: lavoro/dimensionamento.py, voce D.8 (5 m, il solo tratto in controsoffitto, scritto a mano sul caso)",
           "fonte_in_parole": "regola Nove C per lo scarico della condensa",
           "perche": "La condensa fredda in controsoffitto gocciola fuori dal tubo. Su tutta la lunghezza, in dubbio per eccesso: la parte in controsoffitto la sa solo la pianta.",
-          "prezzo": []
+          "prezzo": [
+            {
+              "codice": "I84b",
+              "n": 1
+            }
+          ],
+          "prezzo_nota": "listino: guaina elastomerica 9 mm, foro 35 (I84b), da Idrosanitaria"
         },
         {
           "id": "collante-pvc",
@@ -518,7 +541,13 @@
           "fonte": "kit AA-01: lavoro/dimensionamento.py, voce D.9",
           "fonte_in_parole": "regola Nove C per lo scarico della condensa",
           "perche": "Una confezione per lo scarico.",
-          "prezzo": []
+          "prezzo": [
+            {
+              "codice": "I85",
+              "n": 1
+            }
+          ],
+          "prezzo_nota": "listino: colla per tubo condensa rigido (I85), da Idrosanitaria"
         },
         {
           "id": "foratura-condensa",
@@ -949,6 +978,18 @@
                 {
                   "se": "(?i)\\b19\\s*mm\\b.*\\b40\\s*[×x]",
                   "codice": "I59"
+                },
+                {
+                  "se": "(?i)\\b9\\s*mm\\b.*\\b26\\s*[×x]",
+                  "codice": "I84a"
+                },
+                {
+                  "se": "(?i)\\b9\\s*mm\\b.*\\b32\\s*[×x]",
+                  "codice": "I84b"
+                },
+                {
+                  "se": "(?i)\\b(30|32)\\s*mm\\b.*\\b26\\s*[×x]",
+                  "codice": "I84c"
                 }
               ],
               "n": 1.0
@@ -1239,6 +1280,18 @@
                 {
                   "se": "(?i)\\b19\\s*mm\\b.*\\b40\\s*[×x]",
                   "codice": "I59"
+                },
+                {
+                  "se": "(?i)\\b9\\s*mm\\b.*\\b26\\s*[×x]",
+                  "codice": "I84a"
+                },
+                {
+                  "se": "(?i)\\b9\\s*mm\\b.*\\b32\\s*[×x]",
+                  "codice": "I84b"
+                },
+                {
+                  "se": "(?i)\\b(30|32)\\s*mm\\b.*\\b26\\s*[×x]",
+                  "codice": "I84c"
                 }
               ],
               "n": 1.0
@@ -1438,6 +1491,18 @@
                 {
                   "se": "(?i)\\b19\\s*mm\\b.*\\b40\\s*[×x]",
                   "codice": "I59"
+                },
+                {
+                  "se": "(?i)\\b9\\s*mm\\b.*\\b26\\s*[×x]",
+                  "codice": "I84a"
+                },
+                {
+                  "se": "(?i)\\b9\\s*mm\\b.*\\b32\\s*[×x]",
+                  "codice": "I84b"
+                },
+                {
+                  "se": "(?i)\\b(30|32)\\s*mm\\b.*\\b26\\s*[×x]",
+                  "codice": "I84c"
                 }
               ],
               "n": 1.0

@@ -251,7 +251,39 @@ preventivi degli installatori), lancia la distinta con `--costo`: nella sottocar
 - è il **consumo** (quantità × prezzo per unità del listino): le confezioni intere costano di più;
 - una voce senza codice, con un codice che il listino non ha, o con la quantità DA DEFINIRE, è **DA PREZZARE**, fuori
   dal totale, col suo perché: **non la stimi tu**. Riporta il totale, quante voci sono da prezzare e le più pesanti;
-- i prezzi del listino hanno una data e due gradi di affidabilità (il rilievo al banco e il riferimento online): dillo.
+- i prezzi del listino hanno una data e tre gradi di affidabilità (gli ordini e i preventivi dei fornitori, il
+  rilievo al banco, il riferimento online): dillo.
+
+### Dove comprare, e gli ordini
+
+Il listino è **a più fornitori** (dalla revisione 06): la tabella «I fornitori» dice da chi Nove C ordina (oggi
+Abbattista, Tecnomat, Idrosanitaria), e lo stesso articolo può avere il prezzo di ciascuno. **La marca non conta,
+conta la prescrizione** (I-307): il costo usa, articolo per articolo, **il prezzo più basso fra quelli da cui si
+ordina e che rispettano la voce**, e dice di chi è; un articolo che si scosta dalla voce (⚠ nel listino: il fondo
+scala, l'attacco, il disconnettore che manca) e costa meno è un **avviso sul prezzo**, col risparmio, non una scelta; dove nessuno ha l'articolo, il
+riferimento (online, o le fatture di un installatore). In fondo a `costo-minuteria.md`, **«Dove comprare»**:
+
+- l'**ordine per fornitore**: per ogni articolo il codice e la descrizione del fornitore, la confezione, la quantità
+  (la somma sulle voci che lo usano), il prezzo, e i prezzi degli altri fornitori;
+- **«Un fornitore solo»**: se compra tutta la minuteria da uno, quale costa meno sul totale — gli articoli che ha ai
+  suoi prezzi, quelli che non ha dal più economico degli altri, così i totali sono sullo stesso paniere; e accanto il
+  conto sui soli articoli che **tutti** hanno, che dice chi costa meno a parità di articoli quando un listino è
+  incompleto. Se le due righe nominano fornitori diversi, diglielo: vuol dire che il listino di qualcuno è incompleto;
+- **«Con meno ordini»**: per ogni gruppo di fornitori, quanti articoli non hanno e quanto costano in più gli altri,
+  sugli stessi articoli. È lì che il progettista decide se tre ordini valgono la differenza;
+- gli articoli **senza un fornitore**, da comprare dove si trovano;
+- gli **avvisi sul prezzo**: l'articolo scelto, quello che costa meno e in che cosa si scosta. Se lo scostamento va
+  bene lo decide il progettista, non tu.
+
+Quando il progettista chiede **dove comprare** o di **fare gli ordini**, lancia `--costo` e riportagli «Dove
+comprare» così com'è: gli ordini, il fornitore più economico se ne sceglie uno solo, le combinazioni, gli articoli
+senza fornitore. Se per il cantiere **sceglie lui** il fornitore (o due), rilancia con `--fornitori Idrosanitaria`
+(o `--fornitori Abbattista,Tecnomat`): l'ordine va tutto a quelli, e quello che non hanno resta fra gli articoli
+senza fornitore, col prezzo più basso degli altri. **Non** spostare tu un articolo da un
+fornitore all'altro e non aggiungere trasporto o minimi d'ordine: il conto non li ha, e lo dici. **Non** sostituire
+un pezzo con uno che fa un altro mestiere, e **non** aggiungere articoli che la distinta non conta: lo scopo è
+risparmiare sulla minuteria, non comprare l'utile che non serve (I-310). Le quantità sono il
+consumo: al banco si comprano le confezioni intere (il rotolo, la barra), e la colonna Confezione lo dice.
 
 ## Come la consegni
 

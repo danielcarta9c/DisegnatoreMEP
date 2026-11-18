@@ -116,12 +116,17 @@ def domande(
     return 2 if quante else 0
 
 
-def _il_costo(distinta: Distinta, listino: Path, uscita: Path) -> None:
-    """`--costo` (REL-021): la distinta prezzata col listino, in un file a parte."""
+def _il_costo(distinta: Distinta, listino: Path, uscita: Path, fornitori: list[str] | None = None) -> None:
+    """`--costo` (REL-021): la distinta prezzata col listino, in un file a parte; con `fornitori`
+    (I-306) si ordina soltanto da quelli."""
     from .costo import prezza_la_distinta, scrivi_il_costo
     from .listino import leggi_il_listino
 
-    costo = prezza_la_distinta(distinta, leggi_il_listino(listino))
+    letto = leggi_il_listino(listino)
+    if fornitori:
+        letto = letto.con_i_fornitori(fornitori)
+        print(f"Si ordina soltanto da: {', '.join(fornitori)}.")
+    costo = prezza_la_distinta(distinta, letto)
     titoli = {s["lettera"]: s["titolo"] for s in distinta.regole.distinta["sezioni"]}
     scritti = scrivi_il_costo(costo, uscita, titoli)
     print(
@@ -129,6 +134,14 @@ def _il_costo(distinta: Distinta, listino: Path, uscita: Path) -> None:
         f"{len(costo.righe) - len(costo.da_prezzare)} voci prezzate; {len(costo.da_prezzare)} DA PREZZARE, fuori dal "
         "totale."
     )
+    from .ordine import ordine_della_minuteria
+
+    ordine = ordine_della_minuteria(costo)
+    gruppi = ordine.per_fornitore()
+    if gruppi:
+        parti = ", ".join(f"{f} {len(rr)} articoli" for f, rr in gruppi.items())
+        print(f"Dove comprare: {ordine.totale:.2f} € in {len(gruppi)} ordini ({parti}); "
+              f"{len(ordine.senza_fornitore)} articoli senza un fornitore.")
     for percorso in scritti:
         print(f"  {percorso}")
 
@@ -146,6 +159,7 @@ def esegui(
     lista: bool = False,
     cartella_dei_simboli: Path | None = None,
     listino: Path | None = None,
+    fornitori: list[str] | None = None,
 ) -> int:
     tabelle = tabelle_scelte(sul_foglio)
     distinta = _componi(
@@ -179,7 +193,7 @@ def esegui(
         else:
             print("Il controllo dei report: nessun avviso.")
     if listino is not None:
-        _il_costo(distinta, listino, uscita)
+        _il_costo(distinta, listino, uscita, fornitori)
     if tabelle != TABELLE_DEL_FOGLIO:
         print(f"In tabelle-del-foglio.json: {', '.join(tabelle)}.")
     oltre = [e for e in distinta.verifica if e.esito == "oltre"]

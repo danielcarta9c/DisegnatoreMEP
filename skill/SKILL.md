@@ -7,7 +7,7 @@ compatibility: Richiede l'esecuzione del codice (claude.ai, Claude Cowork o Clau
 
 # Disegnatore MEP
 
-**Versione 2.1.0** — 13 novembre 2026.
+**Versione 2.1.1** — 18 novembre 2026.
 
 Il progettista ha già deciso e dimensionato l'impianto, e te lo descrive a parole. Tu ne fai la
 **tavola dello schema funzionale**: la leggi, chiedi quello che manca, la fai approvare, la componi e
@@ -386,7 +386,10 @@ i preventivi, aggiungi `--costo` al comando: esce `costo-minuteria.md`, la disti
 il listino interno di Nove C ([riferimenti/listino-minuteria.md](riferimenti/listino-minuteria.md),
 con la data e la fonte di ogni prezzo). Quel conto lo dai al progettista e resta fuori dal
 documento per l'installatore, che non ha prezzi. Una voce che non è nel listino resta «DA
-PREZZARE»: non la stimi.
+PREZZARE»: non la stimi. Se chiede **dove comprare** o di **fare gli ordini**, è lo stesso comando: in
+fondo al file, «Dove comprare» dà l'ordine per fornitore (ogni articolo dal più economico fra quelli da
+cui Nove C ordina; la marca non conta, la prescrizione sì, e uno scostamento più economico è un avviso), il fornitore più economico se ne sceglie uno solo, e quanto costa in più comprare da
+meno fornitori; se il fornitore lo sceglie lui, `--fornitori <nome>`. Riportaglielo così com'è.
 
 ### Su richiesta — la pianta dei posizionamenti e dei tracciati
 
@@ -450,7 +453,7 @@ così basta un sì. Un messaggio per passo, non uno per domanda.
 | [riferimenti/rivedere.md](riferimenti/rivedere.md) | le istruzioni di Rivedere: dalla tavola ai vincoli | al passo 7 |
 | [riferimenti/regole-del-piano.md](riferimenti/regole-del-piano.md) | le regole del disegno, con le fonti | quando un rilievo cita una regola |
 | [riferimenti/distinta.md](riferimenti/distinta.md) | la distinta materiali per l'installatore | solo se il progettista la chiede |
-| [riferimenti/listino-minuteria.md](riferimenti/listino-minuteria.md) | il listino interno della minuteria, con data e fonte dei prezzi | solo se il progettista chiede un costo |
+| [riferimenti/listino-minuteria.md](riferimenti/listino-minuteria.md) | il listino interno della minuteria, a più fornitori, con data e fonte dei prezzi | solo se il progettista chiede un costo o dove comprare |
 | [riferimenti/pianta.md](riferimenti/pianta.md) | la pianta dei posizionamenti e dei tracciati | solo se il progettista la chiede |
 | [riferimenti/base.md](riferimenti/base.md) | leggere la planimetria e trascriverne la base, per un sub-agente | con la pianta, a chi legge la planimetria |
 | `dati/` | simboli, catalogo, regole degli accessori e della distinta — un file ciascuno —, nomi, cartiglio, lo schema e un esempio della pianta | li legge il comando; una voce e un manifesto si leggono con `catalogo <id>` e `simbolo <id>` |

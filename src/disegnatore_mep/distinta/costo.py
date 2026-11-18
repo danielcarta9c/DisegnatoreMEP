@@ -15,6 +15,10 @@ la quantita' DA DEFINIRE, e' **DA PREZZARE** e lo dice: non si stima.
 Il prezzo e' il **consumo**: quantita' × prezzo per unita' di misura del listino. Le
 confezioni intere (il rotolo da 50 m per 12 m di tubo) costano di piu': il conto lo dice,
 non le arrotonda.
+
+**A piu' fornitori** (REL-027, I-303): il prezzo di un articolo e' il piu' basso fra i fornitori da
+cui Nove C ordina (`Listino.get`), e il conto dice di chi e'; in fondo, «Dove comprare» raccoglie
+gli articoli in un ordine per fornitore (`ordine.py`).
 """
 
 import json
@@ -25,6 +29,7 @@ from typing import Any
 from .calcolo import DA_DEFINIRE, Distinta, Voce
 from .listino import Listino
 from .lunghezze import in_parole
+from .ordine import ordine_della_minuteria, ordine_in_json, ordine_in_markdown
 
 SEZIONI_DI_MATERIALE = ("S", "B", "C", "D", "I", "E", "X")
 """Le sezioni la cui roba si compra; le altre sono macchine, opere o attivita'."""
@@ -101,8 +106,9 @@ def _riga(voce: Voce, listino: Listino) -> RigaDelCosto:
             riga.manca = f"il listino non ha il codice {codice}"
             return riga
         unitario += n * trovata.prezzo
-        parti.append(f"{in_parole(n)} × {codice} {_euro(trovata.prezzo)} €/{trovata.um}" if n != 1 else
-                     f"{codice} {_euro(trovata.prezzo)} €/{trovata.um}")
+        da = f" ({trovata.fornitore}{' ⚠ ' + trovata.scostamento if trovata.scostamento else ''})" if trovata.fornitore else ""
+        parti.append(f"{in_parole(n)} × {codice} {_euro(trovata.prezzo)} €/{trovata.um}{da}" if n != 1 else
+                     f"{codice} {_euro(trovata.prezzo)} €/{trovata.um}{da}")
     riga.unitario = unitario
     if voce.quantita is None:
         riga.manca = f"quantita' {DA_DEFINIRE}"
@@ -129,7 +135,7 @@ def prezza_la_distinta(distinta: Distinta, listino: Listino) -> Costo:
 def costo_in_json(costo: Costo) -> dict[str, Any]:
     return {
         "formato": "costo-minuteria",
-        "versione": 1,
+        "versione": 2,
         "progetto": costo.progetto,
         "listino": {"titolo": costo.listino.titolo, "revisione": costo.listino.revisione,
                     "percorso": costo.listino.percorso.name},
@@ -145,6 +151,7 @@ def costo_in_json(costo: Costo) -> dict[str, Any]:
             }
             for r in costo.righe
         ],
+        "ordine": ordine_in_json(ordine_della_minuteria(costo)),
     }
 
 
@@ -159,7 +166,9 @@ def costo_in_markdown(costo: Costo, titoli: dict[str, str]) -> str:
         "**escluse le apparecchiature** della sezione A (macchine, unità interne ed esterne, accumuli, bollitori, "
         "plenum motorizzati: si comprano a parte) e la manodopera.",
         "",
-        f"- **Listino:** {costo.listino.titolo}, revisione {costo.listino.revisione or '—'}. Prezzi netti, IVA esclusa.",
+        f"- **Listino:** {costo.listino.titolo}, revisione {costo.listino.revisione or '—'}. Prezzi netti, IVA esclusa; "
+        "per ogni articolo il più basso fra i fornitori da cui si ordina (fra parentesi, di chi è), e dove nessuno lo "
+        "ha il prezzo di riferimento. **Dove comprare** è in fondo.",
         f"- **Totale prezzato: {_euro(costo.totale)} €**, su {len(prezzate)} voci di {len(costo.righe)}.",
         f"- **Da prezzare: {len(costo.da_prezzare)} voci**, che il totale non contiene (elencate in fondo, ciascuna "
         "col suo perché).",
@@ -197,6 +206,7 @@ def costo_in_markdown(costo: Costo, titoli: dict[str, str]) -> str:
     else:
         righe.append("Nessuna: tutte le voci di materiale hanno un prezzo.")
     righe.append("")
+    righe += ordine_in_markdown(ordine_della_minuteria(costo))
     return "\n".join(righe)
 
 

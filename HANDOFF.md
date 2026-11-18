@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-11-14 — **la 2.1.0 è su `main`** (`REL-026`, I-300, PR #95): i rilievi d'uso della 2.0.0 su una commessa. Il PO ha visto le tavole e ha approvato la fusione. `REL-024` è sospeso (fasi 2-4), `REL-025` diventa la 2.2. **Il prossimo pacchetto lo sceglie il PO.**
+**Aggiornato:** 2026-11-18 — **la 2.1.1 è su `main`** (`REL-027`, I-302 … I-312, PR #96): il listino a più fornitori, «Dove comprare», il fornitore unico più economico, gli scostamenti come avvisi sul prezzo. Il PO ha approvato la fusione. **Il prossimo è `REL-028`** (`ACTIVE_WORK_PACKAGE.md`): finire il listino Tecnomat, poi le domande aperte.
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -10,6 +10,45 @@
 > È stato riscritto il 20 settembre perché una sessione ha sbagliato lo sviluppo pur avendo
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
+
+## ▶ Da dove riparte la prossima sessione — scritto il 18 novembre 2026, alla fusione di REL-027
+
+**`REL-027` è consegnato** (la 2.1.1, PR #96, approvata dal PO: «metti tutto su main e fondi», I-312). **Il prossimo
+è `REL-028`** (`ACTIVE_WORK_PACKAGE.md`, DA AVVIARE):
+
+1. **finire il listino Tecnomat** — la lista dei 62 codici è `docs/collaudi/REL-027/tecnomat-da-rilevare.md`, prima i
+   30 di PR.MI.059; si rileva col PO, **con Claude in Chrome nel suo browser**, come il 2 novembre (da qui il sito non
+   si apre); poi si rifà la misura di PR.MI.059;
+2. **le domande aperte di `REL-027`** al PO: apparecchiature nel consiglio, rame «CONDY», pollice nei raccordi
+   «all'attacco», imbuto di scarico, sconti Abbattista nel repository pubblico, la lista di PR.MI.059 fatta con una
+   copia della skill che non è `main`.
+
+Sotto, com'era durante `REL-027`.
+
+## Com'era il 18 novembre 2026, durante REL-027
+
+**Il pacchetto è `REL-027`, la 2.1.1** (`ACTIVE_WORK_PACKAGE.md`): il PO ha portato le offerte di Abbattista e
+Idrosanitaria sulla lista materiali di PR.MI.059 e vuole che la skill gli dica **dove comprare** la minuteria (I-302,
+I-303), con un listino che col tempo copra i tre fornitori (I-304). Ramo `claude/peaceful-brown-lnxll7`. Il rapporto,
+con ogni criterio e il suo comando, è `docs/collaudi/REL-027/RAPPORTO.md`.
+
+- **Il listino rev. 06** (`skill/distinta/LISTINO-MINUTERIA.md`): la tabella «I fornitori» (si ordina da Tecnomat,
+  Abbattista, Idrosanitaria; Bricoman e l'online sono riferimenti), la colonna Fornitore, §4 Abbattista e §5
+  Idrosanitaria con **tutte** le righe dei tre documenti. Lo stesso ID ha un prezzo per fornitore.
+- **Il codice**: `listino.py` legge più prezzi per codice (doppio dello stesso fornitore = errore); `costo.py` usa il
+  più basso fra chi si ordina; `ordine.py` scrive «Dove comprare» — l'ordine per fornitore e le combinazioni con meno
+  ordini. Le regole hanno preso solo i codici di voci che non avevano prezzo.
+- **Su PR.MI.059**: Idrosanitaria e Tecnomat quasi tutto, Abbattista due articoli; Idrosanitaria meno cara di Abbattista
+  su 23 articoli comuni su 28, anche su volano, valvola di zona e circolatore.
+- **Aperti col PO** (rapporto §4, §5, §7): le righe Tecnomat del §1 che non sono la voce (il Filler senza
+  disconnettore, il manometro 0–12); le apparecchiature nel consiglio; il rame «CONDY»; il pollice nei raccordi
+  «all'attacco»; l'imbuto di scarico; gli sconti Abbattista nel repository pubblico; la lista di PR.MI.059 fatta con
+  una copia della skill che non è `main` (quantità nette, testi diversi).
+- **I-306** (il fornitore unico più economico, `--fornitori`) e **I-307 … I-310** (la marca non conta, la
+  prescrizione sì: gli scostamenti ⚠ diventano avvisi sul prezzo; il manometro 0–6; il disconnettore) sono dentro la
+  stessa PR.
+- **Il listino Tecnomat da finire** (I-304, I-311): 62 codici della distinta senza un prezzo Tecnomat conforme, 30 su PR.MI.059; la lista da riempire è `docs/collaudi/REL-027/tecnomat-da-rilevare.md`. Il rilievo del 2 novembre l'hanno fatto il PO e Claude insieme, con Claude in Chrome nel browser del PO: si rifà così (dalla sessione cloud il sito non si apre).
+- **I numeri**: il prossimo input è **I-313**, la prossima decisione **D-241**.
 
 ## ▶ Da dove riparte la prossima sessione — scritto il 13 novembre 2026, con REL-026
 

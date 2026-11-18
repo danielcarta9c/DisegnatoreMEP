@@ -78,17 +78,21 @@ def test_ogni_voce_idronica_del_catalogo_ha_il_suo_corredo(regole: RegoleDellaDi
     assert {"heating_water", "cold_water", "domestic_hot_water"} <= set(regole.fluidi)
 
 
+def _prezzi(listino: Any, fornitore: str) -> list[Any]:
+    return [v for vv in listino.righe.values() for v in vv if v.fornitore == fornitore]
+
+
 def test_il_listino_si_legge_con_le_voci_del_banco_e_quelle_online(listino: Any) -> None:
     """Le 150 righe del rilievo al banco (§1), i 4 nippli delle fatture dell'installatore
-    (§2ter, REL-023) e i codici del riepilogo online (§2)."""
-    del_banco = [v for v in listino.voci.values() if v.fonte.startswith("rilievo al banco")]
-    online = [v for v in listino.voci.values() if v.fonte.startswith("riferimento online")]
-    assert len(del_banco) == 154
-    assert listino.get("I83c").prezzo == pytest.approx(2.13) and "Bricoman" in listino.get("I83c").fonte
-    assert len(online) >= 60
-    assert listino.get("I04").prezzo == pytest.approx(3.64) and listino.get("I04").um == "m"
+    (§2ter, REL-023), i codici del riepilogo online (§2) e, dalla revisione 06 (REL-027), le
+    offerte dei fornitori (§4, §5), ciascuna col suo fornitore."""
+    assert len(_prezzi(listino, "Tecnomat")) == 150 and len(_prezzi(listino, "Bricoman")) == 4
+    assert len(_prezzi(listino, "riferimento online")) >= 60
+    tecnomat = {v.codice: v for v in _prezzi(listino, "Tecnomat")}
+    assert tecnomat["I04"].prezzo == pytest.approx(3.64) and tecnomat["I04"].um == "m"
+    assert tecnomat["I04"].fonte.startswith("rilievo al banco, Tecnomat")
     assert listino.get("E02").prezzo == pytest.approx(2.28)
-    assert listino.revisione.startswith("05")
+    assert listino.revisione.startswith("06")
 
 
 def test_un_codice_doppio_ferma_il_listino(tmp_path: Path) -> None:
@@ -180,7 +184,7 @@ def test_il_comando_scrive_il_costo_accanto_alla_distinta(tmp_path: Path, capsys
     md = (tmp_path / "d" / "interno" / "costo-minuteria.md").read_text(encoding="utf-8")
     assert "Uso interno Nove C" in md and "Totale prezzato" in md
     dati = json.loads((tmp_path / "d" / "interno" / "costo-minuteria.json").read_text(encoding="utf-8"))
-    assert dati["totale_eur"] > 0 and dati["listino"]["revisione"].startswith("05")
+    assert dati["totale_eur"] > 0 and dati["listino"]["revisione"].startswith("06")
     documento = next((tmp_path / "d").glob("Distinta_*.md")).read_text(encoding="utf-8")
     assert "€" not in documento, "il documento per l'installatore resta senza prezzi"
     consegnati = consegna(tmp_path / "d", tmp_path / "consegna")

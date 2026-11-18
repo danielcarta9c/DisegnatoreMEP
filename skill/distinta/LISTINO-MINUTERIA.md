@@ -1,8 +1,11 @@
 # Listino della minuteria — riferimento interno Nove C
 
-**Revisione 05, 6 novembre 2026.** Riscrive in Markdown il file del PO
-`listino_minuteria_pdc_rev02.xlsx` (2 novembre 2026). Da questa revisione il listino vive qui:
-si aggiorna in questo file, non più nel foglio Excel.
+**Revisione 06, 18 novembre 2026.** Riscrive in Markdown il file del PO
+`listino_minuteria_pdc_rev02.xlsx` (2 novembre 2026); dalla revisione 05 il listino vive qui:
+si aggiorna in questo file, non più nel foglio Excel. **La revisione 06 lo fa a più fornitori**
+(`REL-027`, I-302 … I-304): ogni riga dice da chi viene il prezzo, una voce può avere il prezzo di
+più fornitori, e la distinta con `--costo` dice **dove comprare**. Ci sono entrati gli ordini
+Abbattista e il preventivo Idrosanitaria della commessa PR.MI.059 (§4 e §5).
 
 ## A che cosa serve, e a che cosa no
 
@@ -12,10 +15,13 @@ si aggiorna in questo file, non più nel foglio Excel.
 - **Non va nel documento della distinta per l'installatore.** Quel documento resta senza
   prezzi, «a corpo, quantità indicative, sopralluogo obbligatorio», come dicono le istruzioni della distinta. Il
   listino non si mostra all'installatore e non si cita in una tavola.
-- **Non è un preventivo.** Sono prezzi al banco o online, soggetti a variazione e a
-  spedizione. Il prezzo di un ingrosso con lo sconto da professionista di solito è più basso.
+- **Non è un preventivo.** I prezzi al banco e online sono soggetti a variazione e a spedizione; quelli degli
+  ingrossi (§4, §5) sono gli sconti di una commessa, e valgono per la data del documento.
+- **Serve anche a fare gli ordini.** Con `--costo` la distinta dice, articolo per articolo, il fornitore che lo
+  vende al prezzo più basso, e raccoglie gli articoli in un ordine per fornitore; dice anche quanto costa in più
+  comprare da meno fornitori.
 - **La skill non lo usa da sé.** Lo legge l'agente, quando il progettista chiede quanto costa
-  la minuteria. Una voce senza prezzo resta **DA PREZZARE**: non si stima.
+  la minuteria o dove comprarla. Una voce senza prezzo resta **DA PREZZARE**: non si stima.
 
 ## Come si legge
 
@@ -25,8 +31,25 @@ si aggiorna in questo file, non più nel foglio Excel.
   o al pezzo (cad).
 - **ID** è il codice del piano dei materiali: I idraulica, F frigorifero, A aeraulica,
   E elettrico. Una lettera dopo il numero (I36a, I36b) distingue le misure della stessa voce.
-- **Due gradi di affidabilità.** Le righe Tecnomat (§1) le ha rilevate il PO sul sito del
-  negozio. Le righe online (§2) vengono dal motore di ricerca: le pagine dei negozi non si
+- **Fornitore** è chi vende l'articolo a quel prezzo; la tabella «I fornitori» qui sotto dice da quali Nove C
+  ordina. **Lo stesso ID può avere più righe, una per fornitore**: è la stessa voce della stessa misura.
+- **La marca non conta, conta la prescrizione** (I-307): minuteria, volani, accessori. Il gomito a pressare da 32 è APE
+  da Tecnomat, Tiemme da Abbattista, RM da Idrosanitaria, ed è la stessa voce. Quello che conta è che l'articolo
+  rispetti quello che la voce prescrive: la misura, l'attacco, la pressione, il fondo scala, gli organi che la voce
+  nomina (il disconnettore del gruppo di riempimento).
+- **⚠ in testa alla nota è uno scostamento** dalla prescrizione: il fondo scala 0–12 al posto di 0–6, l'attacco 3/8"
+  al posto di ½", il disconnettore che non c'è. Una riga così **non si sceglie da sé**: il conto prende il prezzo più
+  basso fra quelle che rispettano la voce, e se quella con ⚠ costa meno lo dice con un avviso sul prezzo, perché il
+  progettista decida. Se nessun fornitore ha un articolo che rispetta la voce, il conto prende quello con ⚠ e lo
+  avvisa.
+- **Mai un pezzo che fa un altro mestiere** sotto l'ID di una voce: il gruppo di sicurezza sull'acqua fredda del
+  bollitore non diventa una valvola di sicurezza qualsiasi. Un articolo che fa un'altra cosa prende un altro ID, o
+  «—».
+- **ID «—»**: la riga è documentata, ma nessuna regola della distinta la usa ancora (un articolo che la lista non
+  chiede, una misura che la regola non distingue). Il conto non la legge.
+- **Tre gradi di affidabilità.** Gli ordini e i preventivi dei fornitori (§4, §5) e le fatture (§2ter) sono
+  prezzi veri, alla data del documento. Le righe Tecnomat (§1) le hanno rilevate il PO e Claude insieme
+  sul sito del negozio, con Claude in Chrome nel browser del PO (I-311). Le righe online (§2) vengono dal motore di ricerca: le pagine dei negozi non si
   aprivano dalla sessione, quindi **il prezzo non è stato letto sulla pagina del prodotto**.
   Valgono come ordine di grandezza, e prima di usarle per una trattativa si apre il link.
 
@@ -36,6 +59,25 @@ Si cambia la riga, e si scrive nel titolo del capitolo la data del nuovo rilievo
 nuova prende il primo ID libero della sua famiglia. Un prezzo senza fonte (negozio, codice o
 link, data) non entra. Quando una voce del §3 trova un prezzo, si sposta nel §1 o nel §2.
 
+**Un'offerta o un ordine nuovo di un fornitore** prende un capitolo suo, con il numero e la data del documento:
+**ogni riga** del documento, con l'ID della voce se l'articolo è quella voce di quella misura, «—» se no. Lo
+stesso ID **una volta sola per fornitore**: se un fornitore manda un prezzo nuovo per un articolo che ha già, si
+cambia la sua riga (o si toglie quella vecchia) — due prezzi dello stesso fornitore per lo stesso ID fermano la
+lettura. Un fornitore nuovo si aggiunge alla tabella qui sotto.
+
+## I fornitori
+
+| Fornitore | Si ordina | Come si paga | Da dove vengono i prezzi | Capitolo |
+|---|---|---|---|---|
+| Tecnomat | sì | al banco | il rilievo sul sito con Claude in Chrome, nel browser del PO, negozi di Segrate e Pero (MI), 2 novembre 2026 | §1 |
+| Abbattista | sì | RB 30/60 gg fine mese | due ordini della commessa PR.MI.059, 10 e 13 novembre 2026 | §4 |
+| Idrosanitaria | sì | alla consegna | il preventivo della commessa PR.MI.059, 9 novembre 2026 (valido fino al 24 novembre) | §5 |
+| Bricoman | no | — | le fatture all'installatore della commessa PR.BG.017, fine ottobre 2026 | §2ter |
+
+«Si ordina: no» vuol dire che il prezzo è un riferimento: entra nel conto solo dove nessun fornitore da cui si
+ordina ha quell'articolo, come i prezzi online (§2, §2bis). Il PO ha detto che oggi Nove C compra fra Abbattista,
+Tecnomat e Idrosanitaria (I-304); se si comincia a ordinare da Bricoman, si scrive «sì».
+
 ## 1. Il rilievo Tecnomat — 2 novembre 2026
 
 Negozi Tecnomat di Segrate (MI) e Pero (MI). Il prezzo netto è il prezzo «senza IVA»
@@ -43,288 +85,288 @@ esposto dal sito; prezzi al banco. Le note dicono dove una misura non c'era.
 
 ### Idraulica - tubo multistrato
 
-| ID | Voce | Articolo | Codice | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
-|---|---|---|---|---|---|--:|--:|---|---|
-| I01 | Tubo multistrato PEX-AL-PEX nudo, rotolo | MULTISTRATO APE Ø 16x2 mm NUDO PEX-B ROTOLO 100 m | 10041924 | Segrate (MI) | 100 m | 69,10 | 0,69 | m | alt: 25004262 rotolo 50 m netto 39,79 |
-| I02 | Tubo multistrato PEX-AL-PEX nudo, rotolo | MULTISTRATO APE Ø 20x2 mm NUDO PEX-B ROTOLO 100 m | 10041925 | Segrate (MI) | 100 m | 106,50 | 1,06 | m | alt: 25004263 rotolo 50 m netto 63,30 |
-| I03 | Tubo multistrato PEX-AL-PEX nudo, rotolo o barra | MULTISTRATO APE Ø 26x3 mm NUDO PEX-B ROTOLO 50 m | 10041926 | Segrate (MI) | 50 m | 113,53 | 2,27 | m | alt: 12086038 verga 2,5 m netto 7,87 |
-| I04 | Tubo multistrato PEX-AL-PEX nudo, barra | TUBO MULTISTRATO SHARKBITE PERT/AL/PERT Ø 32 x 3 mm NUDO VERGA DA 3 m | 25115665 | Segrate (MI) | 3 m | 10,92 | 3,64 | m | alt: 12086039 APE verga 2,5 m netto 11,20 |
-| I05 | Tubo multistrato PEX-AL-PEX nudo, barra | TUBO MULTISTRATO APE PEX-B Ø 40 x 3,5 mm NUDO VERGA DA 2,5 m | 25019689 | Segrate (MI) | 2.5 m | 13,15 | 5,26 | m |  |
-| I06 | Tubo multistrato PEX-AL-PEX nudo, barra | TUBO MULTISTRATO APE PEX-B Ø 50 x 3,5 mm NUDO VERGA DA 2,5 m | 25019716 | Segrate (MI) | 2.5 m | 20,07 | 8,03 | m | 63x3,5: 25019715 verga 2,5 m lordo 40,78 |
-| I07 | Tubo multistrato preisolato | TUBO MULTISTRATO RIVESTITO APE Ø 16x2 mm PEX-b/Al/PEX-b ROTOLO 100 m SPESSORE GUAINA 6 mm | 25105360 | Segrate (MI) | 100 m | 69,26 | 0,69 | m | prezzo stock; alt 10067680 rotolo 50 m guaina 6 netto 39,18 |
-| I08 | Tubo multistrato preisolato | TUBO MULTISTRATO RIVESTITO APE Ø 20x2 mm PEX-b/Al/PEX-b ROTOLO 50 m SPESSORE GUAINA 9 mm | 10041922 | Segrate (MI) | 50 m | 72,46 | 1,45 | m | alt: 10067681 SYSTEM guaina 6 mm 50 m netto 56,15 |
-| I09 | Tubo multistrato preisolato | TUBO MULTISTRATO RIVESTITO APE Ø 26x3 mm PEX-b/Al/PEX-b ROTOLO 50 m SPESSORE GUAINA 9 mm | 10041923 | Segrate (MI) | 50 m | 130,90 | 2,62 | m | alt: 25004261 rotolo 25 m netto 86,39 |
-| I10 | Tubo multistrato preisolato | TUBO MULTISTRATO RIVESTITO APE Ø 32x3 mm PEX-b/Al/PEX-b ROTOLO 25 m SPESSORE GUAINA 9 mm | 10071536 | Segrate (MI) | 25 m | 98,69 | 3,95 | m |  |
+| ID | Voce | Articolo | Codice | Fornitore | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
+|---|---|---|---|---|---|---|--:|--:|---|---|
+| I01 | Tubo multistrato PEX-AL-PEX nudo, rotolo | MULTISTRATO APE Ø 16x2 mm NUDO PEX-B ROTOLO 100 m | 10041924 | Tecnomat | Segrate (MI) | 100 m | 69,10 | 0,69 | m | alt: 25004262 rotolo 50 m netto 39,79 |
+| I02 | Tubo multistrato PEX-AL-PEX nudo, rotolo | MULTISTRATO APE Ø 20x2 mm NUDO PEX-B ROTOLO 100 m | 10041925 | Tecnomat | Segrate (MI) | 100 m | 106,50 | 1,06 | m | alt: 25004263 rotolo 50 m netto 63,30 |
+| I03 | Tubo multistrato PEX-AL-PEX nudo, rotolo o barra | MULTISTRATO APE Ø 26x3 mm NUDO PEX-B ROTOLO 50 m | 10041926 | Tecnomat | Segrate (MI) | 50 m | 113,53 | 2,27 | m | alt: 12086038 verga 2,5 m netto 7,87 |
+| I04 | Tubo multistrato PEX-AL-PEX nudo, barra | TUBO MULTISTRATO SHARKBITE PERT/AL/PERT Ø 32 x 3 mm NUDO VERGA DA 3 m | 25115665 | Tecnomat | Segrate (MI) | 3 m | 10,92 | 3,64 | m | alt: 12086039 APE verga 2,5 m netto 11,20 |
+| I05 | Tubo multistrato PEX-AL-PEX nudo, barra | TUBO MULTISTRATO APE PEX-B Ø 40 x 3,5 mm NUDO VERGA DA 2,5 m | 25019689 | Tecnomat | Segrate (MI) | 2.5 m | 13,15 | 5,26 | m |  |
+| I06 | Tubo multistrato PEX-AL-PEX nudo, barra | TUBO MULTISTRATO APE PEX-B Ø 50 x 3,5 mm NUDO VERGA DA 2,5 m | 25019716 | Tecnomat | Segrate (MI) | 2.5 m | 20,07 | 8,03 | m | 63x3,5: 25019715 verga 2,5 m lordo 40,78 |
+| I07 | Tubo multistrato preisolato | TUBO MULTISTRATO RIVESTITO APE Ø 16x2 mm PEX-b/Al/PEX-b ROTOLO 100 m SPESSORE GUAINA 6 mm | 25105360 | Tecnomat | Segrate (MI) | 100 m | 69,26 | 0,69 | m | prezzo stock; alt 10067680 rotolo 50 m guaina 6 netto 39,18 |
+| I08 | Tubo multistrato preisolato | TUBO MULTISTRATO RIVESTITO APE Ø 20x2 mm PEX-b/Al/PEX-b ROTOLO 50 m SPESSORE GUAINA 9 mm | 10041922 | Tecnomat | Segrate (MI) | 50 m | 72,46 | 1,45 | m | alt: 10067681 SYSTEM guaina 6 mm 50 m netto 56,15 |
+| I09 | Tubo multistrato preisolato | TUBO MULTISTRATO RIVESTITO APE Ø 26x3 mm PEX-b/Al/PEX-b ROTOLO 50 m SPESSORE GUAINA 9 mm | 10041923 | Tecnomat | Segrate (MI) | 50 m | 130,90 | 2,62 | m | alt: 25004261 rotolo 25 m netto 86,39 |
+| I10 | Tubo multistrato preisolato | TUBO MULTISTRATO RIVESTITO APE Ø 32x3 mm PEX-b/Al/PEX-b ROTOLO 25 m SPESSORE GUAINA 9 mm | 10071536 | Tecnomat | Segrate (MI) | 25 m | 98,69 | 3,95 | m |  |
 
 ### Idraulica - raccordi multistrato
 
-| ID | Voce | Articolo | Codice | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
-|---|---|---|---|---|---|--:|--:|---|---|
-| I11 | Gomito 90 a pressare | GOMITO PRESSFIT APE APL Ø20 mm PRESSATURA TH-H-U TUBO MULTISTRATO | 25000753 | Segrate (MI) | 1 pz | 3,40 | 3,40 | cad |  |
-| I12 | Gomito 90 a pressare | GOMITO PRESSFIT APE APL Ø26 mm PRESSATURA TH-H TUBO MULTISTRATO | 25000739 | Segrate (MI) | 1 pz | 4,86 | 4,86 | cad |  |
-| I13 | Gomito 90 a pressare | GOMITO PRESSFIT APE APL Ø 32 mm PRESSATURA TH-H TUBO MULTISTRATO | 25000723 | Segrate (MI) | 1 pz | 7,45 | 7,45 | cad |  |
-| I14 | Gomito 90 a pressare | GOMITO 90° PRESSFIT APE APL Ø 40 mm PROFILO PRESSATURA TH-H TUBO MULTISTRATO SPESS.3.5 | 25019740 | Segrate (MI) | 1 pz | 11,65 | 11,65 | cad |  |
-| I15 | Gomito 90 a pressare | GOMITO 90° PRESSFIT APE APL Ø 50 mm PROFILO PRESSATURA TH-H TUBO MULTISTRATO SPESS.4 | 25019717 | Segrate (MI) | 1 pz | 21,08 | 21,08 | cad |  |
-| I16 | Tee a pressare | TEE PRESSFIT APE APL Ø20 mm PRESSATURA TH-H-U TUBO MULTISTRATO | 25000730 | Segrate (MI) | 1 pz | 4,54 | 4,54 | cad |  |
-| I17 | Tee a pressare | TEE PRESSFIT APE APL Ø26 mm PRESSATURA TH-H TUBO MULTISTRATO | 25000721 | Segrate (MI) | 1 pz | 6,89 | 6,89 | cad |  |
-| I18 | Tee a pressare | TEE PRESSFIT APE APL Ø 32x32x32 mm PRESSATURA TH-H TUBO MULTISTRATO | 25000725 | Segrate (MI) | 1 pz | 11,02 | 11,02 | cad |  |
-| I19 | Tee a pressare | TEE PRESSFIT APE APL F 1 x Ø 40 mm PROFILO PRESSATURA TH-H TUBO MULTISTRATO SPESS.3.5 | 25019739 | Segrate (MI) | 1 pz | 17,65 | 17,65 | cad | tee 40x40x40 non trovato: voce con derivazione F 1" |
-| I20 | Tee a pressare | TEE PRESSFIT APE APL Ø 50X50X50 mm PROFILO PRESSATURA TH-H TUBO MULTISTRATO SPESS.4 | 25019752 | Segrate (MI) | 1 pz | 26,22 | 26,22 | cad |  |
-| I21 | Raccordo diritto a pressare filettato maschio | RACCORDO PRESS FIT GIACOMINI MULTISTRATO DRITTO M 3/4'' x Ø 20 mm PROFILO PRESSATURA TH-H-U | 12092751 | Segrate (MI) | 1 pz | 3,26 | 3,26 | cad | APE equivalente solo versione GAS |
-| I22 | Raccordo diritto a pressare filettato maschio | RACCORDO DRITTO PRESSFIT APE M 3/4'' x Ø 26 mm PROFILO PRESSATURA TH-H PER TUBO MULTISTRATO | 10042037 | Segrate (MI) | 1 pz | 4,01 | 4,01 | cad | attacco 3/4" (non 1"); alt F 1" x 26: 12086283 netto 4,70 |
-| I23 | Raccordo diritto a pressare filettato maschio | RACCORDO PRESS FIT GIACOMINI MULTISTRATO DRITTO M 1'' x Ø 32 mm PROFILO PRESSATURA TH-H-U | 12092754 | Segrate (MI) | 1 pz | 6,43 | 6,43 | cad | attacco 1" (non 1"1/4) |
-| I24 | Raccordo diritto a pressare filettato maschio | RACCORDO DRITTO PRESSFIT APE APL M 1"1/4 x Ø 40 mm PROFILO T H TUBO MULTISTRATO SPESS.3 | 25019707 | Segrate (MI) | 1 pz | 10,64 | 10,64 | cad |  |
-| I25 | Raccordo diritto a pressare filettato maschio | RACCORDO DRITTO PRESSFIT APE APL F 1"1/2 x Ø 50 mm PROFILO T H TUBO MULTISTRATO SPESS.4 | 25019734 | Segrate (MI) | 1 pz | 13,65 | 13,65 | cad | versione femmina; maschio non trovato |
-| I26a | Manicotto a pressare | MANICOTTO DRITTO A STRINGERE APE Ø 20x20 mm PER TUBO MULTISTRATO | 10041948 | Segrate (MI) | 1 pz | 4,16 | 4,16 | cad | a stringere |
-| I26b | Manicotto a pressare | MANICOTTO DRITTO A STRINGERE APE Ø 26x26 mm PER TUBO MULTISTRATO | 10041949 | Segrate (MI) | 1 pz | 7,48 | 7,48 | cad | a stringere |
-| I26c | Manicotto a pressare | MANICOTTO PRESSFIT APE APL Ø 32x32 mm PRESSATURA TH-H TUBO MULTISTRATO | 25000719 | Segrate (MI) | 1 pz | 5,52 | 5,52 | cad |  |
-| I26d | Manicotto a pressare | MANICOTTO PRESSFIT APE APL Ø 40 x 40 mm PROFILO PRESSATURA TH-H TUBO MULTISTRATO SPESS.3.5 | 25019709 | Segrate (MI) | 1 pz | 8,36 | 8,36 | cad |  |
-| I26e | Manicotto a pressare | MANICOTTO PRESSFIT APE APL Ø 50 x 50 mm PROFILO PRESSATURA TH-H TUBO MULTISTRATO SPESS.4 | 25019736 | Segrate (MI) | 1 pz | 9,48 | 9,48 | cad |  |
-| I27a | Riduzione a pressare | MANICOTTO RIDOTTO PRESSFIT APE APL Ø20x16 mm PRESSATURA TH-H-U TUBO MULTISTRATO | 25000765 | Segrate (MI) | 1 pz | 3,31 | 3,31 | cad |  |
-| I27b | Riduzione a pressare | MANICOTTO PRESSFIT APE APL Ø 32x26 mm PRESSATURA TH-H TUBO MULTISTRATO | 25000726 | Segrate (MI) | 1 pz | 5,55 | 5,55 | cad |  |
-| I27c | Riduzione a pressare | MANICOTTO RIDOTTO PRESSFIT APE Ø 40 x 32 mm PROFILO PRESSATURA TH-H MULTISTRATO | 25019723 | Segrate (MI) | 1 pz | 9,60 | 9,60 | cad |  |
-| I27d | Riduzione a pressare | MANICOTTO RIDOTTO PRESSFIT APE Ø 50 x 40 mm PROFILO PRESSATURA TH-H MULTISTRATO | 25019750 | Segrate (MI) | 1 pz | 15,59 | 15,59 | cad |  |
+| ID | Voce | Articolo | Codice | Fornitore | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
+|---|---|---|---|---|---|---|--:|--:|---|---|
+| I11 | Gomito 90 a pressare | GOMITO PRESSFIT APE APL Ø20 mm PRESSATURA TH-H-U TUBO MULTISTRATO | 25000753 | Tecnomat | Segrate (MI) | 1 pz | 3,40 | 3,40 | cad |  |
+| I12 | Gomito 90 a pressare | GOMITO PRESSFIT APE APL Ø26 mm PRESSATURA TH-H TUBO MULTISTRATO | 25000739 | Tecnomat | Segrate (MI) | 1 pz | 4,86 | 4,86 | cad |  |
+| I13 | Gomito 90 a pressare | GOMITO PRESSFIT APE APL Ø 32 mm PRESSATURA TH-H TUBO MULTISTRATO | 25000723 | Tecnomat | Segrate (MI) | 1 pz | 7,45 | 7,45 | cad |  |
+| I14 | Gomito 90 a pressare | GOMITO 90° PRESSFIT APE APL Ø 40 mm PROFILO PRESSATURA TH-H TUBO MULTISTRATO SPESS.3.5 | 25019740 | Tecnomat | Segrate (MI) | 1 pz | 11,65 | 11,65 | cad |  |
+| I15 | Gomito 90 a pressare | GOMITO 90° PRESSFIT APE APL Ø 50 mm PROFILO PRESSATURA TH-H TUBO MULTISTRATO SPESS.4 | 25019717 | Tecnomat | Segrate (MI) | 1 pz | 21,08 | 21,08 | cad |  |
+| I16 | Tee a pressare | TEE PRESSFIT APE APL Ø20 mm PRESSATURA TH-H-U TUBO MULTISTRATO | 25000730 | Tecnomat | Segrate (MI) | 1 pz | 4,54 | 4,54 | cad |  |
+| I17 | Tee a pressare | TEE PRESSFIT APE APL Ø26 mm PRESSATURA TH-H TUBO MULTISTRATO | 25000721 | Tecnomat | Segrate (MI) | 1 pz | 6,89 | 6,89 | cad |  |
+| I18 | Tee a pressare | TEE PRESSFIT APE APL Ø 32x32x32 mm PRESSATURA TH-H TUBO MULTISTRATO | 25000725 | Tecnomat | Segrate (MI) | 1 pz | 11,02 | 11,02 | cad |  |
+| I19 | Tee a pressare | TEE PRESSFIT APE APL F 1 x Ø 40 mm PROFILO PRESSATURA TH-H TUBO MULTISTRATO SPESS.3.5 | 25019739 | Tecnomat | Segrate (MI) | 1 pz | 17,65 | 17,65 | cad | tee 40x40x40 non trovato: voce con derivazione F 1" |
+| I20 | Tee a pressare | TEE PRESSFIT APE APL Ø 50X50X50 mm PROFILO PRESSATURA TH-H TUBO MULTISTRATO SPESS.4 | 25019752 | Tecnomat | Segrate (MI) | 1 pz | 26,22 | 26,22 | cad |  |
+| I21 | Raccordo diritto a pressare filettato maschio | RACCORDO PRESS FIT GIACOMINI MULTISTRATO DRITTO M 3/4'' x Ø 20 mm PROFILO PRESSATURA TH-H-U | 12092751 | Tecnomat | Segrate (MI) | 1 pz | 3,26 | 3,26 | cad | APE equivalente solo versione GAS |
+| I22 | Raccordo diritto a pressare filettato maschio | RACCORDO DRITTO PRESSFIT APE M 3/4'' x Ø 26 mm PROFILO PRESSATURA TH-H PER TUBO MULTISTRATO | 10042037 | Tecnomat | Segrate (MI) | 1 pz | 4,01 | 4,01 | cad | attacco 3/4" (non 1"); alt F 1" x 26: 12086283 netto 4,70 |
+| I23 | Raccordo diritto a pressare filettato maschio | RACCORDO PRESS FIT GIACOMINI MULTISTRATO DRITTO M 1'' x Ø 32 mm PROFILO PRESSATURA TH-H-U | 12092754 | Tecnomat | Segrate (MI) | 1 pz | 6,43 | 6,43 | cad | attacco 1" (non 1"1/4) |
+| I24 | Raccordo diritto a pressare filettato maschio | RACCORDO DRITTO PRESSFIT APE APL M 1"1/4 x Ø 40 mm PROFILO T H TUBO MULTISTRATO SPESS.3 | 25019707 | Tecnomat | Segrate (MI) | 1 pz | 10,64 | 10,64 | cad |  |
+| I25 | Raccordo diritto a pressare filettato maschio | RACCORDO DRITTO PRESSFIT APE APL F 1"1/2 x Ø 50 mm PROFILO T H TUBO MULTISTRATO SPESS.4 | 25019734 | Tecnomat | Segrate (MI) | 1 pz | 13,65 | 13,65 | cad | versione femmina; maschio non trovato |
+| I26a | Manicotto a pressare | MANICOTTO DRITTO A STRINGERE APE Ø 20x20 mm PER TUBO MULTISTRATO | 10041948 | Tecnomat | Segrate (MI) | 1 pz | 4,16 | 4,16 | cad | a stringere |
+| I26b | Manicotto a pressare | MANICOTTO DRITTO A STRINGERE APE Ø 26x26 mm PER TUBO MULTISTRATO | 10041949 | Tecnomat | Segrate (MI) | 1 pz | 7,48 | 7,48 | cad | a stringere |
+| I26c | Manicotto a pressare | MANICOTTO PRESSFIT APE APL Ø 32x32 mm PRESSATURA TH-H TUBO MULTISTRATO | 25000719 | Tecnomat | Segrate (MI) | 1 pz | 5,52 | 5,52 | cad |  |
+| I26d | Manicotto a pressare | MANICOTTO PRESSFIT APE APL Ø 40 x 40 mm PROFILO PRESSATURA TH-H TUBO MULTISTRATO SPESS.3.5 | 25019709 | Tecnomat | Segrate (MI) | 1 pz | 8,36 | 8,36 | cad |  |
+| I26e | Manicotto a pressare | MANICOTTO PRESSFIT APE APL Ø 50 x 50 mm PROFILO PRESSATURA TH-H TUBO MULTISTRATO SPESS.4 | 25019736 | Tecnomat | Segrate (MI) | 1 pz | 9,48 | 9,48 | cad |  |
+| I27a | Riduzione a pressare | MANICOTTO RIDOTTO PRESSFIT APE APL Ø20x16 mm PRESSATURA TH-H-U TUBO MULTISTRATO | 25000765 | Tecnomat | Segrate (MI) | 1 pz | 3,31 | 3,31 | cad |  |
+| I27b | Riduzione a pressare | MANICOTTO PRESSFIT APE APL Ø 32x26 mm PRESSATURA TH-H TUBO MULTISTRATO | 25000726 | Tecnomat | Segrate (MI) | 1 pz | 5,55 | 5,55 | cad |  |
+| I27c | Riduzione a pressare | MANICOTTO RIDOTTO PRESSFIT APE Ø 40 x 32 mm PROFILO PRESSATURA TH-H MULTISTRATO | 25019723 | Tecnomat | Segrate (MI) | 1 pz | 9,60 | 9,60 | cad |  |
+| I27d | Riduzione a pressare | MANICOTTO RIDOTTO PRESSFIT APE Ø 50 x 40 mm PROFILO PRESSATURA TH-H MULTISTRATO | 25019750 | Tecnomat | Segrate (MI) | 1 pz | 15,59 | 15,59 | cad |  |
 
 ### Idraulica - tubo acciaio
 
-| ID | Voce | Articolo | Codice | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
-|---|---|---|---|---|---|--:|--:|---|---|
-| I28 | Tubo acciaio zincato filettabile, barra | TUBO ACCIAIO ZINCATO 1'' 3 m SENZA SALDATURA 1 FILETTO | 10054077 | Segrate (MI) | 3 m | 22,66 | 7,55 | m | solo 1/2", 3/4" (16,84) e 1"; 1"1/4-2" da verificare |
+| ID | Voce | Articolo | Codice | Fornitore | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
+|---|---|---|---|---|---|---|--:|--:|---|---|
+| I28 | Tubo acciaio zincato filettabile, barra | TUBO ACCIAIO ZINCATO 1'' 3 m SENZA SALDATURA 1 FILETTO | 10054077 | Tecnomat | Segrate (MI) | 3 m | 22,66 | 7,55 | m | solo 1/2", 3/4" (16,84) e 1"; 1"1/4-2" da verificare |
 
 ### Idraulica - raccorderia filettata
 
-| ID | Voce | Articolo | Codice | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
-|---|---|---|---|---|---|--:|--:|---|---|
-| I29a | Nipplo / gomito / tee / riduzione in ghisa malleabile zincata | RACCORDO GHISA 90 GOMITO FF 1''1/4 | 10035683 | Segrate (MI) | 1 pz | 2,59 | 2,59 | cad | altre misure: vedi ricerca ghisa |
-| I29b | Nipplo / gomito / tee / riduzione in ghisa malleabile zincata | RACCORDO GHISA ATUSA FIGURA 130R TEE 1" x 3/4" x 3/4" | 25018534 | Segrate (MI) | 1 pz | 2,93 | 2,93 | cad |  |
-| I29c | Nipplo / gomito / tee / riduzione in ghisa malleabile zincata | RACCORDO GHISA 280 NIPPLE 1''1/4 | 10035767 | Segrate (MI) | 1 pz | 1,89 | 1,89 | cad |  |
-| I30a | Raccordo a tre pezzi (bocchettone) ottone | BOCCHETTONE OTTONE GIALLO BANNINGER DRITTO 3 PEZZI 3/4'' TENUTA O-RING SOLO ACQUA | 10024324 | Segrate (MI) | 1 pz | 3,70 | 3,70 | cad |  |
-| I30b | Raccordo a tre pezzi (bocchettone) ottone | BOCCHETTONE OTTONE GIALLO BANNINGER DRITTO 3 PEZZI 1'' TENUTA O-RING SOLO ACQUA | 10024325 | Segrate (MI) | 1 pz | 6,17 | 6,17 | cad | 1"1/4 e 1"1/2 non trovati |
+| ID | Voce | Articolo | Codice | Fornitore | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
+|---|---|---|---|---|---|---|--:|--:|---|---|
+| I29a | Nipplo / gomito / tee / riduzione in ghisa malleabile zincata | RACCORDO GHISA 90 GOMITO FF 1''1/4 | 10035683 | Tecnomat | Segrate (MI) | 1 pz | 2,59 | 2,59 | cad | altre misure: vedi ricerca ghisa |
+| I29b | Nipplo / gomito / tee / riduzione in ghisa malleabile zincata | RACCORDO GHISA ATUSA FIGURA 130R TEE 1" x 3/4" x 3/4" | 25018534 | Tecnomat | Segrate (MI) | 1 pz | 2,93 | 2,93 | cad |  |
+| I29c | Nipplo / gomito / tee / riduzione in ghisa malleabile zincata | RACCORDO GHISA 280 NIPPLE 1''1/4 | 10035767 | Tecnomat | Segrate (MI) | 1 pz | 1,89 | 1,89 | cad |  |
+| I30a | Raccordo a tre pezzi (bocchettone) ottone | BOCCHETTONE OTTONE GIALLO BANNINGER DRITTO 3 PEZZI 3/4'' TENUTA O-RING SOLO ACQUA | 10024324 | Tecnomat | Segrate (MI) | 1 pz | 3,70 | 3,70 | cad |  |
+| I30b | Raccordo a tre pezzi (bocchettone) ottone | BOCCHETTONE OTTONE GIALLO BANNINGER DRITTO 3 PEZZI 1'' TENUTA O-RING SOLO ACQUA | 10024325 | Tecnomat | Segrate (MI) | 1 pz | 6,17 | 6,17 | cad | 1"1/4 e 1"1/2 non trovati |
 
 ### Idraulica - valvolame
 
-| ID | Voce | Articolo | Codice | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
-|---|---|---|---|---|---|--:|--:|---|---|
-| I31 | Valvola a sfera a passaggio totale ottone | VALVOLA A SFERA ENOLGAS SERIE ATOMIC CON LEVA FF 3/4 PN25 | 25017140 | Segrate (MI) | 1 pz | 5,16 | 5,16 | cad |  |
-| I32 | Valvola a sfera a passaggio totale ottone | VALVOLA A SFERA BUCCHI FF 1'' | 12080447 | Segrate (MI) | 1 pz | 6,30 | 6,30 | cad |  |
-| I33 | Valvola a sfera a passaggio totale ottone | VALVOLA A SFERA BUCCHI FF 1'' 1/4 PN16 | 12080448 | Segrate (MI) | 1 pz | 14,87 | 14,87 | cad |  |
-| I34 | Valvola a sfera a passaggio totale ottone | VALVOLA A SFERA BUCCHI FF 1'' 1/2 PN16 | 12080450 | Segrate (MI) | 1 pz | 18,24 | 18,24 | cad |  |
-| I35 | Valvola a sfera a passaggio totale ottone | VALVOLA A SFERA SERIE BASIC LEVA FF 2" PN50 | 25017115 | Segrate (MI) | 1 pz | 34,27 | 34,27 | cad |  |
-| I36a | Valvola di ritegno a molla | VALVOLA DI RITEGNO ITAP YORK FF 3/4'' OTTONE TENUTA IN POLIMERO 12 BAR | 25086992 | Segrate (MI) | 1 pz | 5,59 | 5,59 | cad |  |
-| I36b | Valvola di ritegno a molla | VALVOLA DI RITEGNO ITAP YORK FF 1'' OTTONE TENUTA IN POLIMERO 12 BAR | 25086996 | Segrate (MI) | 1 pz | 7,09 | 7,09 | cad |  |
-| I36c | Valvola di ritegno a molla | VALVOLA DI RITEGNO ITAP YORK FF 1''1/4 OTTONE TENUTA IN POLIMERO 10 BAR | 25086987 | Segrate (MI) | 1 pz | 10,53 | 10,53 | cad |  |
-| I36d | Valvola di ritegno a molla | VALVOLA DI RITEGNO ITAP YORK FF 1''1/2 OTTONE TENUTA IN POLIMERO 10 BAR | 25087010 | Segrate (MI) | 1 pz | 15,57 | 15,57 | cad |  |
-| I37a | Filtro a Y ottone | FILTRO A Y FARG 610 Ø 3/4'' PER ACQUA PN 25 MAGLIA FILTRANTE 500 MICRON | 25068146 | Segrate (MI) | 1 pz | 7,50 | 7,50 | cad |  |
-| I37b | Filtro a Y ottone | FILTRO A Y FARG 610 Ø 1'' PER ACQUA PN 25 MAGLIA FILTRANTE 500 MICRON | 25068170 | Segrate (MI) | 1 pz | 10,11 | 10,11 | cad | 1"1/4 e 1"1/2 non trovati |
+| ID | Voce | Articolo | Codice | Fornitore | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
+|---|---|---|---|---|---|---|--:|--:|---|---|
+| I31 | Valvola a sfera a passaggio totale ottone | VALVOLA A SFERA ENOLGAS SERIE ATOMIC CON LEVA FF 3/4 PN25 | 25017140 | Tecnomat | Segrate (MI) | 1 pz | 5,16 | 5,16 | cad |  |
+| I32 | Valvola a sfera a passaggio totale ottone | VALVOLA A SFERA BUCCHI FF 1'' | 12080447 | Tecnomat | Segrate (MI) | 1 pz | 6,30 | 6,30 | cad |  |
+| I33 | Valvola a sfera a passaggio totale ottone | VALVOLA A SFERA BUCCHI FF 1'' 1/4 PN16 | 12080448 | Tecnomat | Segrate (MI) | 1 pz | 14,87 | 14,87 | cad |  |
+| I34 | Valvola a sfera a passaggio totale ottone | VALVOLA A SFERA BUCCHI FF 1'' 1/2 PN16 | 12080450 | Tecnomat | Segrate (MI) | 1 pz | 18,24 | 18,24 | cad |  |
+| I35 | Valvola a sfera a passaggio totale ottone | VALVOLA A SFERA SERIE BASIC LEVA FF 2" PN50 | 25017115 | Tecnomat | Segrate (MI) | 1 pz | 34,27 | 34,27 | cad |  |
+| I36a | Valvola di ritegno a molla | VALVOLA DI RITEGNO ITAP YORK FF 3/4'' OTTONE TENUTA IN POLIMERO 12 BAR | 25086992 | Tecnomat | Segrate (MI) | 1 pz | 5,59 | 5,59 | cad |  |
+| I36b | Valvola di ritegno a molla | VALVOLA DI RITEGNO ITAP YORK FF 1'' OTTONE TENUTA IN POLIMERO 12 BAR | 25086996 | Tecnomat | Segrate (MI) | 1 pz | 7,09 | 7,09 | cad |  |
+| I36c | Valvola di ritegno a molla | VALVOLA DI RITEGNO ITAP YORK FF 1''1/4 OTTONE TENUTA IN POLIMERO 10 BAR | 25086987 | Tecnomat | Segrate (MI) | 1 pz | 10,53 | 10,53 | cad |  |
+| I36d | Valvola di ritegno a molla | VALVOLA DI RITEGNO ITAP YORK FF 1''1/2 OTTONE TENUTA IN POLIMERO 10 BAR | 25087010 | Tecnomat | Segrate (MI) | 1 pz | 15,57 | 15,57 | cad |  |
+| I37a | Filtro a Y ottone | FILTRO A Y FARG 610 Ø 3/4'' PER ACQUA PN 25 MAGLIA FILTRANTE 500 MICRON | 25068146 | Tecnomat | Segrate (MI) | 1 pz | 7,50 | 7,50 | cad |  |
+| I37b | Filtro a Y ottone | FILTRO A Y FARG 610 Ø 1'' PER ACQUA PN 25 MAGLIA FILTRANTE 500 MICRON | 25068170 | Tecnomat | Segrate (MI) | 1 pz | 10,11 | 10,11 | cad | 1"1/4 e 1"1/2 non trovati |
 
 ### Idraulica - accessori
 
-| ID | Voce | Articolo | Codice | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
-|---|---|---|---|---|---|--:|--:|---|---|
-| I38a | Defangatore magnetico | FILTRO DEFANGATORE MAGNETICO AQUAFILTRA COMPACT OTTONE 3 VIE FF 3/4 500 MICRON | 25012605 | Segrate (MI) | 1 pz | 33,20 | 33,20 | cad |  |
-| I38b | Defangatore magnetico | FILTRO DEFANGATORE MAGNETICO RBM MP2 1'' 800 µ 11000 GAUSS | 25050370 | Segrate (MI) | 1 pz | 104,92 | 104,92 | cad |  |
-| I43a | Valvola automatica di sfogo aria | VALVOLA SFOGO ARIA AUTOMATICA ITAP 362 M 1/2'' ATTACCO VERTICALE OTTONE | 25087007 | Segrate (MI) | 1 pz | 4,80 | 4,80 | cad |  |
-| I43b | Valvola automatica di sfogo aria | VALVOLA SFOGO ARIA AUTOMATICA ITAP 362 M 3/8'' ATTACCO VERTICALE OTTONE | 25087005 | Segrate (MI) | 1 pz | 4,22 | 4,22 | cad |  |
-| I44 | Manometro radiale/assiale 0-6 bar | MANOMETRO PRESSIONE 0-12 bar | 10047624 | Segrate (MI) | 1 pz | 5,33 | 5,33 | cad | fondo scala 0-12 bar (0-6 non trovato) |
-| I45 | Termometro a immersione con pozzetto | TERMOMETRO BIMETALLICO FERRARI Ø 80 mm 0 - 120° ATTACCO POSTERIORE POZZETTO | 10046531 | Segrate (MI) | 1 pz | 6,89 | 6,89 | cad |  |
-| I46 | Rubinetto di scarico portagomma | RUBINETTO SCARICO CALDAIA 1/2'' CON PORTAGOMMA | 10012741 | Segrate (MI) | 1 pz | 3,73 | 3,73 | cad |  |
-| I47 | Gruppo di riempimento automatico | GRUPPO DI RIEMPIMENTO ''FILLER'' 1/2'' | 10034051 | Segrate (MI) | 1 pz | 24,61 | 24,61 | cad | alt: 25005259 Honeywell V06F con riduttore netto 48,51 |
-| I48 | Riduttore di pressione | RIDUTTORE DI PRESSIONE HONEYWELL D04FM TARABILE 1,5 - 6 bar CON FILTRO | 10071827 | Segrate (MI) | 1 pz | 25,61 | 25,61 | cad | misura attacco da verificare sulla scheda |
-| I49a | Tubo flessibile inox / giunto antivibrante | FLESSIBILE ANTIVIBRANTE ACCIAIO INOX MF 1"1/4 A/F LUNGHEZZA 50 cm | 25051084 | Segrate (MI) | 1 pz | 16,15 | 16,15 | cad |  |
-| I49b | Tubo flessibile inox / giunto antivibrante | GIUNTO ELASTICO IN GOMMA FERRARI PER ACQUA L200 mm 1"FF PN10 A 80° | 25017314 | Segrate (MI) | 1 pz | 7,83 | 7,83 | cad |  |
+| ID | Voce | Articolo | Codice | Fornitore | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
+|---|---|---|---|---|---|---|--:|--:|---|---|
+| I38a | Defangatore magnetico | FILTRO DEFANGATORE MAGNETICO AQUAFILTRA COMPACT OTTONE 3 VIE FF 3/4 500 MICRON | 25012605 | Tecnomat | Segrate (MI) | 1 pz | 33,20 | 33,20 | cad |  |
+| I38b | Defangatore magnetico | FILTRO DEFANGATORE MAGNETICO RBM MP2 1'' 800 µ 11000 GAUSS | 25050370 | Tecnomat | Segrate (MI) | 1 pz | 104,92 | 104,92 | cad |  |
+| I43a | Valvola automatica di sfogo aria | VALVOLA SFOGO ARIA AUTOMATICA ITAP 362 M 1/2'' ATTACCO VERTICALE OTTONE | 25087007 | Tecnomat | Segrate (MI) | 1 pz | 4,80 | 4,80 | cad |  |
+| I43b | Valvola automatica di sfogo aria | VALVOLA SFOGO ARIA AUTOMATICA ITAP 362 M 3/8'' ATTACCO VERTICALE OTTONE | 25087005 | Tecnomat | Segrate (MI) | 1 pz | 4,22 | 4,22 | cad |  |
+| I44 | Manometro radiale/assiale 0-6 bar | MANOMETRO PRESSIONE 0-12 bar | 10047624 | Tecnomat | Segrate (MI) | 1 pz | 5,33 | 5,33 | cad | ⚠ fondo scala 0–12 bar: la voce chiede 0–6 (I-308); 0–6 non trovato |
+| I45 | Termometro a immersione con pozzetto | TERMOMETRO BIMETALLICO FERRARI Ø 80 mm 0 - 120° ATTACCO POSTERIORE POZZETTO | 10046531 | Tecnomat | Segrate (MI) | 1 pz | 6,89 | 6,89 | cad |  |
+| I46 | Rubinetto di scarico portagomma | RUBINETTO SCARICO CALDAIA 1/2'' CON PORTAGOMMA | 10012741 | Tecnomat | Segrate (MI) | 1 pz | 3,73 | 3,73 | cad |  |
+| I47 | Gruppo di riempimento automatico | GRUPPO DI RIEMPIMENTO ''FILLER'' 1/2'' | 10034051 | Tecnomat | Segrate (MI) | 1 pz | 24,61 | 24,61 | cad | ⚠ senza disconnettore nel titolo: la voce lo chiede (I-309); alt: 25005259 Honeywell V06F con riduttore netto 48,51 |
+| I48 | Riduttore di pressione | RIDUTTORE DI PRESSIONE HONEYWELL D04FM TARABILE 1,5 - 6 bar CON FILTRO | 10071827 | Tecnomat | Segrate (MI) | 1 pz | 25,61 | 25,61 | cad | misura attacco da verificare sulla scheda |
+| I49a | Tubo flessibile inox / giunto antivibrante | FLESSIBILE ANTIVIBRANTE ACCIAIO INOX MF 1"1/4 A/F LUNGHEZZA 50 cm | 25051084 | Tecnomat | Segrate (MI) | 1 pz | 16,15 | 16,15 | cad |  |
+| I49b | Tubo flessibile inox / giunto antivibrante | GIUNTO ELASTICO IN GOMMA FERRARI PER ACQUA L200 mm 1"FF PN10 A 80° | 25017314 | Tecnomat | Segrate (MI) | 1 pz | 7,83 | 7,83 | cad |  |
 
 ### Idraulica - sicurezza
 
-| ID | Voce | Articolo | Codice | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
-|---|---|---|---|---|---|--:|--:|---|---|
-| I40a | Valvola di sicurezza 3 bar | VALVOLA SICUREZZA RBM 1/2'' MF 3 bar PED97/23/CE | 10034052 | Segrate (MI) | 1 pz | 13,07 | 13,07 | cad |  |
-| I40b | Valvola di sicurezza 3 bar | VALVOLA SICUREZZA RBM 3/4'' MF 3 BAR CON MANOMETRO - PN10 | 10046860 | Segrate (MI) | 1 pz | 14,61 | 14,61 | cad |  |
-| I41a | Vaso di espansione chiuso a membrana per riscaldamento | VASO ESPANSIONE AQUAFILL RISCALDAMENTO E SANITARIO 8 l Ø 200 mm | 10011741 | Segrate (MI) | 1 pz | 22,46 | 22,46 | cad |  |
-| I41b | Vaso di espansione chiuso a membrana per riscaldamento | VASO ESPANSIONE AQUASYSTEM RISCALDAMENTO E SANITARIO 12 l Ø 280 mm | 25050885 | Segrate (MI) | 1 pz | 23,36 | 23,36 | cad |  |
-| I41c | Vaso di espansione chiuso a membrana per riscaldamento | VASO ESPANSIONE AQUAFILL RISCALDAMENTO E SANITARIO 25 l Ø 290 mm | 25111039 | Segrate (MI) | 1 pz | 32,87 | 32,87 | cad | 18/35/50 l da verificare |
-| I41d | Vaso di espansione chiuso a membrana per riscaldamento | VASO ESPANSIONE AQUAFILL RISCALDAMENTO E SANITARIO 18 l Ø 270 mm | 10011743 | Segrate (MI) | 1 pz | 29,84 | 29,84 | cad | 24/35/50 l non trovati |
-| I42 | Vaso di espansione sanitario | VASO ESPANSIONE AQUAFILL RISCALDAMENTO SANITARIO 12 l Ø 270 mm | 10011742 | Segrate (MI) | 1 pz | 26,64 | 26,64 | cad | stesso articolo riscaldamento e sanitario |
+| ID | Voce | Articolo | Codice | Fornitore | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
+|---|---|---|---|---|---|---|--:|--:|---|---|
+| I40a | Valvola di sicurezza 3 bar | VALVOLA SICUREZZA RBM 1/2'' MF 3 bar PED97/23/CE | 10034052 | Tecnomat | Segrate (MI) | 1 pz | 13,07 | 13,07 | cad |  |
+| I40b | Valvola di sicurezza 3 bar | VALVOLA SICUREZZA RBM 3/4'' MF 3 BAR CON MANOMETRO - PN10 | 10046860 | Tecnomat | Segrate (MI) | 1 pz | 14,61 | 14,61 | cad |  |
+| I41a | Vaso di espansione chiuso a membrana per riscaldamento | VASO ESPANSIONE AQUAFILL RISCALDAMENTO E SANITARIO 8 l Ø 200 mm | 10011741 | Tecnomat | Segrate (MI) | 1 pz | 22,46 | 22,46 | cad |  |
+| I41b | Vaso di espansione chiuso a membrana per riscaldamento | VASO ESPANSIONE AQUASYSTEM RISCALDAMENTO E SANITARIO 12 l Ø 280 mm | 25050885 | Tecnomat | Segrate (MI) | 1 pz | 23,36 | 23,36 | cad |  |
+| I41c | Vaso di espansione chiuso a membrana per riscaldamento | VASO ESPANSIONE AQUAFILL RISCALDAMENTO E SANITARIO 25 l Ø 290 mm | 25111039 | Tecnomat | Segrate (MI) | 1 pz | 32,87 | 32,87 | cad | 18/35/50 l da verificare |
+| I41d | Vaso di espansione chiuso a membrana per riscaldamento | VASO ESPANSIONE AQUAFILL RISCALDAMENTO E SANITARIO 18 l Ø 270 mm | 10011743 | Tecnomat | Segrate (MI) | 1 pz | 29,84 | 29,84 | cad | 24/35/50 l non trovati |
+| I42 | Vaso di espansione sanitario | VASO ESPANSIONE AQUAFILL RISCALDAMENTO SANITARIO 12 l Ø 270 mm | 10011742 | Tecnomat | Segrate (MI) | 1 pz | 26,64 | 26,64 | cad | stesso articolo riscaldamento e sanitario |
 
 ### Idraulica - circolazione
 
-| ID | Voce | Articolo | Codice | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
-|---|---|---|---|---|---|--:|--:|---|---|
-| I50 | Circolatore elettronico | CIRCOLATORE ELETTRONICO MATRA HOT 25-6 INTERASSE 130 mm CON BOCCHETTONI | 25060502 | Segrate (MI) | 1 pz | 92,21 | 92,21 | cad | 32-60 non trovato; alt DAB EVOSTA2 40-70 (25130043) netto 105,12 |
+| ID | Voce | Articolo | Codice | Fornitore | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
+|---|---|---|---|---|---|---|--:|--:|---|---|
+| I50 | Circolatore elettronico | CIRCOLATORE ELETTRONICO MATRA HOT 25-6 INTERASSE 130 mm CON BOCCHETTONI | 25060502 | Tecnomat | Segrate (MI) | 1 pz | 92,21 | 92,21 | cad | 32-60 non trovato; alt DAB EVOSTA2 40-70 (25130043) netto 105,12 |
 
 ### Idraulica - regolazione
 
-| ID | Voce | Articolo | Codice | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
-|---|---|---|---|---|---|--:|--:|---|---|
-| I51 | Valvola deviatrice 3 vie motorizzata | VALVOLA DEVIATRICE 3 VIE GIACOMINI R279B Ø 1'' ATTUATORE K270 220V | 25109732 | Segrate (MI) | 1 pz | 92,95 | 92,95 | cad |  |
-| I52a | Valvola miscelatrice termostatica sanitaria | MISCELATORE TERMOSTATICO GIACOMINI DR156X004 F/F 3/4'' USO SANITARIO E SOLARE | 12102799 | Segrate (MI) | 1 pz | 49,78 | 49,78 | cad |  |
-| I52b | Valvola miscelatrice termostatica sanitaria | MISCELATORE TERMOSTATICO GIACOMINI DR156X005 F/F 1 USO SANITARIO E SOLARE | 12102800 | Segrate (MI) | 1 pz | 53,91 | 53,91 | cad |  |
+| ID | Voce | Articolo | Codice | Fornitore | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
+|---|---|---|---|---|---|---|--:|--:|---|---|
+| I51 | Valvola deviatrice 3 vie motorizzata | VALVOLA DEVIATRICE 3 VIE GIACOMINI R279B Ø 1'' ATTUATORE K270 220V | 25109732 | Tecnomat | Segrate (MI) | 1 pz | 92,95 | 92,95 | cad |  |
+| I52a | Valvola miscelatrice termostatica sanitaria | MISCELATORE TERMOSTATICO GIACOMINI DR156X004 F/F 3/4'' USO SANITARIO E SOLARE | 12102799 | Tecnomat | Segrate (MI) | 1 pz | 49,78 | 49,78 | cad |  |
+| I52b | Valvola miscelatrice termostatica sanitaria | MISCELATORE TERMOSTATICO GIACOMINI DR156X005 F/F 1 USO SANITARIO E SOLARE | 12102800 | Tecnomat | Segrate (MI) | 1 pz | 53,91 | 53,91 | cad |  |
 
 ### Idraulica - trattamento
 
-| ID | Voce | Articolo | Codice | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
-|---|---|---|---|---|---|--:|--:|---|---|
-| I53 | Dosatore di polifosfati | DOSATORE POLIFOSFATI 1/2'' CON BYBASS ATTACCHI RUOTABILI E CARTUCCIA | 25084336 | Segrate (MI) | 1 pz | 17,87 | 17,87 | cad |  |
-| I54 | Glicole propilenico / antigelo impianti | ANTIGELO FACOT ALIGEL A BASE DI GLICOLE MONOPROPILENICO | 25052255 | Segrate (MI) | 1 pz | 42,21 | 42,21 | cad | formato confezione da verificare sulla scheda |
-| I55a | Additivo inibitore / pulitore per impianti | DECAPANTE FACOT FERRONEX PER IMPIANTI TERMICI NUOVI O RECENTI 1 l | 10016379 | Pero (MI) | 1 pz | 10,82 | 10,82 | cad | pulitore/decapante; dosaggio da scheda tecnica |
-| I55b | Additivo inibitore / pulitore per impianti | FILMANTE FACOT FILMAX + THERMAKIL PER IMPIANTI TERMICI ALTA E BASSA TEMPERATURA E ANTIALGHE 1 l | 10016381 | Pero (MI) | 1 pz | 12,70 | 12,70 | cad |  |
+| ID | Voce | Articolo | Codice | Fornitore | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
+|---|---|---|---|---|---|---|--:|--:|---|---|
+| I53 | Dosatore di polifosfati | DOSATORE POLIFOSFATI 1/2'' CON BYBASS ATTACCHI RUOTABILI E CARTUCCIA | 25084336 | Tecnomat | Segrate (MI) | 1 pz | 17,87 | 17,87 | cad |  |
+| I54 | Glicole propilenico / antigelo impianti | ANTIGELO FACOT ALIGEL A BASE DI GLICOLE MONOPROPILENICO | 25052255 | Tecnomat | Segrate (MI) | 1 pz | 42,21 | 42,21 | cad | formato confezione da verificare sulla scheda |
+| I55a | Additivo inibitore / pulitore per impianti | DECAPANTE FACOT FERRONEX PER IMPIANTI TERMICI NUOVI O RECENTI 1 l | 10016379 | Tecnomat | Pero (MI) | 1 pz | 10,82 | 10,82 | cad | pulitore/decapante; dosaggio da scheda tecnica |
+| I55b | Additivo inibitore / pulitore per impianti | FILMANTE FACOT FILMAX + THERMAKIL PER IMPIANTI TERMICI ALTA E BASSA TEMPERATURA E ANTIALGHE 1 l | 10016381 | Tecnomat | Pero (MI) | 1 pz | 12,70 | 12,70 | cad |  |
 
 ### Idraulica - isolamento
 
-| ID | Voce | Articolo | Codice | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
-|---|---|---|---|---|---|--:|--:|---|---|
-| I56 | Guaina isolante elastomerica sp. 9-13 mm | TUBO ISOLANTE IT-FLEX C1 Ø 22 SPESSORE 19 mm ELASTOMERICO CLASSE 1 | 10040200 | Segrate (MI) | 2 m | 4,71 | 2,35 | m | lunghezza barra non nel titolo: assunta 2 m, da verificare; Ø18: 10040199 netto 4,39 |
-| I57 | Guaina isolante elastomerica sp. 13-19 mm | TUBO ISOLANTE IT-FLEX C1 Ø 28 SPESSORE 19 mm ELASTOMERICO CLASSE 1 | 10040201 | Segrate (MI) | 2 m | 5,58 | 2,79 | m | lunghezza barra assunta 2 m |
-| I58 | Guaina isolante elastomerica sp. 13-19 mm | TUBO ISOLANTE IT-FLEX C1 Ø35 SPESSORE 19 mm ELASTOMERICO CLASSE 1 | 25091418 | Segrate (MI) | 2 m | 6,99 | 3,50 | m | lunghezza barra assunta 2 m |
-| I59 | Guaina isolante elastomerica sp. 19 mm | TUBO ISOLANTE IT-FLEX C1 Ø 42 SPESSORE 19 mm ELASTOMERICO CLASSE 1 | 10040204 | Segrate (MI) | 2 m | 7,98 | 3,99 | m | lunghezza barra assunta 2 m; Ø48: 10040205 netto 8,99 |
-| I61 | Nastro adesivo per isolante / colla | NASTRO ADESIVO IN ALLUMINIO ISOCELL FLEX ALU AA H 50 mm x 50 m | 25075683 | Segrate (MI) | 1 pz | 5,57 | 5,57 | cad | rotolo 50 m |
+| ID | Voce | Articolo | Codice | Fornitore | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
+|---|---|---|---|---|---|---|--:|--:|---|---|
+| I56 | Guaina isolante elastomerica sp. 9-13 mm | TUBO ISOLANTE IT-FLEX C1 Ø 22 SPESSORE 19 mm ELASTOMERICO CLASSE 1 | 10040200 | Tecnomat | Segrate (MI) | 2 m | 4,71 | 2,35 | m | lunghezza barra non nel titolo: assunta 2 m, da verificare; Ø18: 10040199 netto 4,39 |
+| I57 | Guaina isolante elastomerica sp. 13-19 mm | TUBO ISOLANTE IT-FLEX C1 Ø 28 SPESSORE 19 mm ELASTOMERICO CLASSE 1 | 10040201 | Tecnomat | Segrate (MI) | 2 m | 5,58 | 2,79 | m | lunghezza barra assunta 2 m |
+| I58 | Guaina isolante elastomerica sp. 13-19 mm | TUBO ISOLANTE IT-FLEX C1 Ø35 SPESSORE 19 mm ELASTOMERICO CLASSE 1 | 25091418 | Tecnomat | Segrate (MI) | 2 m | 6,99 | 3,50 | m | lunghezza barra assunta 2 m |
+| I59 | Guaina isolante elastomerica sp. 19 mm | TUBO ISOLANTE IT-FLEX C1 Ø 42 SPESSORE 19 mm ELASTOMERICO CLASSE 1 | 10040204 | Tecnomat | Segrate (MI) | 2 m | 7,98 | 3,99 | m | lunghezza barra assunta 2 m; Ø48: 10040205 netto 8,99 |
+| I61 | Nastro adesivo per isolante / colla | NASTRO ADESIVO IN ALLUMINIO ISOCELL FLEX ALU AA H 50 mm x 50 m | 25075683 | Tecnomat | Segrate (MI) | 1 pz | 5,57 | 5,57 | cad | rotolo 50 m |
 
 ### Idraulica - fissaggi
 
-| ID | Voce | Articolo | Codice | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
-|---|---|---|---|---|---|--:|--:|---|---|
-| I63 | Collare pesante con gommino e barra filettata M8 | COLLARI PER TUBI FRIULSIDER CON ASOLA Ø 1'' 2 PEZZI TASSELLO NYLON | 10062009 | Segrate (MI) | 2 pz | 2,21 | 1,10 | cad | confezione da 2 pezzi (1/2" 10062007, 3/4" 10062008 netto 1,48) |
-| I64 | Barra filettata M8 / M10 zincata | BARRA FILETTATA M8x1 m ACCIAIO ZINCATO BIANCO | 10066672 | Segrate (MI) | 1 pz | 1,07 | 1,07 | cad | barra 1 m |
-| I65 | Binario / profilo asolato zincato | PROFILO GRIP PF1 32x20x2,5 mm 2 m ACCIAIO DX51 DZ200 INTERASSE ASOLE 35 | 25013666 | Segrate (MI) | 1 pz | 13,11 | 13,11 | cad | barra 2 m |
-| I66 | Tassello ad espansione / chimico | TASSELLO IN ACCIAIO FISCHER FAZ II 12/10 Ø 12 mm 1 PEZZO PER CALCESTRUZZO | 12087276 | Segrate (MI) | 1 pz | 1,84 | 1,84 | cad | M10; M8 non trovato |
+| ID | Voce | Articolo | Codice | Fornitore | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
+|---|---|---|---|---|---|---|--:|--:|---|---|
+| I63 | Collare pesante con gommino e barra filettata M8 | COLLARI PER TUBI FRIULSIDER CON ASOLA Ø 1'' 2 PEZZI TASSELLO NYLON | 10062009 | Tecnomat | Segrate (MI) | 2 pz | 2,21 | 1,10 | cad | confezione da 2 pezzi (1/2" 10062007, 3/4" 10062008 netto 1,48) |
+| I64 | Barra filettata M8 / M10 zincata | BARRA FILETTATA M8x1 m ACCIAIO ZINCATO BIANCO | 10066672 | Tecnomat | Segrate (MI) | 1 pz | 1,07 | 1,07 | cad | barra 1 m |
+| I65 | Binario / profilo asolato zincato | PROFILO GRIP PF1 32x20x2,5 mm 2 m ACCIAIO DX51 DZ200 INTERASSE ASOLE 35 | 25013666 | Tecnomat | Segrate (MI) | 1 pz | 13,11 | 13,11 | cad | barra 2 m |
+| I66 | Tassello ad espansione / chimico | TASSELLO IN ACCIAIO FISCHER FAZ II 12/10 Ø 12 mm 1 PEZZO PER CALCESTRUZZO | 12087276 | Tecnomat | Segrate (MI) | 1 pz | 1,84 | 1,84 | cad | M10; M8 non trovato |
 
 ### Idraulica - sigillanti
 
-| ID | Voce | Articolo | Codice | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
-|---|---|---|---|---|---|--:|--:|---|---|
-| I67a | Teflon / canapa / pasta sigillante / filo sigillante | CANAPA A FILO CON CONTENITORE 80 g | 10069812 | Segrate (MI) | 1 pz | 3,07 | 3,07 | cad |  |
-| I67b | Teflon / canapa / pasta sigillante / filo sigillante | SIGILLANTE GAS E LIQUIDI PTFE FAREN 35S77 75 ml | 10062154 | Segrate (MI) | 1 pz | 8,16 | 8,16 | cad |  |
+| ID | Voce | Articolo | Codice | Fornitore | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
+|---|---|---|---|---|---|---|--:|--:|---|---|
+| I67a | Teflon / canapa / pasta sigillante / filo sigillante | CANAPA A FILO CON CONTENITORE 80 g | 10069812 | Tecnomat | Segrate (MI) | 1 pz | 3,07 | 3,07 | cad |  |
+| I67b | Teflon / canapa / pasta sigillante / filo sigillante | SIGILLANTE GAS E LIQUIDI PTFE FAREN 35S77 75 ml | 10062154 | Tecnomat | Segrate (MI) | 1 pz | 8,16 | 8,16 | cad |  |
 
 ### Idraulica - condensa
 
-| ID | Voce | Articolo | Codice | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
-|---|---|---|---|---|---|--:|--:|---|---|
-| I69 | Sifone ispezionabile condensa | SIFONE SCARICO CONDENSA IDROSTILE IN PP MORSETTO Ø 46x32 mm | 12104501 | Segrate (MI) | 1 pz | 4,88 | 4,88 | cad |  |
-| I70a | Tubo flessibile condensa / tubo cristal | TUBO RETEX Ø 16 mm ATOSSICO TRASPARENTE VENDITA AL METRO | 10063143 | Segrate (MI) | 1 m | 1,89 | 1,89 | m |  |
-| I70b | Tubo flessibile condensa / tubo cristal | TUBO RETEX Ø 19 mm ATOSSICO TRASPARENTE VENDITA AL METRO | 10063144 | Segrate (MI) | 1 m | 2,79 | 2,79 | m |  |
+| ID | Voce | Articolo | Codice | Fornitore | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
+|---|---|---|---|---|---|---|--:|--:|---|---|
+| I69 | Sifone ispezionabile condensa | SIFONE SCARICO CONDENSA IDROSTILE IN PP MORSETTO Ø 46x32 mm | 12104501 | Tecnomat | Segrate (MI) | 1 pz | 4,88 | 4,88 | cad |  |
+| I70a | Tubo flessibile condensa / tubo cristal | TUBO RETEX Ø 16 mm ATOSSICO TRASPARENTE VENDITA AL METRO | 10063143 | Tecnomat | Segrate (MI) | 1 m | 1,89 | 1,89 | m |  |
+| I70b | Tubo flessibile condensa / tubo cristal | TUBO RETEX Ø 19 mm ATOSSICO TRASPARENTE VENDITA AL METRO | 10063144 | Tecnomat | Segrate (MI) | 1 m | 2,79 | 2,79 | m |  |
 
 ### Idraulica - supporti macchina
 
-| ID | Voce | Articolo | Codice | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
-|---|---|---|---|---|---|--:|--:|---|---|
-| I71a | Basamento antivibrante in gomma per unità esterna | GOMMA ANTIVIBRANTE 100x100x5 mm NERO 4 PEZZI | 25013860 | Pero (MI) | 4 pz | 6,48 | 1,62 | cad | 4 pz |
-| I72a | Staffe a muro per unità esterna | STAFFE UNIVERSALI CLOCK 420x400x780 mm PORTATA 120 kg FORNITA CON GOMMINI ANTIVIBRANTI IN PVC | 10062345 | Pero (MI) | 1 pz | 11,89 | 11,89 | cad | coppia di staffe |
-| I72b | Staffe a muro per unità esterna | STAFFE UNIVERSALI CLOCK 465x400x780 mm PORTATA 160 kg FORNITA CON GOMMINI ANTIVIBRANTI IN PVC | 10062346 | Pero (MI) | 1 pz | 16,31 | 16,31 | cad | coppia di staffe |
+| ID | Voce | Articolo | Codice | Fornitore | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
+|---|---|---|---|---|---|---|--:|--:|---|---|
+| I71a | Basamento antivibrante in gomma per unità esterna | GOMMA ANTIVIBRANTE 100x100x5 mm NERO 4 PEZZI | 25013860 | Tecnomat | Pero (MI) | 4 pz | 6,48 | 1,62 | cad | 4 pz |
+| I72a | Staffe a muro per unità esterna | STAFFE UNIVERSALI CLOCK 420x400x780 mm PORTATA 120 kg FORNITA CON GOMMINI ANTIVIBRANTI IN PVC | 10062345 | Tecnomat | Pero (MI) | 1 pz | 11,89 | 11,89 | cad | coppia di staffe |
+| I72b | Staffe a muro per unità esterna | STAFFE UNIVERSALI CLOCK 465x400x780 mm PORTATA 160 kg FORNITA CON GOMMINI ANTIVIBRANTI IN PVC | 10062346 | Tecnomat | Pero (MI) | 1 pz | 16,31 | 16,31 | cad | coppia di staffe |
 
 ### Frigorifero - linee
 
-| ID | Voce | Articolo | Codice | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
-|---|---|---|---|---|---|--:|--:|---|---|
-| F01a | Coppia tubi rame preisolati | TUBO RAME RIVESTITO CLIMA ZETAESSE CUPEX GEL SILVER Ø 1/4''x 1 mm GUAINA - vendita al ml | 25022912 | Segrate (MI) | 1 m | 4,16 | 4,16 | m | linea liquido; "coppia" = 2 tubi (liquido+gas) |
-| F01b | Coppia tubi rame preisolati | TUBO RAME RIVESTITO CLIMA ZETAESSE CUPEX GEL SILVER Ø 3/8''x 1 mm GUAINA - vendita al ml | 25022913 | Segrate (MI) | 1 m | 6,52 | 6,52 | m |  |
-| F02b | Coppia tubi rame preisolati | TUBO RAME RIVESTITO CLIMA ZETAESSE CUPEX GEL SILVER Ø 1/2''x 1 mm GUAINA - vendita al ml | 25022914 | Segrate (MI) | 1 m | 8,43 | 8,43 | m |  |
-| F03b | Coppia tubi rame preisolati | TUBO RAME RIVESTITO CLIMA ZETAESSE CUPEX GEL SILVER Ø 5/8''x 1 mm GUAINA 9 mm - vendita al ml | 25022931 | Segrate (MI) | 1 m | 10,80 | 10,80 | m | 3/4" non trovato |
-| F06 | Nastro di finitura per linee frigorifere | NASTRO ADESIVO PVC ISOLANTE ALTEZZA 5 cm LUNGHEZZA 20 m NERO | 10016397 | Segrate (MI) | 1 pz | 2,75 | 2,75 | cad | rotolo 20 m |
+| ID | Voce | Articolo | Codice | Fornitore | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
+|---|---|---|---|---|---|---|--:|--:|---|---|
+| F01a | Coppia tubi rame preisolati | TUBO RAME RIVESTITO CLIMA ZETAESSE CUPEX GEL SILVER Ø 1/4''x 1 mm GUAINA - vendita al ml | 25022912 | Tecnomat | Segrate (MI) | 1 m | 4,16 | 4,16 | m | linea liquido; "coppia" = 2 tubi (liquido+gas) |
+| F01b | Coppia tubi rame preisolati | TUBO RAME RIVESTITO CLIMA ZETAESSE CUPEX GEL SILVER Ø 3/8''x 1 mm GUAINA - vendita al ml | 25022913 | Tecnomat | Segrate (MI) | 1 m | 6,52 | 6,52 | m |  |
+| F02b | Coppia tubi rame preisolati | TUBO RAME RIVESTITO CLIMA ZETAESSE CUPEX GEL SILVER Ø 1/2''x 1 mm GUAINA - vendita al ml | 25022914 | Tecnomat | Segrate (MI) | 1 m | 8,43 | 8,43 | m |  |
+| F03b | Coppia tubi rame preisolati | TUBO RAME RIVESTITO CLIMA ZETAESSE CUPEX GEL SILVER Ø 5/8''x 1 mm GUAINA 9 mm - vendita al ml | 25022931 | Tecnomat | Segrate (MI) | 1 m | 10,80 | 10,80 | m | 3/4" non trovato |
+| F06 | Nastro di finitura per linee frigorifere | NASTRO ADESIVO PVC ISOLANTE ALTEZZA 5 cm LUNGHEZZA 20 m NERO | 10016397 | Tecnomat | Segrate (MI) | 1 pz | 2,75 | 2,75 | cad | rotolo 20 m |
 
 ### Frigorifero - condensa
 
-| ID | Voce | Articolo | Codice | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
-|---|---|---|---|---|---|--:|--:|---|---|
-| F10a | Pompa scarico condensa | POMPA DI SCARICO CONDENSA TECOM DPC40 PORTATA MASSIMA 40 l PREVALENZA MAX 20 m | 25011135 | Pero (MI) | 1 pz | 56,56 | 56,56 | cad |  |
+| ID | Voce | Articolo | Codice | Fornitore | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
+|---|---|---|---|---|---|---|--:|--:|---|---|
+| F10a | Pompa scarico condensa | POMPA DI SCARICO CONDENSA TECOM DPC40 PORTATA MASSIMA 40 l PREVALENZA MAX 20 m | 25011135 | Tecnomat | Pero (MI) | 1 pz | 56,56 | 56,56 | cad |  |
 
 ### Frigorifero - supporti
 
-| ID | Voce | Articolo | Codice | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
-|---|---|---|---|---|---|--:|--:|---|---|
-| F11a | Staffe a muro per unità esterna split | STAFFE UNIVERSALI CLOCK 420x400x780 mm PORTATA 120 kg FORNITA CON GOMMINI ANTIVIBRANTI IN PVC | 10062345 | Pero (MI) | 1 pz | 11,89 | 11,89 | cad | coppia di staffe |
-| F11b | Staffe a muro per unità esterna split | STAFFE UNIVERSALI CLOCK 465x400x780 mm PORTATA 160 kg FORNITA CON GOMMINI ANTIVIBRANTI IN PVC | 10062346 | Pero (MI) | 1 pz | 16,31 | 16,31 | cad | coppia di staffe |
+| ID | Voce | Articolo | Codice | Fornitore | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
+|---|---|---|---|---|---|---|--:|--:|---|---|
+| F11a | Staffe a muro per unità esterna split | STAFFE UNIVERSALI CLOCK 420x400x780 mm PORTATA 120 kg FORNITA CON GOMMINI ANTIVIBRANTI IN PVC | 10062345 | Tecnomat | Pero (MI) | 1 pz | 11,89 | 11,89 | cad | coppia di staffe |
+| F11b | Staffe a muro per unità esterna split | STAFFE UNIVERSALI CLOCK 465x400x780 mm PORTATA 160 kg FORNITA CON GOMMINI ANTIVIBRANTI IN PVC | 10062346 | Tecnomat | Pero (MI) | 1 pz | 16,31 | 16,31 | cad | coppia di staffe |
 
 ### Aeraulica - canali
 
-| ID | Voce | Articolo | Codice | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
-|---|---|---|---|---|---|--:|--:|---|---|
-| A02a | Tubo flessibile non isolato alluminio | TUBO FLESSIBILE Ø 150 mm ESTENSIBILE IN ALLUMINIO NATURALE L 850 - 3000 mm SPESSORE 0,12 mm | 10042850 | Pero (MI) | 1 pz | 16,19 | 16,19 | cad | non isolato; Ø160 non trovato; estensione max 3 m (€/m indicativo = prezzo/3) |
+| ID | Voce | Articolo | Codice | Fornitore | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
+|---|---|---|---|---|---|---|--:|--:|---|---|
+| A02a | Tubo flessibile non isolato alluminio | TUBO FLESSIBILE Ø 150 mm ESTENSIBILE IN ALLUMINIO NATURALE L 850 - 3000 mm SPESSORE 0,12 mm | 10042850 | Tecnomat | Pero (MI) | 1 pz | 16,19 | 16,19 | cad | non isolato; Ø160 non trovato; estensione max 3 m (€/m indicativo = prezzo/3) |
 
 ### Aeraulica - accessori
 
-| ID | Voce | Articolo | Codice | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
-|---|---|---|---|---|---|--:|--:|---|---|
-| A07a | Nastro alluminio / fascette stringitubo | NASTRO ADESIVO IN ALLUMINIO ISOCELL FLEX ALU AA H 50 mm x 50 m SPESSORE 30 µm | 25075683 | Pero (MI) | 1 pz | 5,57 | 5,57 | cad | rotolo 50 m |
-| A07b | Nastro alluminio / fascette stringitubo | FASCETTE STRINGITUBO ACCIAIO INOX AISI 304 Ø 44-56 mm 2 PEZZI | 10055474 | Pero (MI) | 2 pz | 3,40 | 1,70 | cad | 2 pz |
+| ID | Voce | Articolo | Codice | Fornitore | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
+|---|---|---|---|---|---|---|--:|--:|---|---|
+| A07a | Nastro alluminio / fascette stringitubo | NASTRO ADESIVO IN ALLUMINIO ISOCELL FLEX ALU AA H 50 mm x 50 m SPESSORE 30 µm | 25075683 | Tecnomat | Pero (MI) | 1 pz | 5,57 | 5,57 | cad | rotolo 50 m |
+| A07b | Nastro alluminio / fascette stringitubo | FASCETTE STRINGITUBO ACCIAIO INOX AISI 304 Ø 44-56 mm 2 PEZZI | 10055474 | Tecnomat | Pero (MI) | 2 pz | 3,40 | 1,70 | cad | 2 pz |
 
 ### Elettrico - cavi
 
-| ID | Voce | Articolo | Codice | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
-|---|---|---|---|---|---|--:|--:|---|---|
-| E01 | Cavo FG16OR16 0,6/1 kV | CAVO TRIPOLARE FG16(O)R16 0,6/1 kV SEZIONE 3G2,5 mmq COLORE GRIGIO MATASSA 50m | 10073623 | Segrate (MI) | 50 m | 64,75 | 1,29 | m | matassa 50 m; alt 100 m 10073624 netto 127,05 |
-| E04 | Cavo FG16OR16 0,6/1 kV | CAVO PENTAPOLARE FG16(O)R16 0,6/1 kV SEZIONE 5G2,5 mmq COLORE GRIGIO MATASSA 100m | 10073630 | Segrate (MI) | 100 m | 220,49 | 2,20 | m |  |
-| E06 | Cavo FG16OR16 0,6/1 kV | CAVO PENTAPOLARE FG16(O)R16 0,6/1 kV SEZIONE 5G6 mmq COLORE GRIGIO MATASSA 50m | 25060082 | Segrate (MI) | 50 m | 253,28 | 5,07 | m |  |
-| E07 | Cordina FS17 450/750 V | CAVO UNIPOLARE FS17 CPR 450/750 SEZIONE 1x4 mmq COLORE NERO MATASSA 100 m | 10073509 | Segrate (MI) | 100 m | 60,57 | 0,61 | m | altri colori stesso prezzo |
-| E08 | Cordina FS17 450/750 V | CAVO UNIPOLARE FS17 CPR 450/750 SEZIONE 1x6 mmq COLORE NERO MATASSA 100 m | 10073514 | Segrate (MI) | 100 m | 83,61 | 0,84 | m | altri colori stesso prezzo |
-| E09a | Cavo segnale / bus schermato | CAVO FRO-H2HP-OB 2x0,50 mmq SCHERMATO CPR CCA-S3-D1-A3 MATASSA DA 100 m | 25014566 | Segrate (MI) | 100 m | 57,79 | 0,58 | m |  |
-| E09b | Cavo segnale / bus schermato | CAVO FRO-H2HP-OB 4x0,50 mmq SCHERMATO CPR CCA-S3-D1-A3 MATASSA DA 100 m | 25014575 | Segrate (MI) | 100 m | 84,43 | 0,84 | m |  |
-| E10 | Cavo FROR (comandi) | CAVO FROR 4x0,50 mmq CAVO ANTIFIAMMA CPR GRIGIO MATASSA 100 m | 12097160 | Segrate (MI) | 100 m | 97,54 | 0,98 | m | 1,5 mmq non trovato (0,50 mmq) |
+| ID | Voce | Articolo | Codice | Fornitore | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
+|---|---|---|---|---|---|---|--:|--:|---|---|
+| E01 | Cavo FG16OR16 0,6/1 kV | CAVO TRIPOLARE FG16(O)R16 0,6/1 kV SEZIONE 3G2,5 mmq COLORE GRIGIO MATASSA 50m | 10073623 | Tecnomat | Segrate (MI) | 50 m | 64,75 | 1,29 | m | matassa 50 m; alt 100 m 10073624 netto 127,05 |
+| E04 | Cavo FG16OR16 0,6/1 kV | CAVO PENTAPOLARE FG16(O)R16 0,6/1 kV SEZIONE 5G2,5 mmq COLORE GRIGIO MATASSA 100m | 10073630 | Tecnomat | Segrate (MI) | 100 m | 220,49 | 2,20 | m |  |
+| E06 | Cavo FG16OR16 0,6/1 kV | CAVO PENTAPOLARE FG16(O)R16 0,6/1 kV SEZIONE 5G6 mmq COLORE GRIGIO MATASSA 50m | 25060082 | Tecnomat | Segrate (MI) | 50 m | 253,28 | 5,07 | m |  |
+| E07 | Cordina FS17 450/750 V | CAVO UNIPOLARE FS17 CPR 450/750 SEZIONE 1x4 mmq COLORE NERO MATASSA 100 m | 10073509 | Tecnomat | Segrate (MI) | 100 m | 60,57 | 0,61 | m | altri colori stesso prezzo |
+| E08 | Cordina FS17 450/750 V | CAVO UNIPOLARE FS17 CPR 450/750 SEZIONE 1x6 mmq COLORE NERO MATASSA 100 m | 10073514 | Tecnomat | Segrate (MI) | 100 m | 83,61 | 0,84 | m | altri colori stesso prezzo |
+| E09a | Cavo segnale / bus schermato | CAVO FRO-H2HP-OB 2x0,50 mmq SCHERMATO CPR CCA-S3-D1-A3 MATASSA DA 100 m | 25014566 | Tecnomat | Segrate (MI) | 100 m | 57,79 | 0,58 | m |  |
+| E09b | Cavo segnale / bus schermato | CAVO FRO-H2HP-OB 4x0,50 mmq SCHERMATO CPR CCA-S3-D1-A3 MATASSA DA 100 m | 25014575 | Tecnomat | Segrate (MI) | 100 m | 84,43 | 0,84 | m |  |
+| E10 | Cavo FROR (comandi) | CAVO FROR 4x0,50 mmq CAVO ANTIFIAMMA CPR GRIGIO MATASSA 100 m | 12097160 | Tecnomat | Segrate (MI) | 100 m | 97,54 | 0,98 | m | 1,5 mmq non trovato (0,50 mmq) |
 
 ### Elettrico - vie cavi
 
-| ID | Voce | Articolo | Codice | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
-|---|---|---|---|---|---|--:|--:|---|---|
-| E11a | Tubo corrugato flessibile | TUBO CORRUGATO SEMPLE' ELEKTRIK Ø 25 mm COLORE NERO MATASSA 50 m | 25062264 | Segrate (MI) | 50 m | 21,11 | 0,42 | m |  |
-| E11b | Tubo corrugato flessibile | TUBO CORRUGATO GEWISS NERO Ø 32 mm MATASSA 50 m | 12103297 | Segrate (MI) | 50 m | 48,36 | 0,97 | m |  |
-| E12a | Tubo rigido PVC con raccordi | TUBO RIGIDO GRIGIO GEWISS Ø 25 mm LUNGHEZZA 3 m | 10044194 | Segrate (MI) | 3 m | 4,02 | 1,34 | m |  |
-| E12b | Tubo rigido PVC con raccordi | TUBO RIGIDO GRIGIO GEWISS Ø 32 mm LUNGHEZZA 3 m | 10044196 | Segrate (MI) | 3 m | 5,82 | 1,94 | m |  |
-| E13a | Canala portacavi PVC con accessori | CANALE UFFICIO ARNOCANALI A 2 SCOMPARTI IN PVC 60x40mm LUNGHEZZA 2m GRIGIO | 12102678 | Pero (MI) | 2 m | 7,01 | 3,50 | m | barra 2 m |
-| E14a | Guaina spiralata / raccordi guaina IP65 | 2 RACCORDI TUBO-GUAINA Ø 25 mm PVC IP67 BM | 25037261 | Segrate (MI) | 2 pz | 1,35 | 0,68 | cad | confezione da 2 pezzi |
-| E14b | Guaina spiralata / raccordi guaina IP65 | 2 RACCORDI TUBO-GUAINA Ø 32 mm PVC IP67 BM | 25037266 | Segrate (MI) | 2 pz | 1,93 | 0,96 | cad | confezione da 2 pezzi |
+| ID | Voce | Articolo | Codice | Fornitore | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
+|---|---|---|---|---|---|---|--:|--:|---|---|
+| E11a | Tubo corrugato flessibile | TUBO CORRUGATO SEMPLE' ELEKTRIK Ø 25 mm COLORE NERO MATASSA 50 m | 25062264 | Tecnomat | Segrate (MI) | 50 m | 21,11 | 0,42 | m |  |
+| E11b | Tubo corrugato flessibile | TUBO CORRUGATO GEWISS NERO Ø 32 mm MATASSA 50 m | 12103297 | Tecnomat | Segrate (MI) | 50 m | 48,36 | 0,97 | m |  |
+| E12a | Tubo rigido PVC con raccordi | TUBO RIGIDO GRIGIO GEWISS Ø 25 mm LUNGHEZZA 3 m | 10044194 | Tecnomat | Segrate (MI) | 3 m | 4,02 | 1,34 | m |  |
+| E12b | Tubo rigido PVC con raccordi | TUBO RIGIDO GRIGIO GEWISS Ø 32 mm LUNGHEZZA 3 m | 10044196 | Tecnomat | Segrate (MI) | 3 m | 5,82 | 1,94 | m |  |
+| E13a | Canala portacavi PVC con accessori | CANALE UFFICIO ARNOCANALI A 2 SCOMPARTI IN PVC 60x40mm LUNGHEZZA 2m GRIGIO | 12102678 | Tecnomat | Pero (MI) | 2 m | 7,01 | 3,50 | m | barra 2 m |
+| E14a | Guaina spiralata / raccordi guaina IP65 | 2 RACCORDI TUBO-GUAINA Ø 25 mm PVC IP67 BM | 25037261 | Tecnomat | Segrate (MI) | 2 pz | 1,35 | 0,68 | cad | confezione da 2 pezzi |
+| E14b | Guaina spiralata / raccordi guaina IP65 | 2 RACCORDI TUBO-GUAINA Ø 32 mm PVC IP67 BM | 25037266 | Tecnomat | Segrate (MI) | 2 pz | 1,93 | 0,96 | cad | confezione da 2 pezzi |
 
 ### Elettrico - protezioni
 
-| ID | Voce | Articolo | Codice | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
-|---|---|---|---|---|---|--:|--:|---|---|
-| E15a | Interruttore magnetotermico differenziale 1P+N 30 mA tipo A | INTERRUTTORE MAGNETOTERMICO ABB DIFFERENZIALE 2P PROTETTI 16A 4,5 kA CURVA C 0,03A | 10072117 | Segrate (MI) | 1 pz | 32,70 | 32,70 | cad |  |
-| E16a | Interruttore magnetotermico differenziale 1P+N 30 mA tipo A | INTERRUTTORE MAGNETOTERMICO CHINT DIFFERENZIALE 1P+N 20A 4,5KA 30mA 2 MODULI 230V CLASSE A | 25008032 | Segrate (MI) | 1 pz | 18,44 | 18,44 | cad |  |
-| E16b | Interruttore magnetotermico differenziale 1P+N 30 mA tipo A | INTERRUTTORE MAGNETOTERMICO CHINT DIFFERENZIALE 1P+N 25A 4,5KA 30mA 2 MODULI 230V CLASSE A | 25008046 | Segrate (MI) | 1 pz | 18,44 | 18,44 | cad |  |
-| E17 | Interruttore magnetotermico differenziale 1P+N 30 mA tipo A | INTERRUTTORE MAGNETOTERMICO CHINT DIFFERENZIALE 1P+N 32A 4,5KA 30mA 2 MODULI 230V CLASSE A | 25008050 | Segrate (MI) | 1 pz | 18,44 | 18,44 | cad |  |
-| E18a | Interruttore magnetotermico differenziale 4P 30 mA tipo A | INTERRUTTORE MAGNETOTERMICO TECNOLINE DIFFERENZIALE 4P 16A TIPO A 30mA 10KA 5 MODULI | 25116915 | Segrate (MI) | 1 pz | 61,48 | 61,48 | cad |  |
-| E18b | Interruttore magnetotermico differenziale 4P 30 mA tipo A | INTERRUTTORE MAGNETOTERMICO TECNOLINE DIFFERENZIALE 4P 20A TIPO A 30mA 10KA 415V 5 MODULI | 25116931 | Segrate (MI) | 1 pz | 61,48 | 61,48 | cad | 25 e 32 A 30 mA non trovati |
-| E19a | Interruttore magnetotermico 1P+N | INTERRUTTORE MAGNETOTERMICO CHINT 10A 1P+N CURVA C 4,5KA 1 MODULO | 25008045 | Segrate (MI) | 1 pz | 4,84 | 4,84 | cad |  |
-| E19b | Interruttore magnetotermico 1P+N | INTERRUTTORE MAGNETOTERMICO CHINT 16A 1P+N CURVA C 4,5KA 1 MODULO | 25008041 | Segrate (MI) | 1 pz | 4,84 | 4,84 | cad | 20/25/32 A da verificare |
-| E20 | Interruttore magnetotermico 4P | INTERRUTTORE MAGNETOTERMICO AEG 4P 32A 10KA 4 MODULI CURVA C | 25062710 | Segrate (MI) | 1 pz | 97,54 | 97,54 | cad | 16/25 A non trovati |
-| E21a | Interruttore differenziale puro 2P / 4P 30 mA tipo A | DIFFERENZIALE PURO CHINT 2P 25A 30mA TIPO AC 2 MODULI | 25008031 | Pero (MI) | 1 pz | 16,31 | 16,31 | cad | tipo AC (no A) |
-| E21b | Interruttore differenziale puro 2P / 4P 30 mA tipo A | DIFFERENZIALE PURO TECNOLINE 2P 40A 30mA 230/240VAC TIPO A 2 MODULI | 25127450 | Pero (MI) | 1 pz | 14,34 | 14,34 | cad |  |
-| E21c | Interruttore differenziale puro 2P / 4P 30 mA tipo A | DIFFERENZIALE PURO TECNOLINE 4P 40A 30mA 400/415VAC TIPO A 4 MODULI | 25127438 | Pero (MI) | 1 pz | 24,51 | 24,51 | cad |  |
-| E21d | Interruttore differenziale puro 2P / 4P 30 mA tipo A | DIFFERENZIALE PURO ABB 4P 25A | 25007415 | Pero (MI) | 1 pz | 77,87 | 77,87 | cad | alt 4P 25A (30mA non esplicitato) |
-| E22a | Scaricatore di sovratensioni | SCARICATORE DI SOVRATENSIONE FINDER 2P 230V SPD TIPO II 1P+N | 25003353 | Segrate (MI) | 1 pz | 56,56 | 56,56 | cad |  |
-| E22b | Scaricatore di sovratensioni | SCARICATORE DI SOVRATENSIONE FINDER 4P 230/400V TRIFASE CON INDICATORE DI GUASTO | 25003355 | Segrate (MI) | 1 pz | 97,54 | 97,54 | cad |  |
+| ID | Voce | Articolo | Codice | Fornitore | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
+|---|---|---|---|---|---|---|--:|--:|---|---|
+| E15a | Interruttore magnetotermico differenziale 1P+N 30 mA tipo A | INTERRUTTORE MAGNETOTERMICO ABB DIFFERENZIALE 2P PROTETTI 16A 4,5 kA CURVA C 0,03A | 10072117 | Tecnomat | Segrate (MI) | 1 pz | 32,70 | 32,70 | cad |  |
+| E16a | Interruttore magnetotermico differenziale 1P+N 30 mA tipo A | INTERRUTTORE MAGNETOTERMICO CHINT DIFFERENZIALE 1P+N 20A 4,5KA 30mA 2 MODULI 230V CLASSE A | 25008032 | Tecnomat | Segrate (MI) | 1 pz | 18,44 | 18,44 | cad |  |
+| E16b | Interruttore magnetotermico differenziale 1P+N 30 mA tipo A | INTERRUTTORE MAGNETOTERMICO CHINT DIFFERENZIALE 1P+N 25A 4,5KA 30mA 2 MODULI 230V CLASSE A | 25008046 | Tecnomat | Segrate (MI) | 1 pz | 18,44 | 18,44 | cad |  |
+| E17 | Interruttore magnetotermico differenziale 1P+N 30 mA tipo A | INTERRUTTORE MAGNETOTERMICO CHINT DIFFERENZIALE 1P+N 32A 4,5KA 30mA 2 MODULI 230V CLASSE A | 25008050 | Tecnomat | Segrate (MI) | 1 pz | 18,44 | 18,44 | cad |  |
+| E18a | Interruttore magnetotermico differenziale 4P 30 mA tipo A | INTERRUTTORE MAGNETOTERMICO TECNOLINE DIFFERENZIALE 4P 16A TIPO A 30mA 10KA 5 MODULI | 25116915 | Tecnomat | Segrate (MI) | 1 pz | 61,48 | 61,48 | cad |  |
+| E18b | Interruttore magnetotermico differenziale 4P 30 mA tipo A | INTERRUTTORE MAGNETOTERMICO TECNOLINE DIFFERENZIALE 4P 20A TIPO A 30mA 10KA 415V 5 MODULI | 25116931 | Tecnomat | Segrate (MI) | 1 pz | 61,48 | 61,48 | cad | 25 e 32 A 30 mA non trovati |
+| E19a | Interruttore magnetotermico 1P+N | INTERRUTTORE MAGNETOTERMICO CHINT 10A 1P+N CURVA C 4,5KA 1 MODULO | 25008045 | Tecnomat | Segrate (MI) | 1 pz | 4,84 | 4,84 | cad |  |
+| E19b | Interruttore magnetotermico 1P+N | INTERRUTTORE MAGNETOTERMICO CHINT 16A 1P+N CURVA C 4,5KA 1 MODULO | 25008041 | Tecnomat | Segrate (MI) | 1 pz | 4,84 | 4,84 | cad | 20/25/32 A da verificare |
+| E20 | Interruttore magnetotermico 4P | INTERRUTTORE MAGNETOTERMICO AEG 4P 32A 10KA 4 MODULI CURVA C | 25062710 | Tecnomat | Segrate (MI) | 1 pz | 97,54 | 97,54 | cad | 16/25 A non trovati |
+| E21a | Interruttore differenziale puro 2P / 4P 30 mA tipo A | DIFFERENZIALE PURO CHINT 2P 25A 30mA TIPO AC 2 MODULI | 25008031 | Tecnomat | Pero (MI) | 1 pz | 16,31 | 16,31 | cad | tipo AC (no A) |
+| E21b | Interruttore differenziale puro 2P / 4P 30 mA tipo A | DIFFERENZIALE PURO TECNOLINE 2P 40A 30mA 230/240VAC TIPO A 2 MODULI | 25127450 | Tecnomat | Pero (MI) | 1 pz | 14,34 | 14,34 | cad |  |
+| E21c | Interruttore differenziale puro 2P / 4P 30 mA tipo A | DIFFERENZIALE PURO TECNOLINE 4P 40A 30mA 400/415VAC TIPO A 4 MODULI | 25127438 | Tecnomat | Pero (MI) | 1 pz | 24,51 | 24,51 | cad |  |
+| E21d | Interruttore differenziale puro 2P / 4P 30 mA tipo A | DIFFERENZIALE PURO ABB 4P 25A | 25007415 | Tecnomat | Pero (MI) | 1 pz | 77,87 | 77,87 | cad | alt 4P 25A (30mA non esplicitato) |
+| E22a | Scaricatore di sovratensioni | SCARICATORE DI SOVRATENSIONE FINDER 2P 230V SPD TIPO II 1P+N | 25003353 | Tecnomat | Segrate (MI) | 1 pz | 56,56 | 56,56 | cad |  |
+| E22b | Scaricatore di sovratensioni | SCARICATORE DI SOVRATENSIONE FINDER 4P 230/400V TRIFASE CON INDICATORE DI GUASTO | 25003355 | Tecnomat | Segrate (MI) | 1 pz | 97,54 | 97,54 | cad |  |
 
 ### Elettrico - sezionamento
 
-| ID | Voce | Articolo | Codice | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
-|---|---|---|---|---|---|--:|--:|---|---|
-| E23a | Sezionatore / interruttore rotativo in cassetta IP65 bordo macchina | SEZIONATORI DI MANOVRA 32A 4 poli IN CASSETTA CON MANIGLIA GIALLO/ROSSA | 12085434 | Pero (MI) | 1 pz | 23,24 | 23,24 | cad | IP non dichiarato |
+| ID | Voce | Articolo | Codice | Fornitore | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
+|---|---|---|---|---|---|---|--:|--:|---|---|
+| E23a | Sezionatore / interruttore rotativo in cassetta IP65 bordo macchina | SEZIONATORI DI MANOVRA 32A 4 poli IN CASSETTA CON MANIGLIA GIALLO/ROSSA | 12085434 | Tecnomat | Pero (MI) | 1 pz | 23,24 | 23,24 | cad | IP non dichiarato |
 
 ### Elettrico - quadri
 
-| ID | Voce | Articolo | Codice | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
-|---|---|---|---|---|---|--:|--:|---|---|
-| E24a | Centralino da parete IP65 con portella | CENTRALINO SARTEL DA PARETE STAGNO 8 MODULI IP65 | 10040848 | Pero (MI) | 1 pz | 9,14 | 9,14 | cad |  |
-| E24b | Centralino da parete IP65 con portella | CENTRALINO SARTEL DA PARETE STAGNO 12 MODULI IP65 | 10040850 | Pero (MI) | 1 pz | 16,48 | 16,48 | cad |  |
-| E24c | Centralino da parete IP65 con portella | CENTRALINO SARTEL DA PARETE STAGNO 24 MODULI IP65 | 10040851 | Pero (MI) | 1 pz | 27,79 | 27,79 | cad |  |
-| E25a | Centralino da incasso | CENTRALINO SARTEL INCASSO 8 MODULI CON PORTELLO BIANCO IP40 | 25011885 | Pero (MI) | 1 pz | 7,79 | 7,79 | cad |  |
-| E25b | Centralino da incasso | CENTRALINO SARTEL INCASSO 12 MODULI CON PORTELLO BIANCO IP40 | 25011888 | Pero (MI) | 1 pz | 10,70 | 10,70 | cad |  |
-| E26a | Scatola di derivazione IP55/IP65 | SCATOLA GEWISS DI DERIVAZIONE ESTERNA 100x100x50 mm PARETI LISCE IP55 | 25011797 | Pero (MI) | 1 pz | 5,33 | 5,33 | cad |  |
-| E26b | Scatola di derivazione IP55/IP65 | SCATOLA GEWISS DI DERIVAZIONE ESTERNA 150x110x70 mm PARETI LISCE IP55 | 25011789 | Pero (MI) | 1 pz | 7,79 | 7,79 | cad |  |
-| E26c | Scatola di derivazione IP55/IP65 | SCATOLA GEWISS DI DERIVAZIONE ESTERNA 190x140x70 mm PARETI LISCE IP55 | 25011795 | Pero (MI) | 1 pz | 14,34 | 14,34 | cad |  |
+| ID | Voce | Articolo | Codice | Fornitore | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
+|---|---|---|---|---|---|---|--:|--:|---|---|
+| E24a | Centralino da parete IP65 con portella | CENTRALINO SARTEL DA PARETE STAGNO 8 MODULI IP65 | 10040848 | Tecnomat | Pero (MI) | 1 pz | 9,14 | 9,14 | cad |  |
+| E24b | Centralino da parete IP65 con portella | CENTRALINO SARTEL DA PARETE STAGNO 12 MODULI IP65 | 10040850 | Tecnomat | Pero (MI) | 1 pz | 16,48 | 16,48 | cad |  |
+| E24c | Centralino da parete IP65 con portella | CENTRALINO SARTEL DA PARETE STAGNO 24 MODULI IP65 | 10040851 | Tecnomat | Pero (MI) | 1 pz | 27,79 | 27,79 | cad |  |
+| E25a | Centralino da incasso | CENTRALINO SARTEL INCASSO 8 MODULI CON PORTELLO BIANCO IP40 | 25011885 | Tecnomat | Pero (MI) | 1 pz | 7,79 | 7,79 | cad |  |
+| E25b | Centralino da incasso | CENTRALINO SARTEL INCASSO 12 MODULI CON PORTELLO BIANCO IP40 | 25011888 | Tecnomat | Pero (MI) | 1 pz | 10,70 | 10,70 | cad |  |
+| E26a | Scatola di derivazione IP55/IP65 | SCATOLA GEWISS DI DERIVAZIONE ESTERNA 100x100x50 mm PARETI LISCE IP55 | 25011797 | Tecnomat | Pero (MI) | 1 pz | 5,33 | 5,33 | cad |  |
+| E26b | Scatola di derivazione IP55/IP65 | SCATOLA GEWISS DI DERIVAZIONE ESTERNA 150x110x70 mm PARETI LISCE IP55 | 25011789 | Tecnomat | Pero (MI) | 1 pz | 7,79 | 7,79 | cad |  |
+| E26c | Scatola di derivazione IP55/IP65 | SCATOLA GEWISS DI DERIVAZIONE ESTERNA 190x140x70 mm PARETI LISCE IP55 | 25011795 | Tecnomat | Pero (MI) | 1 pz | 14,34 | 14,34 | cad |  |
 
 ### Elettrico - accessori
 
-| ID | Voce | Articolo | Codice | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
-|---|---|---|---|---|---|--:|--:|---|---|
-| E27a | Pressacavo IP68 | PRESSACAVO CON DADO PG21 IP68 5 PEZZI DOPPIA GUARNIZIONE | 12099464 | Pero (MI) | 5 pz | 3,77 | 0,75 | cad | PG21 ~ M25; conf. 5 pz |
-| E27b | Pressacavo IP68 | PRESSACAVO CON DADO PG16 IP68 5 PEZZI DOPPIA GUARNIZIONE | 12099463 | Pero (MI) | 5 pz | 1,97 | 0,39 | cad | PG16 ~ M20; conf. 5 pz |
-| E28a | Morsetti a leva / morsettiera / capicorda | 5 CONNETTORI A LEVE CABLO 2X4 MM² 2 VIE 600V 32A | 10074717 | Pero (MI) | 5 pz | 1,64 | 0,33 | cad | conf. 5 pz |
-| E28b | Morsetti a leva / morsettiera / capicorda | 5 CONNETTORI A LEVE CABLO 3 VIE 600V 32A | 10073777 | Pero (MI) | 5 pz | 1,93 | 0,39 | cad | conf. 5 pz |
+| ID | Voce | Articolo | Codice | Fornitore | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
+|---|---|---|---|---|---|---|--:|--:|---|---|
+| E27a | Pressacavo IP68 | PRESSACAVO CON DADO PG21 IP68 5 PEZZI DOPPIA GUARNIZIONE | 12099464 | Tecnomat | Pero (MI) | 5 pz | 3,77 | 0,75 | cad | PG21 ~ M25; conf. 5 pz |
+| E27b | Pressacavo IP68 | PRESSACAVO CON DADO PG16 IP68 5 PEZZI DOPPIA GUARNIZIONE | 12099463 | Tecnomat | Pero (MI) | 5 pz | 1,97 | 0,39 | cad | PG16 ~ M20; conf. 5 pz |
+| E28a | Morsetti a leva / morsettiera / capicorda | 5 CONNETTORI A LEVE CABLO 2X4 MM² 2 VIE 600V 32A | 10074717 | Tecnomat | Pero (MI) | 5 pz | 1,64 | 0,33 | cad | conf. 5 pz |
+| E28b | Morsetti a leva / morsettiera / capicorda | 5 CONNETTORI A LEVE CABLO 3 VIE 600V 32A | 10073777 | Tecnomat | Pero (MI) | 5 pz | 1,93 | 0,39 | cad | conf. 5 pz |
 
 ### Elettrico - comando
 
-| ID | Voce | Articolo | Codice | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
-|---|---|---|---|---|---|--:|--:|---|---|
-| E30a | Termostato / cronotermostato ambiente | CRONOTERMOSTATO BPT SETTIMANALE WIFI 220V/240V DA PARETE | 25079387 | Pero (MI) | 1 pz | 56,56 | 56,56 | cad | wifi |
-| E30b | Termostato / cronotermostato ambiente | TERMOSTATO AMBIENTE ARISTON CUBE ROOM A FILO 3319116 | 25012760 | Pero (MI) | 1 pz | 64,75 | 64,75 | cad | filo |
+| ID | Voce | Articolo | Codice | Fornitore | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
+|---|---|---|---|---|---|---|--:|--:|---|---|
+| E30a | Termostato / cronotermostato ambiente | CRONOTERMOSTATO BPT SETTIMANALE WIFI 220V/240V DA PARETE | 25079387 | Tecnomat | Pero (MI) | 1 pz | 56,56 | 56,56 | cad | wifi |
+| E30b | Termostato / cronotermostato ambiente | TERMOSTATO AMBIENTE ARISTON CUBE ROOM A FILO 3319116 | 25012760 | Tecnomat | Pero (MI) | 1 pz | 64,75 | 64,75 | cad | filo |
 
 
 ## 2. Il riferimento online — 5 novembre 2026
@@ -860,19 +902,21 @@ cartella della commessa il 6 novembre 2026. Sono prezzi netti pagati al banco da
 affidabili come prezzo; le quantità di quella commessa non sono un riferimento (il PO: «non mi fido tantissimo»).
 I nippli entrano con la regola delle giunzioni (`REL-023`): un nipplo fra due pezzi filettati che si toccano.
 
-| ID | Voce | Articolo | Codice | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
-|---|---|---|---|---|---|--:|--:|---|---|
-| I83a | Nipplo in ottone | NIPPLE OTTONE CROMATO 1/2'' | 5054826528304 | Bricoman | 1 pz | 1,02 | 1,02 | cad |  |
-| I83b | Nipplo in ottone | NIPPLE OTTONE CROMATO 3/4'' | 5054826528403 | Bricoman | 1 pz | 1,52 | 1,52 | cad |  |
-| I83c | Nipplo in ottone | NIPPLE OTTONE GIALLO BANNINGER M1'' | 5052740322701 | Bricoman | 1 pz | 2,13 | 2,13 | cad | in ghisa (280, 1") 1,15 € |
-| I83d | Nipplo ridotto in ottone | NIPPLE OTT.GIALLO RID.BANNINGER 1x3/4'' | 5052740310104 | Bricoman | 1 pz | 2,21 | 2,21 | cad | in ghisa (245, 1"×¾") 1,41 € |
+| ID | Voce | Articolo | Codice | Fornitore | Negozio | Confezione | Netto conf. € | Netto/UM € | UM | Note |
+|---|---|---|---|---|---|---|--:|--:|---|---|
+| I83a | Nipplo in ottone | NIPPLE OTTONE CROMATO 1/2'' | 5054826528304 | Bricoman | Bricoman | 1 pz | 1,02 | 1,02 | cad |  |
+| I83b | Nipplo in ottone | NIPPLE OTTONE CROMATO 3/4'' | 5054826528403 | Bricoman | Bricoman | 1 pz | 1,52 | 1,52 | cad |  |
+| I83c | Nipplo in ottone | NIPPLE OTTONE GIALLO BANNINGER M1'' | 5052740322701 | Bricoman | Bricoman | 1 pz | 2,13 | 2,13 | cad | in ghisa (280, 1") 1,15 € |
+| I83d | Nipplo ridotto in ottone | NIPPLE OTT.GIALLO RID.BANNINGER 1x3/4'' | 5052740310104 | Bricoman | Bricoman | 1 pz | 2,21 | 2,21 | cad | in ghisa (245, 1"×¾") 1,41 € |
 
 ## 3. Ancora da prezzare
 
 **Le voci che la distinta conta e il listino non ha.** Dopo il §2bis restano: il combinato tipo B di marca nelle taglie
-C20, C25 e C32 (il prezzo pubblico italiano non c'è; c'è il combinato economico, E31a); la guaina sp. 32 per il tubo
-da 28 (si trova solo per il 35); il plenum di ripresa con filtro, la canalina coprilinee 110×75, le fascette, i
-sostegni e il manicotto del flessibile, il collare delle linee frigorifere.
+C20, C25 e C32 (il prezzo pubblico italiano non c'è; c'è il combinato economico, E31a); il plenum di ripresa con filtro
+(Idrosanitaria ne ha dato uno per la Daikin FBA71A9, «prezzo indicativo», §5), la canalina coprilinee 110×75
+(Idrosanitaria ha offerto la serie D100), il manicotto del flessibile, i sostegni dei flessibili diversi dal Ø200, il
+collare delle linee frigorifere. Con il §5 hanno trovato un prezzo la guaina sp. 32 per il tubo da 28 (I84c), le
+fascette (A07c) e il sostegno del flessibile Ø200 (A08c).
 
 Quello che manca, dopo il §1 e il §2:
 
@@ -901,3 +945,182 @@ Quello che manca, dopo il §1 e il §2:
   a metro, a multipli di 2 m.
 - **F04/F05, tubo di rame ricotto con guaina.** Non è da prezzare: è coperto da F01–F03,
   il rame rivestito a metro.
+
+## 4. Abbattista — ordini del 10 e del 13 novembre 2026
+
+**Gli ordini OC-STD-0185611 del 10 novembre 2026** (offerta 212119 del 9 novembre: circolatore, volano, valvola di
+zona, bollitore) **e OC-STD-0188404 del 13 novembre 2026** (offerta 214224 dell'11 novembre: il circuito idraulico),
+commessa PR.MI.059, filiale di Milano. Pagamento RB 30/60 gg fine mese. **Tutte le 46 righe**, nell'ordine del
+documento (colonna Rif.: documento e riga).
+
+- **Il prezzo**: il listino Abbattista con gli sconti in cascata (50+20, 50+25, 50+30; sul tubo 50+15+3); il netto è
+  quello dell'ordine, IVA esclusa. Canapa e nastro anticondensa sono senza sconto.
+- **Il tubo**: Abbattista ha offerto il multistrato **rivestito blu, guaina 6 mm**, in rotoli, al posto del tubo nudo
+  con la guaina che la lista chiedeva (19 e 30 mm sul 32, 9 e 30 mm sul 26): le righe sono sui codici del tubo
+  preisolato (I07, I09, I10), non su quelli del nudo, e la guaina non c'è.
+- **Gli articoli uguali**: la valvola di zona, lo sfogo aria, il defangatore e il gruppo di sicurezza sono gli stessi
+  articoli Caleffi dell'offerta Idrosanitaria (stesso codice), e così il volano Cordivari: il confronto è diretto.
+
+### Il materiale
+
+| ID | Voce | Articolo | Codice | Fornitore | Rif. | Confezione | Listino € | Sconti % | Netto conf. € | Netto/UM € | UM | Note |
+|---|---|---|---|---|---|---|--:|---|--:|--:|---|---|
+| I51 | Valvola deviatrice 3 vie motorizzata | VAL.ZONA MOTOR.CF.6443 1 644366 | 48972151 | Abbattista | OC 0185611 r. 3 | 1 pz | 390,73 | 50+20 | 156,29 | 156,290 | cad | Caleffi 6443 1" (644366), lo stesso articolo dell'offerta Idrosanitaria |
+| I09 | Tubo multistrato preisolato | TUBO MULTISTRATO RIVEST.BLU MM26/06 — MT.50 KAITMRB26/06 26G11711AHEC70F | 23660274 | Abbattista | OC 0188404 r. 1 | rotolo 50 m | 278,79 | 50+15+3 | 114,93 | 2,299 | m | rivestito blu, guaina 6 mm (il §1: 9 mm); offerto al posto del tubo nudo con la guaina della lista |
+| I07 | Tubo multistrato preisolato | TUBO MULTISTRATO RIVEST.BLU MM16/06 — MT.50 KAITMRB16/06 26G11111AHAA70F | 15604398 | Abbattista | OC 0188404 r. 2 | rotolo 50 m | 110,84 | 50+15+3 | 45,70 | 0,914 | m | rivestito blu, guaina 6 mm; offerto al posto del tubo nudo |
+| I10 | Tubo multistrato preisolato | TUBO MULTISTRATO RIVEST.BLU MM32/06 — MT.25 KAITMRB32/06 26G11311AHFC60F | 69113897 | Abbattista | OC 0188404 r. 3 | rotolo 25 m | 204,89 | 50+15+3 | 84,47 | 3,379 | m | rivestito blu, guaina 6 mm (il §1: 9 mm); offerto al posto del tubo nudo con la guaina della lista |
+| I13 | Gomito 90 a pressare | RACC.CURVO 32X32 PRESS.TIEMME 1653 — 1650013 | 67027245 | Abbattista | OC 0188404 r. 4 | 1 pz | 26,26 | 50+25 | 9,85 | 9,848 | cad |  |
+| I43a | Valvola automatica di sfogo aria | VAL.SFOGO ARIA AUT.CF.5020 1/2 GIALLA — 502040 | 41082752 | Abbattista | OC 0188404 r. 5 | 1 pz | 33,92 | 50+20 | 13,57 | 13,570 | cad | Caleffi 5020 (502040), lo stesso articolo dell'offerta Idrosanitaria |
+| I38b | Defangatore magnetico | DEFANG.C/MAGNETE ORIENT.CF.545306 D.1 | 34297572 | Abbattista | OC 0188404 r. 6 | 1 pz | 223,08 | 50+20 | 89,23 | 89,230 | cad | Caleffi 545306, lo stesso articolo dell'offerta Idrosanitaria |
+| I46 | Rubinetto di scarico portagomma | RUBIN.PORTAGOMMA 1/2 TIEMME LEVA NERA — 2500043 | 47637767 | Abbattista | OC 0188404 r. 7 | 1 pz | 14,36 | 50+25 | 5,38 | 5,385 | cad |  |
+| I41a | Vaso di espansione chiuso a membrana per riscaldamento | VASO ESP.SANIT/RISC.VAREM EXTRA LT.8 — LC CE R1008223S4000000 | 32063341 | Abbattista | OC 0188404 r. 8 | 1 pz | 61,70 | 50+25 | 23,14 | 23,140 | cad | sanitario e riscaldamento |
+| I41c | Vaso di espansione chiuso a membrana per riscaldamento | VASO ESP.SANIT.VAREM LT.24 AT.3/4" — C/CONTROFLAN.AVVITATA S2024263S40000000 | 46192715 | Abbattista | OC 0188404 r. 9 | 1 pz | 96,29 | 50+25 | 36,11 | 36,110 | cad | 24 l, sanitario, con controflangia: offerto per il vaso del riscaldamento da 24 l (il codice è la taglia da 25 l) |
+| I44 | Manometro radiale/assiale 0-6 bar | MAN.RAD.3/8 ISPESL D.80 6BAR FERR. — 110512/6 | 23838345 | Abbattista | OC 0188404 r. 10 | 1 pz | 21,00 | 50+30 | 7,35 | 7,350 | cad | ⚠ attacco 3/8" (la voce: ½"); ISPESL; con serpentina e rubinetto a parte (righe 11 e 12) |
+| — | Serpentina in rame 3/8" per manometro | SERPENTINA RAME 3/8 FERR.110556 | 34982850 | Abbattista | OC 0188404 r. 11 | 1 pz | 28,31 | 50+30 | 9,91 | 9,910 | cad | il kit ISPESL del manometro; la lista non la chiede |
+| I77 | Rubinetto portamanometro a tre vie, ½" | RUB.PORTAMANOMETRO PN16 FERR.110553 3/8 | 36256339 | Abbattista | OC 0188404 r. 12 | 1 pz | 39,10 | 50+30 | 13,69 | 13,690 | cad | ⚠ attacco 3/8" (la voce: ½") |
+| I18 | Tee a pressare | RACC.T PRESS.TIEMME 1657 32X32X32 — 1650058 | 99816767 | Abbattista | OC 0188404 r. 13 | 1 pz | 42,98 | 50+25 | 16,12 | 16,116 | cad |  |
+| I17 | Tee a pressare | RACC.T PRESS.TIEMME 1657 26X26X26 — 1650018 | 89921759 | Abbattista | OC 0188404 r. 14 | 1 pz | 26,08 | 50+25 | 9,78 | 9,780 | cad |  |
+| I32 | Valvola a sfera a passaggio totale ottone | VAL.SFERA FF ACQUA 1 TIEMME 2310 — 2310001 C/LEVA ROSSA | 84135919 | Abbattista | OC 0188404 r. 15 | 1 pz | 27,04 | 50+25 | 10,14 | 10,140 | cad |  |
+| I31 | Valvola a sfera a passaggio totale ottone | VAL.SFERA FF ACQUA 3/4 TIEMME 2310 — 2310008 C/LEVA ROSSA | 74240912 | Abbattista | OC 0188404 r. 16 | 1 pz | 17,01 | 50+25 | 6,38 | 6,380 | cad |  |
+| I40a | Valvola di sicurezza 3 bar | VAL.SIC.ISPESL CF.527 3 ATE 1/2 527430 | 92415435 | Abbattista | OC 0188404 r. 17 | 1 pz | 122,36 | 50+20 | 48,95 | 48,950 | cad | Caleffi 527, ISPESL |
+| — | Imbuto di scarico ½" con ritegno | IMBUTO SCAR.CF.5521 1/2 552140 | 94621714 | Abbattista | OC 0188404 r. 18 | 1 pz | 56,89 | 50+20 | 22,76 | 22,760 | cad | per lo scarico convogliato della sicurezza; la lista non lo conta a parte |
+| — | Raccordo diritto a pressare M 1" × 26 | RACC.DIR.M.PRESS.TIEMME 1650 26X1 — 1650027 | 83018140 | Abbattista | OC 0188404 r. 19 | 1 pz | 12,84 | 50+25 | 4,82 | 4,817 | cad | offerto per i raccordi «all'attacco» del 26, che la regola prezza col ¾" (I22) |
+| I22 | Raccordo diritto a pressare filettato maschio | RACC.DIR.M PRESS.TIEMME 1650 26X3/4 — 1650007 | 95193952 | Abbattista | OC 0188404 r. 20 | 1 pz | 9,85 | 50+25 | 3,69 | 3,693 | cad |  |
+| I81c | Raccordo diritto a pressare M × multistrato, ½" × 16 | RACC.DIR.M PRESS.TIEMME 1650 16X1/2 — 1650009 | 68636050 | Abbattista | OC 0188404 r. 21 | 1 pz | 4,84 | 50+25 | 1,81 | 1,810 | cad | offerto per il raccordo «all'attacco» del 16 («quotato ½" M») |
+| — | Raccordo diritto a pressare M 3/8" × 16 | TIEMME RACC.DIR.M.16X3/8M PRESS.1650262 | 04756113 | Abbattista | OC 0188404 r. 22 | 1 pz | 6,12 | 50+25 | 2,29 | 2,290 | cad | la regola prezza il 16 col ½" (I81c) |
+| I23 | Raccordo diritto a pressare filettato maschio | RACC.DIR.M PRESS.TIEMME 1650 32X1 — 1650032 | 05088968 | Abbattista | OC 0188404 r. 23 | 1 pz | 15,06 | 50+25 | 5,65 | 5,646 | cad |  |
+| — | Raccordo diritto a pressare M 1" × 32 | RACC.DIR.M PRESS.TIEMME 1650 32X1 — 1650032 | 05088968 | Abbattista | OC 0188404 r. 24 | 1 pz | 15,06 | 50+25 | 5,64 | 5,645 | cad | come la riga 23: i due raccordi «all'attacco» del 32 |
+| — | Collare con gommino ¾" | COLLARE RIV.GOMMA GIA 082209 STO1G 3/4 | 36190648 | Abbattista | OC 0188404 r. 25 | 1 pz | 5,71 | 50+25 | 2,14 | 2,142 | cad | la regola dei collari ha un codice solo, I63 (1") |
+| — | Collare con gommino 3/8" | COLLARE RIV.GOMMA STO1G 3/8 GIA 082009 | 23388081 | Abbattista | OC 0188404 r. 26 | 1 pz | 5,34 | 50+25 | 2,00 | 2,005 | cad | la regola dei collari ha un codice solo, I63 (1") |
+| I63 | Collare pesante con gommino e barra filettata M8 | COLLARE RIV.GOMMA GIA 082309 STO1G 1 | 01814945 | Abbattista | OC 0188404 r. 27 | 1 pz | 6,25 | 50+25 | 2,34 | 2,342 | cad | il collare; il fissaggio è a parte (riga 28) |
+| — | Supporto rapido di fissaggio per collari (2 pezzi) | SUPP.RAPIDO FISS.GIA 146400 10TF 2PZ. | 19211046 | Abbattista | OC 0188404 r. 28 | 1 pz | 3,20 | 50+25 | 1,20 | 1,199 | cad | il fissaggio dei collari: 14 confezioni per 27 collari |
+| I49a | Tubo flessibile inox / giunto antivibrante | GIUNTO IN GOMMA ANTIVIBRANTE BOCCH.11/4 — MCVGGAB11/4 | 76800301 | Abbattista | OC 0188404 r. 29 | 1 pz | 32,94 | 50+20 | 13,18 | 13,175 | cad | giunto in gomma con bocchettone |
+| I83c | Nipplo in ottone | NIPPLE GHISA ZINCATO FIG 280 1" — GEONGZ2801 | 82014246 | Abbattista | OC 0188404 r. 30 | 1 pz | 5,64 | 50+20 | 2,26 | 2,257 | cad | in ghisa zincata fig. 280 (il §2ter: in ottone) |
+| I83e | Nipplo ridotto 1¼" × 1" | NIPPLE GHISA ZINCATO FIG.245 11/4-1 — GEONGZ24511/4-1 | 39080875 | Abbattista | OC 0188404 r. 31 | 1 pz | 11,22 | 50+20 | 4,49 | 4,490 | cad | in ghisa zincata fig. 245 |
+| I83b | Nipplo in ottone | NIPPLE GHISA ZINCATO FIG 280 3/4 — GEONGZ2803/4 | 72119238 | Abbattista | OC 0188404 r. 32 | 1 pz | 3,92 | 50+20 | 1,57 | 1,570 | cad | in ghisa zincata fig. 280 (il §2ter: in ottone) |
+| I67a | Teflon / canapa / pasta sigillante / filo sigillante | CANAPA EXTRA 4 FACOT CANEXK025 — CANEXK025 | 02923656 | Abbattista | OC 0188404 r. 33 | 0,25 kg | 7,50 | — | 7,50 | 7,500 | cad | canapa, 0,25 kg a 30 €/kg, senza sconto |
+| I67b | Teflon / canapa / pasta sigillante / filo sigillante | KOLGAS-UNI 400GR.FACOT KOLGUNI0400 | 33424924 | Abbattista | OC 0188404 r. 34 | 1 pz | 14,54 | 50+20 | 5,81 | 5,810 | cad | pasta sigillante, 400 g |
+| I61 | Nastro adesivo per isolante / colla | NASTRO ANTICOND.H50MM L10M SP.3MM — 850NS020100 | 88838050 | Abbattista | OC 0188404 r. 35 | rotolo 10 m | 4,91 | — | 4,91 | 24,550 | cad | nastro anticondensa in gomma 3 mm, senza sconto; il codice è il rotolo da 50 m: 5 rotoli da 10 m |
+| I55a | Additivo inibitore / pulitore per impianti | CONDIZ.CALD.CILLIT HS23RS PLUS KG.1 — 10145AC LAVAGGIO ALTA T. | 38021657 | Abbattista | OC 0188404 r. 36 | 1 pz | 47,70 | 50+20 | 19,08 | 19,080 | cad | lavaggio, 1 kg |
+| I55b | Additivo inibitore / pulitore per impianti | CONDIZ.CALD.CILLIT HS COMBI KG1 10135 — ALTA TEMPERATURA PROTET | 67193034 | Abbattista | OC 0188404 r. 37 | 1 pz | 75,60 | 50+20 | 30,24 | 30,240 | cad | protettivo, 1 kg |
+| I74 | Gruppo di sicurezza sanitario per bollitore, ¾" | GR.SIC.BOLL.CF.5261 1/2 526142 | 43273068 | Abbattista | OC 0188404 r. 38 | 1 pz | 71,02 | 50+20 | 28,41 | 28,410 | cad | Caleffi 5261 ½" (526142), lo stesso articolo dell'offerta Idrosanitaria |
+| I47 | Gruppo di riempimento automatico | VAL.CAR.CALEFFI.553 C/MANOM.1/2 553640 — RIEMPIMENTO AUTOM | 42291019 | Abbattista | OC 0188404 r. 39 | 1 pz | 168,96 | 50+20 | 67,59 | 67,590 | cad | ⚠ il disconnettore non è nel titolo: la voce lo chiede (I-309); Caleffi 553 con manometro |
+| I78a | Riduzione filettata in ottone M × F, 1¼" × 1" | RIDUZIONE GHISA ZINCATA FIG.241 11/4-1 — GEORGZ24111/4-1 | 45357738 | Abbattista | OC 0188404 r. 40 | 1 pz | 5,17 | 50+20 | 2,07 | 2,070 | cad | in ghisa zincata fig. 241 |
+| — | Staffa per vaso di espansione ¾" | STAFFA VASO DI ESPANSIONE 3/4" 075510 — GIA | 69816916 | Abbattista | OC 0188404 r. 41 | 1 pz | 38,70 | 50+25 | 14,52 | 14,515 | cad | la voce del vaso la comprende («con attacco e staffa») |
+| I75 | Valvola a sfera FF a passaggio totale, ½" | VAL.SFERA FF ACQUA 1/2 TIEMME 2320 — 2310010 C/FARF.ROSSA | 88290332 | Abbattista | OC 0188404 r. 42 | 1 pz | 11,94 | 50+25 | 4,48 | 4,480 | cad | con farfalla |
+
+### Le apparecchiature (fuori dal conto della minuteria)
+
+La sezione A della distinta non si prezza (D-235): queste righe sono qui perché il PO compra da Abbattista gli
+accessori più costosi (I-304), e perché il confronto si veda.
+
+| ID | Voce | Articolo | Codice | Fornitore | Rif. | Confezione | Listino € | Sconti % | Netto conf. € | Netto/UM € | UM | Note |
+|---|---|---|---|---|---|---|--:|---|--:|--:|---|---|
+| — | Circolatore | POMPA EVOSTA 2 40-70/130 (1")1X230 50/60 — Y25 60231853 | 85801171 | Abbattista | OC 0185611 r. 1 | 1 pz | 241,29 | 50+20 | 96,52 | 96,520 | cad |  |
+| — | Volano termico a quattro attacchi | UP GBF 80 VOLANO TERMICO SEPARATORE IDRA — 3070160920018 | 68432687 | Abbattista | OC 0185611 r. 2 | 1 pz | 448,21 | 50+20 | 179,29 | 179,290 | cad | stesso articolo Cordivari dell'offerta Idrosanitaria (3070160920018) |
+| — | Bollitore ACS 200 l | BOLLY 1 XL WB 200 BOLLITORE VERTICALE CO — 3104162330011 | 79861453 | Abbattista | OC 0185611 r. 4 | 1 pz | 1.566,31 | 50+20 | 626,52 | 626,520 | cad | modello diverso da quello dell'offerta Idrosanitaria |
+
+## 5. Idrosanitaria — preventivo del 9 novembre 2026
+
+**Il preventivo XC/STD/2704331 del 9 novembre 2026**, valido fino al 24 novembre 2026, commessa PR.MI.059, sede di
+Magnago. Pagamento alla consegna. Il preventivo è «indicativo, da rivedere in fase d'ordine». **Tutte le 81 righe**,
+nell'ordine del documento; il totale merce è 10.835,01 € più 8,75 € di contributo RAEE (sulle macchine).
+
+- **Il prezzo**: il prezzo unitario del preventivo, già netto, IVA esclusa.
+- **Il tubo**: nudo, in barre da 5 m, con la guaina a parte (spessore × foro: «9X28» è la guaina da 9 mm per il tubo
+  da 26).
+- **I raccordi «all'attacco»**: per i raccordi diritti a pressare filettati che la lista chiamava «all'attacco» (senza
+  il pollice), Idrosanitaria ha offerto **manicotti** tubo-tubo (righe 40, 42, 47): le righe sono sui codici dei
+  manicotti, che è quello che sono.
+- **Il rame «CONDY»**: senza ID finché non si sa se è il rame rivestito (righe 50 e 51).
+
+### Il materiale
+
+| ID | Voce | Articolo | Codice | Fornitore | Rif. | Confezione | Netto conf. € | Netto/UM € | UM | Note |
+|---|---|---|---|---|---|---|--:|--:|---|---|
+| I71a | Basamento antivibrante in gomma per unità esterna | PIEDINO ANTIVIBRANTE PAV 1000KG | 11105340N | Idrosanitaria | XC 2704331 r. 6 | 1 pz | 2,60 | 2,603 | cad | piedino antivibrante, portata 1000 kg |
+| I03 | Tubo multistrato PEX-AL-PEX nudo, rotolo o barra | TUBO 26X3 AL.0,35 NUDO BARRE 5MT PEX-AL-PEX | R999Y174 | Idrosanitaria | XC 2704331 r. 7 | barra 5 m | 2,01 | 2,011 | m | barre da 5 m |
+| I84a | Guaina isolante elastomerica sp. 9 mm per tubo 26 | ISOLANTE GOMMA ST 9X28 MM | 09028005508 | Idrosanitaria | XC 2704331 r. 8 | 1 m | 0,51 | 0,513 | m | spessore 9 mm, foro 28 mm |
+| — | Collare con gommino ¾" M8 | COLLARE OTER PES.C/GUARN. P+T 3/4" M8 833 | 83305 | Idrosanitaria | XC 2704331 r. 9 | 1 pz | 1,44 | 1,442 | cad | la regola dei collari ha un codice solo, I63 (1") |
+| I01 | Tubo multistrato PEX-AL-PEX nudo, rotolo | TUBO 16X2 AL.0,2 NUDO BARRE 5MT PEX-AL-PEX | R999Y125 | Idrosanitaria | XC 2704331 r. 10 | barra 5 m | 0,76 | 0,760 | m | barre da 5 m |
+| — | Collare isofonico 3/8" | COLLARE ISOFONICO ZINCATO C/T 3/8 | 83303 | Idrosanitaria | XC 2704331 r. 11 | 1 pz | 1,29 | 1,294 | cad | la regola dei collari ha un codice solo, I63 (1") |
+| I84c | Guaina isolante elastomerica sp. 32 mm per tubo 26 | ISOLANTE GOMMA ST 32X28 MM | 32028005508 | Idrosanitaria | XC 2704331 r. 12 | 1 m | 3,50 | 3,505 | m | spessore 32 mm, foro 28 mm: per la guaina da 30 mm della lista |
+| I04 | Tubo multistrato PEX-AL-PEX nudo, barra | TUBO 32X3 AL.0,4 NUDO BARRE 5MT PX-AL-PEX | R999Y184 | Idrosanitaria | XC 2704331 r. 13 | barra 5 m | 3,21 | 3,211 | m | barre da 5 m |
+| I58 | Guaina isolante elastomerica sp. 13-19 mm | ISOLANTE GOMMA ST 19X35 MM | 19035005508 | Idrosanitaria | XC 2704331 r. 14 | 1 m | 1,65 | 1,654 | m | spessore 19 mm, foro 35 mm |
+| I63 | Collare pesante con gommino e barra filettata M8 | COLLARE OTER PES.C/GUARN. P+T 1" M8 833 | 83306 | Idrosanitaria | XC 2704331 r. 15 | 1 pz | 1,68 | 1,681 | cad | collare pesante con guarnizione, M8 |
+| I82 | Guaina elastomerica sp. 32 mm, tubo Ø35 | ISOLANTE GOMMA ST 32X35 MM | 32035005508 | Idrosanitaria | XC 2704331 r. 16 | 1 m | 3,94 | 3,945 | m | spessore 32 mm, foro 35 mm |
+| I13 | Gomito 90 a pressare | RM122 GOMITO 90° 32 | RM122Y011 | Idrosanitaria | XC 2704331 r. 17 | 1 pz | 7,20 | 7,200 | cad |  |
+| I61 | Nastro adesivo per isolante / colla | NASTRO IN GOMMA ADES.H.50 SP.3 L.10M | 850NS020100 | Idrosanitaria | XC 2704331 r. 18 | rotolo 10 m | 3,07 | 15,340 | cad | nastro in gomma adesivo 3 mm, rotolo 10 m; il codice è il rotolo da 50 m: 5 rotoli |
+| I67a | Teflon / canapa / pasta sigillante / filo sigillante | CANAPA GR.250 | 00505 | Idrosanitaria | XC 2704331 r. 19 | 1 pz | 3,94 | 3,944 | cad | canapa 250 g |
+| I67b | Teflon / canapa / pasta sigillante / filo sigillante | MASTICE EXTRA GAS KG.0,460 | 00201 | Idrosanitaria | XC 2704331 r. 20 | 1 pz | 2,63 | 2,632 | cad | mastice 0,46 kg |
+| I43a | Valvola automatica di sfogo aria | VALV.AUTOM.SFOGO ARIA 1/2" 2,5BARMINICAL | 502040 | Idrosanitaria | XC 2704331 r. 21 | 1 pz | 11,16 | 11,158 | cad | Caleffi Minical (502040), lo stesso articolo dell'ordine Abbattista |
+| I51 | Valvola deviatrice 3 vie motorizzata | VALV.DEVIAT.1" 3 VIE MOTOR.C/MICRO 220 | 644366 | Idrosanitaria | XC 2704331 r. 22 | 1 pz | 143,33 | 143,326 | cad | Caleffi 644366, lo stesso articolo dell'ordine Abbattista |
+| I74 | Gruppo di sicurezza sanitario per bollitore, ¾" | GRUPPO SICUREZZA BOILER 1/2 DIR. | 526142 | Idrosanitaria | XC 2704331 r. 23 | 1 pz | 26,05 | 26,051 | cad | Caleffi 526142, lo stesso articolo dell'ordine Abbattista |
+| I38b | Defangatore magnetico | DEFANGATORE MAGNETICO VERTICALE 1" F | 545306 | Idrosanitaria | XC 2704331 r. 24 | 1 pz | 81,83 | 81,832 | cad | Caleffi 545306, lo stesso articolo dell'ordine Abbattista |
+| I46 | Rubinetto di scarico portagomma | RUBINETTO SCARICO CALDAIA 1/2 | 538400 | Idrosanitaria | XC 2704331 r. 25 | 1 pz | 6,25 | 6,246 | cad |  |
+| I41a | Vaso di espansione chiuso a membrana per riscaldamento | SERBATOIO RISC/SANIT. DP 8LT BCO | A2C2L16 V0020 | Idrosanitaria | XC 2704331 r. 26 | 1 pz | 20,05 | 20,053 | cad | riscaldamento e sanitario |
+| I41c | Vaso di espansione chiuso a membrana per riscaldamento | VASO ESPANSIONE RISC. ER 24 CE | A102L27 00270 | Idrosanitaria | XC 2704331 r. 27 | 1 pz | 23,66 | 23,663 | cad | 24 l, riscaldamento (il codice è la taglia da 25 l) |
+| I47 | Gruppo di riempimento automatico | GRUPPO DI CARICAMENTO C/DISCONNETTORE 1/2" | 580011 | Idrosanitaria | XC 2704331 r. 28 | 1 pz | 153,01 | 153,011 | cad | con disconnettore |
+| I49a | Tubo flessibile inox / giunto antivibrante | ZKT GIUNTO ELASTICO FIL. 1"1/4 PN10 GHISA/EPDM | 149B12570C | Idrosanitaria | XC 2704331 r. 29 | 1 pz | 16,27 | 16,271 | cad | giunto elastico filettato ghisa/EPDM |
+| I55a | Additivo inibitore / pulitore per impianti | X800 PULITORE IMPIANTI 1LT | X800L-12X1L-EXPB | Idrosanitaria | XC 2704331 r. 30 | 1 pz | 24,81 | 24,807 | cad |  |
+| I55b | Additivo inibitore / pulitore per impianti | PROTETTIVO FILMANTE UNIV. | K375Y021 | Idrosanitaria | XC 2704331 r. 31 | 1 pz | 19,70 | 19,705 | cad |  |
+| I78a | Riduzione filettata in ottone M × F, 1¼" × 1" | F241 RIDUZ.MF GH.ZINC.11/4-1" | 770241231 | Idrosanitaria | XC 2704331 r. 32 | 1 pz | 1,44 | 1,438 | cad | in ghisa zincata fig. 241 |
+| I44 | Manometro radiale/assiale 0-6 bar | MANOMETRO ATT.RAD.G1/2B M1-ABS 100/R-0-6BAR | PA5206BD03 | Idrosanitaria | XC 2704331 r. 33 | 1 pz | 9,84 | 9,842 | cad | 0–6 bar, attacco radiale ½" |
+| I18 | Tee a pressare | RM150 TEE 32X32X32 | RM150Y011 | Idrosanitaria | XC 2704331 r. 34 | 1 pz | 11,11 | 11,105 | cad |  |
+| I17 | Tee a pressare | RM150 TEE 26X26X26 | RM150Y009 | Idrosanitaria | XC 2704331 r. 35 | 1 pz | 7,27 | 7,274 | cad |  |
+| I77 | Rubinetto portamanometro a tre vie, ½" | 403RF RUBINETTO PORTAMANOMETRO 1/2" WATTS | 403R12 | Idrosanitaria | XC 2704331 r. 36 | 1 pz | 8,95 | 8,951 | cad |  |
+| I32 | Valvola a sfera a passaggio totale ottone | 0801 VALV.SFERA ASTER 1" FF LEVA ALLUM. C/LEVA ALLUMINIO | 0801N406 | Idrosanitaria | XC 2704331 r. 37 | 1 pz | 8,12 | 8,120 | cad |  |
+| I31 | Valvola a sfera a passaggio totale ottone | 0801 VALV.SFERA ASTER 3/4" FF LEVA ALLUM. | 0801N405 | Idrosanitaria | XC 2704331 r. 38 | 1 pz | 5,62 | 5,620 | cad |  |
+| I40a | Valvola di sicurezza 3 bar | VST VALVOLA DI SICUREZZA 1/2" 3 BAR CERTIF.INAIL | 0212130 | Idrosanitaria | XC 2704331 r. 39 | 1 pz | 27,14 | 27,135 | cad | certificata INAIL |
+| I26b | Manicotto a pressare | RM102 MANICOTTO 26X3 | RM102Y009 | Idrosanitaria | XC 2704331 r. 40 | 1 pz | 4,24 | 4,242 | cad | manicotto: offerto per i raccordi «all'attacco» del 26 della lista, che sono filettati |
+| I22 | Raccordo diritto a pressare filettato maschio | RM107 RACCORDO FIL.M. 26X3/4" | RM107Y049 | Idrosanitaria | XC 2704331 r. 41 | 1 pz | 3,01 | 3,011 | cad |  |
+| I81b | Manicotto a pressare multistrato, 16×2 | RM102 MANICOTTO 16X2 | RM102Y003 | Idrosanitaria | XC 2704331 r. 42 | 1 pz | 2,14 | 2,137 | cad | manicotto: offerto per il raccordo «all'attacco» del 16 della lista, che è filettato |
+| — | Raccordo diritto a pressare M 3/8" × 16 | RM107 RACCORDO FIL.M. 16X3/8" | RM107Y023 | Idrosanitaria | XC 2704331 r. 43 | 1 pz | 1,62 | 1,621 | cad | la regola prezza il 16 col ½" (I81c) |
+| I23 | Raccordo diritto a pressare filettato maschio | RM107 RACCORDO FIL.M. 32X1" | RM107Y059 | Idrosanitaria | XC 2704331 r. 44 | 1 pz | 4,74 | 4,737 | cad |  |
+| I83c | Nipplo in ottone | F280 NIPPLO GHISA ZINC.1" | 770280206 | Idrosanitaria | XC 2704331 r. 45 | 1 pz | 1,57 | 1,567 | cad | in ghisa zincata fig. 280 (il §2ter: in ottone) |
+| I83e | Nipplo ridotto 1¼" × 1" | F245 NIPPLO GH.ZINC.11/4-1" | 770245227 | Idrosanitaria | XC 2704331 r. 46 | 1 pz | 3,12 | 3,119 | cad | in ghisa zincata fig. 245 |
+| I26c | Manicotto a pressare | RM102 MANICOTTO 32X3 | RM102Y011 | Idrosanitaria | XC 2704331 r. 47 | 1 pz | 6,07 | 6,074 | cad | manicotto: offerto per i raccordi «all'attacco» del 32 della lista, che sono filettati |
+| I83b | Nipplo in ottone | F280 NIPPLO GHISA ZINC.3/4" | 770280205 | Idrosanitaria | XC 2704331 r. 48 | 1 pz | 1,09 | 1,089 | cad | in ghisa zincata fig. 280 (il §2ter: in ottone) |
+| A01c | Tubo flessibile isolato per aria, rotolo 10 m, Ø200 | TUBO FLEX ISOLATO PER CANALIZZATO D203 PREZZO AL MT | TES203 | Idrosanitaria | XC 2704331 r. 49 | 1 m | 6,90 | 6,897 | m | Ø203, al metro |
+| — | Tubo di rame 3/8" × 0,8, rotolo 50 m («CONDY») | TUBO RAME 3/8"X0.8 ROTOLO 50M CONDY | RBMEM009520800 | Idrosanitaria | XC 2704331 r. 50 | 1 m | 4,34 | 4,344 | m | senza ID finché non si sa se è il rivestito: se lo è, prende F01b |
+| — | Tubo di rame 5/8" × 1,0, rotolo 50 m («CONDY») | TUBO RAME 5/8"X1.0 ROTOLO 50M CONDY | RBMEM015871000 | Idrosanitaria | XC 2704331 r. 51 | 1 m | 9,50 | 9,504 | m | senza ID finché non si sa se è il rivestito: se lo è, prende F03b |
+| — | Piedino antivibrante, portata 1000 kg | PIEDINO ANTIVIBRANTE PAV 1000KG | 11105340N | Idrosanitaria | XC 2704331 r. 57 | 1 pz | 2,60 | 2,603 | cad | come la riga 6 (I71a), per l'unità esterna |
+| I64 | Barra filettata M8 / M10 zincata | BARRA FILETTATA MA 8 X 1000MM ZINCATA DIN 975 | 647V00000801 | Idrosanitaria | XC 2704331 r. 58 | 1 pz | 0,71 | 0,709 | cad |  |
+| — | Barra filettata M10, 1 m | BARRA FILETTATA MA10 X 1000MM ZINCATA DIN 975 | 647V00001001 | Idrosanitaria | XC 2704331 r. 59 | 1 pz | 1,15 | 1,153 | cad | le regole prezzano la M10 con la M8 (I64) |
+| — | Dado esagonale M8 | DADI ESAG. M 8 6S CL8 ZINC.UNI 5588 | 688V00000008 | Idrosanitaria | XC 2704331 r. 60 | 1 pz | 0,01 | 0,009 | cad |  |
+| — | Dado esagonale M10 | DADI ESAG. M10 6S CL8 ZINC.UNI 5588 | 688V00000010 | Idrosanitaria | XC 2704331 r. 61 | 1 pz | 0,02 | 0,019 | cad | «quantita' dadi da confermare» |
+| A06c | Plenum porta-bocchetta 400×200, attacco Ø200 | PORTABOCCHETTA PLP 400X200 1X200 POSTERIORE | PLP-U-400X200-1B-P | Idrosanitaria | XC 2704331 r. 62 | 1 pz | 30,81 | 30,808 | cad | ⚠ attacco posteriore (la voce: laterale) |
+| A07c | Fascetta stringitubo inox 60–270 mm | FASCETTE STRINGITUBO ACC.INOX 60-270 | FSI60-270 | Idrosanitaria | XC 2704331 r. 63 | 1 pz | 1,82 | 1,819 | cad | per il flessibile fino a Ø250 |
+| A07a | Nastro alluminio / fascette stringitubo | NASTRO ADESIVO IN ALLUMINIO | KK-43 | Idrosanitaria | XC 2704331 r. 64 | 1 pz | 16,75 | 16,749 | cad |  |
+| A08c | Collare di fissaggio isolato Ø200 | COLLARE FISSAGGIO ISOLATO D200 | AIR-RS2SNE-200 | Idrosanitaria | XC 2704331 r. 65 | 1 pz | 3,60 | 3,600 | cad | il sostegno del flessibile Ø200; 5 offerti contro 21 della lista |
+| — | Derivazione a Y 250-200-150 | DERIVAZ.MULTIPLA A Y 250-200-150 MM | 11161803 | Idrosanitaria | XC 2704331 r. 66 | 1 pz | 87,72 | 87,717 | cad | non è la derivazione 1×Ø200 > 2×Ø200 della lista |
+| F06 | Nastro di finitura per linee frigorifere | NASTRO IN GOMMA ADES.H.50 SP.3 L.10M | 850NS020100 | Idrosanitaria | XC 2704331 r. 67 | 1 pz | 3,07 | 3,068 | cad | nastro in gomma adesivo 3 mm, rotolo 10 m |
+| — | Plenum di ripresa chiuso per Daikin FBA71A9 | PLENUM DI RIPRESA CHIUSO DAIKIN FBA71A9 | PLR-DAI091-C | Idrosanitaria | XC 2704331 r. 68 | 1 pz | 102,32 | 102,316 | cad | «prezzo indicativo da rivedere in fase esecutiva con disegno esecutivo» |
+| — | Giunto antivibrante in tela 70/100/70, rotolo 25 m | GIUNTO ANTIVIBRANTE 70/100/70 - CONF. 25 M | CC8 | Idrosanitaria | XC 2704331 r. 69 | 1 pz | 80,91 | 80,908 | cad | il rotolo, per un giunto della lista |
+| — | Canalina coprilinee D100, barra 2 m | T-100 CANALINA C/BOLLA 2MT D100 (PREZZO AL MT) | B-N11120010 | Idrosanitaria | XC 2704331 r. 70 | 1 m | 8,64 | 8,640 | m | «modello da confermare»; la lista chiede la 110×75 |
+| — | Curva piana della canalina D100 | CP-100 CURVA PIANA D100 | N11120100 | Idrosanitaria | XC 2704331 r. 71 | 1 pz | 11,42 | 11,418 | cad |  |
+| — | Terminale a muro della canalina D100 | TERMINALE A MURO FLANGIATO QUADRO TM100 NEW LINE (3 PZ) | SCD100283 | Idrosanitaria | XC 2704331 r. 72 | 1 pz | 17,58 | 17,584 | cad |  |
+| — | Manicotto della canalina D100 | MG-100 MANICOTTO DI GIUNZIONE D100 | N11121100 | Idrosanitaria | XC 2704331 r. 73 | 1 pz | 3,86 | 3,860 | cad |  |
+| I68a | Tubo di scarico condensa Ø32 / Ø40 con raccordi, Ø32 PP (HT) barra 2 m | TCR-32 TUBO SCAR CON RIGIDO 2MTAL MT | SCD300034 | Idrosanitaria | XC 2704331 r. 74 | barra 2 m | 2,38 | 2,382 | m | tubo rigido per condensa TCR-32, barra 2 m |
+| I87 | Clip di fissaggio per tubo condensa rigido | CLIP FISS.BIANCO TUBO SC.COND.RIGID | 11126396 | Idrosanitaria | XC 2704331 r. 75 | 1 pz | 0,40 | 0,403 | cad |  |
+| I84b | Guaina isolante elastomerica sp. 9 mm per tubo 32 | ISOLANTE GOMMA ST 9X35 MM | 09035005508 | Idrosanitaria | XC 2704331 r. 76 | 1 m | 0,59 | 0,586 | m | spessore 9 mm, foro 35 mm |
+| I86 | Braga 45° Ø40/32 in PP | PP-TECH BRAGA DM 40/32 45 HTEA | BEA040345 | Idrosanitaria | XC 2704331 r. 77 | 1 pz | 1,16 | 1,162 | cad | l'innesto sullo scarico esistente |
+| I68d | Tubo di scarico condensa Ø32 / Ø40 con raccordi, curva Ø32 87°/45° | TCR32 CA 90 CURVA AD ANGOLO | 11126392 | Idrosanitaria | XC 2704331 r. 78 | 1 pz | 3,69 | 3,694 | cad | curva TCR32 90° |
+| I68f | Tubo di scarico condensa Ø32 / Ø40 con raccordi, manicotto Ø32 | TCR32 MG MANICOTTO DI GIUNZIONE | 11126393 | Idrosanitaria | XC 2704331 r. 79 | 1 pz | 2,60 | 2,603 | cad | manicotto TCR32 |
+| I69 | Sifone ispezionabile condensa | SIFONE A SECCO ORIZ. ANTIODORED.32 | SCD300006 | Idrosanitaria | XC 2704331 r. 80 | 1 pz | 13,33 | 13,328 | cad | sifone a secco antiodore, Ø32 |
+| I85 | Collante per tubo di scarico condensa rigido | COLLA PER TUBO SCARICO CONDENSA RIGIDO | 11126315 | Idrosanitaria | XC 2704331 r. 81 | 1 pz | 13,65 | 13,652 | cad |  |
+
+### Le apparecchiature e la climatizzazione (fuori dal conto della minuteria)
+
+| ID | Voce | Articolo | Codice | Fornitore | Rif. | Confezione | Netto conf. € | Netto/UM € | UM | Note |
+|---|---|---|---|---|---|---|--:|--:|---|---|
+| — | Bollitore ACS 200 l | BOL. BOLLY1 ST FB WB 200 V003 | 3104162330042 | Idrosanitaria | XC 2704331 r. 1 | 1 pz | 461,40 | 461,396 | cad | «modello da confermare»; modello diverso da quello di Abbattista |
+| — | Pompa di calore monoblocco 12 kW R290 | U.E. PDC MONOBLOCCO TRI 12KW R290 | AW12NMXGHA | Idrosanitaria | XC 2704331 r. 2 | 1 pz | 3.103,60 | 3.103,600 | cad |  |
+| — | Box elettronico della pompa di calore | BOX ELETTRONICO POMPA DI CALORE MONOBLOCCO R290 | ATW-A03N | Idrosanitaria | XC 2704331 r. 3 | 1 pz | 461,20 | 461,200 | cad |  |
+| — | Circolatore | EVOSTA2 40-70/130 1" CIRC.EL.SING.MONOF. | 60231853 | Idrosanitaria | XC 2704331 r. 4 | 1 pz | 93,60 | 93,600 | cad |  |
+| — | Volano termico a quattro attacchi | BOL. VB 80LT C/4 ATT. C/COPERT.V003 | 3070160920018 | Idrosanitaria | XC 2704331 r. 5 | 1 pz | 156,49 | 156,492 | cad | lo stesso articolo Cordivari dell'ordine Abbattista (UP GBF 80) |
+| — | Comando a filo Daikin | COMANDO FILO BT BIANCO | BRC1H52W7 | Idrosanitaria | XC 2704331 r. 52 | 1 pz | 119,12 | 119,116 | cad |  |
+| — | Plenum motorizzato di zona Airzone 4×200 | AIRZONE EASYZONE 25 WI-FI MEDIUM IB8 DAIKIN 4X200 | AZC25DAIBS07M4 | Idrosanitaria | XC 2704331 r. 53 | 1 pz | 993,61 | 993,611 | cad |  |
+| — | Termostato di zona Airzone radio | TERMOSTATO THINK RADIO BIANCO | AZCE6THINKRB | Idrosanitaria | XC 2704331 r. 54 | 1 pz | 170,16 | 170,158 | cad |  |
+| — | Unità esterna Daikin 7,1 kW | U.E. MONO ADVANCE 7,1KW R32 MONOFASE | RZASG71MV1 | Idrosanitaria | XC 2704331 r. 55 | 1 pz | 1.017,27 | 1.017,275 | cad |  |
+| — | Unità interna canalizzata Daikin 7 kW | U.I.CANALIZ.M/PREV S/COM 7,0KW R32/R410 | FBA71A9 | Idrosanitaria | XC 2704331 r. 56 | 1 pz | 835,78 | 835,783 | cad |  |
