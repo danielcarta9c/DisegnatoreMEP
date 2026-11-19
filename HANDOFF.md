@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-11-18 — **la 2.1.1 è su `main`** (`REL-027`, I-302 … I-312, PR #96): il listino a più fornitori, «Dove comprare», il fornitore unico più economico, gli scostamenti come avvisi sul prezzo. Il PO ha approvato la fusione. **Il prossimo è `REL-028`** (`ACTIVE_WORK_PACKAGE.md`): finire il listino Tecnomat, poi le domande aperte.
+**Aggiornato:** 2026-11-19 — **la 2.2.2 è su `main`** (`REL-030`, PR #101); l'handoff BD.RM.264 è su `main` (I-335, PR #102). **Il prossimo è `REL-031`** (`ACTIVE_WORK_PACKAGE.md`).
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -11,16 +11,19 @@
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
 
-## ▶ Da dove riparte la prossima sessione — 19 novembre 2026, dopo REL-030 (la 2.2.2, PR #101)
+## ▶ Da dove riparte la prossima sessione — 19 novembre 2026, alla fusione della PR #102
 
-**Il prossimo lavoro è l'handoff del PO dal caso BD.RM.264 (I-335):** `docs/input-pm/2026-11-19-handoff-bd-rm-264/`.
-Si parte da `LEGGIMI.md` e `SPEC_lista_prezzata_e_disegnatore.md`. Tre filoni: la **lista prezzata** come PDF a sé sul
-modello rev04 (non la distinta, non `costo-minuteria.md`); **tappi e volano standard** Cordivari 4 attacchi 50/80 l,
-avviso distanza da `distinta.tubi`, carico manuale con disconnettore; **prezzi** (Shenling 9 kW, matching per famiglia,
-M01c da correggere). La sessione che lo prende scrive prima il pacchetto (`ACTIVE_WORK_PACKAGE.md` è ancora quello di
-REL-030, fuso con la PR #101) e lo fa vedere al PO.
+**Il pacchetto attivo è `REL-031`** (`ACTIVE_WORK_PACKAGE.md`, da avviare). Applica l'handoff del PO dal caso BD.RM.264
+(I-335, `docs/input-pm/2026-11-19-handoff-bd-rm-264/`, si parte dal `LEGGIMI.md`). Ha tre filoni:
+- la **lista prezzata** come PDF a sé, sul modello rev04;
+- **tappi e volano standard** Cordivari a 4 attacchi da 50 e 80 l, l'avviso della distanza letto anche da
+  `distinta.tubi`, il carico manuale con disconnettore;
+- **prezzi**: Shenling 9 kW a 2.450 €, aggancio per famiglia, M01c da correggere.
 
-- **I numeri**: il prossimo input è **I-336**. La prossima decisione va verificata in `docs/DECISION_LOG.md`.
+Le domande al PO sono scritte nel pacchetto: lo scarico O del bollitore, gli attacchi C, il prezzo reale del volano 50 l.
+Da verificare per primo: come la skill raggiunge l'impaginazione nove-c-report senza percorsi assoluti.
+
+- **I numeri**: il prossimo input è **I-336**, la prossima decisione **D-245**.
 
 ## ▶ Da dove riparte la prossima sessione — scritto il 18 novembre 2026 sera, alla fusione di REL-029
 
