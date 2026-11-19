@@ -1,0 +1,17 @@
+{
+  "formato": "A3",
+  "vista": "elettrico",
+  "note": [
+    "La pompa di calore regola da sé ed è al centro (I-230): deviatrice a sinistra col comando verso la macchina, relè e circolatore a destra, sonde e termostato in fila sotto a sinistra, quadro in basso a destra (comporre, elettrico)."
+  ],
+  "pezzi": {
+    "pdc": {"x": 0, "y": 0, "regola": "centro della tavola"},
+    "deviatrice": {"x": -30, "y": -35, "rotazione": 90, "regola": "comando verso la macchina (D-215)"},
+    "rele-circolatore": {"x": 50, "y": -25, "rotazione": 0, "regola": "D-228 — relè a destra della macchina"},
+    "circolatore": {"x": 52.5, "y": -45, "rotazione": 180, "regola": "sopra il suo relè, alimentazione in giù"},
+    "termostato": {"x": -17.5, "y": 40, "rotazione": 90, "regola": "ingresso più basso, il più vicino"},
+    "sonda-volano": {"x": -32.5, "y": 40, "rotazione": 0, "regola": "sonde in fila sotto a sinistra"},
+    "sonda-acs": {"x": -47.5, "y": 40, "rotazione": 0, "regola": "ingresso più alto, la più lontana"},
+    "quadro": {"x": 40, "y": 45, "regola": "in basso a destra, sotto la colonna del relè"}
+  }
+}

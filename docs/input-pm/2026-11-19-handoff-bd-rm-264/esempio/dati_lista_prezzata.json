@@ -1,0 +1,553 @@
+{
+ "sezioni": {
+  "Pompa di calore": [
+   {
+    "rif": "P.1",
+    "voce": "Pompa di calore aria-acqua monoblocco Shenling ThermaX R290 9 kW (HPM-V90W/R3)",
+    "q": 1,
+    "um": "n",
+    "fo": "Shenling",
+    "pu": 2450.0,
+    "tot": 2450.0
+   }
+  ],
+  "Apparecchiature": [
+   {
+    "rif": "A.1",
+    "voce": "Bollitore ACS Cordivari Bolly 1 XL WB 200 l, serpentino 2 m²",
+    "q": 1,
+    "um": "n",
+    "fo": "Idrosanitaria",
+    "pu": 546.0,
+    "tot": 546.0
+   },
+   {
+    "rif": "A.2",
+    "voce": "Volano termico Cordivari VB 50 l a 4 attacchi",
+    "q": 1,
+    "um": "n",
+    "fo": "Idrosanitaria",
+    "pu": 95.0,
+    "tot": 95.0
+   },
+   {
+    "rif": "A.3",
+    "voce": "Circolatore DAB Evosta 2 40-70/130 1\"",
+    "q": 1,
+    "um": "n",
+    "fo": "Idrosanitaria",
+    "pu": 93.6,
+    "tot": 93.6
+   },
+   {
+    "rif": "A.4",
+    "voce": "Cronotermostato ambiente BPT settimanale wifi",
+    "q": 1,
+    "um": "n",
+    "fo": "Tecnomat",
+    "pu": 56.56,
+    "tot": 56.56
+   }
+  ],
+  "Circuito idraulico": [
+   {
+    "rif": "I.1",
+    "voce": "Tubo multistrato MS 20×2, nudo",
+    "q": 8.0,
+    "um": "m",
+    "fo": "Tecnomat",
+    "pu": 1.065,
+    "tot": 8.52
+   },
+   {
+    "rif": "I.2",
+    "voce": "Guaina isolante elastomerica per tubo multistrato MS 20×2",
+    "q": 8,
+    "um": "m",
+    "fo": "Tecnomat",
+    "pu": 2.355,
+    "tot": 18.84
+   },
+   {
+    "rif": "I.3",
+    "voce": "Collare con gommino e tassello per tubo multistrato MS 20×2",
+    "q": 9.0,
+    "um": "n",
+    "fo": "Tecnomat",
+    "pu": 1.105,
+    "tot": 9.95
+   },
+   {
+    "rif": "I.4",
+    "voce": "Manicotto a pressare tubo multistrato MS 20×2",
+    "q": 4.0,
+    "um": "n",
+    "fo": "Tecnomat",
+    "pu": 4.16,
+    "tot": 16.64
+   },
+   {
+    "rif": "I.5",
+    "voce": "Tubo multistrato MS 32×3, nudo",
+    "q": 16.0,
+    "um": "m",
+    "fo": "Idrosanitaria",
+    "pu": 3.211,
+    "tot": 51.38
+   },
+   {
+    "rif": "I.6",
+    "voce": "Guaina isolante elastomerica per tubo multistrato MS 32×3)",
+    "q": 16.0,
+    "um": "m",
+    "fo": "Idrosanitaria",
+    "pu": 1.654,
+    "tot": 26.46
+   },
+   {
+    "rif": "I.7",
+    "voce": "Collare con gommino e tassello per tubo multistrato MS 32×3",
+    "q": 11.0,
+    "um": "n",
+    "fo": "Tecnomat",
+    "pu": 1.105,
+    "tot": 12.15
+   },
+   {
+    "rif": "I.8",
+    "voce": "Manicotto a pressare tubo multistrato MS 32×3",
+    "q": 1.0,
+    "um": "n",
+    "fo": "Tecnomat",
+    "pu": 5.52,
+    "tot": 5.52
+   },
+   {
+    "rif": "I.9",
+    "voce": "Tubo multistrato MS 26×3, nudo",
+    "q": 4.0,
+    "um": "m",
+    "fo": "Idrosanitaria",
+    "pu": 2.011,
+    "tot": 8.04
+   },
+   {
+    "rif": "I.10",
+    "voce": "Guaina isolante elastomerica per tubo multistrato MS 26×3",
+    "q": 4,
+    "um": "m",
+    "fo": "Tecnomat",
+    "pu": 2.79,
+    "tot": 11.16
+   },
+   {
+    "rif": "I.11",
+    "voce": "Collare con gommino e tassello per tubo multistrato MS 26×3",
+    "q": 3.0,
+    "um": "n",
+    "fo": "Tecnomat",
+    "pu": 1.105,
+    "tot": 3.31
+   },
+   {
+    "rif": "I.12",
+    "voce": "Manicotto a pressare tubo multistrato MS 26×3",
+    "q": 1.0,
+    "um": "n",
+    "fo": "Idrosanitaria",
+    "pu": 4.242,
+    "tot": 4.24
+   },
+   {
+    "rif": "I.13",
+    "voce": "Gomito 90° a pressare tubo multistrato MS 32×3",
+    "q": 20.0,
+    "um": "n",
+    "fo": "Idrosanitaria",
+    "pu": 7.2,
+    "tot": 144.0
+   },
+   {
+    "rif": "I.14",
+    "voce": "Nastro adesivo per le giunte dell'isolamento, rotolo 50 m",
+    "q": 1.0,
+    "um": "n",
+    "fo": "Tecnomat",
+    "pu": 5.57,
+    "tot": 5.57
+   },
+   {
+    "rif": "I.15",
+    "voce": "Canapa per raccordi filettati",
+    "q": 1,
+    "um": "n",
+    "fo": "Tecnomat",
+    "pu": 3.07,
+    "tot": 3.07
+   },
+   {
+    "rif": "I.16",
+    "voce": "Pasta sigillante per raccordi filettati",
+    "q": 1,
+    "um": "n",
+    "fo": "Idrosanitaria",
+    "pu": 2.63,
+    "tot": 2.63
+   },
+   {
+    "rif": "I.17",
+    "voce": "Valvola automatica di sfogo aria ½\" con rubinetto di intercettazione",
+    "q": 1.0,
+    "um": "n",
+    "fo": "Tecnomat",
+    "pu": 4.8,
+    "tot": 4.8
+   },
+   {
+    "rif": "I.18",
+    "voce": "Tee a pressare tubo multistrato MS 32×3",
+    "q": 5.0,
+    "um": "n",
+    "fo": "Tecnomat",
+    "pu": 11.02,
+    "tot": 55.1
+   },
+   {
+    "rif": "I.19",
+    "voce": "Valvola deviatrice a tre vie 1\" con attuatore 230 V",
+    "q": 1.0,
+    "um": "n",
+    "fo": "Tecnomat",
+    "pu": 88.93,
+    "tot": 88.93
+   },
+   {
+    "rif": "I.20",
+    "voce": "Gruppo di sicurezza sanitario per bollitore (ritegno, sicurezza 6 bar, intercettazione)",
+    "q": 1.0,
+    "um": "n",
+    "fo": "Idrosanitaria",
+    "pu": 26.051,
+    "tot": 26.05
+   },
+   {
+    "rif": "I.21",
+    "voce": "Defangatore magnetico 1\"",
+    "q": 1.0,
+    "um": "n",
+    "fo": "Idrosanitaria",
+    "pu": 81.832,
+    "tot": 81.83
+   },
+   {
+    "rif": "I.22",
+    "voce": "Rubinetto di scarico ½\" con portagomma",
+    "q": 2.0,
+    "um": "n",
+    "fo": "Tecnomat",
+    "pu": 3.73,
+    "tot": 7.46
+   },
+   {
+    "rif": "I.23",
+    "voce": "Vaso di espansione sanitario 12 l, con attacco e staffa",
+    "q": 1.0,
+    "um": "n",
+    "fo": "Tecnomat",
+    "pu": 26.64,
+    "tot": 26.64
+   },
+   {
+    "rif": "I.24",
+    "voce": "Vaso di espansione chiuso a membrana per riscaldamento 24 l, con attacco e staffa",
+    "q": 1.0,
+    "um": "n",
+    "fo": "Idrosanitaria",
+    "pu": 23.663,
+    "tot": 23.66
+   },
+   {
+    "rif": "I.25",
+    "voce": "Giunto antivibrante 1\"",
+    "q": 2.0,
+    "um": "n",
+    "fo": "Tecnomat",
+    "pu": 9.59,
+    "tot": 19.18
+   },
+   {
+    "rif": "I.26",
+    "voce": "Miscelatore termostatico sanitario ¾\" (Giacomini DR156)",
+    "q": 1,
+    "um": "n",
+    "fo": "Tecnomat",
+    "pu": 46.3,
+    "tot": 46.3
+   },
+   {
+    "rif": "I.27",
+    "voce": "Pulitore per impianti nuovi o recenti, 1 l",
+    "q": 1.0,
+    "um": "n",
+    "fo": "Tecnomat",
+    "pu": 10.82,
+    "tot": 10.82
+   },
+   {
+    "rif": "I.28",
+    "voce": "Filmante e inibitore per impianti, 1 l",
+    "q": 1.0,
+    "um": "n",
+    "fo": "Tecnomat",
+    "pu": 12.7,
+    "tot": 12.7
+   },
+   {
+    "rif": "I.29",
+    "voce": "Manometro 0-6 bar attacco ½\"",
+    "q": 1.0,
+    "um": "n",
+    "fo": "Idrosanitaria",
+    "pu": 9.842,
+    "tot": 9.84
+   },
+   {
+    "rif": "I.30",
+    "voce": "Pozzetto portasonda ½\" per la sonda",
+    "q": 2.0,
+    "um": "n",
+    "fo": "Online",
+    "pu": 12.66,
+    "tot": 25.32
+   },
+   {
+    "rif": "I.31",
+    "voce": "Filtro a Y 1\" FF, maglia 500 µm",
+    "q": 1.0,
+    "um": "n",
+    "fo": "Tecnomat",
+    "pu": 10.11,
+    "tot": 10.11
+   },
+   {
+    "rif": "I.32",
+    "voce": "Tee a pressare tubo multistrato MS 20×2",
+    "q": 2.0,
+    "um": "n",
+    "fo": "Tecnomat",
+    "pu": 4.54,
+    "tot": 9.08
+   },
+   {
+    "rif": "I.33",
+    "voce": "Rubinetto portamanometro a tre vie ½\"",
+    "q": 1.0,
+    "um": "n",
+    "fo": "Idrosanitaria",
+    "pu": 8.951,
+    "tot": 8.95
+   },
+   {
+    "rif": "I.34",
+    "voce": "Valvola a sfera a passaggio totale 1\" FF, con leva",
+    "q": 8.0,
+    "um": "n",
+    "fo": "Tecnomat",
+    "pu": 6.3,
+    "tot": 50.4
+   },
+   {
+    "rif": "I.35",
+    "voce": "Valvola a sfera a passaggio totale ½\" FF, con leva",
+    "q": 9.0,
+    "um": "n",
+    "fo": "Tecnomat",
+    "pu": 3.57,
+    "tot": 32.13
+   },
+   {
+    "rif": "I.36",
+    "voce": "Valvola di sicurezza ½\" MF 3 bar, con scarico convogliato",
+    "q": 1.0,
+    "um": "n",
+    "fo": "Tecnomat",
+    "pu": 13.07,
+    "tot": 13.07
+   },
+   {
+    "rif": "I.37",
+    "voce": "Raccordo diritto a pressare M × tubo multistrato MS 20×2, all'attacco",
+    "q": 5.0,
+    "um": "n",
+    "fo": "Tecnomat",
+    "pu": 3.26,
+    "tot": 16.3
+   },
+   {
+    "rif": "I.38",
+    "voce": "Raccordo diritto a pressare M ½\" × tubo multistrato MS 20×2",
+    "q": 13.0,
+    "um": "n",
+    "fo": "Tecnomat",
+    "pu": 3.26,
+    "tot": 42.38
+   },
+   {
+    "rif": "I.39",
+    "voce": "Raccordo diritto a pressare M ¾\" × tubo multistrato MS 20×2, all'attacco",
+    "q": 1.0,
+    "um": "n",
+    "fo": "Tecnomat",
+    "pu": 3.26,
+    "tot": 3.26
+   },
+   {
+    "rif": "I.40",
+    "voce": "Nipplo ½\" M × M",
+    "q": 5.0,
+    "um": "n",
+    "fo": "Tecnomat",
+    "pu": 0.78,
+    "tot": 3.9
+   },
+   {
+    "rif": "I.41",
+    "voce": "Raccordo diritto a pressare M 1\" × tubo multistrato MS 32×3",
+    "q": 15.0,
+    "um": "n",
+    "fo": "Idrosanitaria",
+    "pu": 4.737,
+    "tot": 71.06
+   },
+   {
+    "rif": "I.42",
+    "voce": "Nipplo 1\" M × M",
+    "q": 5.0,
+    "um": "n",
+    "fo": "Tecnomat",
+    "pu": 1.19,
+    "tot": 5.95
+   },
+   {
+    "rif": "I.43",
+    "voce": "Nipplo ridotto 1¼\" × 1\" M × M",
+    "q": 2.0,
+    "um": "n",
+    "fo": "Tecnomat",
+    "pu": 2.29,
+    "tot": 4.58
+   },
+   {
+    "rif": "I.44",
+    "voce": "Raccordo diritto a pressare M 1¼\" × tubo multistrato MS 20×2, all'attacco",
+    "q": 1.0,
+    "um": "n",
+    "fo": "Tecnomat",
+    "pu": 3.26,
+    "tot": 3.26
+   }
+  ],
+  "Elettrico": [
+   {
+    "rif": "E.1",
+    "voce": "Cavo FG16OR16 3G1,5 (comandi relè e deviatrice, alimentazione circolatore)",
+    "q": 63.0,
+    "um": "m",
+    "fo": "Tecnomat",
+    "pu": 0.975,
+    "tot": 61.42
+   },
+   {
+    "rif": "E.2",
+    "voce": "Cavo FG16OR16 3G4 (alimentazione pompa di calore)",
+    "q": 31.0,
+    "um": "m",
+    "fo": "Online",
+    "pu": 2.28,
+    "tot": 70.68
+   },
+   {
+    "rif": "E.3",
+    "voce": "Scatola di derivazione IP55",
+    "q": 4.0,
+    "um": "n",
+    "fo": "Tecnomat",
+    "pu": 5.33,
+    "tot": 21.32
+   },
+   {
+    "rif": "E.4",
+    "voce": "Tubo corrugato Ø25 per le linee di alimentazione",
+    "q": 100.0,
+    "um": "m",
+    "fo": "Tecnomat",
+    "pu": 0.422,
+    "tot": 42.2
+   },
+   {
+    "rif": "E.5",
+    "voce": "Cavo 2×0,75 (sonde e termostato)",
+    "q": 27.0,
+    "um": "m",
+    "fo": "Tecnomat",
+    "pu": 0.697,
+    "tot": 18.82
+   },
+   {
+    "rif": "E.6",
+    "voce": "Tubo corrugato Ø20 per bus e linee di comando",
+    "q": 30.0,
+    "um": "m",
+    "fo": "Tecnomat",
+    "pu": 0.422,
+    "tot": 12.66
+   },
+   {
+    "rif": "E.7",
+    "voce": "Interruttore magnetotermico differenziale 2P C25 Idn 30 mA tipo A",
+    "q": 1.0,
+    "um": "n",
+    "fo": "Tecnomat",
+    "pu": 15.49,
+    "tot": 15.49
+   },
+   {
+    "rif": "E.8",
+    "voce": "Relè d'appoggio 10 A su guida DIN nel quadro, bobina 230 V",
+    "q": 1.0,
+    "um": "n",
+    "fo": "Tecnomat",
+    "pu": 23.77,
+    "tot": 23.77
+   },
+   {
+    "rif": "E.9",
+    "voce": "Scatola 503 per termostati e comandi a parete",
+    "q": 1.0,
+    "um": "n",
+    "fo": "Tecnomat",
+    "pu": 0.25,
+    "tot": 0.25
+   }
+  ],
+  "Staffaggi": [
+   {
+    "rif": "S.1",
+    "voce": "Piedini antivibranti per l'unità esterna",
+    "q": 4,
+    "um": "n",
+    "fo": "Tecnomat",
+    "pu": 1.62,
+    "tot": 6.48
+   }
+  ]
+ },
+ "totali": {
+  "Pompa di calore": 2450.0,
+  "Apparecchiature": 791.16,
+  "Circuito idraulico": 1044.54,
+  "Elettrico": 266.61,
+  "Staffaggi": 6.48
+ },
+ "totale": 4558.79
+}

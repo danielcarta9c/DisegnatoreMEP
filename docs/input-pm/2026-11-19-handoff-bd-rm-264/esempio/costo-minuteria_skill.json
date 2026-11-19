@@ -1,0 +1,2565 @@
+{
+  "formato": "costo-minuteria",
+  "versione": 2,
+  "progetto": {
+    "client": "Daniele Gianni",
+    "address": "Via di San Giovanni in Laterano 28, Roma (RM)",
+    "project_name": "Sostituzione caldaia con pompa di calore - int. 28",
+    "commission_code": "BD.RM.264",
+    "revision": "00",
+    "issue_date": "2026-11-19",
+    "sheet_number": "T1",
+    "sheet_title": "Schema funzionale centrale termica a pompa di calore"
+  },
+  "listino": {
+    "titolo": "Listino della minuteria — riferimento interno Nove C",
+    "revisione": "07, 18 novembre 2026",
+    "percorso": "listino-minuteria.md"
+  },
+  "totale_eur": 1787.35,
+  "per_sezione_eur": {
+    "A": 546.0,
+    "S": 6.48,
+    "I": 968.26,
+    "E": 266.61
+  },
+  "righe": [
+    {
+      "rif": "A.1",
+      "testo": "Bollitore ACS: Cordivari Bolly 1 XL WB 200 — 200 l, a serpentino maggiorato per pompa di calore, superficie di scambio non minore di 2 m²",
+      "quantita": 1.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "M10b",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 546.0,
+      "totale_eur": 546.0,
+      "conto": "1 n × (M10b 546,00 €/cad (Idrosanitaria))",
+      "da_prezzare": "",
+      "nota": "fornita da Nove C"
+    },
+    {
+      "rif": "A.2",
+      "testo": "Pompa di circolazione: DAB Evosta 2",
+      "quantita": 1.0,
+      "um": "n",
+      "codici": [],
+      "unitario_eur": null,
+      "totale_eur": null,
+      "conto": "",
+      "da_prezzare": "nessuna voce del listino per modello «Evosta 2»",
+      "nota": "fornita da Nove C"
+    },
+    {
+      "rif": "A.3",
+      "testo": "Pompa di calore aria-acqua: Shenling ThermaX R290 9 kW (HPM-V90W/R3)",
+      "quantita": 1.0,
+      "um": "n",
+      "codici": [],
+      "unitario_eur": null,
+      "totale_eur": null,
+      "conto": "",
+      "da_prezzare": "nessuna voce del listino per {marca} {power_kw} «Shenling 9»",
+      "nota": "fornita da Nove C"
+    },
+    {
+      "rif": "A.4",
+      "testo": "Termostato di zona: BPT Cronotermostato settimanale wifi",
+      "quantita": 1.0,
+      "um": "n",
+      "codici": [],
+      "unitario_eur": null,
+      "totale_eur": null,
+      "conto": "",
+      "da_prezzare": "nessuna voce del listino per modello «Cronotermostato settimanale wifi»",
+      "nota": "fornita da Nove C"
+    },
+    {
+      "rif": "A.5",
+      "testo": "Volano termico a quattro attacchi: Cordivari VB 50 l a 4 attacchi",
+      "quantita": 1.0,
+      "um": "n",
+      "codici": [],
+      "unitario_eur": null,
+      "totale_eur": null,
+      "conto": "",
+      "da_prezzare": "nessuna voce del listino per volume_l «50»",
+      "nota": "fornita da Nove C"
+    },
+    {
+      "rif": "S.1",
+      "testo": "Basamento a terra per l'unità esterna con supporti antivibranti",
+      "quantita": 1.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "I71a",
+          "n": 4.0
+        }
+      ],
+      "unitario_eur": 6.48,
+      "totale_eur": 6.48,
+      "conto": "1 n × (4 × I71a 1,62 €/cad (Tecnomat))",
+      "da_prezzare": "",
+      "nota": "listino: quattro gomme antivibranti 100×100 (I71a); il basamento in opera costa di più"
+    },
+    {
+      "rif": "I.1",
+      "testo": "Tubo multistrato MS 20×2, nudo",
+      "quantita": 8.0,
+      "um": "m",
+      "codici": [
+        {
+          "codice": "I02",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 1.065,
+      "totale_eur": 8.52,
+      "conto": "8 m × (I02 1,06 €/m (Tecnomat))",
+      "da_prezzare": "",
+      "nota": ""
+    },
+    {
+      "rif": "I.2",
+      "testo": "Guaina isolante elastomerica per tubo multistrato MS 20×2 (guaina 9 mm)",
+      "quantita": 6.0,
+      "um": "m",
+      "codici": [],
+      "unitario_eur": null,
+      "totale_eur": null,
+      "conto": "",
+      "da_prezzare": "nessuna voce del listino per {isolamento} {sezione} «guaina 9 mm multistrato MS 20×2»",
+      "nota": "la guaina si prezza sullo spessore che dice il progettista: 19 mm (I56–I59) o 32 mm sul tubo 32 (I82)"
+    },
+    {
+      "rif": "I.3",
+      "testo": "Collare con gommino e tassello per tubo multistrato MS 20×2",
+      "quantita": 9.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "I63",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 1.105,
+      "totale_eur": 9.95,
+      "conto": "9 n × (I63 1,10 €/cad (Tecnomat))",
+      "da_prezzare": "",
+      "nota": ""
+    },
+    {
+      "rif": "I.4",
+      "testo": "Manicotto a pressare tubo multistrato MS 20×2 (riserva)",
+      "quantita": 4.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "I26a",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 4.16,
+      "totale_eur": 16.64,
+      "conto": "4 n × (I26a 4,16 €/cad (Tecnomat))",
+      "da_prezzare": "",
+      "nota": ""
+    },
+    {
+      "rif": "I.5",
+      "testo": "Guaina isolante elastomerica per tubo multistrato MS 20×2 (guaina 13 mm)",
+      "quantita": 2.0,
+      "um": "m",
+      "codici": [],
+      "unitario_eur": null,
+      "totale_eur": null,
+      "conto": "",
+      "da_prezzare": "nessuna voce del listino per {isolamento} {sezione} «guaina 13 mm multistrato MS 20×2»",
+      "nota": "la guaina si prezza sullo spessore che dice il progettista: 19 mm (I56–I59) o 32 mm sul tubo 32 (I82)"
+    },
+    {
+      "rif": "I.6",
+      "testo": "Tubo multistrato MS 32×3, nudo",
+      "quantita": 16.0,
+      "um": "m",
+      "codici": [
+        {
+          "codice": "I04",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 3.211,
+      "totale_eur": 51.38,
+      "conto": "16 m × (I04 3,21 €/m (Idrosanitaria))",
+      "da_prezzare": "",
+      "nota": ""
+    },
+    {
+      "rif": "I.7",
+      "testo": "Guaina isolante elastomerica per tubo multistrato MS 32×3 (guaina 19 mm (con protezione UV nel tratto esterno))",
+      "quantita": 16.0,
+      "um": "m",
+      "codici": [
+        {
+          "codice": "I58",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 1.654,
+      "totale_eur": 26.46,
+      "conto": "16 m × (I58 1,65 €/m (Idrosanitaria))",
+      "da_prezzare": "",
+      "nota": "la guaina si prezza sullo spessore che dice il progettista: 19 mm (I56–I59) o 32 mm sul tubo 32 (I82)"
+    },
+    {
+      "rif": "I.8",
+      "testo": "Collare con gommino e tassello per tubo multistrato MS 32×3",
+      "quantita": 11.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "I63",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 1.105,
+      "totale_eur": 12.15,
+      "conto": "11 n × (I63 1,10 €/cad (Tecnomat))",
+      "da_prezzare": "",
+      "nota": ""
+    },
+    {
+      "rif": "I.9",
+      "testo": "Manicotto a pressare tubo multistrato MS 32×3 (riserva)",
+      "quantita": 1.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "I26c",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 5.52,
+      "totale_eur": 5.52,
+      "conto": "1 n × (I26c 5,52 €/cad (Tecnomat))",
+      "da_prezzare": "",
+      "nota": ""
+    },
+    {
+      "rif": "I.10",
+      "testo": "Tubo multistrato MS 26×3, nudo",
+      "quantita": 4.0,
+      "um": "m",
+      "codici": [
+        {
+          "codice": "I03",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 2.011,
+      "totale_eur": 8.04,
+      "conto": "4 m × (I03 2,01 €/m (Idrosanitaria))",
+      "da_prezzare": "",
+      "nota": ""
+    },
+    {
+      "rif": "I.11",
+      "testo": "Guaina isolante elastomerica per tubo multistrato MS 26×3 (guaina 13 mm)",
+      "quantita": 4.0,
+      "um": "m",
+      "codici": [],
+      "unitario_eur": null,
+      "totale_eur": null,
+      "conto": "",
+      "da_prezzare": "nessuna voce del listino per {isolamento} {sezione} «guaina 13 mm multistrato MS 26×3»",
+      "nota": "la guaina si prezza sullo spessore che dice il progettista: 19 mm (I56–I59) o 32 mm sul tubo 32 (I82)"
+    },
+    {
+      "rif": "I.12",
+      "testo": "Collare con gommino e tassello per tubo multistrato MS 26×3",
+      "quantita": 3.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "I63",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 1.105,
+      "totale_eur": 3.31,
+      "conto": "3 n × (I63 1,10 €/cad (Tecnomat))",
+      "da_prezzare": "",
+      "nota": ""
+    },
+    {
+      "rif": "I.13",
+      "testo": "Manicotto a pressare tubo multistrato MS 26×3 (riserva)",
+      "quantita": 1.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "I26b",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 4.242,
+      "totale_eur": 4.24,
+      "conto": "1 n × (I26b 4,24 €/cad (Idrosanitaria))",
+      "da_prezzare": "",
+      "nota": ""
+    },
+    {
+      "rif": "I.14",
+      "testo": "Gomito 90° a pressare tubo multistrato MS 32×3, a corpo",
+      "quantita": 20.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "I13",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 7.2,
+      "totale_eur": 144.0,
+      "conto": "20 n × (I13 7,20 €/cad (Idrosanitaria))",
+      "da_prezzare": "",
+      "nota": "a corpo, sul tubo principale"
+    },
+    {
+      "rif": "I.15",
+      "testo": "Nastro adesivo per le giunte dell'isolamento, rotolo 50 m",
+      "quantita": 1.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "I61",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 5.57,
+      "totale_eur": 5.57,
+      "conto": "1 n × (I61 5,57 €/cad (Tecnomat))",
+      "da_prezzare": "",
+      "nota": ""
+    },
+    {
+      "rif": "I.16",
+      "testo": "Canapa e pasta sigillante per i raccordi filettati",
+      "quantita": 1.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "I67a",
+          "n": 1.0
+        },
+        {
+          "codice": "I67b",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 5.702,
+      "totale_eur": 5.7,
+      "conto": "1 n × (I67a 3,07 €/cad (Tecnomat) + I67b 2,63 €/cad (Idrosanitaria))",
+      "da_prezzare": "",
+      "nota": ""
+    },
+    {
+      "rif": "I.17",
+      "testo": "Valvola automatica di sfogo aria ½\" con rubinetto di intercettazione",
+      "quantita": 1.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "I43a",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 4.8,
+      "totale_eur": 4.8,
+      "conto": "1 n × (I43a 4,80 €/cad (Tecnomat))",
+      "da_prezzare": "",
+      "nota": "listino: sola valvola di sfogo (I43a), senza rubinetto"
+    },
+    {
+      "rif": "I.18",
+      "testo": "Tee a pressare tubo multistrato MS 32×3",
+      "quantita": 5.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "I18",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 11.02,
+      "totale_eur": 55.1,
+      "conto": "5 n × (I18 11,02 €/cad (Tecnomat))",
+      "da_prezzare": "",
+      "nota": ""
+    },
+    {
+      "rif": "I.19",
+      "testo": "Valvola deviatrice a tre vie 1\" con attuatore 230 V",
+      "quantita": 1.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "I51",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 88.93,
+      "totale_eur": 88.93,
+      "conto": "1 n × (I51 88,93 €/cad (Tecnomat))",
+      "da_prezzare": "",
+      "nota": "listino: deviatrice 1\" con attuatore (I51), qualunque pollice"
+    },
+    {
+      "rif": "I.20",
+      "testo": "Gruppo di sicurezza sanitario per bollitore (ritegno, sicurezza 6 bar, intercettazione)",
+      "quantita": 1.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "I74",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 26.051,
+      "totale_eur": 26.05,
+      "conto": "1 n × (I74 26,05 €/cad (Idrosanitaria))",
+      "da_prezzare": "",
+      "nota": "riferimento online: Caleffi 526153"
+    },
+    {
+      "rif": "I.21",
+      "testo": "Defangatore magnetico 1\"",
+      "quantita": 1.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "I38b",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 81.832,
+      "totale_eur": 81.83,
+      "conto": "1 n × (I38b 81,83 €/cad (Idrosanitaria))",
+      "da_prezzare": "",
+      "nota": ""
+    },
+    {
+      "rif": "I.22",
+      "testo": "Rubinetto di scarico ½\" con portagomma",
+      "quantita": 2.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "I46",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 3.73,
+      "totale_eur": 7.46,
+      "conto": "2 n × (I46 3,73 €/cad (Tecnomat))",
+      "da_prezzare": "",
+      "nota": ""
+    },
+    {
+      "rif": "I.23",
+      "testo": "Vaso di espansione sanitario 12 l, con attacco e staffa",
+      "quantita": 1.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "I42",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 26.64,
+      "totale_eur": 26.64,
+      "conto": "1 n × (I42 26,64 €/cad (Tecnomat))",
+      "da_prezzare": "",
+      "nota": "listino: vaso sanitario 12 l (I42), qualunque taglia"
+    },
+    {
+      "rif": "I.24",
+      "testo": "Vaso di espansione chiuso a membrana per riscaldamento 24 l, con attacco e staffa",
+      "quantita": 1.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "I41c",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 23.663,
+      "totale_eur": 23.66,
+      "conto": "1 n × (I41c 23,66 €/cad (Idrosanitaria))",
+      "da_prezzare": "",
+      "nota": "la taglia del listino non minore di quella calcolata"
+    },
+    {
+      "rif": "I.25",
+      "testo": "Giunto antivibrante 1\"",
+      "quantita": 2.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "I49b",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 9.59,
+      "totale_eur": 19.18,
+      "conto": "2 n × (I49b 9,59 €/cad (Tecnomat ⚠ sostituisce 25017314 (giunto in gomma FF 1\" non più a catalogo): flessibile inox MF 1\" L 40 cm, non giunto in gomma FF))",
+      "da_prezzare": "",
+      "nota": ""
+    },
+    {
+      "rif": "I.26",
+      "testo": "Miscelatore termostatico sanitario ½\"",
+      "quantita": 1.0,
+      "um": "n",
+      "codici": [],
+      "unitario_eur": null,
+      "totale_eur": null,
+      "conto": "",
+      "da_prezzare": "nessuna voce del listino per pollice «½\"»",
+      "nota": ""
+    },
+    {
+      "rif": "I.27",
+      "testo": "Pulitore per impianti nuovi o recenti, 1 l",
+      "quantita": 1.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "I55a",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 10.82,
+      "totale_eur": 10.82,
+      "conto": "1 n × (I55a 10,82 €/cad (Tecnomat))",
+      "da_prezzare": "",
+      "nota": ""
+    },
+    {
+      "rif": "I.28",
+      "testo": "Filmante e inibitore per impianti, 1 l",
+      "quantita": 1.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "I55b",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 12.7,
+      "totale_eur": 12.7,
+      "conto": "1 n × (I55b 12,70 €/cad (Tecnomat))",
+      "da_prezzare": "",
+      "nota": ""
+    },
+    {
+      "rif": "I.29",
+      "testo": "Manometro 0-6 bar attacco ½\"",
+      "quantita": 1.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "I44",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 9.842,
+      "totale_eur": 9.84,
+      "conto": "1 n × (I44 9,84 €/cad (Idrosanitaria))",
+      "da_prezzare": "",
+      "nota": "listino: manometro 0-12 bar (I44)"
+    },
+    {
+      "rif": "I.30",
+      "testo": "Pozzetto portasonda ½\" per la sonda",
+      "quantita": 2.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "I76",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 12.66,
+      "totale_eur": 25.32,
+      "conto": "2 n × (I76 12,66 €/cad (riferimento online))",
+      "da_prezzare": "",
+      "nota": ""
+    },
+    {
+      "rif": "I.31",
+      "testo": "Filtro a Y 1\" FF, maglia 500 µm",
+      "quantita": 1.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "I37b",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 10.11,
+      "totale_eur": 10.11,
+      "conto": "1 n × (I37b 10,11 €/cad (Tecnomat))",
+      "da_prezzare": "",
+      "nota": ""
+    },
+    {
+      "rif": "I.32",
+      "testo": "Tee a pressare tubo multistrato MS 20×2",
+      "quantita": 2.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "I16",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 4.54,
+      "totale_eur": 9.08,
+      "conto": "2 n × (I16 4,54 €/cad (Tecnomat))",
+      "da_prezzare": "",
+      "nota": ""
+    },
+    {
+      "rif": "I.33",
+      "testo": "Rubinetto portamanometro a tre vie ½\"",
+      "quantita": 1.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "I77",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 8.951,
+      "totale_eur": 8.95,
+      "conto": "1 n × (I77 8,95 €/cad (Idrosanitaria))",
+      "da_prezzare": "",
+      "nota": ""
+    },
+    {
+      "rif": "I.34",
+      "testo": "Valvola a sfera a passaggio totale 1\" FF, con leva",
+      "quantita": 8.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "I32",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 6.3,
+      "totale_eur": 50.4,
+      "conto": "8 n × (I32 6,30 €/cad (Tecnomat))",
+      "da_prezzare": "",
+      "nota": ""
+    },
+    {
+      "rif": "I.35",
+      "testo": "Valvola a sfera a passaggio totale ½\" FF, con leva",
+      "quantita": 9.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "I75",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 3.57,
+      "totale_eur": 32.13,
+      "conto": "9 n × (I75 3,57 €/cad (Tecnomat))",
+      "da_prezzare": "",
+      "nota": ""
+    },
+    {
+      "rif": "I.36",
+      "testo": "Valvola di sicurezza ½\" MF 3 bar, con scarico convogliato",
+      "quantita": 1.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "I40a",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 13.07,
+      "totale_eur": 13.07,
+      "conto": "1 n × (I40a 13,07 €/cad (Tecnomat))",
+      "da_prezzare": "",
+      "nota": ""
+    },
+    {
+      "rif": "I.37",
+      "testo": "Raccordo diritto a pressare M DA DEFINIRE (attacco) × tubo multistrato MS 20×2, all'attacco",
+      "quantita": 5.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "I21",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 3.26,
+      "totale_eur": 16.3,
+      "conto": "5 n × (I21 3,26 €/cad (Tecnomat))",
+      "da_prezzare": "",
+      "nota": "il prezzo è quello del raccordo del tubo (M ¾\" × 26, M 1\" × 32): fra pollici vicini cambia di poco"
+    },
+    {
+      "rif": "I.38",
+      "testo": "Raccordo diritto a pressare M ½\" × tubo multistrato MS 20×2",
+      "quantita": 13.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "I21",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 3.26,
+      "totale_eur": 42.38,
+      "conto": "13 n × (I21 3,26 €/cad (Tecnomat))",
+      "da_prezzare": "",
+      "nota": ""
+    },
+    {
+      "rif": "I.39",
+      "testo": "Raccordo diritto a pressare M ¾\" × tubo multistrato MS 20×2, all'attacco",
+      "quantita": 1.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "I21",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 3.26,
+      "totale_eur": 3.26,
+      "conto": "1 n × (I21 3,26 €/cad (Tecnomat))",
+      "da_prezzare": "",
+      "nota": "il prezzo è quello del raccordo del tubo (M ¾\" × 26, M 1\" × 32): fra pollici vicini cambia di poco"
+    },
+    {
+      "rif": "I.40",
+      "testo": "Nipplo ½\" M × M",
+      "quantita": 5.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "I83a",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 0.78,
+      "totale_eur": 3.9,
+      "conto": "5 n × (I83a 0,78 €/cad (Tecnomat))",
+      "da_prezzare": "",
+      "nota": ""
+    },
+    {
+      "rif": "I.41",
+      "testo": "Raccordo diritto a pressare M 1\" × tubo multistrato MS 32×3",
+      "quantita": 15.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "I23",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 4.737,
+      "totale_eur": 71.06,
+      "conto": "15 n × (I23 4,74 €/cad (Idrosanitaria))",
+      "da_prezzare": "",
+      "nota": ""
+    },
+    {
+      "rif": "I.42",
+      "testo": "Nipplo 1\" M × M",
+      "quantita": 5.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "I83c",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 1.19,
+      "totale_eur": 5.95,
+      "conto": "5 n × (I83c 1,19 €/cad (Tecnomat))",
+      "da_prezzare": "",
+      "nota": ""
+    },
+    {
+      "rif": "I.43",
+      "testo": "Nipplo ridotto 1¼\" × 1\" M × M",
+      "quantita": 2.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "I83e",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 2.29,
+      "totale_eur": 4.58,
+      "conto": "2 n × (I83e 2,29 €/cad (Tecnomat))",
+      "da_prezzare": "",
+      "nota": "1¼\" × 1\": il nipplo ridotto in ghisa (I83e), dalle offerte Abbattista e Idrosanitaria; prima la riduzione M × F (I78a)"
+    },
+    {
+      "rif": "I.44",
+      "testo": "Raccordo diritto a pressare M 1¼\" × tubo multistrato MS 20×2, all'attacco",
+      "quantita": 1.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "I21",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 3.26,
+      "totale_eur": 3.26,
+      "conto": "1 n × (I21 3,26 €/cad (Tecnomat))",
+      "da_prezzare": "",
+      "nota": "il prezzo è quello del raccordo del tubo (M ¾\" × 26, M 1\" × 32): fra pollici vicini cambia di poco"
+    },
+    {
+      "rif": "E.1",
+      "testo": "Cavo FG16OR16 3G1,5, Comando del relè del circolatore secondario, Comando della valvola deviatrice ACS, Alimentazione circolatore secondario dal quadro, attraverso il relè",
+      "quantita": 63.0,
+      "um": "m",
+      "codici": [
+        {
+          "codice": "E35a",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 0.975,
+      "totale_eur": 61.42,
+      "conto": "63 m × (E35a 0,97 €/m (Tecnomat))",
+      "da_prezzare": "",
+      "nota": ""
+    },
+    {
+      "rif": "E.2",
+      "testo": "Cavo FG16OR16 3G4, Alimentazione pompa di calore dal quadro",
+      "quantita": 31.0,
+      "um": "m",
+      "codici": [
+        {
+          "codice": "E02",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 2.28,
+      "totale_eur": 70.68,
+      "conto": "31 m × (E02 2,28 €/m (riferimento online))",
+      "da_prezzare": "",
+      "nota": ""
+    },
+    {
+      "rif": "E.3",
+      "testo": "Scatola di derivazione IP55",
+      "quantita": 4.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "E26a",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 5.33,
+      "totale_eur": 21.32,
+      "conto": "4 n × (E26a 5,33 €/cad (Tecnomat))",
+      "da_prezzare": "",
+      "nota": ""
+    },
+    {
+      "rif": "E.4",
+      "testo": "Tubo corrugato Ø25 per le linee di alimentazione",
+      "quantita": 100.0,
+      "um": "m",
+      "codici": [
+        {
+          "codice": "E11a",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 0.422,
+      "totale_eur": 42.2,
+      "conto": "100 m × (E11a 0,42 €/m (Tecnomat))",
+      "da_prezzare": "",
+      "nota": ""
+    },
+    {
+      "rif": "E.5",
+      "testo": "Cavo 2×0,75, Segnali delle sonde e del termostato",
+      "quantita": 27.0,
+      "um": "m",
+      "codici": [
+        {
+          "codice": "E36",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 0.697,
+      "totale_eur": 18.82,
+      "conto": "27 m × (E36 0,70 €/m (Tecnomat ⚠ sezione 2×0,50 (la voce: 2×0,75)))",
+      "da_prezzare": "",
+      "nota": ""
+    },
+    {
+      "rif": "E.6",
+      "testo": "Tubo corrugato Ø20 per bus e linee di comando",
+      "quantita": 30.0,
+      "um": "m",
+      "codici": [
+        {
+          "codice": "E11a",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 0.422,
+      "totale_eur": 12.66,
+      "conto": "30 m × (E11a 0,42 €/m (Tecnomat))",
+      "da_prezzare": "",
+      "nota": "listino: corrugato Ø25 (E11a)"
+    },
+    {
+      "rif": "E.7",
+      "testo": "Interruttore magnetotermico differenziale 2P C25 Idn 30 mA tipo A",
+      "quantita": 1.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "E16b",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 15.49,
+      "totale_eur": 15.49,
+      "conto": "1 n × (E16b 15,49 €/cad (Tecnomat))",
+      "da_prezzare": "",
+      "nota": "tipo A dal listino Tecnomat; tipo B dal combinato economico (E31a, 85–90 €): il differenziale puro tipo B di marca con il suo magnetotermico costa 270–390 € (E31b + E32)"
+    },
+    {
+      "rif": "E.8",
+      "testo": "Relè d'appoggio 10 A su guida DIN nel quadro, bobina 230 V",
+      "quantita": 1.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "E34",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 23.77,
+      "totale_eur": 23.77,
+      "conto": "1 n × (E34 23,77 €/cad (Tecnomat ⚠ contattore, non relè modulare (la voce)))",
+      "da_prezzare": "",
+      "nota": "riferimento online: Finder 22.21 da 20 A, equivalenti più economici"
+    },
+    {
+      "rif": "E.9",
+      "testo": "Scatola 503 per termostati e comandi a parete",
+      "quantita": 1.0,
+      "um": "n",
+      "codici": [
+        {
+          "codice": "E37",
+          "n": 1.0
+        }
+      ],
+      "unitario_eur": 0.25,
+      "totale_eur": 0.25,
+      "conto": "1 n × (E37 0,25 €/cad (Tecnomat))",
+      "da_prezzare": "",
+      "nota": ""
+    }
+  ],
+  "ordine": {
+    "fornitori": [
+      "Abbattista",
+      "Idrosanitaria",
+      "Tecnomat"
+    ],
+    "totale_eur": 1691.35,
+    "per_fornitore": {
+      "Idrosanitaria": {
+        "totale_eur": 1004.15,
+        "righe": [
+          {
+            "codice": "M10b",
+            "quantita": 1.0,
+            "um": "cad",
+            "totale_eur": 546.0,
+            "voci": [
+              "A.1"
+            ],
+            "scelta": {
+              "fornitore": "Idrosanitaria",
+              "prezzo_eur": 546.0,
+              "articolo": "Cordivari BOLLY 1 XL WB 200",
+              "codice_fornitore": "3104162330011",
+              "confezione": "1 pz",
+              "fonte": "Idrosanitaria, XC 2704331 r. 1, corretta (comunicata dal PO il 18 novembre 2026)",
+              "scostamento": ""
+            },
+            "altri": [
+              {
+                "fornitore": "Abbattista",
+                "prezzo_eur": 626.52,
+                "articolo": "BOLLY 1 XL WB 200 BOLLITORE VERTICALE CO — 3104162330011",
+                "codice_fornitore": "79861453",
+                "confezione": "1 pz",
+                "fonte": "Abbattista, OC 0185611 r. 4",
+                "scostamento": ""
+              }
+            ],
+            "avvisi": []
+          },
+          {
+            "codice": "I13",
+            "quantita": 20.0,
+            "um": "cad",
+            "totale_eur": 144.0,
+            "voci": [
+              "I.14"
+            ],
+            "scelta": {
+              "fornitore": "Idrosanitaria",
+              "prezzo_eur": 7.2,
+              "articolo": "RM122 GOMITO 90° 32",
+              "codice_fornitore": "RM122Y011",
+              "confezione": "1 pz",
+              "fonte": "Idrosanitaria, XC 2704331 r. 17",
+              "scostamento": ""
+            },
+            "altri": [
+              {
+                "fornitore": "Tecnomat",
+                "prezzo_eur": 7.45,
+                "articolo": "GOMITO PRESSFIT APE APL Ø 32 mm PRESSATURA TH-H TUBO MULTISTRATO",
+                "codice_fornitore": "25000723",
+                "confezione": "1 pz",
+                "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+                "scostamento": ""
+              },
+              {
+                "fornitore": "Abbattista",
+                "prezzo_eur": 9.848,
+                "articolo": "RACC.CURVO 32X32 PRESS.TIEMME 1653 — 1650013",
+                "codice_fornitore": "67027245",
+                "confezione": "1 pz",
+                "fonte": "Abbattista, OC 0188404 r. 4",
+                "scostamento": ""
+              }
+            ],
+            "avvisi": []
+          },
+          {
+            "codice": "I38b",
+            "quantita": 1.0,
+            "um": "cad",
+            "totale_eur": 81.83,
+            "voci": [
+              "I.21"
+            ],
+            "scelta": {
+              "fornitore": "Idrosanitaria",
+              "prezzo_eur": 81.832,
+              "articolo": "DEFANGATORE MAGNETICO VERTICALE 1\" F",
+              "codice_fornitore": "545306",
+              "confezione": "1 pz",
+              "fonte": "Idrosanitaria, XC 2704331 r. 24",
+              "scostamento": ""
+            },
+            "altri": [
+              {
+                "fornitore": "Abbattista",
+                "prezzo_eur": 89.23,
+                "articolo": "DEFANG.C/MAGNETE ORIENT.CF.545306 D.1",
+                "codice_fornitore": "34297572",
+                "confezione": "1 pz",
+                "fonte": "Abbattista, OC 0188404 r. 6",
+                "scostamento": ""
+              },
+              {
+                "fornitore": "Tecnomat",
+                "prezzo_eur": 104.92,
+                "articolo": "FILTRO DEFANGATORE MAGNETICO RBM MP2 1'' 800 µ 11000 GAUSS",
+                "codice_fornitore": "25050370",
+                "confezione": "1 pz",
+                "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+                "scostamento": ""
+              }
+            ],
+            "avvisi": []
+          },
+          {
+            "codice": "I23",
+            "quantita": 15.0,
+            "um": "cad",
+            "totale_eur": 71.06,
+            "voci": [
+              "I.41"
+            ],
+            "scelta": {
+              "fornitore": "Idrosanitaria",
+              "prezzo_eur": 4.737,
+              "articolo": "RM107 RACCORDO FIL.M. 32X1\"",
+              "codice_fornitore": "RM107Y059",
+              "confezione": "1 pz",
+              "fonte": "Idrosanitaria, XC 2704331 r. 44",
+              "scostamento": ""
+            },
+            "altri": [
+              {
+                "fornitore": "Abbattista",
+                "prezzo_eur": 5.646,
+                "articolo": "RACC.DIR.M PRESS.TIEMME 1650 32X1 — 1650032",
+                "codice_fornitore": "05088968",
+                "confezione": "1 pz",
+                "fonte": "Abbattista, OC 0188404 r. 23",
+                "scostamento": ""
+              },
+              {
+                "fornitore": "Tecnomat",
+                "prezzo_eur": 6.43,
+                "articolo": "RACCORDO PRESS FIT GIACOMINI MULTISTRATO DRITTO M 1'' x Ø 32 mm PROFILO PRESSATURA TH-H-U",
+                "codice_fornitore": "12092754",
+                "confezione": "1 pz",
+                "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+                "scostamento": ""
+              }
+            ],
+            "avvisi": []
+          },
+          {
+            "codice": "I04",
+            "quantita": 16.0,
+            "um": "m",
+            "totale_eur": 51.38,
+            "voci": [
+              "I.6"
+            ],
+            "scelta": {
+              "fornitore": "Idrosanitaria",
+              "prezzo_eur": 3.211,
+              "articolo": "TUBO 32X3 AL.0,4 NUDO BARRE 5MT PX-AL-PEX",
+              "codice_fornitore": "R999Y184",
+              "confezione": "barra 5 m",
+              "fonte": "Idrosanitaria, XC 2704331 r. 13",
+              "scostamento": ""
+            },
+            "altri": [
+              {
+                "fornitore": "Tecnomat",
+                "prezzo_eur": 3.64,
+                "articolo": "TUBO MULTISTRATO SHARKBITE PERT/AL/PERT Ø 32 x 3 mm NUDO VERGA DA 3 m",
+                "codice_fornitore": "25115665",
+                "confezione": "3 m",
+                "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+                "scostamento": ""
+              }
+            ],
+            "avvisi": []
+          },
+          {
+            "codice": "I58",
+            "quantita": 16.0,
+            "um": "m",
+            "totale_eur": 26.46,
+            "voci": [
+              "I.7"
+            ],
+            "scelta": {
+              "fornitore": "Idrosanitaria",
+              "prezzo_eur": 1.654,
+              "articolo": "ISOLANTE GOMMA ST 19X35 MM",
+              "codice_fornitore": "19035005508",
+              "confezione": "1 m",
+              "fonte": "Idrosanitaria, XC 2704331 r. 14",
+              "scostamento": ""
+            },
+            "altri": [
+              {
+                "fornitore": "Tecnomat",
+                "prezzo_eur": 3.495,
+                "articolo": "TUBO ISOLANTE IT-FLEX C1 Ø35 SPESSORE 19 mm ELASTOMERICO CLASSE 1",
+                "codice_fornitore": "25091418",
+                "confezione": "2 m",
+                "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+                "scostamento": ""
+              }
+            ],
+            "avvisi": []
+          },
+          {
+            "codice": "I74",
+            "quantita": 1.0,
+            "um": "cad",
+            "totale_eur": 26.05,
+            "voci": [
+              "I.20"
+            ],
+            "scelta": {
+              "fornitore": "Idrosanitaria",
+              "prezzo_eur": 26.051,
+              "articolo": "GRUPPO SICUREZZA BOILER 1/2 DIR.",
+              "codice_fornitore": "526142",
+              "confezione": "1 pz",
+              "fonte": "Idrosanitaria, XC 2704331 r. 23",
+              "scostamento": ""
+            },
+            "altri": [
+              {
+                "fornitore": "Tecnomat",
+                "prezzo_eur": 20.3,
+                "articolo": "GRUPPO DI SICUREZZA UNIVAL 3/4\" TARATURA 7 BAR",
+                "codice_fornitore": "10059049",
+                "confezione": "1 pz",
+                "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+                "scostamento": "taratura 7 bar (la voce: 6 bar)"
+              },
+              {
+                "fornitore": "Abbattista",
+                "prezzo_eur": 28.41,
+                "articolo": "GR.SIC.BOLL.CF.5261 1/2 526142",
+                "codice_fornitore": "43273068",
+                "confezione": "1 pz",
+                "fonte": "Abbattista, OC 0188404 r. 38",
+                "scostamento": ""
+              }
+            ],
+            "avvisi": [
+              {
+                "fornitore": "Tecnomat",
+                "prezzo_eur": 20.3,
+                "articolo": "GRUPPO DI SICUREZZA UNIVAL 3/4\" TARATURA 7 BAR",
+                "codice_fornitore": "10059049",
+                "confezione": "1 pz",
+                "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+                "scostamento": "taratura 7 bar (la voce: 6 bar)"
+              }
+            ]
+          },
+          {
+            "codice": "I41c",
+            "quantita": 1.0,
+            "um": "cad",
+            "totale_eur": 23.66,
+            "voci": [
+              "I.24"
+            ],
+            "scelta": {
+              "fornitore": "Idrosanitaria",
+              "prezzo_eur": 23.663,
+              "articolo": "VASO ESPANSIONE RISC. ER 24 CE",
+              "codice_fornitore": "A102L27 00270",
+              "confezione": "1 pz",
+              "fonte": "Idrosanitaria, XC 2704331 r. 27",
+              "scostamento": ""
+            },
+            "altri": [
+              {
+                "fornitore": "Tecnomat",
+                "prezzo_eur": 32.87,
+                "articolo": "VASO ESPANSIONE AQUAFILL RISCALDAMENTO E SANITARIO 25 l Ø 290 mm",
+                "codice_fornitore": "25111039",
+                "confezione": "1 pz",
+                "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+                "scostamento": ""
+              },
+              {
+                "fornitore": "Abbattista",
+                "prezzo_eur": 36.11,
+                "articolo": "VASO ESP.SANIT.VAREM LT.24 AT.3/4\" — C/CONTROFLAN.AVVITATA S2024263S40000000",
+                "codice_fornitore": "46192715",
+                "confezione": "1 pz",
+                "fonte": "Abbattista, OC 0188404 r. 9",
+                "scostamento": ""
+              }
+            ],
+            "avvisi": []
+          },
+          {
+            "codice": "I44",
+            "quantita": 1.0,
+            "um": "cad",
+            "totale_eur": 9.84,
+            "voci": [
+              "I.29"
+            ],
+            "scelta": {
+              "fornitore": "Idrosanitaria",
+              "prezzo_eur": 9.842,
+              "articolo": "MANOMETRO ATT.RAD.G1/2B M1-ABS 100/R-0-6BAR",
+              "codice_fornitore": "PA5206BD03",
+              "confezione": "1 pz",
+              "fonte": "Idrosanitaria, XC 2704331 r. 33",
+              "scostamento": ""
+            },
+            "altri": [
+              {
+                "fornitore": "Tecnomat",
+                "prezzo_eur": 3.81,
+                "articolo": "MANOMETRO POSTERIORE FERRARI 0-6 BAR ATTACCO 1/4\"",
+                "codice_fornitore": "25004117",
+                "confezione": "1 pz",
+                "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+                "scostamento": "attacco posteriore ¼\" (la voce: radiale ½\")"
+              },
+              {
+                "fornitore": "Abbattista",
+                "prezzo_eur": 7.35,
+                "articolo": "MAN.RAD.3/8 ISPESL D.80 6BAR FERR. — 110512/6",
+                "codice_fornitore": "23838345",
+                "confezione": "1 pz",
+                "fonte": "Abbattista, OC 0188404 r. 10",
+                "scostamento": "attacco 3/8\" (la voce: ½\")"
+              }
+            ],
+            "avvisi": [
+              {
+                "fornitore": "Tecnomat",
+                "prezzo_eur": 3.81,
+                "articolo": "MANOMETRO POSTERIORE FERRARI 0-6 BAR ATTACCO 1/4\"",
+                "codice_fornitore": "25004117",
+                "confezione": "1 pz",
+                "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+                "scostamento": "attacco posteriore ¼\" (la voce: radiale ½\")"
+              },
+              {
+                "fornitore": "Abbattista",
+                "prezzo_eur": 7.35,
+                "articolo": "MAN.RAD.3/8 ISPESL D.80 6BAR FERR. — 110512/6",
+                "codice_fornitore": "23838345",
+                "confezione": "1 pz",
+                "fonte": "Abbattista, OC 0188404 r. 10",
+                "scostamento": "attacco 3/8\" (la voce: ½\")"
+              }
+            ]
+          },
+          {
+            "codice": "I77",
+            "quantita": 1.0,
+            "um": "cad",
+            "totale_eur": 8.95,
+            "voci": [
+              "I.33"
+            ],
+            "scelta": {
+              "fornitore": "Idrosanitaria",
+              "prezzo_eur": 8.951,
+              "articolo": "403RF RUBINETTO PORTAMANOMETRO 1/2\" WATTS",
+              "codice_fornitore": "403R12",
+              "confezione": "1 pz",
+              "fonte": "Idrosanitaria, XC 2704331 r. 36",
+              "scostamento": ""
+            },
+            "altri": [
+              {
+                "fornitore": "Abbattista",
+                "prezzo_eur": 13.69,
+                "articolo": "RUB.PORTAMANOMETRO PN16 FERR.110553 3/8",
+                "codice_fornitore": "36256339",
+                "confezione": "1 pz",
+                "fonte": "Abbattista, OC 0188404 r. 12",
+                "scostamento": "attacco 3/8\" (la voce: ½\")"
+              }
+            ],
+            "avvisi": []
+          },
+          {
+            "codice": "I03",
+            "quantita": 4.0,
+            "um": "m",
+            "totale_eur": 8.04,
+            "voci": [
+              "I.10"
+            ],
+            "scelta": {
+              "fornitore": "Idrosanitaria",
+              "prezzo_eur": 2.011,
+              "articolo": "TUBO 26X3 AL.0,35 NUDO BARRE 5MT PEX-AL-PEX",
+              "codice_fornitore": "R999Y174",
+              "confezione": "barra 5 m",
+              "fonte": "Idrosanitaria, XC 2704331 r. 7",
+              "scostamento": ""
+            },
+            "altri": [
+              {
+                "fornitore": "Tecnomat",
+                "prezzo_eur": 2.271,
+                "articolo": "MULTISTRATO APE Ø 26x3 mm NUDO PEX-B ROTOLO 50 m",
+                "codice_fornitore": "10041926",
+                "confezione": "50 m",
+                "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+                "scostamento": ""
+              }
+            ],
+            "avvisi": []
+          },
+          {
+            "codice": "I26b",
+            "quantita": 1.0,
+            "um": "cad",
+            "totale_eur": 4.24,
+            "voci": [
+              "I.13"
+            ],
+            "scelta": {
+              "fornitore": "Idrosanitaria",
+              "prezzo_eur": 4.242,
+              "articolo": "RM102 MANICOTTO 26X3",
+              "codice_fornitore": "RM102Y009",
+              "confezione": "1 pz",
+              "fonte": "Idrosanitaria, XC 2704331 r. 40",
+              "scostamento": ""
+            },
+            "altri": [
+              {
+                "fornitore": "Tecnomat",
+                "prezzo_eur": 7.48,
+                "articolo": "MANICOTTO DRITTO A STRINGERE APE Ø 26x26 mm PER TUBO MULTISTRATO",
+                "codice_fornitore": "10041949",
+                "confezione": "1 pz",
+                "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+                "scostamento": ""
+              }
+            ],
+            "avvisi": []
+          },
+          {
+            "codice": "I67b",
+            "quantita": 1.0,
+            "um": "cad",
+            "totale_eur": 2.63,
+            "voci": [
+              "I.16"
+            ],
+            "scelta": {
+              "fornitore": "Idrosanitaria",
+              "prezzo_eur": 2.632,
+              "articolo": "MASTICE EXTRA GAS KG.0,460",
+              "codice_fornitore": "00201",
+              "confezione": "1 pz",
+              "fonte": "Idrosanitaria, XC 2704331 r. 20",
+              "scostamento": ""
+            },
+            "altri": [
+              {
+                "fornitore": "Abbattista",
+                "prezzo_eur": 5.81,
+                "articolo": "KOLGAS-UNI 400GR.FACOT KOLGUNI0400",
+                "codice_fornitore": "33424924",
+                "confezione": "1 pz",
+                "fonte": "Abbattista, OC 0188404 r. 34",
+                "scostamento": ""
+              },
+              {
+                "fornitore": "Tecnomat",
+                "prezzo_eur": 8.16,
+                "articolo": "SIGILLANTE GAS E LIQUIDI PTFE FAREN 35S77 75 ml",
+                "codice_fornitore": "10062154",
+                "confezione": "1 pz",
+                "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+                "scostamento": ""
+              }
+            ],
+            "avvisi": []
+          }
+        ]
+      },
+      "Tecnomat": {
+        "totale_eur": 687.2,
+        "righe": [
+          {
+            "codice": "I51",
+            "quantita": 1.0,
+            "um": "cad",
+            "totale_eur": 88.93,
+            "voci": [
+              "I.19"
+            ],
+            "scelta": {
+              "fornitore": "Tecnomat",
+              "prezzo_eur": 88.93,
+              "articolo": "VALVOLA DEVIATRICE 3 VIE GIACOMINI R279B Ø 1'' ATTUATORE K270 220V",
+              "codice_fornitore": "25109732",
+              "confezione": "1 pz",
+              "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+              "scostamento": ""
+            },
+            "altri": [
+              {
+                "fornitore": "Idrosanitaria",
+                "prezzo_eur": 143.326,
+                "articolo": "VALV.DEVIAT.1\" 3 VIE MOTOR.C/MICRO 220",
+                "codice_fornitore": "644366",
+                "confezione": "1 pz",
+                "fonte": "Idrosanitaria, XC 2704331 r. 22",
+                "scostamento": ""
+              },
+              {
+                "fornitore": "Abbattista",
+                "prezzo_eur": 156.29,
+                "articolo": "VAL.ZONA MOTOR.CF.6443 1 644366",
+                "codice_fornitore": "48972151",
+                "confezione": "1 pz",
+                "fonte": "Abbattista, OC 0185611 r. 3",
+                "scostamento": ""
+              }
+            ],
+            "avvisi": []
+          },
+          {
+            "codice": "I21",
+            "quantita": 20.0,
+            "um": "cad",
+            "totale_eur": 65.2,
+            "voci": [
+              "I.37",
+              "I.38",
+              "I.39",
+              "I.44"
+            ],
+            "scelta": {
+              "fornitore": "Tecnomat",
+              "prezzo_eur": 3.26,
+              "articolo": "RACCORDO PRESS FIT GIACOMINI MULTISTRATO DRITTO M 3/4'' x Ø 20 mm PROFILO PRESSATURA TH-H-U",
+              "codice_fornitore": "12092751",
+              "confezione": "1 pz",
+              "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+              "scostamento": ""
+            },
+            "altri": [],
+            "avvisi": []
+          },
+          {
+            "codice": "E35a",
+            "quantita": 63.0,
+            "um": "m",
+            "totale_eur": 61.42,
+            "voci": [
+              "E.1"
+            ],
+            "scelta": {
+              "fornitore": "Tecnomat",
+              "prezzo_eur": 0.975,
+              "articolo": "CAVO FG16(O)R16 0,6/1 kV SEZIONE 3G1,5 mmq COLORE GRIGIO MATASSA 100 m",
+              "codice_fornitore": "10073622",
+              "confezione": "100 m",
+              "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+              "scostamento": ""
+            },
+            "altri": [],
+            "avvisi": []
+          },
+          {
+            "codice": "I18",
+            "quantita": 5.0,
+            "um": "cad",
+            "totale_eur": 55.1,
+            "voci": [
+              "I.18"
+            ],
+            "scelta": {
+              "fornitore": "Tecnomat",
+              "prezzo_eur": 11.02,
+              "articolo": "TEE PRESSFIT APE APL Ø 32x32x32 mm PRESSATURA TH-H TUBO MULTISTRATO",
+              "codice_fornitore": "25000725",
+              "confezione": "1 pz",
+              "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+              "scostamento": ""
+            },
+            "altri": [
+              {
+                "fornitore": "Idrosanitaria",
+                "prezzo_eur": 11.105,
+                "articolo": "RM150 TEE 32X32X32",
+                "codice_fornitore": "RM150Y011",
+                "confezione": "1 pz",
+                "fonte": "Idrosanitaria, XC 2704331 r. 34",
+                "scostamento": ""
+              },
+              {
+                "fornitore": "Abbattista",
+                "prezzo_eur": 16.116,
+                "articolo": "RACC.T PRESS.TIEMME 1657 32X32X32 — 1650058",
+                "codice_fornitore": "99816767",
+                "confezione": "1 pz",
+                "fonte": "Abbattista, OC 0188404 r. 13",
+                "scostamento": ""
+              }
+            ],
+            "avvisi": []
+          },
+          {
+            "codice": "E11a",
+            "quantita": 130.0,
+            "um": "m",
+            "totale_eur": 54.86,
+            "voci": [
+              "E.4",
+              "E.6"
+            ],
+            "scelta": {
+              "fornitore": "Tecnomat",
+              "prezzo_eur": 0.422,
+              "articolo": "TUBO CORRUGATO SEMPLE' ELEKTRIK Ø 25 mm COLORE NERO MATASSA 50 m",
+              "codice_fornitore": "25062264",
+              "confezione": "50 m",
+              "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+              "scostamento": ""
+            },
+            "altri": [],
+            "avvisi": []
+          },
+          {
+            "codice": "I32",
+            "quantita": 8.0,
+            "um": "cad",
+            "totale_eur": 50.4,
+            "voci": [
+              "I.34"
+            ],
+            "scelta": {
+              "fornitore": "Tecnomat",
+              "prezzo_eur": 6.3,
+              "articolo": "VALVOLA A SFERA BUCCHI FF 1''",
+              "codice_fornitore": "12080447",
+              "confezione": "1 pz",
+              "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+              "scostamento": ""
+            },
+            "altri": [
+              {
+                "fornitore": "Idrosanitaria",
+                "prezzo_eur": 8.12,
+                "articolo": "0801 VALV.SFERA ASTER 1\" FF LEVA ALLUM. C/LEVA ALLUMINIO",
+                "codice_fornitore": "0801N406",
+                "confezione": "1 pz",
+                "fonte": "Idrosanitaria, XC 2704331 r. 37",
+                "scostamento": ""
+              },
+              {
+                "fornitore": "Abbattista",
+                "prezzo_eur": 10.14,
+                "articolo": "VAL.SFERA FF ACQUA 1 TIEMME 2310 — 2310001 C/LEVA ROSSA",
+                "codice_fornitore": "84135919",
+                "confezione": "1 pz",
+                "fonte": "Abbattista, OC 0188404 r. 15",
+                "scostamento": ""
+              }
+            ],
+            "avvisi": []
+          },
+          {
+            "codice": "I75",
+            "quantita": 9.0,
+            "um": "cad",
+            "totale_eur": 32.13,
+            "voci": [
+              "I.35"
+            ],
+            "scelta": {
+              "fornitore": "Tecnomat",
+              "prezzo_eur": 3.57,
+              "articolo": "VALVOLA A SFERA PER ACQUA ENOLGAS SERIE ATOMIC CON LEVA FF 1/2 PN25",
+              "codice_fornitore": "25017114",
+              "confezione": "1 pz",
+              "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+              "scostamento": ""
+            },
+            "altri": [
+              {
+                "fornitore": "Abbattista",
+                "prezzo_eur": 4.48,
+                "articolo": "VAL.SFERA FF ACQUA 1/2 TIEMME 2320 — 2310010 C/FARF.ROSSA",
+                "codice_fornitore": "88290332",
+                "confezione": "1 pz",
+                "fonte": "Abbattista, OC 0188404 r. 42",
+                "scostamento": ""
+              }
+            ],
+            "avvisi": []
+          },
+          {
+            "codice": "I42",
+            "quantita": 1.0,
+            "um": "cad",
+            "totale_eur": 26.64,
+            "voci": [
+              "I.23"
+            ],
+            "scelta": {
+              "fornitore": "Tecnomat",
+              "prezzo_eur": 26.64,
+              "articolo": "VASO ESPANSIONE AQUAFILL RISCALDAMENTO SANITARIO 12 l Ø 270 mm",
+              "codice_fornitore": "10011742",
+              "confezione": "1 pz",
+              "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+              "scostamento": ""
+            },
+            "altri": [],
+            "avvisi": []
+          },
+          {
+            "codice": "I63",
+            "quantita": 23.0,
+            "um": "cad",
+            "totale_eur": 25.41,
+            "voci": [
+              "I.3",
+              "I.8",
+              "I.12"
+            ],
+            "scelta": {
+              "fornitore": "Tecnomat",
+              "prezzo_eur": 1.105,
+              "articolo": "COLLARI PER TUBI FRIULSIDER CON ASOLA Ø 1'' 2 PEZZI TASSELLO NYLON",
+              "codice_fornitore": "10062009",
+              "confezione": "2 pz",
+              "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+              "scostamento": ""
+            },
+            "altri": [
+              {
+                "fornitore": "Idrosanitaria",
+                "prezzo_eur": 1.681,
+                "articolo": "COLLARE OTER PES.C/GUARN. P+T 1\" M8 833",
+                "codice_fornitore": "83306",
+                "confezione": "1 pz",
+                "fonte": "Idrosanitaria, XC 2704331 r. 15",
+                "scostamento": ""
+              },
+              {
+                "fornitore": "Abbattista",
+                "prezzo_eur": 2.342,
+                "articolo": "COLLARE RIV.GOMMA GIA 082309 STO1G 1",
+                "codice_fornitore": "01814945",
+                "confezione": "1 pz",
+                "fonte": "Abbattista, OC 0188404 r. 27",
+                "scostamento": ""
+              }
+            ],
+            "avvisi": []
+          },
+          {
+            "codice": "E34",
+            "quantita": 1.0,
+            "um": "cad",
+            "totale_eur": 23.77,
+            "voci": [
+              "E.8"
+            ],
+            "scelta": {
+              "fornitore": "Tecnomat",
+              "prezzo_eur": 23.77,
+              "articolo": "CONTATTORE 230 V 20 A ABB",
+              "codice_fornitore": "10026879",
+              "confezione": "1 pz",
+              "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+              "scostamento": "contattore, non relè modulare (la voce)"
+            },
+            "altri": [],
+            "avvisi": [
+              {
+                "fornitore": "Tecnomat",
+                "prezzo_eur": 23.77,
+                "articolo": "CONTATTORE 230 V 20 A ABB",
+                "codice_fornitore": "10026879",
+                "confezione": "1 pz",
+                "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+                "scostamento": "contattore, non relè modulare (la voce)"
+              }
+            ]
+          },
+          {
+            "codice": "E26a",
+            "quantita": 4.0,
+            "um": "cad",
+            "totale_eur": 21.32,
+            "voci": [
+              "E.3"
+            ],
+            "scelta": {
+              "fornitore": "Tecnomat",
+              "prezzo_eur": 5.33,
+              "articolo": "SCATOLA GEWISS DI DERIVAZIONE ESTERNA 100x100x50 mm PARETI LISCE IP55",
+              "codice_fornitore": "25011797",
+              "confezione": "1 pz",
+              "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+              "scostamento": ""
+            },
+            "altri": [],
+            "avvisi": []
+          },
+          {
+            "codice": "I49b",
+            "quantita": 2.0,
+            "um": "cad",
+            "totale_eur": 19.18,
+            "voci": [
+              "I.25"
+            ],
+            "scelta": {
+              "fornitore": "Tecnomat",
+              "prezzo_eur": 9.59,
+              "articolo": "FLESSIBILE ANTIVIBRANTE ACCIAIO INOX MF 1'' A/F LUNGHEZZA 40 CM PORTATA L/MIN 490",
+              "codice_fornitore": "12092616",
+              "confezione": "1 pz",
+              "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+              "scostamento": "sostituisce 25017314 (giunto in gomma FF 1\" non più a catalogo): flessibile inox MF 1\" L 40 cm, non giunto in gomma FF"
+            },
+            "altri": [],
+            "avvisi": [
+              {
+                "fornitore": "Tecnomat",
+                "prezzo_eur": 9.59,
+                "articolo": "FLESSIBILE ANTIVIBRANTE ACCIAIO INOX MF 1'' A/F LUNGHEZZA 40 CM PORTATA L/MIN 490",
+                "codice_fornitore": "12092616",
+                "confezione": "1 pz",
+                "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+                "scostamento": "sostituisce 25017314 (giunto in gomma FF 1\" non più a catalogo): flessibile inox MF 1\" L 40 cm, non giunto in gomma FF"
+              }
+            ]
+          },
+          {
+            "codice": "E36",
+            "quantita": 27.0,
+            "um": "m",
+            "totale_eur": 18.82,
+            "voci": [
+              "E.5"
+            ],
+            "scelta": {
+              "fornitore": "Tecnomat",
+              "prezzo_eur": 0.697,
+              "articolo": "CAVO FRO-H2HP-OB 2x0,50 mmq SCHERMATO CPR CCA-S3-D1-A3 MATASSA DA 100 m",
+              "codice_fornitore": "25014566",
+              "confezione": "100 m",
+              "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+              "scostamento": "sezione 2×0,50 (la voce: 2×0,75)"
+            },
+            "altri": [],
+            "avvisi": [
+              {
+                "fornitore": "Tecnomat",
+                "prezzo_eur": 0.697,
+                "articolo": "CAVO FRO-H2HP-OB 2x0,50 mmq SCHERMATO CPR CCA-S3-D1-A3 MATASSA DA 100 m",
+                "codice_fornitore": "25014566",
+                "confezione": "100 m",
+                "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+                "scostamento": "sezione 2×0,50 (la voce: 2×0,75)"
+              }
+            ]
+          },
+          {
+            "codice": "I26a",
+            "quantita": 4.0,
+            "um": "cad",
+            "totale_eur": 16.64,
+            "voci": [
+              "I.4"
+            ],
+            "scelta": {
+              "fornitore": "Tecnomat",
+              "prezzo_eur": 4.16,
+              "articolo": "MANICOTTO DRITTO A STRINGERE APE Ø 20x20 mm PER TUBO MULTISTRATO",
+              "codice_fornitore": "10041948",
+              "confezione": "1 pz",
+              "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+              "scostamento": ""
+            },
+            "altri": [],
+            "avvisi": []
+          },
+          {
+            "codice": "E16b",
+            "quantita": 1.0,
+            "um": "cad",
+            "totale_eur": 15.49,
+            "voci": [
+              "E.7"
+            ],
+            "scelta": {
+              "fornitore": "Tecnomat",
+              "prezzo_eur": 15.49,
+              "articolo": "INTERRUTTORE MAGNETOTERMICO CHINT DIFFERENZIALE 1P+N 25A 4,5KA 30mA 2 MODULI 230V CLASSE A",
+              "codice_fornitore": "25008046",
+              "confezione": "1 pz",
+              "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+              "scostamento": ""
+            },
+            "altri": [],
+            "avvisi": []
+          },
+          {
+            "codice": "I40a",
+            "quantita": 1.0,
+            "um": "cad",
+            "totale_eur": 13.07,
+            "voci": [
+              "I.36"
+            ],
+            "scelta": {
+              "fornitore": "Tecnomat",
+              "prezzo_eur": 13.07,
+              "articolo": "VALVOLA SICUREZZA RBM 1/2'' MF 3 bar PED97/23/CE",
+              "codice_fornitore": "10034052",
+              "confezione": "1 pz",
+              "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+              "scostamento": ""
+            },
+            "altri": [
+              {
+                "fornitore": "Idrosanitaria",
+                "prezzo_eur": 27.135,
+                "articolo": "VST VALVOLA DI SICUREZZA 1/2\" 3 BAR CERTIF.INAIL",
+                "codice_fornitore": "0212130",
+                "confezione": "1 pz",
+                "fonte": "Idrosanitaria, XC 2704331 r. 39",
+                "scostamento": ""
+              },
+              {
+                "fornitore": "Abbattista",
+                "prezzo_eur": 48.95,
+                "articolo": "VAL.SIC.ISPESL CF.527 3 ATE 1/2 527430",
+                "codice_fornitore": "92415435",
+                "confezione": "1 pz",
+                "fonte": "Abbattista, OC 0188404 r. 17",
+                "scostamento": ""
+              }
+            ],
+            "avvisi": []
+          },
+          {
+            "codice": "I55b",
+            "quantita": 1.0,
+            "um": "cad",
+            "totale_eur": 12.7,
+            "voci": [
+              "I.28"
+            ],
+            "scelta": {
+              "fornitore": "Tecnomat",
+              "prezzo_eur": 12.7,
+              "articolo": "FILMANTE FACOT FILMAX + THERMAKIL PER IMPIANTI TERMICI ALTA E BASSA TEMPERATURA E ANTIALGHE 1 l",
+              "codice_fornitore": "10016381",
+              "confezione": "1 pz",
+              "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+              "scostamento": ""
+            },
+            "altri": [
+              {
+                "fornitore": "Idrosanitaria",
+                "prezzo_eur": 19.705,
+                "articolo": "PROTETTIVO FILMANTE UNIV.",
+                "codice_fornitore": "K375Y021",
+                "confezione": "1 pz",
+                "fonte": "Idrosanitaria, XC 2704331 r. 31",
+                "scostamento": ""
+              },
+              {
+                "fornitore": "Abbattista",
+                "prezzo_eur": 30.24,
+                "articolo": "CONDIZ.CALD.CILLIT HS COMBI KG1 10135 — ALTA TEMPERATURA PROTET",
+                "codice_fornitore": "67193034",
+                "confezione": "1 pz",
+                "fonte": "Abbattista, OC 0188404 r. 37",
+                "scostamento": ""
+              }
+            ],
+            "avvisi": []
+          },
+          {
+            "codice": "I55a",
+            "quantita": 1.0,
+            "um": "cad",
+            "totale_eur": 10.82,
+            "voci": [
+              "I.27"
+            ],
+            "scelta": {
+              "fornitore": "Tecnomat",
+              "prezzo_eur": 10.82,
+              "articolo": "DECAPANTE FACOT FERRONEX PER IMPIANTI TERMICI NUOVI O RECENTI 1 l",
+              "codice_fornitore": "10016379",
+              "confezione": "1 pz",
+              "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+              "scostamento": ""
+            },
+            "altri": [
+              {
+                "fornitore": "Abbattista",
+                "prezzo_eur": 19.08,
+                "articolo": "CONDIZ.CALD.CILLIT HS23RS PLUS KG.1 — 10145AC LAVAGGIO ALTA T.",
+                "codice_fornitore": "38021657",
+                "confezione": "1 pz",
+                "fonte": "Abbattista, OC 0188404 r. 36",
+                "scostamento": ""
+              },
+              {
+                "fornitore": "Idrosanitaria",
+                "prezzo_eur": 24.807,
+                "articolo": "X800 PULITORE IMPIANTI 1LT",
+                "codice_fornitore": "X800L-12X1L-EXPB",
+                "confezione": "1 pz",
+                "fonte": "Idrosanitaria, XC 2704331 r. 30",
+                "scostamento": ""
+              }
+            ],
+            "avvisi": []
+          },
+          {
+            "codice": "I37b",
+            "quantita": 1.0,
+            "um": "cad",
+            "totale_eur": 10.11,
+            "voci": [
+              "I.31"
+            ],
+            "scelta": {
+              "fornitore": "Tecnomat",
+              "prezzo_eur": 10.11,
+              "articolo": "FILTRO A Y FARG 610 Ø 1'' PER ACQUA PN 25 MAGLIA FILTRANTE 500 MICRON",
+              "codice_fornitore": "25068170",
+              "confezione": "1 pz",
+              "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+              "scostamento": ""
+            },
+            "altri": [],
+            "avvisi": []
+          },
+          {
+            "codice": "I16",
+            "quantita": 2.0,
+            "um": "cad",
+            "totale_eur": 9.08,
+            "voci": [
+              "I.32"
+            ],
+            "scelta": {
+              "fornitore": "Tecnomat",
+              "prezzo_eur": 4.54,
+              "articolo": "TEE PRESSFIT APE APL Ø20 mm PRESSATURA TH-H-U TUBO MULTISTRATO",
+              "codice_fornitore": "25000730",
+              "confezione": "1 pz",
+              "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+              "scostamento": ""
+            },
+            "altri": [],
+            "avvisi": []
+          },
+          {
+            "codice": "I02",
+            "quantita": 8.0,
+            "um": "m",
+            "totale_eur": 8.52,
+            "voci": [
+              "I.1"
+            ],
+            "scelta": {
+              "fornitore": "Tecnomat",
+              "prezzo_eur": 1.065,
+              "articolo": "MULTISTRATO APE Ø 20x2 mm NUDO PEX-B ROTOLO 100 m",
+              "codice_fornitore": "10041925",
+              "confezione": "100 m",
+              "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+              "scostamento": ""
+            },
+            "altri": [],
+            "avvisi": []
+          },
+          {
+            "codice": "I46",
+            "quantita": 2.0,
+            "um": "cad",
+            "totale_eur": 7.46,
+            "voci": [
+              "I.22"
+            ],
+            "scelta": {
+              "fornitore": "Tecnomat",
+              "prezzo_eur": 3.73,
+              "articolo": "RUBINETTO SCARICO CALDAIA 1/2'' CON PORTAGOMMA",
+              "codice_fornitore": "10012741",
+              "confezione": "1 pz",
+              "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+              "scostamento": ""
+            },
+            "altri": [
+              {
+                "fornitore": "Abbattista",
+                "prezzo_eur": 5.385,
+                "articolo": "RUBIN.PORTAGOMMA 1/2 TIEMME LEVA NERA — 2500043",
+                "codice_fornitore": "47637767",
+                "confezione": "1 pz",
+                "fonte": "Abbattista, OC 0188404 r. 7",
+                "scostamento": ""
+              },
+              {
+                "fornitore": "Idrosanitaria",
+                "prezzo_eur": 6.246,
+                "articolo": "RUBINETTO SCARICO CALDAIA 1/2",
+                "codice_fornitore": "538400",
+                "confezione": "1 pz",
+                "fonte": "Idrosanitaria, XC 2704331 r. 25",
+                "scostamento": ""
+              }
+            ],
+            "avvisi": []
+          },
+          {
+            "codice": "I71a",
+            "quantita": 4.0,
+            "um": "cad",
+            "totale_eur": 6.48,
+            "voci": [
+              "S.1"
+            ],
+            "scelta": {
+              "fornitore": "Tecnomat",
+              "prezzo_eur": 1.62,
+              "articolo": "GOMMA ANTIVIBRANTE 100x100x5 mm NERO 4 PEZZI",
+              "codice_fornitore": "25013860",
+              "confezione": "4 pz",
+              "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+              "scostamento": ""
+            },
+            "altri": [
+              {
+                "fornitore": "Idrosanitaria",
+                "prezzo_eur": 2.603,
+                "articolo": "PIEDINO ANTIVIBRANTE PAV 1000KG",
+                "codice_fornitore": "11105340N",
+                "confezione": "1 pz",
+                "fonte": "Idrosanitaria, XC 2704331 r. 6",
+                "scostamento": ""
+              }
+            ],
+            "avvisi": []
+          },
+          {
+            "codice": "I83c",
+            "quantita": 5.0,
+            "um": "cad",
+            "totale_eur": 5.95,
+            "voci": [
+              "I.42"
+            ],
+            "scelta": {
+              "fornitore": "Tecnomat",
+              "prezzo_eur": 1.19,
+              "articolo": "RACCORDO GHISA BERG MONTANA FIGURA 280 NIPPLE 1\" CONFORME USO ACQUA E GAS",
+              "codice_fornitore": "25018203",
+              "confezione": "1 pz",
+              "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+              "scostamento": ""
+            },
+            "altri": [
+              {
+                "fornitore": "Idrosanitaria",
+                "prezzo_eur": 1.567,
+                "articolo": "F280 NIPPLO GHISA ZINC.1\"",
+                "codice_fornitore": "770280206",
+                "confezione": "1 pz",
+                "fonte": "Idrosanitaria, XC 2704331 r. 45",
+                "scostamento": ""
+              },
+              {
+                "fornitore": "Abbattista",
+                "prezzo_eur": 2.257,
+                "articolo": "NIPPLE GHISA ZINCATO FIG 280 1\" — GEONGZ2801",
+                "codice_fornitore": "82014246",
+                "confezione": "1 pz",
+                "fonte": "Abbattista, OC 0188404 r. 30",
+                "scostamento": ""
+              }
+            ],
+            "avvisi": []
+          },
+          {
+            "codice": "I61",
+            "quantita": 1.0,
+            "um": "cad",
+            "totale_eur": 5.57,
+            "voci": [
+              "I.15"
+            ],
+            "scelta": {
+              "fornitore": "Tecnomat",
+              "prezzo_eur": 5.57,
+              "articolo": "NASTRO ADESIVO IN ALLUMINIO ISOCELL FLEX ALU AA H 50 mm x 50 m",
+              "codice_fornitore": "25075683",
+              "confezione": "1 pz",
+              "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+              "scostamento": ""
+            },
+            "altri": [
+              {
+                "fornitore": "Idrosanitaria",
+                "prezzo_eur": 15.34,
+                "articolo": "NASTRO IN GOMMA ADES.H.50 SP.3 L.10M",
+                "codice_fornitore": "850NS020100",
+                "confezione": "rotolo 10 m",
+                "fonte": "Idrosanitaria, XC 2704331 r. 18",
+                "scostamento": ""
+              },
+              {
+                "fornitore": "Abbattista",
+                "prezzo_eur": 24.55,
+                "articolo": "NASTRO ANTICOND.H50MM L10M SP.3MM — 850NS020100",
+                "codice_fornitore": "88838050",
+                "confezione": "rotolo 10 m",
+                "fonte": "Abbattista, OC 0188404 r. 35",
+                "scostamento": ""
+              }
+            ],
+            "avvisi": []
+          },
+          {
+            "codice": "I26c",
+            "quantita": 1.0,
+            "um": "cad",
+            "totale_eur": 5.52,
+            "voci": [
+              "I.9"
+            ],
+            "scelta": {
+              "fornitore": "Tecnomat",
+              "prezzo_eur": 5.52,
+              "articolo": "MANICOTTO PRESSFIT APE APL Ø 32x32 mm PRESSATURA TH-H TUBO MULTISTRATO",
+              "codice_fornitore": "25000719",
+              "confezione": "1 pz",
+              "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+              "scostamento": ""
+            },
+            "altri": [
+              {
+                "fornitore": "Idrosanitaria",
+                "prezzo_eur": 6.074,
+                "articolo": "RM102 MANICOTTO 32X3",
+                "codice_fornitore": "RM102Y011",
+                "confezione": "1 pz",
+                "fonte": "Idrosanitaria, XC 2704331 r. 47",
+                "scostamento": ""
+              }
+            ],
+            "avvisi": []
+          },
+          {
+            "codice": "I43a",
+            "quantita": 1.0,
+            "um": "cad",
+            "totale_eur": 4.8,
+            "voci": [
+              "I.17"
+            ],
+            "scelta": {
+              "fornitore": "Tecnomat",
+              "prezzo_eur": 4.8,
+              "articolo": "VALVOLA SFOGO ARIA AUTOMATICA ITAP 362 M 1/2'' ATTACCO VERTICALE OTTONE",
+              "codice_fornitore": "25087007",
+              "confezione": "1 pz",
+              "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+              "scostamento": ""
+            },
+            "altri": [
+              {
+                "fornitore": "Idrosanitaria",
+                "prezzo_eur": 11.158,
+                "articolo": "VALV.AUTOM.SFOGO ARIA 1/2\" 2,5BARMINICAL",
+                "codice_fornitore": "502040",
+                "confezione": "1 pz",
+                "fonte": "Idrosanitaria, XC 2704331 r. 21",
+                "scostamento": ""
+              },
+              {
+                "fornitore": "Abbattista",
+                "prezzo_eur": 13.57,
+                "articolo": "VAL.SFOGO ARIA AUT.CF.5020 1/2 GIALLA — 502040",
+                "codice_fornitore": "41082752",
+                "confezione": "1 pz",
+                "fonte": "Abbattista, OC 0188404 r. 5",
+                "scostamento": ""
+              }
+            ],
+            "avvisi": []
+          },
+          {
+            "codice": "I83e",
+            "quantita": 2.0,
+            "um": "cad",
+            "totale_eur": 4.58,
+            "voci": [
+              "I.43"
+            ],
+            "scelta": {
+              "fornitore": "Tecnomat",
+              "prezzo_eur": 2.29,
+              "articolo": "RACCORDO GHISA BERG MONTANA FIGURA 245 NIPPLE RIDOTTO 1\"1/4 X 1\" CONFORME USO ACQUA E GAS",
+              "codice_fornitore": "25018245",
+              "confezione": "1 pz",
+              "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+              "scostamento": ""
+            },
+            "altri": [
+              {
+                "fornitore": "Idrosanitaria",
+                "prezzo_eur": 3.119,
+                "articolo": "F245 NIPPLO GH.ZINC.11/4-1\"",
+                "codice_fornitore": "770245227",
+                "confezione": "1 pz",
+                "fonte": "Idrosanitaria, XC 2704331 r. 46",
+                "scostamento": ""
+              },
+              {
+                "fornitore": "Abbattista",
+                "prezzo_eur": 4.49,
+                "articolo": "NIPPLE GHISA ZINCATO FIG.245 11/4-1 — GEONGZ24511/4-1",
+                "codice_fornitore": "39080875",
+                "confezione": "1 pz",
+                "fonte": "Abbattista, OC 0188404 r. 31",
+                "scostamento": ""
+              }
+            ],
+            "avvisi": []
+          },
+          {
+            "codice": "I83a",
+            "quantita": 5.0,
+            "um": "cad",
+            "totale_eur": 3.9,
+            "voci": [
+              "I.40"
+            ],
+            "scelta": {
+              "fornitore": "Tecnomat",
+              "prezzo_eur": 0.78,
+              "articolo": "RACCORDO GHISA BERG MONTANA FIGURA 280 NIPPLE 1/2\" CONFORME USO ACQUA E GAS",
+              "codice_fornitore": "25018214",
+              "confezione": "1 pz",
+              "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+              "scostamento": ""
+            },
+            "altri": [],
+            "avvisi": []
+          },
+          {
+            "codice": "I67a",
+            "quantita": 1.0,
+            "um": "cad",
+            "totale_eur": 3.07,
+            "voci": [
+              "I.16"
+            ],
+            "scelta": {
+              "fornitore": "Tecnomat",
+              "prezzo_eur": 3.07,
+              "articolo": "CANAPA A FILO CON CONTENITORE 80 g",
+              "codice_fornitore": "10069812",
+              "confezione": "1 pz",
+              "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+              "scostamento": ""
+            },
+            "altri": [
+              {
+                "fornitore": "Idrosanitaria",
+                "prezzo_eur": 3.944,
+                "articolo": "CANAPA GR.250",
+                "codice_fornitore": "00505",
+                "confezione": "1 pz",
+                "fonte": "Idrosanitaria, XC 2704331 r. 19",
+                "scostamento": ""
+              },
+              {
+                "fornitore": "Abbattista",
+                "prezzo_eur": 7.5,
+                "articolo": "CANAPA EXTRA 4 FACOT CANEXK025 — CANEXK025",
+                "codice_fornitore": "02923656",
+                "confezione": "0,25 kg",
+                "fonte": "Abbattista, OC 0188404 r. 33",
+                "scostamento": ""
+              }
+            ],
+            "avvisi": []
+          },
+          {
+            "codice": "E37",
+            "quantita": 1.0,
+            "um": "cad",
+            "totale_eur": 0.25,
+            "voci": [
+              "E.9"
+            ],
+            "scelta": {
+              "fornitore": "Tecnomat",
+              "prezzo_eur": 0.25,
+              "articolo": "SCATOLA INCASSO KML 3 MODULI",
+              "codice_fornitore": "12085813",
+              "confezione": "1 pz",
+              "fonte": "rilievo al banco, Tecnomat Segrate (MI), 18 novembre 2026",
+              "scostamento": ""
+            },
+            "altri": [],
+            "avvisi": []
+          }
+        ]
+      }
+    },
+    "senza_fornitore": [
+      {
+        "codice": "E02",
+        "quantita": 31.0,
+        "um": "m",
+        "totale_eur": 70.68,
+        "voci": [
+          "E.2"
+        ],
+        "riferimento": {
+          "fornitore": "riferimento online",
+          "prezzo_eur": 2.28,
+          "articolo": "Cavo FG16OR16 0,6/1 kV 3G4, 3G4",
+          "codice_fornitore": "",
+          "confezione": "",
+          "fonte": "riferimento online, 5 novembre 2026, mediana di 5 riscontri",
+          "scostamento": ""
+        }
+      },
+      {
+        "codice": "I76",
+        "quantita": 2.0,
+        "um": "cad",
+        "totale_eur": 25.32,
+        "voci": [
+          "I.30"
+        ],
+        "riferimento": {
+          "fornitore": "riferimento online",
+          "prezzo_eur": 12.66,
+          "articolo": "Pozzetto portasonda in ottone, ½\"",
+          "codice_fornitore": "",
+          "confezione": "",
+          "fonte": "riferimento online, 6 novembre 2026, mediana di 4 riscontri",
+          "scostamento": ""
+        }
+      }
+    ],
+    "totale_di_riferimento_eur": 96.0,
+    "un_fornitore": [
+      {
+        "fornitore": "Tecnomat",
+        "ha": 40,
+        "da_lui_eur": 1209.32,
+        "non_ha": 4,
+        "altrove_eur": 590.84,
+        "totale_eur": 1800.17,
+        "in_piu_eur": 108.82,
+        "in_comune_eur": 679.26
+      },
+      {
+        "fornitore": "Idrosanitaria",
+        "ha": 28,
+        "da_lui_eur": 1451.77,
+        "non_ha": 16,
+        "altrove_eur": 387.33,
+        "totale_eur": 1839.1,
+        "in_piu_eur": 147.75,
+        "in_comune_eur": 754.31
+      },
+      {
+        "fornitore": "Abbattista",
+        "ha": 21,
+        "da_lui_eur": 1654.83,
+        "non_ha": 23,
+        "altrove_eur": 476.12,
+        "totale_eur": 2130.95,
+        "in_piu_eur": 439.6,
+        "in_comune_eur": 959.58
+      }
+    ],
+    "articoli_in_comune": 18,
+    "combinazioni": [
+      {
+        "fornitori": [
+          "Tecnomat"
+        ],
+        "scoperti": 4,
+        "totale_eur": 1209.32,
+        "in_piu_eur": 108.82
+      },
+      {
+        "fornitori": [
+          "Idrosanitaria"
+        ],
+        "scoperti": 16,
+        "totale_eur": 1451.77,
+        "in_piu_eur": 147.75
+      },
+      {
+        "fornitori": [
+          "Abbattista"
+        ],
+        "scoperti": 23,
+        "totale_eur": 1654.83,
+        "in_piu_eur": 439.6
+      },
+      {
+        "fornitori": [
+          "Idrosanitaria",
+          "Tecnomat"
+        ],
+        "scoperti": 0,
+        "totale_eur": 1691.35,
+        "in_piu_eur": 0.0
+      },
+      {
+        "fornitori": [
+          "Abbattista",
+          "Tecnomat"
+        ],
+        "scoperti": 2,
+        "totale_eur": 1834.45,
+        "in_piu_eur": 161.89
+      },
+      {
+        "fornitori": [
+          "Abbattista",
+          "Idrosanitaria"
+        ],
+        "scoperti": 15,
+        "totale_eur": 1484.64,
+        "in_piu_eur": 148.49
+      },
+      {
+        "fornitori": [
+          "Abbattista",
+          "Idrosanitaria",
+          "Tecnomat"
+        ],
+        "scoperti": 0,
+        "totale_eur": 1691.35,
+        "in_piu_eur": 0.0
+      }
+    ]
+  }
+}
