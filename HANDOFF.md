@@ -11,6 +11,17 @@
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
 
+## ▶ Da dove riparte la prossima sessione — 19 novembre 2026, dopo REL-030 (la 2.2.2, PR #101)
+
+**Il prossimo lavoro è l'handoff del PO dal caso BD.RM.264 (I-335):** `docs/input-pm/2026-11-19-handoff-bd-rm-264/`.
+Si parte da `LEGGIMI.md` e `SPEC_lista_prezzata_e_disegnatore.md`. Tre filoni: la **lista prezzata** come PDF a sé sul
+modello rev04 (non la distinta, non `costo-minuteria.md`); **tappi e volano standard** Cordivari 4 attacchi 50/80 l,
+avviso distanza da `distinta.tubi`, carico manuale con disconnettore; **prezzi** (Shenling 9 kW, matching per famiglia,
+M01c da correggere). La sessione che lo prende scrive prima il pacchetto (`ACTIVE_WORK_PACKAGE.md` è ancora quello di
+REL-030, fuso con la PR #101) e lo fa vedere al PO.
+
+- **I numeri**: il prossimo input è **I-336**. La prossima decisione va verificata in `docs/DECISION_LOG.md`.
+
 ## ▶ Da dove riparte la prossima sessione — scritto il 18 novembre 2026 sera, alla fusione di REL-029
 
 **La 2.2.1 è su `main`** (`REL-029`, PR #99; rapporto `docs/collaudi/REL-029/RAPPORTO.md`): il bollitore col

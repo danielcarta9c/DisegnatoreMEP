@@ -1,0 +1,648 @@
+{
+ "schema_version": "1.1.0",
+ "metadata": {
+  "project_id": "pdc-shenling-9kw-radiatori-bollitore",
+  "client": "Daniele Gianni",
+  "project_name": "Sostituzione caldaia con pompa di calore - int. 28",
+  "commission_code": "BD.RM.264",
+  "revision": "00",
+  "issue_date": "2026-11-19",
+  "address": "Via di San Giovanni in Laterano 28, Roma (RM)",
+  "livello": "definitivo",
+  "sheet_title": "Schema funzionale centrale termica a pompa di calore",
+  "sheet_number": "T1",
+  "header_note": "Conto Termico 3.0 con sconto in fattura",
+  "drawn_by": "Nove C Ingegneria"
+ },
+ "plant_regime": "up_to_35_kw",
+ "networks": [
+  {
+   "id": "primario",
+   "name": "Circuito primario della pompa di calore",
+   "domain": "hydronic",
+   "medium": "heating_water"
+  },
+  {
+   "id": "secondario",
+   "name": "Circuito secondario ai radiatori",
+   "domain": "hydronic",
+   "medium": "heating_water"
+  },
+  {
+   "id": "acqua-fredda",
+   "name": "Acqua fredda al bollitore",
+   "domain": "hydronic",
+   "medium": "cold_water"
+  },
+  {
+   "id": "acs",
+   "name": "Acqua calda sanitaria",
+   "domain": "hydronic",
+   "medium": "domestic_hot_water"
+  },
+  {
+   "id": "alim-pdc",
+   "name": "Alimentazione pompa di calore dal quadro",
+   "domain": "control",
+   "medium": "power_supply"
+  },
+  {
+   "id": "alim-circolatore",
+   "name": "Alimentazione circolatore secondario dal quadro, attraverso il relè",
+   "domain": "control",
+   "medium": "power_supply"
+  },
+  {
+   "id": "comando-rele",
+   "name": "Comando del relè del circolatore secondario",
+   "domain": "control",
+   "medium": "power_supply"
+  },
+  {
+   "id": "comando-deviatrice",
+   "name": "Comando della valvola deviatrice ACS",
+   "domain": "control",
+   "medium": "power_supply"
+  },
+  {
+   "id": "sonde",
+   "name": "Segnali delle sonde e del termostato",
+   "domain": "control",
+   "medium": "control_bus"
+  },
+  {
+   "id": "carico",
+   "name": "Attacco di carico manuale dell'impianto",
+   "domain": "hydronic",
+   "medium": "heating_water"
+  }
+ ],
+ "components": [
+  {
+   "id": "pdc",
+   "definition_id": "heat-pump-air-water",
+   "tag": null,
+   "properties": {
+    "power_kw": 9,
+    "marca": "Shenling",
+    "modello": "ThermaX R290 9 kW (HPM-V90W/R3)",
+    "tipo": "aria-acqua monoblocco R290",
+    "delta_t_k": 5
+   }
+  },
+  {
+   "id": "deviatrice",
+   "definition_id": "diverting-valve-3way",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "volano",
+   "definition_id": "buffer-four-port",
+   "tag": null,
+   "properties": {
+    "volume_l": 50,
+    "marca": "Cordivari",
+    "modello": "VB 50 l a 4 attacchi"
+   }
+  },
+  {
+   "id": "bollitore",
+   "definition_id": "dhw-cylinder",
+   "tag": null,
+   "properties": {
+    "volume_l": 200,
+    "marca": "Cordivari",
+    "modello": "Bolly 1 XL WB 200",
+    "superficie_scambio_m2": 2.0
+   },
+   "non_a_bordo": [
+    "expansion"
+   ]
+  },
+  {
+   "id": "rit-primario",
+   "definition_id": "tee-junction",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "circolatore",
+   "definition_id": "pump-circulator",
+   "tag": null,
+   "properties": {
+    "marca": "DAB",
+    "modello": "Evosta 2"
+   }
+  },
+  {
+   "id": "radiatori",
+   "definition_id": "radiator",
+   "tag": null,
+   "esistente": true,
+   "properties": {
+    "etichetta": "radiatori e scaldasalviette esistenti con valvole termostatiche",
+    "power_kw": 7.1,
+    "delta_t_k": 10
+   }
+  },
+  {
+   "id": "acquedotto",
+   "definition_id": "cold-water-inlet",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "utenze",
+   "definition_id": "dhw-draw-off",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "sonda-acs",
+   "definition_id": "temperature-probe-dhw",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "sonda-volano",
+   "definition_id": "temperature-probe",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "termostato",
+   "definition_id": "room-thermostat",
+   "tag": null,
+   "properties": {
+    "marca": "BPT",
+    "modello": "Cronotermostato settimanale wifi"
+   }
+  },
+  {
+   "id": "quadro",
+   "definition_id": "electrical-panel",
+   "tag": null,
+   "esistente": true,
+   "properties": {}
+  },
+  {
+   "id": "qf-pdc",
+   "definition_id": "circuit-breaker-rcbo",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "rele-circolatore",
+   "definition_id": "interface-relay",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "der-carico",
+   "definition_id": "tee-branch",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "carico",
+   "definition_id": "capped-connection",
+   "tag": null,
+   "properties": {
+    "etichetta": "carico impianto: rubinetto manuale + disconnettore CA (UNI EN 1717)"
+   }
+  }
+ ],
+ "connections": [
+  {
+   "id": "p1",
+   "network_id": "primario",
+   "endpoint_a": {
+    "component_id": "pdc",
+    "port_id": "water_supply"
+   },
+   "endpoint_b": {
+    "component_id": "deviatrice",
+    "port_id": "in"
+   },
+   "properties": {}
+  },
+  {
+   "id": "p2",
+   "network_id": "primario",
+   "endpoint_a": {
+    "component_id": "deviatrice",
+    "port_id": "out_a"
+   },
+   "endpoint_b": {
+    "component_id": "volano",
+    "port_id": "primary_in"
+   },
+   "properties": {}
+  },
+  {
+   "id": "p3",
+   "network_id": "primario",
+   "endpoint_a": {
+    "component_id": "deviatrice",
+    "port_id": "out_b"
+   },
+   "endpoint_b": {
+    "component_id": "bollitore",
+    "port_id": "coil_in"
+   },
+   "properties": {}
+  },
+  {
+   "id": "p4",
+   "network_id": "primario",
+   "endpoint_a": {
+    "component_id": "volano",
+    "port_id": "primary_out"
+   },
+   "endpoint_b": {
+    "component_id": "rit-primario",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "p5",
+   "network_id": "primario",
+   "endpoint_a": {
+    "component_id": "bollitore",
+    "port_id": "coil_out"
+   },
+   "endpoint_b": {
+    "component_id": "rit-primario",
+    "port_id": "c"
+   },
+   "properties": {}
+  },
+  {
+   "id": "p6",
+   "network_id": "primario",
+   "endpoint_a": {
+    "component_id": "rit-primario",
+    "port_id": "b"
+   },
+   "endpoint_b": {
+    "component_id": "der-carico",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "s1",
+   "network_id": "secondario",
+   "endpoint_a": {
+    "component_id": "volano",
+    "port_id": "secondary_out"
+   },
+   "endpoint_b": {
+    "component_id": "circolatore",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "s2",
+   "network_id": "secondario",
+   "endpoint_a": {
+    "component_id": "circolatore",
+    "port_id": "b"
+   },
+   "endpoint_b": {
+    "component_id": "radiatori",
+    "port_id": "in"
+   },
+   "properties": {}
+  },
+  {
+   "id": "s3",
+   "network_id": "secondario",
+   "endpoint_a": {
+    "component_id": "radiatori",
+    "port_id": "out"
+   },
+   "endpoint_b": {
+    "component_id": "volano",
+    "port_id": "secondary_in"
+   },
+   "properties": {}
+  },
+  {
+   "id": "s4",
+   "network_id": "secondario",
+   "endpoint_a": {
+    "component_id": "volano",
+    "port_id": "probe"
+   },
+   "endpoint_b": {
+    "component_id": "sonda-volano",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "f1",
+   "network_id": "acqua-fredda",
+   "endpoint_a": {
+    "component_id": "acquedotto",
+    "port_id": "a"
+   },
+   "endpoint_b": {
+    "component_id": "bollitore",
+    "port_id": "cold_in"
+   },
+   "properties": {}
+  },
+  {
+   "id": "w1",
+   "network_id": "acs",
+   "endpoint_a": {
+    "component_id": "bollitore",
+    "port_id": "dhw_out"
+   },
+   "endpoint_b": {
+    "component_id": "utenze",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "w2",
+   "network_id": "acs",
+   "endpoint_a": {
+    "component_id": "bollitore",
+    "port_id": "probe"
+   },
+   "endpoint_b": {
+    "component_id": "sonda-acs",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "e1",
+   "network_id": "alim-pdc",
+   "endpoint_a": {
+    "component_id": "quadro",
+    "port_id": "out_1"
+   },
+   "endpoint_b": {
+    "component_id": "qf-pdc",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "e2",
+   "network_id": "alim-pdc",
+   "endpoint_a": {
+    "component_id": "qf-pdc",
+    "port_id": "b"
+   },
+   "endpoint_b": {
+    "component_id": "pdc",
+    "port_id": "power"
+   },
+   "properties": {},
+   "sezione": "3G4",
+   "lunghezza_m": 30
+  },
+  {
+   "id": "e3",
+   "network_id": "comando-rele",
+   "endpoint_a": {
+    "component_id": "pdc",
+    "port_id": "out_pompa_zona_1"
+   },
+   "endpoint_b": {
+    "component_id": "rele-circolatore",
+    "port_id": "bobina"
+   },
+   "properties": {},
+   "sezione": "3G1,5",
+   "lunghezza_m": 30
+  },
+  {
+   "id": "e4",
+   "network_id": "alim-circolatore",
+   "endpoint_a": {
+    "component_id": "quadro",
+    "port_id": "out_2"
+   },
+   "endpoint_b": {
+    "component_id": "rele-circolatore",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "e5",
+   "network_id": "alim-circolatore",
+   "endpoint_a": {
+    "component_id": "rele-circolatore",
+    "port_id": "b"
+   },
+   "endpoint_b": {
+    "component_id": "circolatore",
+    "port_id": "power"
+   },
+   "properties": {},
+   "sezione": "3G1,5",
+   "lunghezza_m": 22
+  },
+  {
+   "id": "e6",
+   "network_id": "comando-deviatrice",
+   "endpoint_a": {
+    "component_id": "pdc",
+    "port_id": "out_acs"
+   },
+   "endpoint_b": {
+    "component_id": "deviatrice",
+    "port_id": "comando"
+   },
+   "properties": {},
+   "sezione": "3G1,5",
+   "lunghezza_m": 8
+  },
+  {
+   "id": "c1",
+   "network_id": "sonde",
+   "endpoint_a": {
+    "component_id": "sonda-acs",
+    "port_id": "signal"
+   },
+   "endpoint_b": {
+    "component_id": "pdc",
+    "port_id": "sonda_acs"
+   },
+   "properties": {},
+   "sezione": "2×0,75",
+   "lunghezza_m": 8
+  },
+  {
+   "id": "c2",
+   "network_id": "sonde",
+   "endpoint_a": {
+    "component_id": "sonda-volano",
+    "port_id": "signal"
+   },
+   "endpoint_b": {
+    "component_id": "pdc",
+    "port_id": "sonda_accumulo"
+   },
+   "properties": {},
+   "sezione": "2×0,75",
+   "lunghezza_m": 8
+  },
+  {
+   "id": "c3",
+   "network_id": "sonde",
+   "endpoint_a": {
+    "component_id": "termostato",
+    "port_id": "a"
+   },
+   "endpoint_b": {
+    "component_id": "pdc",
+    "port_id": "termostato"
+   },
+   "properties": {},
+   "sezione": "2×0,75",
+   "lunghezza_m": 8
+  },
+  {
+   "id": "p7",
+   "network_id": "primario",
+   "endpoint_a": {
+    "component_id": "der-carico",
+    "port_id": "b"
+   },
+   "endpoint_b": {
+    "component_id": "pdc",
+    "port_id": "water_return"
+   },
+   "properties": {}
+  },
+  {
+   "id": "k1",
+   "network_id": "carico",
+   "endpoint_a": {
+    "component_id": "der-carico",
+    "port_id": "branch"
+   },
+   "endpoint_b": {
+    "component_id": "carico",
+    "port_id": "a"
+   },
+   "properties": {},
+   "sezione": "MS 20×2"
+  }
+ ],
+ "assumptions": [
+  {
+   "id": "a1",
+   "text": "Chi regola: la pompa di calore con la regolazione a bordo. Sonde del bollitore e del volano e termostato ambiente sono cablati alla macchina, che comanda la deviatrice ACS e, tramite relè d'appoggio da 10 A nel quadro, il circolatore del secondario.",
+   "status": "approved"
+  },
+  {
+   "id": "a2",
+   "text": "Un solo radiatore rappresenta i 3 radiatori di design, il radiatore verticale e i 3 scaldasalviette esistenti, tutti con valvole termostatiche, sulla distribuzione esistente.",
+   "status": "approved"
+  },
+  {
+   "id": "a3",
+   "text": "La deviatrice a tre vie sta sul primario a monte del volano: via dritta al volano, terza via al serpentino del bollitore. La priorità sanitaria è una logica di regolazione: sul grafo si vede la valvola, non la priorità.",
+   "status": "approved"
+  },
+  {
+   "id": "a4",
+   "text": "Circolatore del secondario sulla mandata ai radiatori, a valle del volano.",
+   "status": "approved"
+  },
+  {
+   "id": "a5",
+   "text": "Il quadro è quello esistente dell'appartamento; si aggiungono l'interruttore magnetotermico differenziale della linea PdC e il relè del circolatore.",
+   "status": "approved"
+  },
+  {
+   "id": "a6",
+   "text": "La caldaia esistente si dismette e non compare nello schema; nessun ricircolo sanitario.",
+   "status": "approved"
+  },
+  {
+   "id": "a7",
+   "text": "Lunghezze stimate dal progettista: macchina-centrale 8 m (primario 16 m andata e ritorno), quadro-macchina 30 m; quadro-lavanderia stimato 22 m; tratti in centrale (secondario, acqua fredda, ACS) stimati 2-4 m.",
+   "status": "approved"
+  },
+  {
+   "id": "a8",
+   "text": "Termostato: quello esistente, ricablato dalla lavanderia alla pompa di calore (8 m). Marca e modello da definire.",
+   "status": "approved"
+  },
+  {
+   "id": "a9",
+   "text": "Salto termico del secondario 10 K sul carico di progetto di 7,1 kW (analisi energetica), per il diametro del tratto in centrale.",
+   "status": "approved"
+  }
+ ],
+ "rule_applications": [],
+ "subsystems": [],
+ "sheets": [],
+ "diametri": {
+  "reti": [
+   "primario",
+   "secondario"
+  ]
+ },
+ "accessori_tolti": [
+  {
+   "pezzo": "filling-unit-pdc-water-return",
+   "motivo": "il progettista vuole il carico manuale con rubinetto, non il gruppo automatico"
+  }
+ ],
+ "distinta": {
+  "tubi": [
+   {
+    "rete": "primario",
+    "tubo": "MS 32×3",
+    "metri": 16,
+    "isolamento": "guaina 19 mm (con protezione UV nel tratto esterno)"
+   },
+   {
+    "rete": "secondario",
+    "tubo": "MS 26×3",
+    "metri": 4,
+    "isolamento": "guaina 13 mm"
+   },
+   {
+    "rete": "acqua-fredda",
+    "tubo": "MS 20×2",
+    "metri": 4,
+    "isolamento": "guaina 9 mm"
+   },
+   {
+    "rete": "acs",
+    "tubo": "MS 20×2",
+    "metri": 2,
+    "isolamento": "guaina 13 mm"
+   },
+   {
+    "rete": "acqua-fredda-mixing-valve-thermostatic-bollitore-dhw-out",
+    "tubo": "MS 20×2",
+    "metri": 1,
+    "isolamento": "guaina 9 mm"
+   },
+   {
+    "rete": "carico",
+    "tubo": "MS 20×2",
+    "metri": 1,
+    "isolamento": "guaina 9 mm"
+   }
+  ],
+  "gomiti": 20
+ }
+}

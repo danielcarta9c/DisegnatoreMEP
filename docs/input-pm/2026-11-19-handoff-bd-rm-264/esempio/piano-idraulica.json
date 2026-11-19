@@ -1,0 +1,144 @@
+{
+ "formato": "A3",
+ "vista": "idraulica",
+ "note": [
+  "Pompa di calore e volano allo stesso y: mandata a 65 e ritorno a 80 rette da porta a porta (D-159, B1).",
+  "Deviatrice sulla mandata vicino al volano, rit-primario sul ritorno 12,5 mm a sinistra: la discesa alla serpentina corre accanto alla risalita del ritorno, una L ciascuna (B11, B12, I-240).",
+  "Bollitore sotto il primario, fra deviatrice e volano: il sormonto della discesa sul ritorno è quello imposto del bollitore fuori dalla coppia.",
+  "Vaso, manometro e attacco di carico pendono in giù dal ritorno; la sicurezza in su dalla mandata (A4)."
+ ],
+ "pezzi": {
+  "pdc": {
+   "x": 0,
+   "y": 60,
+   "regola": "D-159 — quota delle porte"
+  },
+  "tee-valve-safety-pdc-water-supply": {
+   "x": 75,
+   "y": 62.5,
+   "regola": "B8 — sulla quota della mandata"
+  },
+  "valve-safety-pdc-water-supply": {
+   "x": 75,
+   "y": 42.5,
+   "regola": "A4 — addosso, in su"
+  },
+  "tee-expansion-connection-pdc-water-return": {
+   "x": 85,
+   "y": 77.5,
+   "regola": "B8 — ordine della catena del ritorno"
+  },
+  "expansion-connection-pdc-water-return": {
+   "x": 85,
+   "y": 97.5,
+   "regola": "A4 — pende in giù"
+  },
+  "tee-pressure-gauge-pdc-water-return": {
+   "x": 97.5,
+   "y": 77.5,
+   "regola": "B8"
+  },
+  "pressure-gauge-pdc-water-return": {
+   "x": 97.5,
+   "y": 97.5,
+   "regola": "A4 — pende in giù"
+  },
+  "der-carico": {
+   "x": 140.0,
+   "y": 77.5,
+   "regola": "B8 — dopo il defangatore, ordine della catena"
+  },
+  "carico": {
+   "x": 140.0,
+   "y": 105,
+   "regola": "A4 — attacco di carico in giù"
+  },
+  "rit-primario": {
+   "x": 157.5,
+   "y": 77.5,
+   "regola": "B12 — accanto alla discesa della deviatrice"
+  },
+  "deviatrice": {
+   "x": 172.5,
+   "y": 60,
+   "rotazione": 0,
+   "regola": "D-168 — via dritta sulla mandata, terza via in giù verso la serpentina"
+  },
+  "bollitore": {
+   "x": 192.5,
+   "y": 115,
+   "regola": "A1 — fascia accumuli, sotto il primario"
+  },
+  "sonda-acs": {
+   "x": 225.0,
+   "y": 132.5,
+   "regola": "A4"
+  },
+  "mixing-valve-thermostatic-bollitore-dhw-out": {
+   "x": 222.5,
+   "y": 97.5,
+   "rotazione": 0,
+   "regola": "D-175 — ACS verso destra, fredda dal basso"
+  },
+  "inlet-mixing-valve-thermostatic-bollitore-dhw-out": {
+   "x": 222.5,
+   "y": 125,
+   "regola": "A4 — sotto la terza via"
+  },
+  "utenze": {
+   "x": 247.5,
+   "y": 100,
+   "regola": "A4"
+  },
+  "tee-expansion-connection-dhw-bollitore-cold-in": {
+   "x": 175.0,
+   "y": 150,
+   "regola": "ordine della catena dell'acqua fredda"
+  },
+  "expansion-connection-dhw-bollitore-cold-in": {
+   "x": 175.0,
+   "y": 170,
+   "regola": "A4"
+  },
+  "tee-drain-connection-cold-bollitore-cold-in": {
+   "x": 142.5,
+   "y": 150,
+   "regola": "ordine della catena"
+  },
+  "drain-connection-cold-bollitore-cold-in": {
+   "x": 142.5,
+   "y": 160,
+   "regola": "A4"
+  },
+  "acquedotto": {
+   "x": 110.0,
+   "y": 150,
+   "regola": "A4 — addosso all'acqua fredda del bollitore"
+  },
+  "volano": {
+   "x": 262.5,
+   "y": 60,
+   "regola": "D-159 — stesso y della pompa"
+  },
+  "air-vent-volano-primary-out": {
+   "x": 272.5,
+   "y": 52.5,
+   "regola": "addosso al vent"
+  },
+  "drain-connection-volano-primary-in": {
+   "x": 272.5,
+   "y": 110,
+   "regola": "addosso al drain"
+  },
+  "sonda-volano": {
+   "x": 245.0,
+   "y": 85,
+   "regola": "A4 — sull'attacco sonda"
+  },
+  "radiatori": {
+   "x": 327.5,
+   "y": 62.5,
+   "regola": "D-167 — terminale preso da sinistra, coppia del secondario dritta"
+  }
+ }
+}
