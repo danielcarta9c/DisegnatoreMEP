@@ -3,7 +3,7 @@
 > **Uso interno Nove C.** Non va all'installatore né al fornitore: la lista per loro resta senza prezzi. È il costo, a prezzi di listino, di **tutto** il materiale che la distinta conta: le apparecchiature della sezione A (macchine, accumuli, bollitori, circolatori, unità e comandi del clima), anche quelle fornite da Nove C (D-241), e la minuteria (tubi, raccordi, valvolame, canali, cavi, accessori). Fuori la manodopera e le voci del Committente.
 
 - **Listino:** Listino della minuteria — riferimento interno Nove C, revisione 07, 18 novembre 2026. Prezzi netti, IVA esclusa; per ogni articolo il più basso fra i fornitori da cui si ordina (fra parentesi, di chi è), e dove nessuno lo ha il prezzo di riferimento. **Dove comprare** è in fondo.
-- **Totale prezzato: 8.907,68 €**, su 90 voci di 99.
+- **Totale prezzato: 8.827,16 €**, su 90 voci di 99.
 - **Da prezzare: 9 voci**, che il totale non contiene (elencate in fondo, ciascuna col suo perché).
 - Il conto è quantità × prezzo per unità del listino. Le quantità sono quelle della distinta, nette (senza maggiorazione percentuale, I-320; restano i minimi delle linee), e dove la distinta conta confezioni (il flessibile in rotoli da 10 m) si pagano le confezioni intere; il resto è il consumo, e al banco le confezioni intere costano di più.
 
@@ -11,21 +11,21 @@
 
 | Sezione | Voci prezzate | Da prezzare | Totale € |
 |---|--:|--:|--:|
-| A — Apparecchiature | 8 | 0 | 6.946,00 |
+| A — Apparecchiature | 8 | 0 | 6.865,48 |
 | S — Staffaggi e supporti | 5 | 0 | 37,55 |
 | I — Circuito idraulico | 41 | 0 | 1.157,88 |
 | E — Elettrico, comando e regolazione | 20 | 1 | 241,91 |
 | B — Distribuzione aria | 5 | 4 | 383,07 |
 | C — Circuito frigorifero | 3 | 3 | 99,69 |
 | D — Scarico condensa | 8 | 1 | 41,58 |
-| **Totale** | 90 | 9 | **8.907,68** |
+| **Totale** | 90 | 9 | **8.827,16** |
 
 ## Le voci prezzate
 
 | Rif. | Voce | Q.tà | UM | € unitario | € totale | Conto | Nota |
 |---|---|--:|---|--:|--:|---|---|
 | P-A.1 | Pompa di calore aria-acqua: Shenling ThermaX R290 12 kW | 1 | n | 3.103,60 | 3.103,60 | M01c 3103.60 (Idrosanitaria) | fornita da Nove C |
-| P-A.2 | Bollitore ACS — 200 l, a serpentino maggiorato per pompa di calore, superficie di scambio non minore di 2 m² | 1 | n | 626,52 | 626,52 | M10b 626.52 (Abbattista) | fornita da Nove C; esclusi perché sbagliati: Idrosanitaria (serpentino 0,8 m², sotto il minimo di 2 m²) |
+| P-A.2 | Bollitore ACS — 200 l, a serpentino maggiorato per pompa di calore, superficie di scambio non minore di 2 m² | 1 | n | 546,00 | 546,00 | M10b 546.00 (Idrosanitaria) | fornita da Nove C |
 | P-A.3 | Volano termico a quattro attacchi, 80 l | 1 | n | 156,49 | 156,49 | M20b 156.49 (Idrosanitaria) | fornita da Nove C |
 | P-A.4 | Pompa di circolazione: DAB Evosta 2 40-70/130 | 1 | n | 93,60 | 93,60 | M30a 93.60 (Idrosanitaria) | fornita da Nove C |
 | C-A.1 | Unità esterna: Daikin RZASG71MV1 | 1 | n | 1.017,27 | 1.017,27 | M41a 1017.27 (Idrosanitaria) | fornita da Nove C |
@@ -133,10 +133,10 @@
 
 Ogni articolo dal fornitore che lo vende al prezzo più basso, fra quelli da cui Nove C ordina (la tabella «I fornitori» del listino) e fra gli articoli che rispettano la voce: la marca non conta, la prescrizione sì. Un articolo che se ne scosta (⚠) e costa meno è un avviso sul prezzo, non una scelta. Le quantità sono quelle della distinta, sommate per articolo; al banco si comprano le confezioni intere (colonna Confezione). I prezzi hanno la data del loro documento, e il conto non tiene trasporto, ordine minimo e condizioni di pagamento.
 
-- **Ogni articolo dal più economico: 8.855,00 €** in 3 ordini — Idrosanitaria 7.511,78 € (33 articoli), Tecnomat 686,73 € (38 articoli), Abbattista 656,49 € (3 articoli).
+- **Ogni articolo dal più economico: 8.774,48 €** in 3 ordini — Idrosanitaria 8.057,78 € (34 articoli), Tecnomat 686,73 € (38 articoli), Abbattista 29,97 € (2 articoli).
 - **Avvisi sul prezzo: 8 articoli** con un'offerta che costa meno ma non rispetta la voce (101,33 € di risparmio, se lo scostamento va bene): sono qui sotto, e decide il progettista.
 - **Senza un fornitore: 2 articoli**, 52,68 € a prezzi di riferimento (online, o le fatture di un installatore): da comprare dove si trovano. Sono in fondo.
-- **Un fornitore solo per tutta la minuteria: il più economico è Idrosanitaria**, 9.100,15 € (8.236,63 € da Idrosanitaria, 863,51 € per i 14 articoli che non ha, da comprare altrove): 245,15 € in più che dividere l'ordine. A parità di articoli (i 24 che hanno tutti) il più economico è Tecnomat.
+- **Un fornitore solo per tutta la minuteria: il più economico è Idrosanitaria**, 9.019,63 € (8.782,63 € da Idrosanitaria, 236,99 € per i 13 articoli che non ha, da comprare altrove): 245,15 € in più che dividere l'ordine. A parità di articoli (i 24 che hanno tutti) il più economico è Tecnomat.
 
 ### Un fornitore solo
 
@@ -144,9 +144,9 @@ Tutta la minuteria da un fornitore: gli articoli che ha ai suoi prezzi, quelli c
 
 | Fornitore | Articoli che ha | € da lui | Articoli che non ha | € di quelli, altrove | Totale € | In più dell'ordine diviso € | € sugli articoli che hanno tutti |
 |---|--:|--:|--:|--:|--:|--:|--:|
-| Idrosanitaria | 60 | 8.236,63 | 14 | 863,51 | 9.100,15 | 245,15 | 913,47 |
-| Tecnomat | 57 | 1.834,68 | 17 | 7.321,27 | 9.155,95 | 300,95 | 846,60 |
-| Abbattista | 29 | 2.079,45 | 45 | 7.197,17 | 9.276,62 | 421,62 | 1.145,09 |
+| Idrosanitaria | 61 | 8.782,63 | 13 | 236,99 | 9.019,63 | 245,15 | 913,47 |
+| Tecnomat | 57 | 1.834,68 | 17 | 7.240,75 | 9.075,43 | 300,95 | 846,60 |
+| Abbattista | 29 | 2.079,45 | 45 | 7.197,17 | 9.276,62 | 502,14 | 1.145,09 |
 
 ### Avvisi sul prezzo
 
@@ -168,15 +168,15 @@ Quanto costa comprare da un gruppo di fornitori soltanto: gli articoli che quel 
 
 | Fornitori | Ordini | Articoli che non hanno | € degli articoli che hanno | € in più del minimo |
 |---|--:|--:|--:|--:|
-| Idrosanitaria | 1 | 14 | 8.236,63 | 245,15 |
+| Idrosanitaria | 1 | 13 | 8.782,63 | 245,15 |
 | Tecnomat | 1 | 17 | 1.834,68 | 300,95 |
-| Abbattista | 1 | 45 | 2.079,45 | 421,62 |
-| Idrosanitaria + Tecnomat | 2 | 1 | 8.235,01 | 6,53 |
-| Abbattista + Idrosanitaria | 2 | 12 | 8.853,13 | 231,51 |
-| Abbattista + Tecnomat | 2 | 13 | 2.720,16 | 283,76 |
-| Abbattista + Idrosanitaria + Tecnomat | 3 | 0 | 8.855,00 | 0,00 |
+| Abbattista | 1 | 45 | 2.079,45 | 502,14 |
+| Idrosanitaria + Tecnomat | 2 | 0 | 8.781,01 | 6,53 |
+| Abbattista + Idrosanitaria | 2 | 12 | 8.772,61 | 231,51 |
+| Abbattista + Tecnomat | 2 | 13 | 2.720,16 | 364,28 |
+| Abbattista + Idrosanitaria + Tecnomat | 3 | 0 | 8.774,48 | 0,00 |
 
-### L'ordine a Idrosanitaria — 33 articoli, 7.511,78 €
+### L'ordine a Idrosanitaria — 34 articoli, 8.057,78 €
 
 | Codice | Articolo | Cod. fornitore | Confezione | Q.tà | UM | €/UM | € | Gli altri | Voci |
 |---|---|---|---|--:|---|--:|--:|---|---|
@@ -184,6 +184,7 @@ Quanto costa comprare da un gruppo di fornitori soltanto: gli articoli che quel 
 | M41a | U.E. MONO ADVANCE 7,1KW R32 MONOFASE | RZASG71MV1 | 1 pz | 1 | cad | 1.017,27 | 1.017,27 | — | C-A.1 |
 | M42a | AIRZONE EASYZONE 25 WI-FI MEDIUM IB8 DAIKIN 4X200 | AZC25DAIBS07M4 | 1 pz | 1 | cad | 993,61 | 993,61 | — | C-A.3 |
 | M40a | U.I.CANALIZ.M/PREV S/COM 7,0KW R32/R410 | FBA71A9 | 1 pz | 1 | cad | 835,78 | 835,78 | — | C-A.2 |
+| M10b | Cordivari BOLLY 1 XL WB 200 | 3104162330011 | 1 pz | 1 | cad | 546,00 | 546,00 | Abbattista 626,52 | P-A.2 |
 | M20b | BOL. VB 80LT C/4 ATT. C/COPERT.V003 | 3070160920018 | 1 pz | 1 | cad | 156,49 | 156,49 | Abbattista 179,29 | P-A.3 |
 | A06c | PORTABOCCHETTA PLP 400X200 1X200 POSTERIORE | PLP-U-400X200-1B-P | 1 pz | 5 | cad | 30,81 ⚠ | 154,04 | — | C-B.5 |
 | I47 | GRUPPO DI CARICAMENTO C/DISCONNETTORE 1/2" | 580011 | 1 pz | 1 | cad | 153,01 | 153,01 | Abbattista 67,59 ⚠ · Tecnomat 254,57 | P-I.21 |
@@ -257,11 +258,10 @@ Quanto costa comprare da un gruppo di fornitori soltanto: gli articoli che quel 
 | I83b | RACCORDO GHISA BERG MONTANA FIGURA 280 NIPPLE 3/4" CONFORME USO ACQUA E GAS | 25018205 | 1 pz | 1 | cad | 0,950 | 0,95 | Idrosanitaria 1,09 · Abbattista 1,57 | P-I.41 |
 | E37 | SCATOLA INCASSO KML 3 MODULI | 12085813 | 1 pz | 3 | cad | 0,250 | 0,75 | — | P-E.8, C-E.10 |
 
-### L'ordine a Abbattista — 3 articoli, 656,49 €
+### L'ordine a Abbattista — 2 articoli, 29,97 €
 
 | Codice | Articolo | Cod. fornitore | Confezione | Q.tà | UM | €/UM | € | Gli altri | Voci |
 |---|---|---|---|--:|---|--:|--:|---|---|
-| M10b | BOLLY 1 XL WB 200 BOLLITORE VERTICALE CO — 3104162330011 | 79861453 | 1 pz | 1 | cad | 626,52 | 626,52 | — | P-A.2 |
 | I49a | GIUNTO IN GOMMA ANTIVIBRANTE BOCCH.11/4 — MCVGGAB11/4 | 76800301 | 1 pz | 2 | cad | 13,18 | 26,35 | Tecnomat 16,15 · Idrosanitaria 16,27 | P-I.22 |
 | I81c | RACC.DIR.M PRESS.TIEMME 1650 16X1/2 — 1650009 | 68636050 | 1 pz | 2 | cad | 1,81 | 3,62 | Tecnomat 2,10 | P-I.35, P-I.36 |
 

@@ -133,3 +133,7 @@ Il comando della skill li riapre da sé.
   in «Dove comprare» un bollitore col serpentino sotto il minimo non si sceglie, nemmeno come ripiego, e il conto dice
   chi è escluso; senza un bollitore buono la voce è DA PREZZARE e l'agente chiede al progettista se accetta un
   serpentino minore. Tavole identiche alla 2.2.0. 157 file.
+- **2.2.2** — 18 novembre 2026 (`REL-030`, I-333): **il bollitore Boilernova euromax WWM** — la skill conosce i suoi
+  attacchi e la superficie del serpentino dalla scheda (il 200: 190 l, 3,0 m², serpentino 1"), come il Cordivari
+  Bolly 1 XL; la superficie della scheda vale per gli avvisi quando il grafo non la scrive; il bollitore di
+  Idrosanitaria nel listino è il Bolly 1 XL WB 200 a 546 € (I-334). Tavole identiche. 157 file.

@@ -9,6 +9,7 @@
 """
 
 import json
+from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
@@ -17,7 +18,7 @@ import pytest
 from disegnatore_mep.distinta import RegoleDellaDistinta, componi_la_distinta
 from disegnatore_mep.distinta.costo import costo_in_markdown, prezza_la_distinta
 from disegnatore_mep.distinta.documento import documento_della_lista, tutti_i_testi
-from disegnatore_mep.distinta.listino import leggi_il_listino
+from disegnatore_mep.distinta.listino import VoceDelListino, leggi_il_listino
 from disegnatore_mep.distinta.ordine import ordine_della_minuteria
 from disegnatore_mep.graphics.tabella import dati_idronici
 from disegnatore_mep.skill import cartelle_del_repository, main
@@ -139,24 +140,35 @@ def test_la_superficie_va_nella_tabella_delle_apparecchiature() -> None:
     assert dati_idronici(("dhw_storage",), {"volume_l": 200, "superficie_scambio_m2": 2.5}) == ["200 l", "serpentino 2,5 m²"]
 
 
+def _con_un_bollitore_piccolo(listino: Any) -> Any:
+    """Il listino vero, con in piu' un bollitore da 200 l col serpentino da 0,8 m² e meno caro: il caso del Bolly 1 ST
+    che Idrosanitaria aveva quotato prima di correggere il preventivo (I-334)."""
+    piccolo = VoceDelListino("M10b", "BOLLITORE 200 L SERPENTINO 0,8 MQ", 461.40, "cad", "prova", "Tecnomat",
+                             superficie_m2=0.8)
+    return replace(listino, righe={**listino.righe, "M10b": (*listino.righe["M10b"], piccolo)})
+
+
 def test_il_listino_dice_il_serpentino_e_il_confronto_lo_usa(
     regole: RegoleDellaDistinta, nomi: tuple[dict[str, str], dict[str, str]], listino: Any
 ) -> None:
     righe = {v.fornitore: v for v in listino.righe["M10b"]}
-    assert righe["Abbattista"].superficie_m2 == 2.0 and righe["Idrosanitaria"].superficie_m2 == 0.8
-    # Con la 9 kW (2 m²) il bollitore di Abbattista rispetta la voce, e vince anche se costa di piu';
-    # quello di Idrosanitaria (0,8 m²) e' sbagliato: escluso dal confronto, non un avviso (REL-029, I-331).
+    # I-334: Idrosanitaria ha corretto il preventivo col Bolly 1 XL WB 200, come Abbattista.
+    assert righe["Abbattista"].superficie_m2 == 2.0 and righe["Idrosanitaria"].superficie_m2 == 2.0
+    assert righe["Idrosanitaria"].prezzo == pytest.approx(546.00)
+    con_il_piccolo = _con_un_bollitore_piccolo(listino)
+    # Con la 9 kW (2 m²) il bollitore da 0,8 m² e' sbagliato: escluso dal confronto, non un avviso (REL-029, I-331);
+    # vince il Bolly XL meno caro, quello di Idrosanitaria.
     grafo = _impianto()
     grafo["components"][0]["properties"]["power_kw"] = 9
-    costo = prezza_la_distinta(componi_la_distinta(grafo, regole, *nomi), listino)
+    costo = prezza_la_distinta(componi_la_distinta(grafo, regole, *nomi), con_il_piccolo)
     ordine = ordine_della_minuteria(costo)
     bollitore = next(r for r in ordine.righe if r.codice == "M10b")
-    assert bollitore.scelta is not None and bollitore.scelta.fornitore == "Abbattista"
-    assert not bollitore.avvisi and {v.fornitore for v in bollitore.offerte} == {"Abbattista"}
+    assert bollitore.scelta is not None and bollitore.scelta.fornitore == "Idrosanitaria"
+    assert not bollitore.avvisi and {v.fornitore for v in bollitore.offerte} == {"Abbattista", "Idrosanitaria"}
     riga = next(r for r in costo.righe if r.testo.startswith("Bollitore ACS"))
-    assert "esclusi perché sbagliati: Idrosanitaria (serpentino 0,8 m², sotto il minimo di 2 m²)" in riga.nota
-    # Con la 12 kW (2,5 m², manuale) tutti e due sono sotto: nessuno si sceglie, la voce e' DA PREZZARE.
-    costo = prezza_la_distinta(componi_la_distinta(_impianto(), regole, *nomi), listino)
+    assert "esclusi perché sbagliati: Tecnomat (serpentino 0,8 m², sotto il minimo di 2 m²)" in riga.nota
+    # Con la 12 kW (2,5 m², manuale) tutti sono sotto: nessuno si sceglie, la voce e' DA PREZZARE.
+    costo = prezza_la_distinta(componi_la_distinta(_impianto(), regole, *nomi), con_il_piccolo)
     riga = next(r for r in costo.righe if r.testo.startswith("Bollitore ACS"))
     assert not riga.prezzata and riga.manca.startswith("nessun articolo del listino rispetta la voce; esclusi:")
     assert "Abbattista (serpentino 2 m², sotto il minimo di 2,5 m²)" in riga.manca
@@ -249,15 +261,42 @@ def test_il_progettista_accetta_un_serpentino_piu_piccolo(
     regole: RegoleDellaDistinta, nomi: tuple[dict[str, str], dict[str, str]], listino: Any
 ) -> None:
     """I-329: di base la specifica della macchina; il progettista puo' accettare il Bolly 1 XL da 2 m² sulla
-    12 kW, scrivendo il minimo sul bollitore. Allora il Bolly di Abbattista rispetta la voce e vince."""
+    12 kW, scrivendo il minimo sul bollitore. Allora il Bolly XL rispetta la voce, e vince il meno caro
+    (Idrosanitaria a 546 €, I-334)."""
     grafo = _impianto()
     grafo["components"][1]["properties"]["superficie_minima_scambio_m2"] = 2
     voce = _bollitore(componi_la_distinta(grafo, regole, *nomi))
     assert voce.superficie_minima_m2 == 2.0 and voce.testo.endswith("non minore di 2 m²")
     ordine = ordine_della_minuteria(prezza_la_distinta(componi_la_distinta(grafo, regole, *nomi), listino))
-    assert next(r for r in ordine.righe if r.codice == "M10b").scelta.fornitore == "Abbattista"  # type: ignore[union-attr]
+    assert next(r for r in ordine.righe if r.codice == "M10b").scelta.fornitore == "Idrosanitaria"  # type: ignore[union-attr]
     # Un serpentino ne' smaltato ne' inox (Polywarm), senza il minimo del progettista, e' una domanda.
     grafo = _impianto()
     grafo["components"][1]["properties"]["serpentino"] = "acciaio rivestito Polywarm"
     voce = _bollitore(componi_la_distinta(grafo, regole, *nomi))
     assert voce.superficie_minima_m2 is None and voce.da_definire
+
+
+# --- REL-030 (I-333): il Boilernova euromax WWM, dalla sua scheda ---------------------------------
+
+
+def _con_l_euromax(grafo: dict[str, Any]) -> dict[str, Any]:
+    grafo["components"][1]["properties"].update({"marca": "Boilernova", "modello": "euromax WWM 200 SMALGLASS"})
+    return grafo
+
+
+def test_l_euromax_wwm_200_ha_i_suoi_attacchi_e_il_suo_serpentino(
+    regole: RegoleDellaDistinta, nomi: tuple[dict[str, str], dict[str, str]]
+) -> None:
+    """La scheda Boilernova (I-333): serpentino 1" sul 200, 3,0 m²: rispetta i 2,5 m² della Shenling 12 kW."""
+    distinta = componi_la_distinta(_con_l_euromax(_impianto()), regole, *nomi)
+    attacchi = {v.testo: v.quantita for v in distinta.voci_della_sezione("I") if v.testo.endswith("all'attacco")}
+    assert attacchi["Raccordo diritto a pressare M 1\" × tubo multistrato MS 32×3, all'attacco"] == 2
+    assert not [a for a in distinta.avvisi if "BOL-01" in a]
+    assert "serpentino del bollitore scelto 3 m²" in _bollitore(distinta).note
+
+
+def test_il_bolly_1_xl_200_dice_i_suoi_2_m2_anche_se_il_grafo_non_li_scrive(
+    regole: RegoleDellaDistinta, nomi: tuple[dict[str, str], dict[str, str]]
+) -> None:
+    distinta = componi_la_distinta(_impianto(), regole, *nomi)
+    assert "BOL-01: serpentino 2 m², sotto il minimo di 2,5 m²" in "\n".join(distinta.avvisi)
